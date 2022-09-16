@@ -5,7 +5,6 @@
 vendor/
 t2-output/
 target/
-Acid/
 tags
 
 #except the following files
@@ -36,5 +35,7 @@ tags
 !*.bat
 
 !*.md
+!*.jpg
+!*.png
 
 #except the following folders
