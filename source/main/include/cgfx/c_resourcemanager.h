@@ -4,32 +4,37 @@
 // https://github.com/nvpro-samples/nvpro_core/tree/master/nvvk
 // https://www.onlineocr.net/
 
-
-
-class Shader;
-class BindGroup;
-class Texture;
-class Buffer;
-
-struct ShaderDesc;
-struct BindGroupDesc;
-struct TextureDesc;
-struct BufferDesc;
-
-class ResourceManager
+namespace ncore
 {
-public:
-    static ResourceManager* ptr;
+    namespace ngfx
+    {
+        class shader_t;
+        class bindgroup_t;
+        class texture_t;
+        class buffer_t;
 
-    virtual ~ResourceManager() = 0;
+        struct shaderdesc_t;
+        struct bindgroupdesc_t;
+        struct texturedesc_t;
+        struct bufferdesc_t;
 
-    virtual Handle<Shader>    createShader(ShaderDesc& desc)       = 0;
-    virtual Handle<BindGroup> createBindGroup(BindGroupDesc& desc) = 0;
-    virtual Handle<Texture>   createTexture(TextureDesc& desc)     = 0;
-    virtual Handle<Buffer>    createBuffer(BufferDesc& desc)       = 0;
+        class resourcemanager_t
+        {
+        public:
+            static resourcemanager_t* ptr;
 
-    virtual void deleteShader(Handle<Shader> handle)       = 0;
-    virtual void deleteBindGroup(Handle<BindGroup> handle) = 0;
-    virtual void deleteTexture(Handle<Texture> handle)     = 0;
-    virtual void deleteBuffer(Handle<Buffer> handle)       = 0;
-};
+            virtual ~resourcemanager_t() = 0;
+
+            virtual handle_t<shader_t>    createShader(shaderdesc_t& desc)       = 0;
+            virtual handle_t<bindgroup_t> createBindgroup(bindgroupdesc_t& desc) = 0;
+            virtual handle_t<texture_t>   createTexture(texturedesc_t& desc)     = 0;
+            virtual handle_t<buffer_t>    createBuffer(bufferdesc_t& desc)       = 0;
+
+            virtual void deleteShader(handle_t<shader_t> handle)       = 0;
+            virtual void deleteBindgroup(handle_t<bindgroup_t> handle) = 0;
+            virtual void deleteTexture(handle_t<texture_t> handle)     = 0;
+            virtual void deleteBuffer(handle_t<buffer_t> handle)       = 0;
+        };
+
+    } // namespace ngfx
+} // namespace ncore
