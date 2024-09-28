@@ -1,6 +1,6 @@
 # cgfx
 
-C++ library for next-gen graphics
+C++ library for next-gen graphics, back-ends.
 
 ## back-ends
 
