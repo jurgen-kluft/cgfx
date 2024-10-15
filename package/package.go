@@ -1,10 +1,10 @@
 package cgfx
 
 import (
+	callocator "github.com/jurgen-kluft/callocator/package"
 	cbase "github.com/jurgen-kluft/cbase/package"
 	"github.com/jurgen-kluft/ccode/denv"
 	cd3d12 "github.com/jurgen-kluft/cd3d12/package"
-	cgfxcommon "github.com/jurgen-kluft/cgfxcommon/package"
 	cmacos "github.com/jurgen-kluft/cmacos/package"
 	cunittest "github.com/jurgen-kluft/cunittest/package"
 )
@@ -14,7 +14,7 @@ func GetPackage() *denv.Package {
 	// Dependencies
 	unittestpkg := cunittest.GetPackage()
 	basepkg := cbase.GetPackage()
-	gfxcommonpkg := cgfxcommon.GetPackage()
+	allocatorpkg := callocator.GetPackage()
 	macospkg := cmacos.GetPackage()
 	d3d12pkg := cd3d12.GetPackage()
 
@@ -23,12 +23,12 @@ func GetPackage() *denv.Package {
 	mainpkg.AddPackage(unittestpkg)
 	mainpkg.AddPackage(basepkg)
 	mainpkg.AddPackage(macospkg)
-	mainpkg.AddPackage(gfxcommonpkg)
+	mainpkg.AddPackage(allocatorpkg)
 
 	// 'cgfx' library
 	mainlib := denv.SetupDefaultCppLibProject("cgfx", "github.com\\jurgen-kluft\\cgfx")
 	mainlib.Dependencies = append(mainlib.Dependencies, basepkg.GetMainLib())
-	mainlib.Dependencies = append(mainlib.Dependencies, gfxcommonpkg.GetMainLib())
+	mainlib.Dependencies = append(mainlib.Dependencies, allocatorpkg.GetMainLib())
 
 	if denv.IsMacOS() {
 		mainlib.Dependencies = append(mainlib.Dependencies, macospkg.GetMainLib())
