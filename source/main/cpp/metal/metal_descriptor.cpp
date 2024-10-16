@@ -333,7 +333,7 @@ namespace ncore
 
             if (m_pSampler == nullptr)
             {
-                //RE_ERROR("[MetalSampler] failed to create {}", m_name);
+                // RE_ERROR("[MetalSampler] failed to create {}", m_name);
                 return false;
             }
 

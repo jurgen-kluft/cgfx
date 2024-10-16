@@ -14,7 +14,7 @@ namespace ncore
 
         MockHeap::~MockHeap() {}
 
-        bool MockHeap::Create() { return true; }
+        bool  MockHeap::Create() { return true; }
         void* MockHeap::GetHandle() const { return nullptr; }
 
     }  // namespace ngfx

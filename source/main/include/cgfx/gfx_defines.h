@@ -41,8 +41,8 @@ namespace ncore
                 void resize(u32 size)
                 {
                     m_size = size;
-                    //TODO
-                    //m_data = new T[size];
+                    // TODO
+                    // m_data = new T[size];
                 }
 
                 T*  m_data;

@@ -168,7 +168,7 @@ namespace ncore
             BeginBlitEncoder();
 
             // TODO handle events
-            //BeginEvent("IGfxCommandList::WriteBuffer");
+            // BeginEvent("IGfxCommandList::WriteBuffer");
 
             MTL::Buffer* mtlBuffer = (MTL::Buffer*)buffer->GetHandle();
             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 0, sizeof(u8)), u8(data >> 0));
@@ -176,7 +176,7 @@ namespace ncore
             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 2, sizeof(u8)), u8(data >> 16));
             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 3, sizeof(u8)), u8(data >> 24));
 
-            //EndEvent();
+            // EndEvent();
         }
 
         void MetalCommandList::UpdateTileMappings(IGfxTexture* texture, IGfxHeap* heap, u32 mapping_count, const GfxTileMapping* mappings)
@@ -351,7 +351,7 @@ namespace ncore
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
-            MTL::Viewport viewport; // = {x, y, width, height, 0.0, 1.0};
+            MTL::Viewport viewport;  // = {x, y, width, height, 0.0, 1.0};
             viewport.originX = x;
             viewport.originY = y;
             viewport.width   = width;

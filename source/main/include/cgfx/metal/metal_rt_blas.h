@@ -35,7 +35,7 @@ namespace ncore
             MTL::Buffer*                                   m_pScratchBuffer         = nullptr;
 
             MTL::AccelerationStructureTriangleGeometryDescriptor** m_geometries;
-            u32                                                   m_geometries_count;
+            u32                                                    m_geometries_count;
         };
 
     }  // namespace ngfx

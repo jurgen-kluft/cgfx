@@ -207,7 +207,7 @@ namespace ncore
         bool IsDepthFormat(GfxFormat format) { return format == GfxFormat::D32FS8 || format == GfxFormat::D32F || format == GfxFormat::D16; }
         bool IsStencilFormat(GfxFormat format) { return format == GfxFormat::D32FS8; }
         bool IsSRGBFormat(GfxFormat format) { return format == GfxFormat::RGBA8SRGB || format == GfxFormat::BGRA8SRGB; }
-        u32 CalcSubresource(const GfxTextureDesc& desc, u32 mip, u32 slice) { return mip + desc.mip_levels * slice; }
+        u32  CalcSubresource(const GfxTextureDesc& desc, u32 mip, u32 slice) { return mip + desc.mip_levels * slice; }
 
         void DecomposeSubresource(const GfxTextureDesc& desc, u32 subresource, u32& mip, u32& slice)
         {

@@ -21,7 +21,7 @@ namespace ncore
             m_pEvent = device->newSharedEvent();
             if (m_pEvent == nullptr)
             {
-                //RE_ERROR("[MetalFence] failed to create {}", m_name);
+                // RE_ERROR("[MetalFence] failed to create {}", m_name);
                 return false;
             }
 

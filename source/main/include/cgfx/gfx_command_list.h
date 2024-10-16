@@ -22,8 +22,8 @@ namespace ncore
         class IGfxClearUavApi
         {
         public:
-            virtual void ClearUAV(IGfxCommandList* commandList, IGfxResource* resource, IGfxDescriptor* descriptor, const GfxUnorderedAccessViewDesc& uavDesc, const float* value)    = 0;
-            virtual void ClearUAV(IGfxCommandList* commandList, IGfxResource* resource, IGfxDescriptor* descriptor, const GfxUnorderedAccessViewDesc& uavDesc, const u32* value) = 0;
+            virtual void ClearUAV(IGfxCommandList* commandList, IGfxResource* resource, IGfxDescriptor* descriptor, const GfxUnorderedAccessViewDesc& uavDesc, const float* value) = 0;
+            virtual void ClearUAV(IGfxCommandList* commandList, IGfxResource* resource, IGfxDescriptor* descriptor, const GfxUnorderedAccessViewDesc& uavDesc, const u32* value)   = 0;
         };
 
         class IGfxCommandList : public IGfxResource

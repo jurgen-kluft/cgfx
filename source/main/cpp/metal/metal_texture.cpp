@@ -47,7 +47,7 @@ namespace ncore
 
             if (m_pTexture == nullptr)
             {
-                //RE_ERROR("[MetalTexture] failed to create {}", m_name);
+                // RE_ERROR("[MetalTexture] failed to create {}", m_name);
                 return false;
             }
 

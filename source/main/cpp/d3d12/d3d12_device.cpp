@@ -376,7 +376,7 @@ namespace ncore
             m_pDxgiAdapter                        = FindAdapter(m_pDxgiFactory, minimumFeatureLevel);
             if (m_pDxgiAdapter == nullptr)
             {
-                //RE_ERROR("failed to find a capable DXGI adapter.");
+                // RE_ERROR("failed to find a capable DXGI adapter.");
                 return false;
             }
 
@@ -418,7 +418,7 @@ namespace ncore
 
             if (!capableDevice)
             {
-                //RE_ERROR("the device is not capable of running RealEngine.");
+                // RE_ERROR("the device is not capable of running RealEngine.");
                 RE_INFO("SM 6.6 : {}", m_featureSupport.HighestShaderModel() >= D3D_SHADER_MODEL_6_6 ? "Yes" : "No");
                 RE_INFO("Resource Binding Tier 3 : {}", m_featureSupport.ResourceBindingTier() >= D3D12_RESOURCE_BINDING_TIER_3 ? "Yes" : "No");
                 RE_INFO("Raytracing Tier 1.1 : {}", m_featureSupport.RaytracingTier() >= D3D12_RAYTRACING_TIER_1_1 ? "Yes" : "No");

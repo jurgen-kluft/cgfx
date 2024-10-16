@@ -39,14 +39,14 @@ namespace ncore
 
             if (m_pBuffer == nullptr)
             {
-                //RE_ERROR("[MetalBuffer] failed to create {}", m_name);
+                // RE_ERROR("[MetalBuffer] failed to create {}", m_name);
                 return false;
             }
 
             ((MetalDevice*)m_pDevice)->MakeResident(m_pBuffer);
 
-            //TODO
-            //SetDebugLabel(m_pBuffer, m_name.c_str());
+            // TODO
+            // SetDebugLabel(m_pBuffer, m_name.c_str());
 
             if (m_desc.memory_type != GfxMemoryType::GpuOnly)
             {

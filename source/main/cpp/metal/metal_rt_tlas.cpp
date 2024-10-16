@@ -46,7 +46,7 @@ namespace ncore
 
             if (m_pAccelerationStructure == nullptr || m_pScratchBuffer == nullptr)
             {
-                //RE_ERROR("[MetalRayTracingTLAS] failed to create : {}", m_name);
+                // RE_ERROR("[MetalRayTracingTLAS] failed to create : {}", m_name);
                 return false;
             }
 
@@ -62,9 +62,9 @@ namespace ncore
             m_pGPUHeaderBuffer      = device->newBuffer(headerSize, MTL::ResourceStorageModeShared);
             ((MetalDevice*)m_pDevice)->MakeResident(m_pGPUHeaderBuffer);
 
-            //TODO allocate
+            // TODO allocate
             u32* instanceContributions = nullptr;
-            //ize(m_desc.instance_count, 0);
+            // ize(m_desc.instance_count, 0);
 
             IRRaytracingSetAccelerationStructure((u8*)m_pGPUHeaderBuffer->contents(), m_pAccelerationStructure->gpuResourceID(), (u8*)m_pGPUHeaderBuffer->contents() + sizeof(IRRaytracingAccelerationStructureGPUHeader), instanceContributions,
                                                  m_desc.instance_count);
@@ -81,16 +81,16 @@ namespace ncore
                 m_currentInstanceBufferOffset = 0;
             }
 
-            s32 accelerationStructuresCount = 0;
-            MTL::AccelerationStructure** accelerationStructures = nullptr;
+            s32                          accelerationStructuresCount = 0;
+            MTL::AccelerationStructure** accelerationStructures      = nullptr;
             // TODO allocate
-            //accelerationStructures.reserve(instance_count);
+            // accelerationStructures.reserve(instance_count);
 
             MTL::AccelerationStructureUserIDInstanceDescriptor* instanceDescriptors = (MTL::AccelerationStructureUserIDInstanceDescriptor*)((char*)m_instanceBufferCpuAddress + m_currentInstanceBufferOffset);
 
             for (u32 i = 0; i < instance_count; ++i)
             {
-                const GfxRayTracingInstance& instance = instances[i];
+                const GfxRayTracingInstance& instance                 = instances[i];
                 accelerationStructures[accelerationStructuresCount++] = ((MTL::AccelerationStructure*)instance.blas->GetHandle());
 
                 instanceDescriptors[i].accelerationStructureIndex      = i;

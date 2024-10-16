@@ -35,7 +35,7 @@ namespace ncore
 
             if (m_pHeap == nullptr)
             {
-                //RE_ERROR("[MetalHeap] failed to create {}", m_name);
+                // RE_ERROR("[MetalHeap] failed to create {}", m_name);
                 return false;
             }
 

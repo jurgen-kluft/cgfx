@@ -67,7 +67,7 @@ namespace ncore
 
             if (!m_pPSO)
             {
-                //RE_ERROR("[MetalGraphicsPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
+                // RE_ERROR("[MetalGraphicsPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
                 pError->release();
                 return false;
             }
@@ -142,7 +142,7 @@ namespace ncore
 
             if (!m_pPSO)
             {
-                //RE_ERROR("[MetalMeshShadingPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
+                // RE_ERROR("[MetalMeshShadingPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
                 pError->release();
                 return false;
             }
@@ -189,7 +189,7 @@ namespace ncore
 
             if (!m_pPSO)
             {
-                //RE_ERROR("[MetalComputePipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
+                // RE_ERROR("[MetalComputePipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
                 pError->release();
                 return false;
             }

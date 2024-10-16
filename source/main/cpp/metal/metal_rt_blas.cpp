@@ -29,8 +29,8 @@ namespace ncore
 
         bool MetalRayTracingBLAS::Create()
         {
-            //TODO, allocate memory for geometries
-            //m_geometries.reserve(m_desc.geometry_counth);
+            // TODO, allocate memory for geometries
+            // m_geometries.reserve(m_desc.geometry_counth);
 
             for (size_t i = 0; i < m_desc.geometries_count; ++i)
             {

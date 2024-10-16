@@ -2,7 +2,7 @@
 #define __CGFX_METAL_RT_TLAS_H__
 #include "ccore/c_target.h"
 #ifdef USE_PRAGMA_ONCE
-#    pragma once
+    #pragma once
 #endif
 
 #include "cgfx/metal/metal_utils.h"

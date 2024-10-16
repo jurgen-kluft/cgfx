@@ -66,8 +66,8 @@ namespace ncore
 
             for (u32 i = 0; i < m_desc.backbuffer_count; ++i)
             {
-                eastl::string name; // = fmt::format("{} texture {}", m_name, i).c_str();
-                MockTexture* texture                  = new MockTexture((MockDevice*)m_pDevice, textureDesc, name);
+                eastl::string name;  // = fmt::format("{} texture {}", m_name, i).c_str();
+                MockTexture*  texture                 = new MockTexture((MockDevice*)m_pDevice, textureDesc, name);
                 m_backBuffers[m_numBackBufferCount++] = texture;
             }
 

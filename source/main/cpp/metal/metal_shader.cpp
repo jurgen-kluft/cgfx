@@ -34,7 +34,7 @@ namespace ncore
 
             if (library == nullptr)
             {
-                //RE_ERROR("[MetalShader] failed to create {} \r\n{}", m_name, error->localizedDescription()->utf8String());
+                // RE_ERROR("[MetalShader] failed to create {} \r\n{}", m_name, error->localizedDescription()->utf8String());
 
                 error->release();
                 return false;

@@ -105,10 +105,7 @@ namespace ncore
                 return index;
             }
 
-            void Free(u32 index)
-            {
-                m_freeDescriptors[m_freeDescriptorsCount++] = index;
-            }
+            void Free(u32 index) { m_freeDescriptors[m_freeDescriptorsCount++] = index; }
 
             MTL::Buffer* GetBuffer() const { return m_pBuffer; }
 
@@ -151,7 +148,7 @@ namespace ncore
 
             if (!m_pDevice->supportsFamily(MTL::GPUFamilyApple7))
             {
-                //RE_INFO("RealEngine requires a Metal GPU family Apple7+ device");
+                // RE_INFO("RealEngine requires a Metal GPU family Apple7+ device");
                 return false;
             }
 
