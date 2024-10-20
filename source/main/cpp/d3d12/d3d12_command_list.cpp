@@ -1,3 +1,4 @@
+#include "cbase/c_integer.h"
 #include "cgfx/d3d12/d3d12_command_list.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_fence.h"
@@ -191,9 +192,9 @@ namespace ncore
 
             u32 min_width  = GetFormatBlockWidth(desc.format);
             u32 min_height = GetFormatBlockHeight(desc.format);
-            u32 w          = eastl::max(desc.width >> mip_level, min_width);
-            u32 h          = eastl::max(desc.height >> mip_level, min_height);
-            u32 d          = eastl::max(desc.depth >> mip_level, 1u);
+            u32 w          = math::max(desc.width >> mip_level, min_width);
+            u32 h          = math::max(desc.height >> mip_level, min_height);
+            u32 d          = math::max(desc.depth >> mip_level, 1u);
 
             D3D12_TEXTURE_COPY_LOCATION dst = {};
             dst.pResource                   = (ID3D12Resource*)dst_texture->GetHandle();
@@ -222,9 +223,9 @@ namespace ncore
 
             u32 min_width  = GetFormatBlockWidth(desc.format);
             u32 min_height = GetFormatBlockHeight(desc.format);
-            u32 w          = eastl::max(desc.width >> mip_level, min_width);
-            u32 h          = eastl::max(desc.height >> mip_level, min_height);
-            u32 d          = eastl::max(desc.depth >> mip_level, 1u);
+            u32 w          = math::max(desc.width >> mip_level, min_width);
+            u32 h          = math::max(desc.height >> mip_level, min_height);
+            u32 d          = math::max(desc.depth >> mip_level, 1u);
 
             D3D12_TEXTURE_COPY_LOCATION dst        = {};
             dst.pResource                          = (ID3D12Resource*)dst_buffer->GetHandle();

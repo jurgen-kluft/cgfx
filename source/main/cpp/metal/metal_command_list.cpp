@@ -1,3 +1,4 @@
+#include "cbase/c_integer.h"
 #include "cgfx/metal/metal_command_list.h"
 #include "cgfx/metal/metal_device.h"
 #include "cgfx/metal/metal_swapchain.h"
@@ -103,12 +104,12 @@ namespace ncore
             BeginBlitEncoder();
 
             const GfxTextureDesc& desc        = dst_texture->GetDesc();
-            MTL::Size             textureSize = MTL::Size::Make(eastl::max(desc.width >> mip_level, 1u), eastl::max(desc.height >> mip_level, 1u), eastl::max(desc.depth >> mip_level, 1u));
+            MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
 
             u32 bytesPerRow = ((MetalTexture*)dst_texture)->GetRowPitch(mip_level);
 
             u32 block_height  = GetFormatBlockHeight(desc.format);
-            u32 height        = eastl::max(desc.height >> mip_level, block_height);
+            u32 height        = math::max(desc.height >> mip_level, block_height);
             u32 row_num       = height / block_height;
             u32 bytesPerImage = bytesPerRow * row_num;
 
@@ -121,12 +122,12 @@ namespace ncore
             BeginBlitEncoder();
 
             const GfxTextureDesc& desc        = src_texture->GetDesc();
-            MTL::Size             textureSize = MTL::Size::Make(eastl::max(desc.width >> mip_level, 1u), eastl::max(desc.height >> mip_level, 1u), eastl::max(desc.depth >> mip_level, 1u));
+            MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
 
             u32 bytesPerRow = ((MetalTexture*)src_texture)->GetRowPitch(mip_level);
 
             u32 block_height  = GetFormatBlockHeight(desc.format);
-            u32 height        = eastl::max(desc.height >> mip_level, block_height);
+            u32 height        = math::max(desc.height >> mip_level, block_height);
             u32 row_num       = height / block_height;
             u32 bytesPerImage = bytesPerRow * row_num;
 
@@ -146,7 +147,7 @@ namespace ncore
             BeginBlitEncoder();
 
             const GfxTextureDesc& desc     = src->GetDesc();
-            MTL::Size             src_size = MTL::Size::Make(eastl::max(desc.width >> src_mip, 1u), eastl::max(desc.height >> src_mip, 1u), eastl::max(desc.depth >> src_mip, 1u));
+            MTL::Size             src_size = MTL::Size::Make(math::max(desc.width >> src_mip, 1u), math::max(desc.height >> src_mip, 1u), math::max(desc.depth >> src_mip, 1u));
 
             m_pBlitCommandEncoder->copyFromTexture((MTL::Texture*)src->GetHandle(), src_array, src_mip, MTL::Origin(0, 0, 0), src_size, (MTL::Texture*)dst->GetHandle(), dst_array, dst_mip, MTL::Origin(0, 0, 0));
         }

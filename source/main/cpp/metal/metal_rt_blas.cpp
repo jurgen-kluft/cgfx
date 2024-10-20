@@ -1,3 +1,4 @@
+#include "cbase/c_integer.h"
 #include "cgfx/metal/metal_rt_blas.h"
 #include "cgfx/metal/metal_device.h"
 #include "cgfx/metal/metal_buffer.h"
@@ -60,7 +61,7 @@ namespace ncore
             MTL::AccelerationStructureSizes asSizes = device->accelerationStructureSizes(m_pDescriptor);
 
             m_pAccelerationStructure = device->newAccelerationStructure(asSizes.accelerationStructureSize);
-            m_pScratchBuffer         = device->newBuffer(eastl::max(asSizes.buildScratchBufferSize, asSizes.refitScratchBufferSize), MTL::ResourceStorageModePrivate);
+            m_pScratchBuffer         = device->newBuffer(math::max(asSizes.buildScratchBufferSize, asSizes.refitScratchBufferSize), MTL::ResourceStorageModePrivate);
 
             geometryDescriptors->release();
 

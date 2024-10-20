@@ -1,3 +1,4 @@
+#include "cbase/c_integer.h"
 #include "cgfx/metal/metal_texture.h"
 #include "cgfx/metal/metal_device.h"
 #include "cgfx/metal/metal_heap.h"
@@ -78,9 +79,9 @@ namespace ncore
             {
                 for (u32 mip = 0; mip < m_desc.mip_levels; ++mip)
                 {
-                    u32 width  = eastl::max(m_desc.width >> mip, min_width);
-                    u32 height = eastl::max(m_desc.height >> mip, min_height);
-                    u32 depth  = eastl::max(m_desc.depth >> mip, 1u);
+                    u32 width  = math::max(m_desc.width >> mip, min_width);
+                    u32 height = math::max(m_desc.height >> mip, min_height);
+                    u32 depth  = math::max(m_desc.depth >> mip, 1u);
 
                     size += GetFormatRowPitch(m_desc.format, width) * height * depth;
                 }
@@ -92,7 +93,7 @@ namespace ncore
         u32 MetalTexture::GetRowPitch(u32 mip_level) const
         {
             u32 min_width = GetFormatBlockWidth(m_desc.format);
-            u32 width     = eastl::max(m_desc.width >> mip_level, min_width);
+            u32 width     = math::max(m_desc.width >> mip_level, min_width);
 
             return GetFormatRowPitch(m_desc.format, width) * GetFormatBlockHeight(m_desc.format);
         }

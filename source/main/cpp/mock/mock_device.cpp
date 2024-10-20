@@ -213,9 +213,9 @@ namespace ncore
             {
                 for (u32 mip = 0; mip < desc.mip_levels; ++mip)
                 {
-                    u32 width  = eastl::max(desc.width >> mip, min_width);
-                    u32 height = eastl::max(desc.height >> mip, min_height);
-                    u32 depth  = eastl::max(desc.depth >> mip, 1u);
+                    u32 width  = math::max(desc.width >> mip, min_width);
+                    u32 height = math::max(desc.height >> mip, min_height);
+                    u32 depth  = math::max(desc.depth >> mip, 1u);
 
                     size += GetFormatRowPitch(desc.format, width) * height * depth;
                 }
