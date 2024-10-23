@@ -35,7 +35,7 @@ namespace ncore
             bool                        m_bSupportTearing    = false;
             bool                        m_bWindowMode        = true;
             u32                         m_nCurrentBackBuffer = 0;
-            eastl::vector<IGfxTexture*> m_backBuffers;
+            vector_t<IGfxTexture*> m_backBuffers;
         };
     }  // namespace ngfx
 }  // namespace ncore

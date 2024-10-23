@@ -312,11 +312,11 @@ namespace ncore
 
         void D3D12CommandList::UpdateTileMappings(IGfxTexture* texture, IGfxHeap* heap, u32 mapping_count, const GfxTileMapping* mappings)
         {
-            eastl::vector<D3D12_TILED_RESOURCE_COORDINATE> coordinates;
-            eastl::vector<D3D12_TILE_REGION_SIZE>          sizes;
-            eastl::vector<D3D12_TILE_RANGE_FLAGS>          flags;
-            eastl::vector<UINT>                            heapTileOffsets;
-            eastl::vector<UINT>                            tileCounts;
+            vector_t<D3D12_TILED_RESOURCE_COORDINATE> coordinates;
+            vector_t<D3D12_TILE_REGION_SIZE>          sizes;
+            vector_t<D3D12_TILE_RANGE_FLAGS>          flags;
+            vector_t<UINT>                            heapTileOffsets;
+            vector_t<UINT>                            tileCounts;
 
             coordinates.reserve(mapping_count);
             sizes.reserve(mapping_count);
@@ -405,7 +405,7 @@ namespace ncore
 
         void D3D12CommandList::FlushBarriers()
         {
-            eastl::vector<D3D12_BARRIER_GROUP> barrierGroup;
+            vector_t<D3D12_BARRIER_GROUP> barrierGroup;
             barrierGroup.reserve(3);
 
             if (!m_textureBarriers.empty())

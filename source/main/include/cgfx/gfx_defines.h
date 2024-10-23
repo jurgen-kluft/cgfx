@@ -23,153 +23,149 @@ namespace ncore
 
         static const f32 FLT_MAX = 3.402823466e+38F;
 
-        namespace eastl
+        namespace GfxRender
         {
-            struct string
+            typedef u8 Backend;
+            enum
             {
-                u32         dummy;
-                const char* c_str() const { return ""; }
+                D3D12,
+                Metal,
+                Mock,
             };
+        }  // namespace GfxRender
+        using GfxRenderBackend = GfxRender::Backend;
 
-            template <typename T>
-            struct span
+        namespace Gfx
+        {
+            typedef u32 Format;
+            enum
             {
-                T*       data() { return m_data; }
-                const T* data() const { return m_data; }
-                u32      size() const { return m_size; }
+                Unknown,
 
-                void resize(u32 size)
-                {
-                    m_size = size;
-                    // TODO
-                    // m_data = new T[size];
-                }
+                RGBA32F,
+                RGBA32UI,
+                RGBA32SI,
+                RGBA16F,
+                RGBA16UI,
+                RGBA16SI,
+                RGBA16UNORM,
+                RGBA16SNORM,
+                RGBA8UI,
+                RGBA8SI,
+                RGBA8UNORM,
+                RGBA8SNORM,
+                RGBA8SRGB,
+                BGRA8UNORM,
+                BGRA8SRGB,
+                RGB10A2UI,
+                RGB10A2UNORM,
 
-                T*  m_data;
-                u32 m_size;
+                RGB32F,
+                RGB32UI,
+                RGB32SI,
+                R11G11B10F,
+                RGB9E5,
+
+                RG32F,
+                RG32UI,
+                RG32SI,
+                RG16F,
+                RG16UI,
+                RG16SI,
+                RG16UNORM,
+                RG16SNORM,
+                RG8UI,
+                RG8SI,
+                RG8UNORM,
+                RG8SNORM,
+
+                R32F,
+                R32UI,
+                R32SI,
+                R16F,
+                R16UI,
+                R16SI,
+                R16UNORM,
+                R16SNORM,
+                R8UI,
+                R8SI,
+                R8UNORM,
+                R8SNORM,
+
+                D32F,
+                D32FS8,
+                D16,
+
+                BC1UNORM,
+                BC1SRGB,
+                BC2UNORM,
+                BC2SRGB,
+                BC3UNORM,
+                BC3SRGB,
+                BC4UNORM,
+                BC4SNORM,
+                BC5UNORM,
+                BC5SNORM,
+                BC6U16F,
+                BC6S16F,
+                BC7UNORM,
+                BC7SRGB,
+
             };
+        }  // namespace Gfx
+        using GfxFormat = Gfx::Format;
 
-            template <typename T>
-            inline T max(const T& a, const T& b)
+        namespace GfxMemory
+        {
+            typedef u8 Type;
+            enum
             {
-                return a > b ? a : b;
-            }
-        }  // namespace eastl
+                GpuOnly,
+                CpuOnly,   // staging buffers
+                CpuToGpu,  // frequently updated buffers
+                GpuToCpu,  // readback
+            };
+        }  // namespace GfxMemory
+        using GfxMemoryType = GfxMemory::Type;
 
-        enum class GfxRenderBackend
+        namespace GfxAllocation
         {
-            D3D12,
-            Metal,
-            Mock,
-        };
+            typedef u8 Type;
+            enum
+            {
+                Committed,
+                Placed,
+                Sparse,
+            };
+        }  // namespace GfxAllocation
+        using GfxAllocationType = GfxAllocation::Type;
 
-        enum class GfxFormat
+        namespace GfxBufferUsage
         {
-            Unknown,
+            typedef u32 Flags;
+            enum
+            {
+                GfxBufferUsageConstantBuffer   = 1 << 0,
+                GfxBufferUsageStructuredBuffer = 1 << 1,
+                GfxBufferUsageTypedBuffer      = 1 << 2,
+                GfxBufferUsageRawBuffer        = 1 << 3,
+                GfxBufferUsageUnorderedAccess  = 1 << 4,
+            };
+        }  // namespace GfxBufferUsage
+        using GfxBufferUsageFlags = GfxBufferUsage::Flags;
 
-            RGBA32F,
-            RGBA32UI,
-            RGBA32SI,
-            RGBA16F,
-            RGBA16UI,
-            RGBA16SI,
-            RGBA16UNORM,
-            RGBA16SNORM,
-            RGBA8UI,
-            RGBA8SI,
-            RGBA8UNORM,
-            RGBA8SNORM,
-            RGBA8SRGB,
-            BGRA8UNORM,
-            BGRA8SRGB,
-            RGB10A2UI,
-            RGB10A2UNORM,
-
-            RGB32F,
-            RGB32UI,
-            RGB32SI,
-            R11G11B10F,
-            RGB9E5,
-
-            RG32F,
-            RG32UI,
-            RG32SI,
-            RG16F,
-            RG16UI,
-            RG16SI,
-            RG16UNORM,
-            RG16SNORM,
-            RG8UI,
-            RG8SI,
-            RG8UNORM,
-            RG8SNORM,
-
-            R32F,
-            R32UI,
-            R32SI,
-            R16F,
-            R16UI,
-            R16SI,
-            R16UNORM,
-            R16SNORM,
-            R8UI,
-            R8SI,
-            R8UNORM,
-            R8SNORM,
-
-            D32F,
-            D32FS8,
-            D16,
-
-            BC1UNORM,
-            BC1SRGB,
-            BC2UNORM,
-            BC2SRGB,
-            BC3UNORM,
-            BC3SRGB,
-            BC4UNORM,
-            BC4SNORM,
-            BC5UNORM,
-            BC5SNORM,
-            BC6U16F,
-            BC6S16F,
-            BC7UNORM,
-            BC7SRGB,
-        };
-
-        enum class GfxMemoryType
+        namespace GfxTextureUsage
         {
-            GpuOnly,
-            CpuOnly,   // staging buffers
-            CpuToGpu,  // frequently updated buffers
-            GpuToCpu,  // readback
-        };
-
-        enum class GfxAllocationType
-        {
-            Committed,
-            Placed,
-            Sparse,
-        };
-
-        enum GfxBufferUsageBit
-        {
-            GfxBufferUsageConstantBuffer   = 1 << 0,
-            GfxBufferUsageStructuredBuffer = 1 << 1,
-            GfxBufferUsageTypedBuffer      = 1 << 2,
-            GfxBufferUsageRawBuffer        = 1 << 3,
-            GfxBufferUsageUnorderedAccess  = 1 << 4,
-        };
-        using GfxBufferUsageFlags = u32;
-
-        enum GfxTextureUsageBit
-        {
-            GfxTextureUsageRenderTarget    = 1 << 0,
-            GfxTextureUsageDepthStencil    = 1 << 1,
-            GfxTextureUsageUnorderedAccess = 1 << 2,
-            GfxTextureUsageShared          = 1 << 3,
-        };
-        using GfxTextureUsageFlags = u32;
+            typedef u8 Flags;
+            enum
+            {
+                RenderTarget    = 1 << 0,
+                DepthStencil    = 1 << 1,
+                UnorderedAccess = 1 << 2,
+                Shared          = 1 << 3,
+            };
+        }  // namespace GfxTextureUsage
+        using GfxTextureUsageFlags = GfxTextureUsage::Flags;
 
         enum class GfxTextureType
         {
@@ -180,88 +176,114 @@ namespace ncore
             TextureCubeArray,
         };
 
-        enum class GfxCommandQueue
+        namespace GfxCommand
         {
-            Graphics,
-            Compute,
-            Copy,
-        };
+            typedef u8 Queue;
+            enum
+            {
+                Graphics,
+                Compute,
+                Copy,
+            };
+        }  // namespace GfxCommand
+        using GfxCommandQueue = GfxCommand::Queue;
 
-        enum GfxAccessBit
+        namespace GfxAccess
         {
-            GfxAccessPresent         = 1 << 0,
-            GfxAccessRTV             = 1 << 1,
-            GfxAccessDSV             = 1 << 2,
-            GfxAccessDSVReadOnly     = 1 << 3,
-            GfxAccessVertexShaderSRV = 1 << 4,
-            GfxAccessPixelShaderSRV  = 1 << 5,
-            GfxAccessComputeSRV      = 1 << 6,
-            GfxAccessVertexShaderUAV = 1 << 7,
-            GfxAccessPixelShaderUAV  = 1 << 8,
-            GfxAccessComputeUAV      = 1 << 9,
-            GfxAccessClearUAV        = 1 << 10,
-            GfxAccessCopyDst         = 1 << 11,
-            GfxAccessCopySrc         = 1 << 12,
-            GfxAccessShadingRate     = 1 << 13,
-            GfxAccessIndexBuffer     = 1 << 14,
-            GfxAccessIndirectArgs    = 1 << 15,
-            GfxAccessASRead          = 1 << 16,
-            GfxAccessASWrite         = 1 << 17,
-            GfxAccessDiscard         = 1 << 18,  // aliasing barrier
+            typedef u32 Flags;
+            enum
+            {
+                Present         = 1 << 0,
+                RTV             = 1 << 1,
+                DSV             = 1 << 2,
+                DSVReadOnly     = 1 << 3,
+                VertexShaderSRV = 1 << 4,
+                PixelShaderSRV  = 1 << 5,
+                ComputeSRV      = 1 << 6,
+                VertexShaderUAV = 1 << 7,
+                PixelShaderUAV  = 1 << 8,
+                ComputeUAV      = 1 << 9,
+                ClearUAV        = 1 << 10,
+                CopyDst         = 1 << 11,
+                CopySrc         = 1 << 12,
+                ShadingRate     = 1 << 13,
+                IndexBuffer     = 1 << 14,
+                IndirectArgs    = 1 << 15,
+                ASRead          = 1 << 16,
+                ASWrite         = 1 << 17,
+                Discard         = 1 << 18,  // aliasing barrier
+            };
 
-            GfxAccessMaskVS   = GfxAccessVertexShaderSRV | GfxAccessVertexShaderUAV,
-            GfxAccessMaskPS   = GfxAccessPixelShaderSRV | GfxAccessPixelShaderUAV,
-            GfxAccessMaskCS   = GfxAccessComputeSRV | GfxAccessComputeUAV,
-            GfxAccessMaskSRV  = GfxAccessVertexShaderSRV | GfxAccessPixelShaderSRV | GfxAccessComputeSRV,
-            GfxAccessMaskUAV  = GfxAccessVertexShaderUAV | GfxAccessPixelShaderUAV | GfxAccessComputeUAV,
-            GfxAccessMaskDSV  = GfxAccessDSV | GfxAccessDSVReadOnly,
-            GfxAccessMaskCopy = GfxAccessCopyDst | GfxAccessCopySrc,
-            GfxAccessMaskAS   = GfxAccessASRead | GfxAccessASWrite,
-        };
-        using GfxAccessFlags = u32;
+            const Flags MaskVS   = VertexShaderSRV | VertexShaderUAV;
+            const Flags MaskPS   = PixelShaderSRV | PixelShaderUAV;
+            const Flags MaskCS   = ComputeSRV | ComputeUAV;
+            const Flags MaskSRV  = VertexShaderSRV | PixelShaderSRV | ComputeSRV;
+            const Flags MaskUAV  = VertexShaderUAV | PixelShaderUAV | ComputeUAV;
+            const Flags MaskDSV  = DSV | DSVReadOnly;
+            const Flags MaskCopy = CopyDst | CopySrc;
+            const Flags MaskAS   = ASRead | ASWrite;
+        }  // namespace GfxAccess
+        using GfxAccessFlags = GfxAccess::Flags;
 
-        enum class GfxRenderPassLoadOp
+        namespace GfxRenderPass
         {
-            Load,
-            Clear,
-            DontCare,
-        };
+            typedef u8 LoadOp;
+            enum
+            {
+                LoadLoad,
+                LoadClear,
+                LoadDontCare,
+            };
 
-        enum class GfxRenderPassStoreOp
-        {
-            Store,
-            DontCare,
-        };
+            typedef u8 StoreOp;
+            enum
+            {
+                StoreStore,
+                StoreDontCare,
+            };
+        }  // namespace GfxRenderPass
+        using GfxRenderPassLoadOp  = GfxRenderPass::LoadOp;
+        using GfxRenderPassStoreOp = GfxRenderPass::StoreOp;
 
-        enum class GfxShaderResourceViewType
+        namespace GfxShaderResourceView
         {
-            Texture2D,
-            Texture2DArray,
-            Texture3D,
-            TextureCube,
-            TextureCubeArray,
-            StructuredBuffer,
-            TypedBuffer,
-            RawBuffer,
-            RayTracingTLAS,
-        };
+            typedef u8 Type;
+            enum
+            {
+                Texture2D,
+                Texture2DArray,
+                Texture3D,
+                TextureCube,
+                TextureCubeArray,
+                StructuredBuffer,
+                TypedBuffer,
+                RawBuffer,
+                RayTracingTLAS,
+            };
+        }  // namespace GfxShaderResourceView
+        using GfxShaderResourceViewType = GfxShaderResourceView::Type;
 
-        enum class GfxUnorderedAccessViewType
+        namespace GfxUnorderedAccessView
         {
-            Texture2D,
-            Texture2DArray,
-            Texture3D,
-            StructuredBuffer,
-            TypedBuffer,
-            RawBuffer,
-        };
+            typedef u8 Type;
+            enum
+            {
+                Texture2D,
+                Texture2DArray,
+                Texture3D,
+                StructuredBuffer,
+                TypedBuffer,
+                RawBuffer,
+            };
+        }  // namespace GfxUnorderedAccessView
+        using GfxUnorderedAccessViewType = GfxUnorderedAccessView::Type;
 
         static const u32 GFX_ALL_SUB_RESOURCE = 0xFFFFFFFF;
         static const u32 GFX_INVALID_RESOURCE = 0xFFFFFFFF;
 
         struct GfxDeviceDesc
         {
-            GfxRenderBackend backend = GfxRenderBackend::D3D12;
+            GfxRenderBackend backend = GfxRender::D3D12;
         };
 
         struct GfxSwapchainDesc
@@ -270,22 +292,22 @@ namespace ncore
             u32       width             = 1;
             u32       height            = 1;
             u32       backbuffer_count  = 3;
-            GfxFormat backbuffer_format = GfxFormat::RGBA8SRGB;
+            GfxFormat backbuffer_format = Gfx::RGBA8SRGB;
         };
 
         struct GfxHeapDesc
         {
             u32           size        = 1;
-            GfxMemoryType memory_type = GfxMemoryType::GpuOnly;
+            GfxMemoryType memory_type = GfxMemory::GpuOnly;
         };
 
         struct GfxBufferDesc
         {
             u32                 stride      = 1;
             u32                 size        = 1;
-            GfxFormat           format      = GfxFormat::Unknown;
-            GfxMemoryType       memory_type = GfxMemoryType::GpuOnly;
-            GfxAllocationType   alloc_type  = GfxAllocationType::Placed;
+            GfxFormat           format      = Gfx::Unknown;
+            GfxMemoryType       memory_type = GfxMemory::GpuOnly;
+            GfxAllocationType   alloc_type  = GfxAllocation::Placed;
             GfxBufferUsageFlags usage       = 0;
             IGfxHeap*           heap        = nullptr;
             u32                 heap_offset = 0;
@@ -304,9 +326,9 @@ namespace ncore
             u32                  mip_levels  = 1;
             u32                  array_size  = 1;
             GfxTextureType       type        = GfxTextureType::Texture2D;
-            GfxFormat            format      = GfxFormat::Unknown;
-            GfxMemoryType        memory_type = GfxMemoryType::GpuOnly;
-            GfxAllocationType    alloc_type  = GfxAllocationType::Placed;
+            GfxFormat            format      = Gfx::Unknown;
+            GfxMemoryType        memory_type = GfxMemory::GpuOnly;
+            GfxAllocationType    alloc_type  = GfxAllocation::Placed;
             GfxTextureUsageFlags usage       = 0;
             IGfxHeap*            heap        = nullptr;
             u32                  heap_offset = 0;
@@ -326,8 +348,8 @@ namespace ncore
 
         struct GfxShaderResourceViewDesc
         {
-            GfxShaderResourceViewType type   = GfxShaderResourceViewType::Texture2D;
-            GfxFormat                 format = GfxFormat::Unknown;
+            GfxShaderResourceView::Type type   = GfxShaderResourceView::Texture2D;
+            GfxFormat                   format = Gfx::Unknown;
 
             union
             {
@@ -361,8 +383,8 @@ namespace ncore
 
         struct GfxUnorderedAccessViewDesc
         {
-            GfxUnorderedAccessViewType type   = GfxUnorderedAccessViewType::Texture2D;
-            GfxFormat                  format = GfxFormat::Unknown;
+            GfxUnorderedAccessView::Type type   = GfxUnorderedAccessView::Texture2D;
+            GfxFormat                    format = Gfx::Unknown;
 
             union
             {
@@ -394,26 +416,26 @@ namespace ncore
 
         struct GfxRenderPassColorAttachment
         {
-            IGfxTexture*         texture        = nullptr;
-            u32                  mip_slice      = 0;
-            u32                  array_slice    = 0;
-            GfxRenderPassLoadOp  load_op        = GfxRenderPassLoadOp::Load;
-            GfxRenderPassStoreOp store_op       = GfxRenderPassStoreOp::Store;
-            float                clear_color[4] = {};
+            IGfxTexture*           texture        = nullptr;
+            u32                    mip_slice      = 0;
+            u32                    array_slice    = 0;
+            GfxRenderPass::LoadOp  load_op        = GfxRenderPass::LoadLoad;
+            GfxRenderPass::StoreOp store_op       = GfxRenderPass::StoreStore;
+            float                  clear_color[4] = {};
         };
 
         struct GfxRenderPassDepthAttachment
         {
-            IGfxTexture*         texture          = nullptr;
-            u32                  mip_slice        = 0;
-            u32                  array_slice      = 0;
-            GfxRenderPassLoadOp  load_op          = GfxRenderPassLoadOp::Load;
-            GfxRenderPassStoreOp store_op         = GfxRenderPassStoreOp::Store;
-            GfxRenderPassLoadOp  stencil_load_op  = GfxRenderPassLoadOp::Load;
-            GfxRenderPassStoreOp stencil_store_op = GfxRenderPassStoreOp::Store;
-            float                clear_depth      = 0.0f;
-            u32                  clear_stencil    = 0;
-            bool                 read_only        = false;
+            IGfxTexture*           texture          = nullptr;
+            u32                    mip_slice        = 0;
+            u32                    array_slice      = 0;
+            GfxRenderPass::LoadOp  load_op          = GfxRenderPass::LoadLoad;
+            GfxRenderPass::StoreOp store_op         = GfxRenderPass::StoreStore;
+            GfxRenderPass::LoadOp  stencil_load_op  = GfxRenderPass::LoadLoad;
+            GfxRenderPass::StoreOp stencil_store_op = GfxRenderPass::StoreStore;
+            float                  clear_depth      = 0.0f;
+            u32                    clear_stencil    = 0;
+            bool                   read_only        = false;
         };
 
         struct GfxRenderPassDesc
@@ -443,9 +465,9 @@ namespace ncore
         struct GfxShaderDesc
         {
             GfxShaderType          type;
-            eastl::string          file;
-            eastl::string          entry_point;
-            eastl::string*         defines;
+            const char*            file;
+            const char*            entry_point;
+            const char**           defines;
             u32                    define_count;
             GfxShaderCompilerFlags flags = 0;
         };
@@ -587,8 +609,8 @@ namespace ncore
             GfxRasterizerState   rasterizer_state;
             GfxDepthStencilState depthstencil_state;
             GfxBlendState        blend_state[8];
-            GfxFormat            rt_format[8]        = {GfxFormat::Unknown};
-            GfxFormat            depthstencil_format = GfxFormat::Unknown;
+            GfxFormat            rt_format[8]        = {Gfx::Unknown};
+            GfxFormat            depthstencil_format = Gfx::Unknown;
             GfxPrimitiveType     primitive_type      = GfxPrimitiveType::TriangleList;
         };
 
@@ -600,8 +622,8 @@ namespace ncore
             GfxRasterizerState   rasterizer_state;
             GfxDepthStencilState depthstencil_state;
             GfxBlendState        blend_state[8];
-            GfxFormat            rt_format[8]        = {GfxFormat::Unknown};
-            GfxFormat            depthstencil_format = GfxFormat::Unknown;
+            GfxFormat            rt_format[8]        = {Gfx::Unknown};
+            GfxFormat            depthstencil_format = Gfx::Unknown;
         };
 
         struct GfxComputePipelineDesc

@@ -21,7 +21,7 @@ namespace ncore
             D3D12_SHADER_BYTECODE GetByteCode() const { return {m_data.data(), m_data.size()}; }
 
         private:
-            eastl::vector<u8> m_data;
+            vector_t<u8> m_data;
         };
     }  // namespace ngfx
 }  // namespace ncore

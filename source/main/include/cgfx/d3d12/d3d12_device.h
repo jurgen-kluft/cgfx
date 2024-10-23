@@ -32,7 +32,7 @@ namespace ncore
             u32                            m_descirptorCount = 0;
             u32                            m_allocatedCount  = 0;
             bool                           m_bShaderVisible  = false;
-            eastl::vector<D3D12Descriptor> m_freeDescriptors;
+            vector_t<D3D12Descriptor> m_freeDescriptors;
         };
 
         class D3D12Device;

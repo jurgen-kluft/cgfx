@@ -90,14 +90,14 @@ namespace ncore
             u32                m_commandCount = 0;
             IGfxPipelineState* m_pCurrentPSO  = nullptr;
 
-            eastl::vector<D3D12_TEXTURE_BARRIER> m_textureBarriers;
-            eastl::vector<D3D12_BUFFER_BARRIER>  m_bufferBarriers;
-            eastl::vector<D3D12_GLOBAL_BARRIER>  m_globalBarriers;
+            vector_t<D3D12_TEXTURE_BARRIER> m_textureBarriers;
+            vector_t<D3D12_BUFFER_BARRIER>  m_bufferBarriers;
+            vector_t<D3D12_GLOBAL_BARRIER>  m_globalBarriers;
 
-            eastl::vector<eastl::pair<IGfxFence*, u64>> m_pendingWaits;
-            eastl::vector<eastl::pair<IGfxFence*, u64>> m_pendingSignals;
+            vector_t<eastl::pair<IGfxFence*, u64>> m_pendingWaits;
+            vector_t<eastl::pair<IGfxFence*, u64>> m_pendingSignals;
 
-            eastl::vector<IGfxSwapchain*> m_pendingSwapchain;
+            vector_t<IGfxSwapchain*> m_pendingSwapchain;
 
 #if MICROPROFILE_GPU_TIMERS_D3D12
             struct MicroProfileThreadLogGpu* m_pProfileLog   = nullptr;

@@ -38,9 +38,9 @@ namespace ncore
             ID3D12Resource*      m_pTexture    = nullptr;
             D3D12MA::Allocation* m_pAllocation = nullptr;
 
-            eastl::vector<D3D12Descriptor> m_RTV;
-            eastl::vector<D3D12Descriptor> m_DSV;
-            eastl::vector<D3D12Descriptor> m_readonlyDSV;
+            vector_t<D3D12Descriptor> m_RTV;
+            vector_t<D3D12Descriptor> m_DSV;
+            vector_t<D3D12Descriptor> m_readonlyDSV;
 
             HANDLE m_sharedHandle = 0;
 

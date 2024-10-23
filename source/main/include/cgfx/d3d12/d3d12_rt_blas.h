@@ -30,7 +30,7 @@ namespace ncore
             void GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset);
 
         private:
-            eastl::vector<D3D12_RAYTRACING_GEOMETRY_DESC>      m_geometries;
+            vector_t<D3D12_RAYTRACING_GEOMETRY_DESC>      m_geometries;
             D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC m_buildDesc;
 
             ID3D12Resource*      m_pASBuffer          = nullptr;
