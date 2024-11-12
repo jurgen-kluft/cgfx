@@ -1,8 +1,8 @@
 #ifndef __CGFX_D3D12_HEADER_H__
 #define __CGFX_D3D12_HEADER_H__
 
-#include "directx/d3d12.h"
-#include "directx/d3dx12.h"
+#include "cd3d12/d3d12.h"
+#include "cd3d12/d3dx12.h"
 #include "dxgi1_6.h"
 
 #include "cgfx/gfx_defines.h"
