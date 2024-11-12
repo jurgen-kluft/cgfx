@@ -19,7 +19,7 @@ namespace ncore
         class D3D12Texture : public IGfxTexture
         {
         public:
-            D3D12Texture(D3D12Device* pDevice, const GfxTextureDesc& desc, const eastl::string& name);
+            D3D12Texture(D3D12Device* pDevice, const GfxTextureDesc& desc, const char* name);
             ~D3D12Texture();
 
             virtual void*                    GetHandle() const override { return m_pTexture; }

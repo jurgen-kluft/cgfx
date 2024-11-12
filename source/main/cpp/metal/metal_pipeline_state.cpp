@@ -7,7 +7,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalGraphicsPipelineState::MetalGraphicsPipelineState(MetalDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const eastl::string& name)
+        MetalGraphicsPipelineState::MetalGraphicsPipelineState(MetalDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -35,7 +35,7 @@ namespace ncore
 
             for (u32 i = 0; i < 8; ++i)
             {
-                if (m_desc.rt_format[i] != GfxFormat::Unknown)
+                if (m_desc.rt_format[i] != Gfx::Unknown)
                 {
                     MTL::RenderPipelineColorAttachmentDescriptor* colorAttachment = descriptor->colorAttachments()->object(i);
                     colorAttachment->setPixelFormat(ToPixelFormat(m_desc.rt_format[i]));
@@ -58,7 +58,7 @@ namespace ncore
 
             descriptor->setInputPrimitiveTopology(ToTopologyClass(m_desc.primitive_type));
             descriptor->setRasterSampleCount(1);
-            SetDebugLabel(descriptor, m_name.c_str());
+            SetDebugLabel(descriptor, m_name);
 
             MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
             NS::Error*   pError = nullptr;
@@ -79,7 +79,7 @@ namespace ncore
             return true;
         }
 
-        MetalMeshShadingPipelineState::MetalMeshShadingPipelineState(MetalDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const eastl::string& name)
+        MetalMeshShadingPipelineState::MetalMeshShadingPipelineState(MetalDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -111,7 +111,7 @@ namespace ncore
 
             for (u32 i = 0; i < 8; ++i)
             {
-                if (m_desc.rt_format[i] != GfxFormat::Unknown)
+                if (m_desc.rt_format[i] != Gfx::Unknown)
                 {
                     MTL::RenderPipelineColorAttachmentDescriptor* colorAttachment = descriptor->colorAttachments()->object(i);
                     colorAttachment->setPixelFormat(ToPixelFormat(m_desc.rt_format[i]));
@@ -133,7 +133,7 @@ namespace ncore
             }
 
             descriptor->setRasterSampleCount(1);
-            SetDebugLabel(descriptor, m_name.c_str());
+            SetDebugLabel(descriptor, m_name);
 
             MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
             NS::Error*   pError = nullptr;
@@ -163,7 +163,7 @@ namespace ncore
             return true;
         }
 
-        MetalComputePipelineState::MetalComputePipelineState(MetalDevice* pDevice, const GfxComputePipelineDesc& desc, const eastl::string& name)
+        MetalComputePipelineState::MetalComputePipelineState(MetalDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -179,7 +179,7 @@ namespace ncore
 
             MTL::ComputePipelineDescriptor* descriptor = MTL::ComputePipelineDescriptor::alloc()->init();
             descriptor->setComputeFunction((MTL::Function*)m_desc.cs->GetHandle());
-            SetDebugLabel(descriptor, m_name.c_str());
+            SetDebugLabel(descriptor, m_name);
 
             MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
 

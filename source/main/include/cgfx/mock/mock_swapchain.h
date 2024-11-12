@@ -13,7 +13,7 @@ namespace ncore
         class MockSwapchain : public IGfxSwapchain
         {
         public:
-            MockSwapchain(MockDevice* pDevice, const GfxSwapchainDesc& desc, const eastl::string& name);
+            MockSwapchain(MockDevice* pDevice, const GfxSwapchainDesc& desc, const char* name);
             ~MockSwapchain();
 
             bool Create();

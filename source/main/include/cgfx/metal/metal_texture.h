@@ -14,7 +14,7 @@ namespace ncore
         class MetalTexture : public IGfxTexture
         {
         public:
-            MetalTexture(MetalDevice* pDevice, const GfxTextureDesc& desc, const eastl::string& name);
+            MetalTexture(MetalDevice* pDevice, const GfxTextureDesc& desc, const char* name);
             ~MetalTexture();
 
             bool Create();

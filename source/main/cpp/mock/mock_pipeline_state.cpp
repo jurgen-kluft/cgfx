@@ -6,7 +6,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MockGraphicsPipelineState::MockGraphicsPipelineState(MockDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const eastl::string& name)
+        MockGraphicsPipelineState::MockGraphicsPipelineState(MockDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -20,7 +20,7 @@ namespace ncore
 
         bool MockGraphicsPipelineState::Create() { return true; }
 
-        MockMeshShadingPipelineState::MockMeshShadingPipelineState(MockDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const eastl::string& name)
+        MockMeshShadingPipelineState::MockMeshShadingPipelineState(MockDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -34,7 +34,7 @@ namespace ncore
 
         bool MockMeshShadingPipelineState::Create() { return true; }
 
-        MockComputePipelineState::MockComputePipelineState(MockDevice* pDevice, const GfxComputePipelineDesc& desc, const eastl::string& name)
+        MockComputePipelineState::MockComputePipelineState(MockDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

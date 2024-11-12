@@ -6,14 +6,14 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Shader::D3D12Shader(D3D12Device* pDevice, const GfxShaderDesc& desc, const eastl::string& name)
+        D3D12Shader::D3D12Shader(D3D12Device* pDevice, const GfxShaderDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
             m_name    = name;
         }
 
-        bool D3D12Shader::Create(eastl::span<u8> data)
+        bool D3D12Shader::Create(byte* data_ptr, u32 data_len)
         {
             m_data.resize(data.size());
             memcpy(m_data.data(), data.data(), data.size());

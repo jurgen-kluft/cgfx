@@ -6,7 +6,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Heap::D3D12Heap(D3D12Device* pDevice, const GfxHeapDesc& desc, const eastl::string& name)
+        D3D12Heap::D3D12Heap(D3D12Device* pDevice, const GfxHeapDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

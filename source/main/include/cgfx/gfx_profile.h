@@ -12,13 +12,13 @@ namespace ncore
 {
     namespace ngfx
     {
-        void BeginMPGpuEvent(IGfxCommandList* pCommandList, const eastl::string& event_name);
+        void BeginMPGpuEvent(IGfxCommandList* pCommandList, const char* event_name);
         void EndMPGpuEvent(IGfxCommandList* pCommandList);
 
         class RenderEvent
         {
         public:
-            RenderEvent(IGfxCommandList* pCommandList, const eastl::string& event_name)
+            RenderEvent(IGfxCommandList* pCommandList, const char* event_name)
                 : m_pCommandList(pCommandList)
             {
                 pCommandList->BeginEvent(event_name);
@@ -33,7 +33,7 @@ namespace ncore
         class MPRenderEvent
         {
         public:
-            MPRenderEvent(IGfxCommandList* pCommandList, const eastl::string& event_name)
+            MPRenderEvent(IGfxCommandList* pCommandList, const char* event_name)
                 : m_pCommandList(pCommandList)
             {
                 BeginMPGpuEvent(pCommandList, event_name);

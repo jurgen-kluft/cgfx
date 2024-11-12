@@ -13,7 +13,7 @@ namespace ncore
         class MetalCommandList : public IGfxCommandList
         {
         public:
-            MetalCommandList(MetalDevice* pDevice, GfxCommandQueue queue_type, const eastl::string& name);
+            MetalCommandList(MetalDevice* pDevice, GfxCommandQueue queue_type, const char* name);
             ~MetalCommandList();
 
             bool Create();
@@ -31,7 +31,7 @@ namespace ncore
 
             virtual void BeginProfiling() override;
             virtual void EndProfiling() override;
-            virtual void BeginEvent(const eastl::string& event_name) override;
+            virtual void BeginEvent(const char* event_name) override;
             virtual void EndEvent() override;
 
             virtual void CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset) override;

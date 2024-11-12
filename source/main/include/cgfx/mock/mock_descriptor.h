@@ -13,7 +13,7 @@ namespace ncore
         class MockShaderResourceView : public IGfxDescriptor
         {
         public:
-            MockShaderResourceView(MockDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const eastl::string& name);
+            MockShaderResourceView(MockDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name);
             ~MockShaderResourceView();
 
             bool Create();
@@ -29,7 +29,7 @@ namespace ncore
         class MockUnorderedAccessView : public IGfxDescriptor
         {
         public:
-            MockUnorderedAccessView(MockDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name);
+            MockUnorderedAccessView(MockDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name);
             ~MockUnorderedAccessView();
 
             bool Create();
@@ -45,7 +45,7 @@ namespace ncore
         class MockConstantBufferView : public IGfxDescriptor
         {
         public:
-            MockConstantBufferView(MockDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name);
+            MockConstantBufferView(MockDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name);
             ~MockConstantBufferView();
 
             bool Create();
@@ -61,7 +61,7 @@ namespace ncore
         class MockSampler : public IGfxDescriptor
         {
         public:
-            MockSampler(MockDevice* pDevice, const GfxSamplerDesc& desc, const eastl::string& name);
+            MockSampler(MockDevice* pDevice, const GfxSamplerDesc& desc, const char* name);
             ~MockSampler();
 
             bool Create();

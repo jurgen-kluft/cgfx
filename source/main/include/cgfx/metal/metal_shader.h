@@ -19,13 +19,13 @@ namespace ncore
         class MetalShader : public IGfxShader
         {
         public:
-            MetalShader(MetalDevice* pDevice, const GfxShaderDesc& desc, const eastl::string& name);
+            MetalShader(MetalDevice* pDevice, const GfxShaderDesc& desc, const char* name);
             ~MetalShader();
 
             const MetalShaderReflection& GetReflection() const { return m_reflection; }
 
             virtual void* GetHandle() const override { return m_pFunction; }
-            virtual bool  Create(eastl::span<uint8_t> data) override;
+            virtual bool  Create(byte* data_ptr, u32 data_len) override;
 
         private:
             MTL::Function*        m_pFunction = nullptr;

@@ -19,7 +19,7 @@ namespace ncore
         class D3D12Buffer : public IGfxBuffer
         {
         public:
-            D3D12Buffer(D3D12Device* pDevice, const GfxBufferDesc& desc, const eastl::string& name);
+            D3D12Buffer(D3D12Device* pDevice, const GfxBufferDesc& desc, const char* name);
             ~D3D12Buffer();
 
             virtual void* GetHandle() const override { return m_pBuffer; }

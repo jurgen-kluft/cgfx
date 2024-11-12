@@ -18,7 +18,7 @@ namespace ncore
         class D3D12RayTracingTLAS : public IGfxRayTracingTLAS
         {
         public:
-            D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracingTLASDesc& desc, const eastl::string& name);
+            D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracingTLASDesc& desc, const char* name);
             ~D3D12RayTracingTLAS();
 
             virtual void*             GetHandle() const override { return m_pASBuffer; }

@@ -18,12 +18,12 @@ namespace ncore
             virtual bool  IsTexture() const { return false; }
             virtual bool  IsBuffer() const { return false; }
 
-            IGfxDevice*          GetDevice() const { return m_pDevice; }
-            const eastl::string& GetName() const { return m_name; }
+            IGfxDevice* GetDevice() const { return m_pDevice; }
+            const char* GetName() const { return m_name; }
 
         protected:
-            IGfxDevice*   m_pDevice = nullptr;
-            eastl::string m_name;
+            IGfxDevice* m_pDevice = nullptr;
+            const char* m_name;
         };
 
     }  // namespace ngfx

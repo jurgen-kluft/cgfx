@@ -2,11 +2,13 @@
 #include "cgfx/mock/mock_device.h"
 #include "cgfx/gfx.h"
 
+#include "ccore/c_math.h"
+
 namespace ncore
 {
     namespace ngfx
     {
-        MockTexture::MockTexture(MockDevice* pDevice, const GfxTextureDesc& desc, const eastl::string& name)
+        MockTexture::MockTexture(MockDevice* pDevice, const GfxTextureDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

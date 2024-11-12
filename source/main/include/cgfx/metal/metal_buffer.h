@@ -13,7 +13,7 @@ namespace ncore
         class MetalBuffer : public IGfxBuffer
         {
         public:
-            MetalBuffer(MetalDevice* pDevice, const GfxBufferDesc& desc, const eastl::string& name);
+            MetalBuffer(MetalDevice* pDevice, const GfxBufferDesc& desc, const char* name);
             ~MetalBuffer();
 
             bool Create();

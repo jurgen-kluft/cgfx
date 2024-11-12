@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalHeap::MetalHeap(MetalDevice* pDevice, const GfxHeapDesc& desc, const eastl::string& name)
+        MetalHeap::MetalHeap(MetalDevice* pDevice, const GfxHeapDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -41,7 +41,7 @@ namespace ncore
 
             ((MetalDevice*)m_pDevice)->MakeResident(m_pHeap);
 
-            SetDebugLabel(m_pHeap, m_name.c_str());
+            SetDebugLabel(m_pHeap, m_name);
 
             return true;
         }

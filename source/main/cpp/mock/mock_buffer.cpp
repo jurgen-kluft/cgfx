@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockBuffer::MockBuffer(MockDevice* pDevice, const GfxBufferDesc& desc, const eastl::string& name)
+        MockBuffer::MockBuffer(MockDevice* pDevice, const GfxBufferDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -23,7 +23,7 @@ namespace ncore
 
         bool MockBuffer::Create()
         {
-            if (m_desc.memory_type != GfxMemoryType::GpuOnly)
+            if (m_desc.memory_type != GfxMemory::GpuOnly)
             {
                 // TODO
                 //  m_pCpuAddress = RE_ALLOC(m_desc.size);

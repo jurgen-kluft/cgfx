@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Fence::D3D12Fence(D3D12Device* pDevice, const eastl::string& name)
+        D3D12Fence::D3D12Fence(D3D12Device* pDevice, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

@@ -7,7 +7,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalSwapchain::MetalSwapchain(MetalDevice* pDevice, const GfxSwapchainDesc& desc, const eastl::string& name)
+        MetalSwapchain::MetalSwapchain(MetalDevice* pDevice, const GfxSwapchainDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -31,7 +31,7 @@ namespace ncore
             textureDesc.width  = m_desc.width;
             textureDesc.height = m_desc.height;
             textureDesc.format = m_desc.backbuffer_format;
-            textureDesc.usage  = GfxTextureUsageRenderTarget;
+            textureDesc.usage  = GfxTextureUsage::RenderTarget;
 
             m_pTexture = new MetalTexture((MetalDevice*)m_pDevice, textureDesc, m_name);
 

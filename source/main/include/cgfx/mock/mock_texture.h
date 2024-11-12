@@ -12,7 +12,7 @@ namespace ncore
         class MockTexture : public IGfxTexture
         {
         public:
-            MockTexture(MockDevice* pDevice, const GfxTextureDesc& desc, const eastl::string& name);
+            MockTexture(MockDevice* pDevice, const GfxTextureDesc& desc, const char* name);
             ~MockTexture();
 
             bool Create();

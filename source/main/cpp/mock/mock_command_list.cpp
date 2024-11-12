@@ -7,7 +7,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MockCommandList::MockCommandList(MockDevice* pDevice, GfxCommandQueue queue_type, const eastl::string& name)
+        MockCommandList::MockCommandList(MockDevice* pDevice, GfxCommandQueue queue_type, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -40,7 +40,7 @@ namespace ncore
 
         void MockCommandList::EndProfiling() {}
 
-        void MockCommandList::BeginEvent(const eastl::string& event_name) {}
+        void MockCommandList::BeginEvent(const char* event_name) {}
 
         void MockCommandList::EndEvent() {}
 

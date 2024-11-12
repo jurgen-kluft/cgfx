@@ -7,7 +7,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalRayTracingBLAS::MetalRayTracingBLAS(MetalDevice* pDevice, const GfxRayTracingBLASDesc& desc, const eastl::string& name)
+        MetalRayTracingBLAS::MetalRayTracingBLAS(MetalDevice* pDevice, const GfxRayTracingBLASDesc& desc, const char* name)
         {
             m_pDevice          = pDevice;
             m_desc             = desc;
@@ -45,7 +45,7 @@ namespace ncore
                 geometryDescriptor->setVertexFormat(ToAttributeFormat(geometry.vertex_format));
                 geometryDescriptor->setIndexBuffer((MTL::Buffer*)geometry.index_buffer->GetHandle());
                 geometryDescriptor->setIndexBufferOffset((NS::UInteger)geometry.index_buffer_offset);
-                geometryDescriptor->setIndexType(geometry.index_format == GfxFormat::R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32);
+                geometryDescriptor->setIndexType(geometry.index_format == Gfx::R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32);
                 geometryDescriptor->setTriangleCount((NS::UInteger)geometry.index_count / 3);
 
                 m_geometries[m_geometries_count++] = geometryDescriptor;
@@ -74,7 +74,7 @@ namespace ncore
             ((MetalDevice*)m_pDevice)->MakeResident(m_pAccelerationStructure);
             ((MetalDevice*)m_pDevice)->MakeResident(m_pScratchBuffer);
 
-            NS::String* label = NS::String::alloc()->init(m_name.c_str(), NS::StringEncoding::UTF8StringEncoding);
+            NS::String* label = NS::String::alloc()->init(m_name, NS::StringEncoding::UTF8StringEncoding);
             m_pAccelerationStructure->setLabel(label);
             label->release();
 

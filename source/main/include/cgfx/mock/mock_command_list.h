@@ -12,7 +12,7 @@ namespace ncore
         class MockCommandList : public IGfxCommandList
         {
         public:
-            MockCommandList(MockDevice* pDevice, GfxCommandQueue queue_type, const eastl::string& name);
+            MockCommandList(MockDevice* pDevice, GfxCommandQueue queue_type, const char* name);
             ~MockCommandList();
 
             bool Create();
@@ -30,7 +30,7 @@ namespace ncore
 
             virtual void BeginProfiling() override;
             virtual void EndProfiling() override;
-            virtual void BeginEvent(const eastl::string& event_name) override;
+            virtual void BeginEvent(const char* event_name) override;
             virtual void EndEvent() override;
 
             virtual void CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset) override;

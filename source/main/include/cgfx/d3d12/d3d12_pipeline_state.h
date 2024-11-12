@@ -13,7 +13,7 @@ namespace ncore
         class D3D12GraphicsPipelineState : public IGfxPipelineState
         {
         public:
-            D3D12GraphicsPipelineState(D3D12Device* pDevice, const GfxGraphicsPipelineDesc& desc, const eastl::string& name);
+            D3D12GraphicsPipelineState(D3D12Device* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name);
             ~D3D12GraphicsPipelineState();
 
             virtual void* GetHandle() const { return m_pPipelineState; }
@@ -30,7 +30,7 @@ namespace ncore
         class D3D12MeshShadingPipelineState : public IGfxPipelineState
         {
         public:
-            D3D12MeshShadingPipelineState(D3D12Device* pDevice, const GfxMeshShadingPipelineDesc& desc, const eastl::string& name);
+            D3D12MeshShadingPipelineState(D3D12Device* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name);
             ~D3D12MeshShadingPipelineState();
 
             virtual void* GetHandle() const { return m_pPipelineState; }
@@ -44,7 +44,7 @@ namespace ncore
         class D3D12ComputePipelineState : public IGfxPipelineState
         {
         public:
-            D3D12ComputePipelineState(D3D12Device* pDevice, const GfxComputePipelineDesc& desc, const eastl::string& name);
+            D3D12ComputePipelineState(D3D12Device* pDevice, const GfxComputePipelineDesc& desc, const char* name);
             ~D3D12ComputePipelineState();
 
             virtual void* GetHandle() const { return m_pPipelineState; }

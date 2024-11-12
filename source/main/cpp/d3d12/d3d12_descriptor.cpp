@@ -9,7 +9,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12ShaderResourceView::D3D12ShaderResourceView(D3D12Device* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const eastl::string& name)
+        D3D12ShaderResourceView::D3D12ShaderResourceView(D3D12Device* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -136,7 +136,7 @@ namespace ncore
             return true;
         }
 
-        D3D12UnorderedAccessView::D3D12UnorderedAccessView(D3D12Device* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name)
+        D3D12UnorderedAccessView::D3D12UnorderedAccessView(D3D12Device* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -251,7 +251,7 @@ namespace ncore
             return true;
         }
 
-        D3D12ConstantBufferView::D3D12ConstantBufferView(D3D12Device* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name)
+        D3D12ConstantBufferView::D3D12ConstantBufferView(D3D12Device* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -277,7 +277,7 @@ namespace ncore
             return true;
         }
 
-        D3D12Sampler::D3D12Sampler(D3D12Device* pDevice, const GfxSamplerDesc& desc, const eastl::string& name)
+        D3D12Sampler::D3D12Sampler(D3D12Device* pDevice, const GfxSamplerDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

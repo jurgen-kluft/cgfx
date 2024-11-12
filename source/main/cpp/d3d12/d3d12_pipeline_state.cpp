@@ -20,7 +20,7 @@ namespace ncore
             return false;
         }
 
-        D3D12GraphicsPipelineState::D3D12GraphicsPipelineState(D3D12Device* pDevice, const GfxGraphicsPipelineDesc& desc, const eastl::string& name)
+        D3D12GraphicsPipelineState::D3D12GraphicsPipelineState(D3D12Device* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name)
         {
             m_pDevice           = pDevice;
             m_name              = name;
@@ -79,7 +79,7 @@ namespace ncore
             return true;
         }
 
-        D3D12ComputePipelineState::D3D12ComputePipelineState(D3D12Device* pDevice, const GfxComputePipelineDesc& desc, const eastl::string& name)
+        D3D12ComputePipelineState::D3D12ComputePipelineState(D3D12Device* pDevice, const GfxComputePipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -118,7 +118,7 @@ namespace ncore
             return true;
         }
 
-        D3D12MeshShadingPipelineState::D3D12MeshShadingPipelineState(D3D12Device* pDevice, const GfxMeshShadingPipelineDesc& desc, const eastl::string& name)
+        D3D12MeshShadingPipelineState::D3D12MeshShadingPipelineState(D3D12Device* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

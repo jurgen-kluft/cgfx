@@ -15,7 +15,7 @@ namespace ncore
         class MetalShaderResourceView : public IGfxDescriptor
         {
         public:
-            MetalShaderResourceView(MetalDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const eastl::string& name);
+            MetalShaderResourceView(MetalDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name);
             ~MetalShaderResourceView();
 
             bool Create();
@@ -33,7 +33,7 @@ namespace ncore
         class MetalUnorderedAccessView : public IGfxDescriptor
         {
         public:
-            MetalUnorderedAccessView(MetalDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name);
+            MetalUnorderedAccessView(MetalDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name);
             ~MetalUnorderedAccessView();
 
             bool                              Create();
@@ -52,7 +52,7 @@ namespace ncore
         class MetalConstantBufferView : public IGfxDescriptor
         {
         public:
-            MetalConstantBufferView(MetalDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name);
+            MetalConstantBufferView(MetalDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name);
             ~MetalConstantBufferView();
 
             bool Create();
@@ -69,7 +69,7 @@ namespace ncore
         class MetalSampler : public IGfxDescriptor
         {
         public:
-            MetalSampler(MetalDevice* pDevice, const GfxSamplerDesc& desc, const eastl::string& name);
+            MetalSampler(MetalDevice* pDevice, const GfxSamplerDesc& desc, const char* name);
             ~MetalSampler();
 
             bool Create();

@@ -18,25 +18,25 @@ namespace ncore
             virtual void  BeginFrame() override;
             virtual void  EndFrame() override;
 
-            virtual IGfxSwapchain*      CreateSwapchain(const GfxSwapchainDesc& desc, const eastl::string& name) override;
-            virtual IGfxCommandList*    CreateCommandList(GfxCommandQueue queue_type, const eastl::string& name) override;
-            virtual IGfxFence*          CreateFence(const eastl::string& name) override;
-            virtual IGfxHeap*           CreateHeap(const GfxHeapDesc& desc, const eastl::string& name) override;
-            virtual IGfxBuffer*         CreateBuffer(const GfxBufferDesc& desc, const eastl::string& name) override;
-            virtual IGfxTexture*        CreateTexture(const GfxTextureDesc& desc, const eastl::string& name) override;
-            virtual IGfxShader*         CreateShader(const GfxShaderDesc& desc, eastl::span<u8> data, const eastl::string& name) override;
-            virtual IGfxPipelineState*  CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const eastl::string& name) override;
-            virtual IGfxPipelineState*  CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const eastl::string& name) override;
-            virtual IGfxPipelineState*  CreateComputePipelineState(const GfxComputePipelineDesc& desc, const eastl::string& name) override;
-            virtual IGfxDescriptor*     CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const eastl::string& name) override;
-            virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name) override;
-            virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name) override;
-            virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const eastl::string& name) override;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const eastl::string& name) override;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const eastl::string& name) override;
+            virtual IGfxSwapchain*      CreateSwapchain(const GfxSwapchainDesc& desc, const char* name) override;
+            virtual IGfxCommandList*    CreateCommandList(GfxCommandQueue queue_type, const char* name) override;
+            virtual IGfxFence*          CreateFence(const char* name) override;
+            virtual IGfxHeap*           CreateHeap(const GfxHeapDesc& desc, const char* name) override;
+            virtual IGfxBuffer*         CreateBuffer(const GfxBufferDesc& desc, const char* name) override;
+            virtual IGfxTexture*        CreateTexture(const GfxTextureDesc& desc, const char* name) override;
+            virtual IGfxShader*         CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name) override;
+            virtual IGfxPipelineState*  CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name) override;
+            virtual IGfxPipelineState*  CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name) override;
+            virtual IGfxPipelineState*  CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name) override;
+            virtual IGfxDescriptor*     CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name) override;
+            virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) override;
+            virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name) override;
+            virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name) override;
+            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name) override;
+            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name) override;
 
             virtual u32  GetAllocationSize(const GfxTextureDesc& desc) override;
-            virtual bool DumpMemoryStats(const eastl::string& file) override;
+            virtual bool DumpMemoryStats(const char* file) override;
         };
 
     }  // namespace ngfx

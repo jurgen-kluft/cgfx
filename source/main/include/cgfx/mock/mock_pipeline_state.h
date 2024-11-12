@@ -13,7 +13,7 @@ namespace ncore
         class MockGraphicsPipelineState : public IGfxPipelineState
         {
         public:
-            MockGraphicsPipelineState(MockDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const eastl::string& name);
+            MockGraphicsPipelineState(MockDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name);
             ~MockGraphicsPipelineState();
 
             virtual void* GetHandle() const override;
@@ -26,7 +26,7 @@ namespace ncore
         class MockMeshShadingPipelineState : public IGfxPipelineState
         {
         public:
-            MockMeshShadingPipelineState(MockDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const eastl::string& name);
+            MockMeshShadingPipelineState(MockDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name);
             ~MockMeshShadingPipelineState();
 
             virtual void* GetHandle() const override;
@@ -39,7 +39,7 @@ namespace ncore
         class MockComputePipelineState : public IGfxPipelineState
         {
         public:
-            MockComputePipelineState(MockDevice* pDevice, const GfxComputePipelineDesc& desc, const eastl::string& name);
+            MockComputePipelineState(MockDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name);
             ~MockComputePipelineState();
 
             virtual void* GetHandle() const override;

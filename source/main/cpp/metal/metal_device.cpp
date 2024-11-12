@@ -26,14 +26,14 @@ namespace ncore
         class MetalConstantBufferAllocator
         {
         public:
-            MetalConstantBufferAllocator(MetalDevice* device, u32 buffer_size, const eastl::string& name)
+            MetalConstantBufferAllocator(MetalDevice* device, u32 buffer_size, const char* name)
             {
                 m_pDevice = device;
 
                 MTL::Device* mtlDevice = (MTL::Device*)m_pDevice->GetHandle();
                 m_pBuffer              = mtlDevice->newBuffer(buffer_size, MTL::ResourceStorageModeShared | MTL::ResourceCPUCacheModeWriteCombined | MTL::ResourceHazardTrackingModeTracked);
                 m_pDevice->MakeResident(m_pBuffer);
-                SetDebugLabel(m_pBuffer, name.c_str());
+                SetDebugLabel(m_pBuffer, name);
 
                 m_pCpuAddress = m_pBuffer->contents();
                 m_bufferSize  = buffer_size;
@@ -67,14 +67,14 @@ namespace ncore
         class MetalDescriptorAllocator
         {
         public:
-            MetalDescriptorAllocator(MetalDevice* device, u32 descriptor_count, const eastl::string& name)
+            MetalDescriptorAllocator(MetalDevice* device, u32 descriptor_count, const char* name)
             {
                 m_pDevice = device;
 
                 MTL::Device* mtlDevice = (MTL::Device*)m_pDevice->GetHandle();
                 m_pBuffer              = mtlDevice->newBuffer(sizeof(IRDescriptorTableEntry) * descriptor_count, MTL::ResourceStorageModeShared | MTL::ResourceCPUCacheModeWriteCombined | MTL::ResourceHazardTrackingModeTracked);
                 m_pDevice->MakeResident(m_pBuffer);
-                SetDebugLabel(m_pBuffer, name.c_str());
+                SetDebugLabel(m_pBuffer, name);
 
                 m_pCpuAddress     = m_pBuffer->contents();
                 m_descirptorCount = descriptor_count;
@@ -162,7 +162,7 @@ namespace ncore
 
             for (u32 i = 0; i < GFX_MAX_INFLIGHT_FRAMES; ++i)
             {
-                eastl::string name;  // fmt::format("CB Allocator {}", i).c_str();
+                const char* name = "in-flight frame";  // fmt::format("CB Allocator {}", i).c_str();
                 // TODO: allocate
                 MetalConstantBufferAllocator* cballocator = nullptr;  // <MetalConstantBufferAllocator>(this, 8 * 1024 * 1024, name);
                 m_pConstantBufferAllocators[i]            = cballocator;
@@ -214,7 +214,7 @@ namespace ncore
 
         void MetalDevice::EndFrame() { ++m_frameID; }
 
-        IGfxSwapchain* MetalDevice::CreateSwapchain(const GfxSwapchainDesc& desc, const eastl::string& name)
+        IGfxSwapchain* MetalDevice::CreateSwapchain(const GfxSwapchainDesc& desc, const char* name)
         {
             MetalSwapchain* swapchain = new MetalSwapchain(this, desc, name);
             if (!swapchain->Create())
@@ -225,7 +225,7 @@ namespace ncore
             return swapchain;
         }
 
-        IGfxCommandList* MetalDevice::CreateCommandList(GfxCommandQueue queue_type, const eastl::string& name)
+        IGfxCommandList* MetalDevice::CreateCommandList(GfxCommandQueue queue_type, const char* name)
         {
             MetalCommandList* commandList = new MetalCommandList(this, queue_type, name);
             if (!commandList->Create())
@@ -236,7 +236,7 @@ namespace ncore
             return commandList;
         }
 
-        IGfxFence* MetalDevice::CreateFence(const eastl::string& name)
+        IGfxFence* MetalDevice::CreateFence(const char* name)
         {
             MetalFence* fence = new MetalFence(this, name);
             if (!fence->Create())
@@ -247,7 +247,7 @@ namespace ncore
             return fence;
         }
 
-        IGfxHeap* MetalDevice::CreateHeap(const GfxHeapDesc& desc, const eastl::string& name)
+        IGfxHeap* MetalDevice::CreateHeap(const GfxHeapDesc& desc, const char* name)
         {
             MetalHeap* heap = new MetalHeap(this, desc, name);
             if (!heap->Create())
@@ -258,7 +258,7 @@ namespace ncore
             return heap;
         }
 
-        IGfxBuffer* MetalDevice::CreateBuffer(const GfxBufferDesc& desc, const eastl::string& name)
+        IGfxBuffer* MetalDevice::CreateBuffer(const GfxBufferDesc& desc, const char* name)
         {
             MetalBuffer* buffer = new MetalBuffer(this, desc, name);
             if (!buffer->Create())
@@ -269,7 +269,7 @@ namespace ncore
             return buffer;
         }
 
-        IGfxTexture* MetalDevice::CreateTexture(const GfxTextureDesc& desc, const eastl::string& name)
+        IGfxTexture* MetalDevice::CreateTexture(const GfxTextureDesc& desc, const char* name)
         {
             MetalTexture* texture = new MetalTexture(this, desc, name);
             if (!texture->Create())
@@ -280,10 +280,10 @@ namespace ncore
             return texture;
         }
 
-        IGfxShader* MetalDevice::CreateShader(const GfxShaderDesc& desc, eastl::span<u8> data, const eastl::string& name)
+        IGfxShader* MetalDevice::CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name)
         {
             MetalShader* shader = new MetalShader(this, desc, name);
-            if (!shader->Create(data))
+            if (!shader->Create(data_ptr, data_len))
             {
                 delete shader;
                 return nullptr;
@@ -291,7 +291,7 @@ namespace ncore
             return shader;
         }
 
-        IGfxPipelineState* MetalDevice::CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const eastl::string& name)
+        IGfxPipelineState* MetalDevice::CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name)
         {
             MetalGraphicsPipelineState* pso = new MetalGraphicsPipelineState(this, desc, name);
             if (!pso->Create())
@@ -302,7 +302,7 @@ namespace ncore
             return pso;
         }
 
-        IGfxPipelineState* MetalDevice::CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const eastl::string& name)
+        IGfxPipelineState* MetalDevice::CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name)
         {
             MetalMeshShadingPipelineState* pso = new MetalMeshShadingPipelineState(this, desc, name);
             if (!pso->Create())
@@ -313,7 +313,7 @@ namespace ncore
             return pso;
         }
 
-        IGfxPipelineState* MetalDevice::CreateComputePipelineState(const GfxComputePipelineDesc& desc, const eastl::string& name)
+        IGfxPipelineState* MetalDevice::CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name)
         {
             MetalComputePipelineState* pso = new MetalComputePipelineState(this, desc, name);
             if (!pso->Create())
@@ -324,7 +324,7 @@ namespace ncore
             return pso;
         }
 
-        IGfxDescriptor* MetalDevice::CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MetalDevice::CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name)
         {
             MetalShaderResourceView* srv = new MetalShaderResourceView(this, resource, desc, name);
             if (!srv->Create())
@@ -335,7 +335,7 @@ namespace ncore
             return srv;
         }
 
-        IGfxDescriptor* MetalDevice::CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MetalDevice::CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name)
         {
             MetalUnorderedAccessView* uav = new MetalUnorderedAccessView(this, resource, desc, name);
             if (!uav->Create())
@@ -346,7 +346,7 @@ namespace ncore
             return uav;
         }
 
-        IGfxDescriptor* MetalDevice::CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MetalDevice::CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
         {
             MetalConstantBufferView* cbv = new MetalConstantBufferView(this, buffer, desc, name);
             if (!cbv->Create())
@@ -357,7 +357,7 @@ namespace ncore
             return cbv;
         }
 
-        IGfxDescriptor* MetalDevice::CreateSampler(const GfxSamplerDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MetalDevice::CreateSampler(const GfxSamplerDesc& desc, const char* name)
         {
             MetalSampler* sampler = new MetalSampler(this, desc, name);
             if (!sampler->Create())
@@ -368,7 +368,7 @@ namespace ncore
             return sampler;
         }
 
-        IGfxRayTracingBLAS* MetalDevice::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const eastl::string& name)
+        IGfxRayTracingBLAS* MetalDevice::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name)
         {
             MetalRayTracingBLAS* blas = new MetalRayTracingBLAS(this, desc, name);
             if (!blas->Create())
@@ -379,7 +379,7 @@ namespace ncore
             return blas;
         }
 
-        IGfxRayTracingTLAS* MetalDevice::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const eastl::string& name)
+        IGfxRayTracingTLAS* MetalDevice::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name)
         {
             MetalRayTracingTLAS* tlas = new MetalRayTracingTLAS(this, desc, name);
             if (!tlas->Create())
@@ -399,7 +399,7 @@ namespace ncore
             return (u32)sizeAndAlign.size;
         }
 
-        bool MetalDevice::DumpMemoryStats(const eastl::string& file) { return false; }
+        bool MetalDevice::DumpMemoryStats(const char* file) { return false; }
 
         u64 MetalDevice::AllocateConstantBuffer(const void* data, size_t data_size)
         {

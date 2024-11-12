@@ -13,10 +13,10 @@ namespace ncore
         class D3D12Shader : public IGfxShader
         {
         public:
-            D3D12Shader(D3D12Device* pDevice, const GfxShaderDesc& desc, const eastl::string& name);
+            D3D12Shader(D3D12Device* pDevice, const GfxShaderDesc& desc, const char* name);
 
             virtual void* GetHandle() const override { return nullptr; }
-            virtual bool  Create(eastl::span<u8> data) override;
+            virtual bool  Create(byte* data_ptr, u32 data_len) override;
 
             D3D12_SHADER_BYTECODE GetByteCode() const { return {m_data.data(), m_data.size()}; }
 

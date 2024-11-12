@@ -9,7 +9,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalRayTracingTLAS::MetalRayTracingTLAS(MetalDevice* pDevice, const GfxRayTracingTLASDesc& desc, const eastl::string& name)
+        MetalRayTracingTLAS::MetalRayTracingTLAS(MetalDevice* pDevice, const GfxRayTracingTLASDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -54,7 +54,7 @@ namespace ncore
             ((MetalDevice*)m_pDevice)->MakeResident(m_pScratchBuffer);
             ((MetalDevice*)m_pDevice)->MakeResident(m_pInstanceBuffer);
 
-            NS::String* label = NS::String::alloc()->init(m_name.c_str(), NS::StringEncoding::UTF8StringEncoding);
+            NS::String* label = NS::String::alloc()->init(m_name, NS::StringEncoding::UTF8StringEncoding);
             m_pAccelerationStructure->setLabel(label);
             label->release();
 

@@ -8,7 +8,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MockSwapchain::MockSwapchain(MockDevice* pDevice, const GfxSwapchainDesc& desc, const eastl::string& name)
+        MockSwapchain::MockSwapchain(MockDevice* pDevice, const GfxSwapchainDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -62,11 +62,11 @@ namespace ncore
             textureDesc.width  = m_desc.width;
             textureDesc.height = m_desc.height;
             textureDesc.format = m_desc.backbuffer_format;
-            textureDesc.usage  = GfxTextureUsageRenderTarget;
+            textureDesc.usage  = GfxTextureUsage::RenderTarget;
 
             for (u32 i = 0; i < m_desc.backbuffer_count; ++i)
             {
-                eastl::string name;  // = fmt::format("{} texture {}", m_name, i).c_str();
+                const char* name = "back-buffer";  // = fmt::format("{} texture {}", m_name, i).c_str();
                 MockTexture*  texture                 = new MockTexture((MockDevice*)m_pDevice, textureDesc, name);
                 m_backBuffers[m_numBackBufferCount++] = texture;
             }

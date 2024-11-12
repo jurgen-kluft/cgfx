@@ -13,7 +13,7 @@ namespace ncore
         class MockRayTracingTLAS : public IGfxRayTracingTLAS
         {
         public:
-            MockRayTracingTLAS(MockDevice* pDevice, const GfxRayTracingTLASDesc& desc, const eastl::string& name);
+            MockRayTracingTLAS(MockDevice* pDevice, const GfxRayTracingTLASDesc& desc, const char* name);
             ~MockRayTracingTLAS();
 
             bool Create();

@@ -9,7 +9,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalTexture::MetalTexture(MetalDevice* pDevice, const GfxTextureDesc& desc, const eastl::string& name)
+        MetalTexture::MetalTexture(MetalDevice* pDevice, const GfxTextureDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -32,7 +32,7 @@ namespace ncore
 
             if (m_desc.heap)
             {
-                ASSERT(m_desc.alloc_type == GfxAllocationType::Placed);
+                ASSERT(m_desc.alloc_type == GfxAllocation::Placed);
                 ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
 
                 MTL::Heap* heap = (MTL::Heap*)m_desc.heap->GetHandle();
@@ -54,7 +54,7 @@ namespace ncore
 
             ((MetalDevice*)m_pDevice)->MakeResident(m_pTexture);
 
-            SetDebugLabel(m_pTexture, m_name.c_str());
+            SetDebugLabel(m_pTexture, m_name);
 
             return true;
         }

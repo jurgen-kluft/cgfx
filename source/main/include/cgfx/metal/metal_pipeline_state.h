@@ -18,7 +18,7 @@ namespace ncore
         class MetalGraphicsPipelineState : public IGfxPipelineState
         {
         public:
-            MetalGraphicsPipelineState(MetalDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const eastl::string& name);
+            MetalGraphicsPipelineState(MetalDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name);
             ~MetalGraphicsPipelineState();
 
             const GfxGraphicsPipelineDesc& GetDesc() const { return m_desc; }
@@ -36,7 +36,7 @@ namespace ncore
         class MetalMeshShadingPipelineState : public IGfxPipelineState
         {
         public:
-            MetalMeshShadingPipelineState(MetalDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const eastl::string& name);
+            MetalMeshShadingPipelineState(MetalDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name);
             ~MetalMeshShadingPipelineState();
 
             const GfxMeshShadingPipelineDesc& GetDesc() const { return m_desc; }
@@ -58,7 +58,7 @@ namespace ncore
         class MetalComputePipelineState : public IGfxPipelineState
         {
         public:
-            MetalComputePipelineState(MetalDevice* pDevice, const GfxComputePipelineDesc& desc, const eastl::string& name);
+            MetalComputePipelineState(MetalDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name);
             ~MetalComputePipelineState();
 
             MTL::Size GetThreadsPerThreadgroup() const { return m_threadsPerThreadgroup; }

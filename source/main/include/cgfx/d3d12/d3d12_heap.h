@@ -18,7 +18,7 @@ namespace ncore
         class D3D12Heap : public IGfxHeap
         {
         public:
-            D3D12Heap(D3D12Device* pDevice, const GfxHeapDesc& desc, const eastl::string& name);
+            D3D12Heap(D3D12Device* pDevice, const GfxHeapDesc& desc, const char* name);
             ~D3D12Heap();
 
             virtual void* GetHandle() const override;

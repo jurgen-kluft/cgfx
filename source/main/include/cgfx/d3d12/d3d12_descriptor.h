@@ -14,7 +14,7 @@ namespace ncore
         class D3D12ShaderResourceView : public IGfxDescriptor
         {
         public:
-            D3D12ShaderResourceView(D3D12Device* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const eastl::string& name);
+            D3D12ShaderResourceView(D3D12Device* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name);
             ~D3D12ShaderResourceView();
 
             virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
@@ -31,7 +31,7 @@ namespace ncore
         class D3D12UnorderedAccessView : public IGfxDescriptor
         {
         public:
-            D3D12UnorderedAccessView(D3D12Device* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name);
+            D3D12UnorderedAccessView(D3D12Device* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name);
             ~D3D12UnorderedAccessView();
 
             virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
@@ -52,7 +52,7 @@ namespace ncore
         class D3D12ConstantBufferView : public IGfxDescriptor
         {
         public:
-            D3D12ConstantBufferView(D3D12Device* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name);
+            D3D12ConstantBufferView(D3D12Device* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name);
             ~D3D12ConstantBufferView();
 
             virtual void* GetHandle() const override { return m_pBuffer->GetHandle(); }
@@ -69,7 +69,7 @@ namespace ncore
         class D3D12Sampler : public IGfxDescriptor
         {
         public:
-            D3D12Sampler(D3D12Device* pDevice, const GfxSamplerDesc& desc, const eastl::string& name);
+            D3D12Sampler(D3D12Device* pDevice, const GfxSamplerDesc& desc, const char* name);
             ~D3D12Sampler();
 
             virtual void* GetHandle() const override { return nullptr; }

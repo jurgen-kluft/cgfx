@@ -12,13 +12,14 @@ namespace ncore
         class MockShader : public IGfxShader
         {
         public:
-            MockShader(MockDevice* pDevice, const GfxShaderDesc& desc, const eastl::string& name);
+            MockShader(MockDevice* pDevice, const GfxShaderDesc& desc, const char* name);
 
             virtual void* GetHandle() const override;
-            virtual bool  Create(eastl::span<u8> data) override;
+            virtual bool  Create(byte* data_ptr, u32 data_len) override;
 
         private:
-            eastl::span<u8> m_data;
+            byte* m_data;
+            u32   m_len;
         };
 
     }  // namespace ngfx

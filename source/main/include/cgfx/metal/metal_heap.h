@@ -17,7 +17,7 @@ namespace ncore
         class MetalHeap : public IGfxHeap
         {
         public:
-            MetalHeap(MetalDevice* pDevice, const GfxHeapDesc& desc, const eastl::string& name);
+            MetalHeap(MetalDevice* pDevice, const GfxHeapDesc& desc, const char* name);
             ~MetalHeap();
 
             bool Create();

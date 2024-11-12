@@ -12,6 +12,8 @@
 #include "cgfx/mock/mock_rt_tlas.h"
 #include "cgfx/gfx.h"
 
+#include "ccore/c_math.h"
+
 namespace ncore
 {
     namespace ngfx
@@ -26,7 +28,7 @@ namespace ncore
         void MockDevice::BeginFrame() {}
         void MockDevice::EndFrame() { ++m_frameID; }
 
-        IGfxSwapchain* MockDevice::CreateSwapchain(const GfxSwapchainDesc& desc, const eastl::string& name)
+        IGfxSwapchain* MockDevice::CreateSwapchain(const GfxSwapchainDesc& desc, const char* name)
         {
             MockSwapchain* swapchain = new MockSwapchain(this, desc, name);
             if (!swapchain->Create())
@@ -37,7 +39,7 @@ namespace ncore
             return swapchain;
         }
 
-        IGfxCommandList* MockDevice::CreateCommandList(GfxCommandQueue queue_type, const eastl::string& name)
+        IGfxCommandList* MockDevice::CreateCommandList(GfxCommandQueue queue_type, const char* name)
         {
             MockCommandList* commandList = new MockCommandList(this, queue_type, name);
             if (!commandList->Create())
@@ -48,7 +50,7 @@ namespace ncore
             return commandList;
         }
 
-        IGfxFence* MockDevice::CreateFence(const eastl::string& name)
+        IGfxFence* MockDevice::CreateFence(const char* name)
         {
             MockFence* fence = new MockFence(this, name);
             if (!fence->Create())
@@ -59,7 +61,7 @@ namespace ncore
             return fence;
         }
 
-        IGfxHeap* MockDevice::CreateHeap(const GfxHeapDesc& desc, const eastl::string& name)
+        IGfxHeap* MockDevice::CreateHeap(const GfxHeapDesc& desc, const char* name)
         {
             MockHeap* heap = new MockHeap(this, desc, name);
             if (!heap->Create())
@@ -70,7 +72,7 @@ namespace ncore
             return heap;
         }
 
-        IGfxBuffer* MockDevice::CreateBuffer(const GfxBufferDesc& desc, const eastl::string& name)
+        IGfxBuffer* MockDevice::CreateBuffer(const GfxBufferDesc& desc, const char* name)
         {
             MockBuffer* buffer = new MockBuffer(this, desc, name);
             if (!buffer->Create())
@@ -81,7 +83,7 @@ namespace ncore
             return buffer;
         }
 
-        IGfxTexture* MockDevice::CreateTexture(const GfxTextureDesc& desc, const eastl::string& name)
+        IGfxTexture* MockDevice::CreateTexture(const GfxTextureDesc& desc, const char* name)
         {
             MockTexture* texture = new MockTexture(this, desc, name);
             if (!texture->Create())
@@ -92,10 +94,10 @@ namespace ncore
             return texture;
         }
 
-        IGfxShader* MockDevice::CreateShader(const GfxShaderDesc& desc, eastl::span<u8> data, const eastl::string& name)
+        IGfxShader* MockDevice::CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name)
         {
             MockShader* shader = new MockShader(this, desc, name);
-            if (!shader->Create(data))
+            if (!shader->Create(data_ptr, data_len))
             {
                 delete shader;
                 return nullptr;
@@ -103,7 +105,7 @@ namespace ncore
             return shader;
         }
 
-        IGfxPipelineState* MockDevice::CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const eastl::string& name)
+        IGfxPipelineState* MockDevice::CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name)
         {
             MockGraphicsPipelineState* pso = new MockGraphicsPipelineState(this, desc, name);
             if (!pso->Create())
@@ -114,7 +116,7 @@ namespace ncore
             return pso;
         }
 
-        IGfxPipelineState* MockDevice::CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const eastl::string& name)
+        IGfxPipelineState* MockDevice::CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name)
         {
             MockMeshShadingPipelineState* pso = new MockMeshShadingPipelineState(this, desc, name);
             if (!pso->Create())
@@ -125,7 +127,7 @@ namespace ncore
             return pso;
         }
 
-        IGfxPipelineState* MockDevice::CreateComputePipelineState(const GfxComputePipelineDesc& desc, const eastl::string& name)
+        IGfxPipelineState* MockDevice::CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name)
         {
             MockComputePipelineState* pso = new MockComputePipelineState(this, desc, name);
             if (!pso->Create())
@@ -136,7 +138,7 @@ namespace ncore
             return pso;
         }
 
-        IGfxDescriptor* MockDevice::CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MockDevice::CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name)
         {
             MockShaderResourceView* srv = new MockShaderResourceView(this, resource, desc, name);
             if (!srv->Create())
@@ -147,7 +149,7 @@ namespace ncore
             return srv;
         }
 
-        IGfxDescriptor* MockDevice::CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MockDevice::CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name)
         {
             MockUnorderedAccessView* uav = new MockUnorderedAccessView(this, resource, desc, name);
             if (!uav->Create())
@@ -158,7 +160,7 @@ namespace ncore
             return uav;
         }
 
-        IGfxDescriptor* MockDevice::CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MockDevice::CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
         {
             MockConstantBufferView* cbv = new MockConstantBufferView(this, buffer, desc, name);
             if (!cbv->Create())
@@ -169,7 +171,7 @@ namespace ncore
             return cbv;
         }
 
-        IGfxDescriptor* MockDevice::CreateSampler(const GfxSamplerDesc& desc, const eastl::string& name)
+        IGfxDescriptor* MockDevice::CreateSampler(const GfxSamplerDesc& desc, const char* name)
         {
             MockSampler* sampler = new MockSampler(this, desc, name);
             if (!sampler->Create())
@@ -180,7 +182,7 @@ namespace ncore
             return sampler;
         }
 
-        IGfxRayTracingBLAS* MockDevice::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const eastl::string& name)
+        IGfxRayTracingBLAS* MockDevice::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name)
         {
             MockRayTracingBLAS* blas = new MockRayTracingBLAS(this, desc, name);
             if (!blas->Create())
@@ -191,7 +193,7 @@ namespace ncore
             return blas;
         }
 
-        IGfxRayTracingTLAS* MockDevice::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const eastl::string& name)
+        IGfxRayTracingTLAS* MockDevice::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name)
         {
             MockRayTracingTLAS* tlas = new MockRayTracingTLAS(this, desc, name);
             if (!tlas->Create())
@@ -224,7 +226,7 @@ namespace ncore
             return size;
         }
 
-        bool MockDevice::DumpMemoryStats(const eastl::string& file) { return false; }
+        bool MockDevice::DumpMemoryStats(const char* file) { return false; }
 
     }  // namespace ngfx
 }  // namespace ncore

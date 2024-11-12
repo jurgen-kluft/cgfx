@@ -12,7 +12,7 @@ namespace ncore
         class MockFence : public IGfxFence
         {
         public:
-            MockFence(MockDevice* pDevice, const eastl::string& name);
+            MockFence(MockDevice* pDevice, const char* name);
             ~MockFence();
 
             bool Create();

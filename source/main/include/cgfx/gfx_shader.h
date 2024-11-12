@@ -12,7 +12,7 @@ namespace ncore
         public:
             const GfxShaderDesc& GetDesc() const { return m_desc; }
             u64                  GetHash() const { return m_hash; }
-            virtual bool         Create(eastl::span<u8> data) = 0;
+            virtual bool         Create(byte* data_ptr, u32 data_len) = 0;
 
         protected:
             GfxShaderDesc m_desc = {};

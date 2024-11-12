@@ -13,7 +13,7 @@ namespace ncore
         class D3D12Fence : public IGfxFence
         {
         public:
-            D3D12Fence(D3D12Device* pDevice, const eastl::string& name);
+            D3D12Fence(D3D12Device* pDevice, const char* name);
             ~D3D12Fence();
 
             virtual void* GetHandle() const override { return m_pFence; }

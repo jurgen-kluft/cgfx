@@ -21,7 +21,7 @@ namespace ncore
     {
         static bool nearly_equal(float a, float b, float epsilon = 0.0001f) { return fabs(a - b) < epsilon; }
 
-        D3D12CommandList::D3D12CommandList(D3D12Device* pDevice, GfxCommandQueue queue_type, const eastl::string& name)
+        D3D12CommandList::D3D12CommandList(D3D12Device* pDevice, GfxCommandQueue queue_type, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -172,7 +172,7 @@ namespace ncore
 #endif
         }
 
-        void D3D12CommandList::BeginEvent(const eastl::string& event_name)
+        void D3D12CommandList::BeginEvent(const char* event_name)
         {
             pix::BeginEvent(m_pCommandList, event_name.c_str());
             ags::BeginEvent(m_pCommandList, event_name.c_str());

@@ -14,7 +14,7 @@ namespace ncore
         class MetalFence : public IGfxFence
         {
         public:
-            MetalFence(MetalDevice* pDevice, const eastl::string& name);
+            MetalFence(MetalDevice* pDevice, const char* name);
             ~MetalFence();
 
             bool Create();

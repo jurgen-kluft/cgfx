@@ -44,7 +44,7 @@ namespace ncore
 
             virtual void BeginProfiling()                            = 0;
             virtual void EndProfiling()                              = 0;
-            virtual void BeginEvent(const eastl::string& event_name) = 0;
+            virtual void BeginEvent(const char* event_name) = 0;
             virtual void EndEvent()                                  = 0;
 
             virtual void CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset) = 0;

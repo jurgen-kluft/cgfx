@@ -7,7 +7,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalBuffer::MetalBuffer(MetalDevice* pDevice, const GfxBufferDesc& desc, const eastl::string& name)
+        MetalBuffer::MetalBuffer(MetalDevice* pDevice, const GfxBufferDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -24,7 +24,7 @@ namespace ncore
         {
             if (m_desc.heap != nullptr)
             {
-                ASSERT(m_desc.alloc_type == GfxAllocationType::Placed);
+                ASSERT(m_desc.alloc_type == GfxAllocation::Placed);
                 ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
                 ASSERT(m_desc.size + m_desc.heap_offset <= m_desc.heap->GetDesc().size);
 
@@ -48,7 +48,7 @@ namespace ncore
             // TODO
             // SetDebugLabel(m_pBuffer, m_name.c_str());
 
-            if (m_desc.memory_type != GfxMemoryType::GpuOnly)
+            if (m_desc.memory_type != GfxMemory::GpuOnly)
             {
                 m_pCpuAddress = m_pBuffer->contents();
             }

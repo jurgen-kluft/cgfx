@@ -13,7 +13,7 @@ namespace ncore
         class MockBuffer : public IGfxBuffer
         {
         public:
-            MockBuffer(MockDevice* pDevice, const GfxBufferDesc& desc, const eastl::string& name);
+            MockBuffer(MockDevice* pDevice, const GfxBufferDesc& desc, const char* name);
             ~MockBuffer();
 
             bool Create();

@@ -13,7 +13,7 @@ namespace ncore
         class D3D12CommandList : public IGfxCommandList
         {
         public:
-            D3D12CommandList(D3D12Device* pDevice, GfxCommandQueue queue_type, const eastl::string& name);
+            D3D12CommandList(D3D12Device* pDevice, GfxCommandQueue queue_type, const char* name);
             ~D3D12CommandList();
 
             bool Create();
@@ -31,7 +31,7 @@ namespace ncore
 
             virtual void BeginProfiling() override;
             virtual void EndProfiling() override;
-            virtual void BeginEvent(const eastl::string& event_name) override;
+            virtual void BeginEvent(const char* event_name) override;
             virtual void EndEvent() override;
 
             virtual void CopyBufferToTexture(IGfxTexture* texture, u32 mip_level, u32 array_slice, IGfxBuffer* buffer, u32 offset) override;

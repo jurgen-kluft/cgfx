@@ -13,7 +13,7 @@ namespace ncore
         class D3D12Swapchain : public IGfxSwapchain
         {
         public:
-            D3D12Swapchain(D3D12Device* pDevice, const GfxSwapchainDesc& desc, const eastl::string& name);
+            D3D12Swapchain(D3D12Device* pDevice, const GfxSwapchainDesc& desc, const char* name);
             ~D3D12Swapchain();
 
             virtual void*        GetHandle() const override { return m_pSwapChain; }

@@ -12,7 +12,7 @@ namespace ncore
         class MockHeap : public IGfxHeap
         {
         public:
-            MockHeap(MockDevice* pDevice, const GfxHeapDesc& desc, const eastl::string& name);
+            MockHeap(MockDevice* pDevice, const GfxHeapDesc& desc, const char* name);
             ~MockHeap();
 
             bool Create();

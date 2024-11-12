@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockFence::MockFence(MockDevice* pDevice, const eastl::string& name)
+        MockFence::MockFence(MockDevice* pDevice, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

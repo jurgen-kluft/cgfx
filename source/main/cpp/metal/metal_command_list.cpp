@@ -19,7 +19,7 @@ namespace ncore
     {
         static bool nearly_equal(float a, float b, float epsilon = 0.0001f) { return fabs(a - b) < epsilon; }
 
-        MetalCommandList::MetalCommandList(MetalDevice* pDevice, GfxCommandQueue queue_type, const eastl::string& name)
+        MetalCommandList::MetalCommandList(MetalDevice* pDevice, GfxCommandQueue queue_type, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -90,9 +90,9 @@ namespace ncore
 
         void MetalCommandList::EndProfiling() {}
 
-        void MetalCommandList::BeginEvent(const eastl::string& event_name)
+        void MetalCommandList::BeginEvent(const char* event_name)
         {
-            NS::String* label = NS::String::alloc()->init(event_name.c_str(), NS::StringEncoding::UTF8StringEncoding);
+            NS::String* label = NS::String::alloc()->init(event_name, NS::StringEncoding::UTF8StringEncoding);
             m_pCommandBuffer->pushDebugGroup(label);
             label->release();
         }
@@ -345,7 +345,7 @@ namespace ncore
 
             m_pIndexBuffer      = (MTL::Buffer*)buffer->GetHandle();
             m_indexBufferOffset = offset;
-            m_indexType         = format == GfxFormat::R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32;
+            m_indexType         = format == Gfx::R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32;
         }
 
         void MetalCommandList::SetViewport(u32 x, u32 y, u32 width, u32 height)

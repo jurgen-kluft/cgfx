@@ -7,7 +7,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12RayTracingTLAS::D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracingTLASDesc& desc, const eastl::string& name)
+        D3D12RayTracingTLAS::D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracingTLASDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

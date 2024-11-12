@@ -7,8 +7,7 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        MockShader::MockShader(MockDevice* pDevice, const GfxShaderDesc& desc, const eastl::string& name)
+        MockShader::MockShader(MockDevice* pDevice, const GfxShaderDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -17,11 +16,13 @@ namespace ncore
 
         void* MockShader::GetHandle() const { return nullptr; }
 
-        bool MockShader::Create(eastl::span<u8> data)
+        bool MockShader::Create(byte* data_ptr, u32 data_len)
         {
-            m_data.resize(data.size());
-            nmem::memcpy(m_data.data(), data.data(), data.size());
-            m_hash = nhash::datahash(data.data(), data.size());
+            // m_data.resize(data.size());
+            // nmem::memcpy(m_data.data(), data.data(), data.size());
+            m_data = data_ptr;
+            m_len  = data_len;
+            m_hash = nhash::datahash(data_ptr, data_len);
             return true;
         }
 

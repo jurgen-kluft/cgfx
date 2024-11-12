@@ -10,7 +10,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalShader::MetalShader(MetalDevice* pDevice, const GfxShaderDesc& desc, const eastl::string& name)
+        MetalShader::MetalShader(MetalDevice* pDevice, const GfxShaderDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -19,14 +19,14 @@ namespace ncore
 
         MetalShader::~MetalShader() { m_pFunction->release(); }
 
-        bool MetalShader::Create(eastl::span<u8> data)
+        bool MetalShader::Create(byte* data_ptr, u32 data_len)
         {
             m_pFunction->release();
 
             MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
 
-            nmem::memcpy(&m_reflection, data.data(), sizeof(MetalShaderReflection));
-            dispatch_data_t metalIR = dispatch_data_create(data.data() + sizeof(MetalShaderReflection), data.size() - sizeof(MetalShaderReflection), dispatch_get_main_queue(), NULL);
+            nmem::memcpy(&m_reflection, data_ptr, sizeof(MetalShaderReflection));
+            dispatch_data_t metalIR = dispatch_data_create(data_ptr + sizeof(MetalShaderReflection), data_len - sizeof(MetalShaderReflection), dispatch_get_main_queue(), NULL);
 
             NS::Error*    error;
             MTL::Library* library = device->newLibrary(metalIR, &error);
@@ -40,14 +40,14 @@ namespace ncore
                 return false;
             }
 
-            NS::String* functionName = NS::String::alloc()->init(m_desc.entry_point.c_str(), NS::StringEncoding::UTF8StringEncoding);
+            NS::String* functionName = NS::String::alloc()->init(m_desc.entry_point, NS::StringEncoding::UTF8StringEncoding);
             m_pFunction              = library->newFunction(functionName);
             library->release();
             functionName->release();
 
-            SetDebugLabel(m_pFunction, m_name.c_str());
+            SetDebugLabel(m_pFunction, m_name);
 
-            m_hash = nhash::datahash(data.data(), data.size());
+            m_hash = nhash::datahash(data_ptr, data_len);
 
             return true;
         }

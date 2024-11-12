@@ -18,7 +18,7 @@ namespace ncore
         class MetalRayTracingTLAS : public IGfxRayTracingTLAS
         {
         public:
-            MetalRayTracingTLAS(MetalDevice* pDevice, const GfxRayTracingTLASDesc& desc, const eastl::string& name);
+            MetalRayTracingTLAS(MetalDevice* pDevice, const GfxRayTracingTLASDesc& desc, const char* name);
             ~MetalRayTracingTLAS();
 
             bool                                          Create();

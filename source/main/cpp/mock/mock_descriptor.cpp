@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockShaderResourceView::MockShaderResourceView(MockDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const eastl::string& name)
+        MockShaderResourceView::MockShaderResourceView(MockDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -21,7 +21,7 @@ namespace ncore
 
         u32 MockShaderResourceView::GetHeapIndex() const { return 0; }
 
-        MockUnorderedAccessView::MockUnorderedAccessView(MockDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name)
+        MockUnorderedAccessView::MockUnorderedAccessView(MockDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -37,7 +37,7 @@ namespace ncore
 
         u32 MockUnorderedAccessView::GetHeapIndex() const { return 0; }
 
-        MockConstantBufferView::MockConstantBufferView(MockDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name)
+        MockConstantBufferView::MockConstantBufferView(MockDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -53,7 +53,7 @@ namespace ncore
 
         u32 MockConstantBufferView::GetHeapIndex() const { return 0; }
 
-        MockSampler::MockSampler(MockDevice* pDevice, const GfxSamplerDesc& desc, const eastl::string& name)
+        MockSampler::MockSampler(MockDevice* pDevice, const GfxSamplerDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

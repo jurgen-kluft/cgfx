@@ -12,7 +12,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalShaderResourceView::MetalShaderResourceView(MetalDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const eastl::string& name)
+        MetalShaderResourceView::MetalShaderResourceView(MetalDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -54,51 +54,51 @@ namespace ncore
 
             switch (m_desc.type)
             {
-                case GfxShaderResourceViewType::Texture2D:
+                case GfxShaderResourceView::Texture2D:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureType2DArray, levelRange, NS::Range(0, 1));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxShaderResourceViewType::Texture2DArray:
+                case GfxShaderResourceView::Texture2DArray:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureType2DArray, levelRange, NS::Range(m_desc.texture.array_slice, m_desc.texture.array_size));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxShaderResourceViewType::Texture3D:
+                case GfxShaderResourceView::Texture3D:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureType3D, levelRange, NS::Range(0, 1));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxShaderResourceViewType::TextureCube:
+                case GfxShaderResourceView::TextureCube:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureTypeCubeArray, levelRange, NS::Range(0, 6));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxShaderResourceViewType::TextureCubeArray:
+                case GfxShaderResourceView::TextureCubeArray:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureTypeCubeArray, levelRange, NS::Range(m_desc.texture.array_slice, m_desc.texture.array_size));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxShaderResourceViewType::StructuredBuffer:
+                case GfxShaderResourceView::StructuredBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageStructuredBuffer);
-                        ASSERT(m_desc.format == GfxFormat::Unknown);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
+                        ASSERT(m_desc.format == Gfx::Unknown);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
                         IRDescriptorTableSetBuffer(descriptorTableEntry, buffer->gpuAddress(), 0);
                         break;
                     }
-                case GfxShaderResourceViewType::TypedBuffer:
+                case GfxShaderResourceView::TypedBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageTypedBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
@@ -116,10 +116,10 @@ namespace ncore
                         IRDescriptorTableSetBufferView(descriptorTableEntry, &bufferView);
                         break;
                     }
-                case GfxShaderResourceViewType::RawBuffer:
+                case GfxShaderResourceView::RawBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageRawBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
                         ASSERT(bufferDesc.stride % 4 == 0);
                         ASSERT(m_desc.buffer.offset % 4 == 0);
                         ASSERT(m_desc.buffer.size % 4 == 0);
@@ -127,7 +127,7 @@ namespace ncore
                         IRDescriptorTableSetBuffer(descriptorTableEntry, buffer->gpuAddress(), 0);
                         break;
                     }
-                case GfxShaderResourceViewType::RayTracingTLAS:
+                case GfxShaderResourceView::RayTracingTLAS:
                     {
                         MetalRayTracingTLAS* tlas = (MetalRayTracingTLAS*)m_pResource;
                         IRDescriptorTableSetAccelerationStructure(descriptorTableEntry, tlas->GetGPUHeaderBuffer()->gpuAddress());
@@ -139,7 +139,7 @@ namespace ncore
             return true;
         }
 
-        MetalUnorderedAccessView::MetalUnorderedAccessView(MetalDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const eastl::string& name)
+        MetalUnorderedAccessView::MetalUnorderedAccessView(MetalDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -178,41 +178,41 @@ namespace ncore
 
             switch (m_desc.type)
             {
-                case GfxUnorderedAccessViewType::Texture2D:
+                case GfxUnorderedAccessView::Texture2D:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureType2DArray, levelRange, NS::Range(0, 1));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxUnorderedAccessViewType::Texture2DArray:
+                case GfxUnorderedAccessView::Texture2DArray:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureType2DArray, levelRange, NS::Range(m_desc.texture.array_slice, m_desc.texture.array_size));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxUnorderedAccessViewType::Texture3D:
+                case GfxUnorderedAccessView::Texture3D:
                     {
                         m_pTextureView = texture->newTextureView(format, MTL::TextureType3D, levelRange, NS::Range(0, 1));
                         IRDescriptorTableSetTexture(descriptorTableEntry, m_pTextureView, 0.0f, 0);
                         break;
                     }
-                case GfxUnorderedAccessViewType::StructuredBuffer:
+                case GfxUnorderedAccessView::StructuredBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageStructuredBuffer);
-                        ASSERT(bufferDesc.usage & GfxBufferUsageUnorderedAccess);
-                        ASSERT(m_desc.format == GfxFormat::Unknown);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
+                        ASSERT(m_desc.format == Gfx::Unknown);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
                         IRDescriptorTableSetBuffer(descriptorTableEntry, buffer->gpuAddress(), 0);
                         break;
                     }
-                case GfxUnorderedAccessViewType::TypedBuffer:
+                case GfxUnorderedAccessView::TypedBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageTypedBuffer);
-                        ASSERT(bufferDesc.usage & GfxBufferUsageUnorderedAccess);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
@@ -231,11 +231,11 @@ namespace ncore
                         IRDescriptorTableSetBufferView(descriptorTableEntry, &bufferView);
                         break;
                     }
-                case GfxUnorderedAccessViewType::RawBuffer:
+                case GfxUnorderedAccessView::RawBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageRawBuffer);
-                        ASSERT(bufferDesc.usage & GfxBufferUsageUnorderedAccess);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(bufferDesc.stride % 4 == 0);
                         ASSERT(m_desc.buffer.offset % 4 == 0);
                         ASSERT(m_desc.buffer.size % 4 == 0);
@@ -249,7 +249,7 @@ namespace ncore
             return true;
         }
 
-        MetalConstantBufferView::MetalConstantBufferView(MetalDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const eastl::string& name)
+        MetalConstantBufferView::MetalConstantBufferView(MetalDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -268,7 +268,7 @@ namespace ncore
             return true;
         }
 
-        MetalSampler::MetalSampler(MetalDevice* pDevice, const GfxSamplerDesc& desc, const eastl::string& name)
+        MetalSampler::MetalSampler(MetalDevice* pDevice, const GfxSamplerDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -325,7 +325,7 @@ namespace ncore
                 ASSERT(false);  // unsupported border color
             }
 
-            SetDebugLabel(descritor, m_name.c_str());
+            SetDebugLabel(descritor, m_name);
 
             MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
             m_pSampler          = device->newSamplerState(descritor);

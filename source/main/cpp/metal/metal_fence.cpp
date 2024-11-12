@@ -6,7 +6,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalFence::MetalFence(MetalDevice* pDevice, const eastl::string& name)
+        MetalFence::MetalFence(MetalDevice* pDevice, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -25,7 +25,7 @@ namespace ncore
                 return false;
             }
 
-            SetDebugLabel(m_pEvent, m_name.c_str());
+            SetDebugLabel(m_pEvent, m_name);
 
             return true;
         }

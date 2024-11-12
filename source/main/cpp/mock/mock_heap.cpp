@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockHeap::MockHeap(MockDevice* pDevice, const GfxHeapDesc& desc, const eastl::string& name)
+        MockHeap::MockHeap(MockDevice* pDevice, const GfxHeapDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

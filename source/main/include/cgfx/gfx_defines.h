@@ -145,11 +145,11 @@ namespace ncore
             typedef u32 Flags;
             enum
             {
-                GfxBufferUsageConstantBuffer   = 1 << 0,
-                GfxBufferUsageStructuredBuffer = 1 << 1,
-                GfxBufferUsageTypedBuffer      = 1 << 2,
-                GfxBufferUsageRawBuffer        = 1 << 3,
-                GfxBufferUsageUnorderedAccess  = 1 << 4,
+                ConstantBuffer   = 1 << 0,
+                StructuredBuffer = 1 << 1,
+                TypedBuffer      = 1 << 2,
+                RawBuffer        = 1 << 3,
+                UnorderedAccess  = 1 << 4,
             };
         }  // namespace GfxBufferUsage
         using GfxBufferUsageFlags = GfxBufferUsage::Flags;

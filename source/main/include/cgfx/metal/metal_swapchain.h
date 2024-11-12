@@ -15,7 +15,7 @@ namespace ncore
         class MetalSwapchain : public IGfxSwapchain
         {
         public:
-            MetalSwapchain(MetalDevice* pDevice, const GfxSwapchainDesc& desc, const eastl::string& name);
+            MetalSwapchain(MetalDevice* pDevice, const GfxSwapchainDesc& desc, const char* name);
             ~MetalSwapchain();
 
             bool           Create();
