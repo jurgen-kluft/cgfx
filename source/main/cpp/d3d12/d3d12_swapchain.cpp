@@ -15,11 +15,11 @@ namespace ncore
 
         D3D12Swapchain::~D3D12Swapchain()
         {
-            for (size_t i = 0; i < m_backBuffers.size(); ++i)
+            for (size_t i = 0; i < m_backBuffers.size; ++i)
             {
-                delete m_backBuffers[i];
+                delete m_backBuffers.data[i];
             }
-            m_backBuffers.clear();
+            m_backBuffers.size = 0;
 
             D3D12Device* pDevice = (D3D12Device*)m_pDevice;
             pDevice->Delete(m_pSwapChain);
@@ -29,7 +29,7 @@ namespace ncore
 
         bool D3D12Swapchain::Present()
         {
-            CPU_EVENT("Render", "D3D12Swapchain::Present");
+            //CPU_EVENT("Render", "D3D12Swapchain::Present");
 
             UINT interval, flags;
             if (m_bEnableVsync)
@@ -59,11 +59,11 @@ namespace ncore
             m_desc.height        = height;
             m_nCurrentBackBuffer = 0;
 
-            for (size_t i = 0; i < m_backBuffers.size(); ++i)
+            for (size_t i = 0; i < m_backBuffers.size; ++i)
             {
-                delete m_backBuffers[i];
+                delete m_backBuffers.data[i];
             }
-            m_backBuffers.clear();
+            m_backBuffers.size = 0;
 
             ((D3D12Device*)m_pDevice)->FlushDeferredDeletions();
 
@@ -83,7 +83,7 @@ namespace ncore
             return CreateTextures();
         }
 
-        IGfxTexture* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers[m_nCurrentBackBuffer]; }
+        IGfxTexture* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers.data[m_nCurrentBackBuffer]; }
 
         bool D3D12Swapchain::Create()
         {
@@ -98,7 +98,7 @@ namespace ncore
             swapChainDesc.BufferCount           = m_desc.backbuffer_count;
             swapChainDesc.Width                 = m_desc.width;
             swapChainDesc.Height                = m_desc.height;
-            swapChainDesc.Format                = m_desc.backbuffer_format == GfxFormat::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(m_desc.backbuffer_format);
+            swapChainDesc.Format                = m_desc.backbuffer_format == Gfx::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(m_desc.backbuffer_format);
             swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
             swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
             swapChainDesc.SampleDesc.Count      = 1;
@@ -128,7 +128,7 @@ namespace ncore
             textureDesc.width  = m_desc.width;
             textureDesc.height = m_desc.height;
             textureDesc.format = m_desc.backbuffer_format;
-            textureDesc.usage  = GfxTextureUsageRenderTarget;
+            textureDesc.usage  = GfxTextureUsage::RenderTarget;
 
             for (u32 i = 0; i < m_desc.backbuffer_count; ++i)
             {
@@ -139,12 +139,13 @@ namespace ncore
                     return false;
                 }
 
-                eastl::string name = fmt::format("{} texture {}", m_name, i).c_str();
-                pBackbuffer->SetName(string_to_wstring(name).c_str());
+                //eastl::string name = fmt::format("{} texture {}", m_name, i).c_str();
+                //pBackbuffer->SetName(string_to_wstring(name).c_str());
+                const char* name = "backbuffer";
 
                 D3D12Texture* texture = new D3D12Texture(pDevice, textureDesc, name);
                 texture->m_pTexture   = pBackbuffer;
-                m_backBuffers.push_back(texture);
+                m_backBuffers.data[m_backBuffers.size++] = (texture);
             }
 
             return true;

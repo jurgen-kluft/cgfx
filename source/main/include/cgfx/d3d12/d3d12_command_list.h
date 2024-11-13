@@ -1,5 +1,9 @@
 #ifndef __CGFX_D3D12_COMMAND_LIST_H__
 #define __CGFX_D3D12_COMMAND_LIST_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_command_list.h"
@@ -90,12 +94,27 @@ namespace ncore
             u32                m_commandCount = 0;
             IGfxPipelineState* m_pCurrentPSO  = nullptr;
 
+            template <typename T>
+            struct vector_t
+            {
+                T*  data     = nullptr;
+                u32 size     = 0;
+                u32 capacity = 0;
+            };
+
             vector_t<D3D12_TEXTURE_BARRIER> m_textureBarriers;
             vector_t<D3D12_BUFFER_BARRIER>  m_bufferBarriers;
             vector_t<D3D12_GLOBAL_BARRIER>  m_globalBarriers;
 
-            vector_t<eastl::pair<IGfxFence*, u64>> m_pendingWaits;
-            vector_t<eastl::pair<IGfxFence*, u64>> m_pendingSignals;
+            template <typename F, typename S>
+            struct pair_t
+            {
+				F first;
+				S second;
+			};
+
+            vector_t<pair_t<IGfxFence*, u64>> m_pendingWaits;
+            vector_t<pair_t<IGfxFence*, u64>> m_pendingSignals;
 
             vector_t<IGfxSwapchain*> m_pendingSwapchain;
 

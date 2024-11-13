@@ -1,5 +1,9 @@
 #ifndef __CGFX_D3D12_DESCRIPTOR_H__
 #define __CGFX_D3D12_DESCRIPTOR_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_descriptor.h"

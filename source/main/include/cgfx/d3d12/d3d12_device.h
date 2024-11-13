@@ -1,5 +1,9 @@
 #ifndef __CGFX_D3D12_DEVICE_H__
 #define __CGFX_D3D12_DEVICE_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_device.h"
@@ -27,12 +31,15 @@ namespace ncore
             D3D12Descriptor       GetDescriptor(u32 index) const;
 
         private:
-            ID3D12DescriptorHeap*          m_pHeap           = nullptr;
-            u32                            m_descriptorSize  = 0;
-            u32                            m_descirptorCount = 0;
-            u32                            m_allocatedCount  = 0;
-            bool                           m_bShaderVisible  = false;
-            vector_t<D3D12Descriptor> m_freeDescriptors;
+            ID3D12DescriptorHeap* m_pHeap           = nullptr;
+            u32                   m_descriptorSize  = 0;
+            u32                   m_descirptorCount = 0;
+            u32                   m_allocatedCount  = 0;
+            bool                  m_bShaderVisible  = false;
+
+            u32              m_freeDescriptorSize;
+            u32              m_freeDescriptorMax;
+            D3D12Descriptor* m_freeDescriptors;
         };
 
         class D3D12Device;
@@ -46,7 +53,7 @@ namespace ncore
             void Reset();
 
         private:
-            eastl::unique_ptr<IGfxBuffer> m_pBuffer       = nullptr;
+            IGfxBuffer* m_pBuffer       = nullptr;
             u32                           m_allocatedSize = 0;
         };
 
@@ -151,37 +158,45 @@ namespace ncore
             ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
 
             D3D12MA::Allocator*                             m_pResourceAllocator = nullptr;
-            eastl::unique_ptr<D3D12ConstantBufferAllocator> m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
-            eastl::unique_ptr<D3D12DescriptorAllocator>     m_pRTVAllocator;
-            eastl::unique_ptr<D3D12DescriptorAllocator>     m_pDSVAllocator;
-            eastl::unique_ptr<D3D12DescriptorAllocator>     m_pResDescriptorAllocator;
-            eastl::unique_ptr<D3D12DescriptorAllocator>     m_pSamplerAllocator;
-            eastl::unique_ptr<D3D12DescriptorAllocator>     m_pNonShaderVisibleUavAllocator;
+            D3D12ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+            D3D12DescriptorAllocator*     m_pRTVAllocator;
+            D3D12DescriptorAllocator*     m_pDSVAllocator;
+            D3D12DescriptorAllocator*     m_pResDescriptorAllocator;
+            D3D12DescriptorAllocator*     m_pSamplerAllocator;
+            D3D12DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
+
+            template<typename T>
+            struct queue_t
+            {
+                u32 m_queueSize;
+                u32 m_queueMax;
+                T*  m_queue;
+            };
 
             struct ObjectDeletion
             {
                 IUnknown* object;
                 u64       frame;
             };
-            eastl::queue<ObjectDeletion> m_deletionQueue;
+            queue_t<ObjectDeletion> m_deletionQueue;
 
             struct AllocationDeletion
             {
                 D3D12MA::Allocation* allocation;
                 u64                  frame;
             };
-            eastl::queue<AllocationDeletion> m_allocationDeletionQueue;
+            queue_t<AllocationDeletion> m_allocationDeletionQueue;
 
             struct DescriptorDeletion
             {
                 D3D12Descriptor descriptor;
                 u64             frame;
             };
-            eastl::queue<DescriptorDeletion> m_rtvDeletionQueue;
-            eastl::queue<DescriptorDeletion> m_dsvDeletionQueue;
-            eastl::queue<DescriptorDeletion> m_resourceDeletionQueue;
-            eastl::queue<DescriptorDeletion> m_samplerDeletionQueue;
-            eastl::queue<DescriptorDeletion> m_nonShaderVisibleUAVDeletionQueue;
+            queue_t<DescriptorDeletion> m_rtvDeletionQueue;
+            queue_t<DescriptorDeletion> m_dsvDeletionQueue;
+            queue_t<DescriptorDeletion> m_resourceDeletionQueue;
+            queue_t<DescriptorDeletion> m_samplerDeletionQueue;
+            queue_t<DescriptorDeletion> m_nonShaderVisibleUAVDeletionQueue;
 
 #if MICROPROFILE_GPU_TIMERS_D3D12
             int m_nProfileGraphicsQueue = -1;

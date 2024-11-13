@@ -1,5 +1,9 @@
 #ifndef __CGFX_D3D12_SWAPCHAIN_H__
 #define __CGFX_D3D12_SWAPCHAIN_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_swapchain.h"
@@ -30,6 +34,14 @@ namespace ncore
 
         private:
             IDXGISwapChain3* m_pSwapChain = nullptr;
+
+            template <typename T>
+            struct vector_t
+            {
+                T* data = nullptr;
+				u32 size = 0;
+				u32 capacity = 0;
+            };
 
             bool                        m_bEnableVsync       = true;
             bool                        m_bSupportTearing    = false;

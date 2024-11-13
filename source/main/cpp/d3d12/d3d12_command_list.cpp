@@ -10,8 +10,8 @@
 #include "cgfx/d3d12/d3d12_rt_blas.h"
 #include "cgfx/d3d12/d3d12_rt_tlas.h"
 #include "cgfx/d3d12/d3d12_swapchain.h"
-#include "cgfx/d3d12/pix_runtime.h"
-#include "cgfx/d3d12/ags.h"
+#include "cd3d12/c_pix_runtime.h"
+#include "cd3d12/amd/c_ags.h"
 #include "cgfx/gfx.h"
 #include "cbase/c_debug.h"
 
@@ -42,17 +42,17 @@ namespace ncore
 
             switch (m_queueType)
             {
-                case GfxCommandQueue::Graphics: type = D3D12_COMMAND_LIST_TYPE_DIRECT; m_pCommandQueue = pDevice->GetGraphicsQueue();
+                case GfxCommand::Graphics: type = D3D12_COMMAND_LIST_TYPE_DIRECT; m_pCommandQueue = pDevice->GetGraphicsQueue();
 #if MICROPROFILE_GPU_TIMERS_D3D12
                     m_nProfileQueue = pDevice->GetProfileGraphicsQueue();
 #endif
                     break;
-                case GfxCommandQueue::Compute: type = D3D12_COMMAND_LIST_TYPE_COMPUTE; m_pCommandQueue = pDevice->GetComputeQueue();
+                case GfxCommand::Compute: type = D3D12_COMMAND_LIST_TYPE_COMPUTE; m_pCommandQueue = pDevice->GetComputeQueue();
 #if MICROPROFILE_GPU_TIMERS_D3D12
                     m_nProfileQueue = pDevice->GetProfileComputeQueue();
 #endif
                     break;
-                case GfxCommandQueue::Copy: type = D3D12_COMMAND_LIST_TYPE_COPY; m_pCommandQueue = pDevice->GetCopyQueue();
+                case GfxCommand::Copy: type = D3D12_COMMAND_LIST_TYPE_COPY; m_pCommandQueue = pDevice->GetCopyQueue();
 #if MICROPROFILE_GPU_TIMERS_D3D12
                     m_nProfileQueue = pDevice->GetProfileCopyQueue();
 #endif
@@ -66,7 +66,8 @@ namespace ncore
             {
                 return false;
             }
-            m_pCommandAllocator->SetName(string_to_wstring(m_name + " allocator").c_str());
+            // string_to_wstring(m_name + " allocator").c_str()
+            // m_pCommandAllocator->SetName(m_name);
 
             hr = pD3D12Device->CreateCommandList(0, type, m_pCommandAllocator, nullptr, IID_PPV_ARGS(&m_pCommandList));
             if (FAILED(hr))
@@ -84,7 +85,7 @@ namespace ncore
         void D3D12CommandList::Begin()
         {
             m_pCommandList->Reset(m_pCommandAllocator, nullptr);
-            m_pCommandList->SetName(string_to_wstring(m_name).c_str());
+            //m_pCommandList->SetName(string_to_wstring(m_name).c_str());
 
             ResetState();
         }

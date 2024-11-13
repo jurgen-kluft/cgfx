@@ -21,7 +21,7 @@ namespace ncore
         static const u32 GFX_MAX_RESOURCE_DESCRIPTOR_COUNT = 65536;
         static const u32 GFX_MAX_SAMPLER_DESCRIPTOR_COUNT  = 128;
 
-        static const f32 FLT_MAX = 3.402823466e+38F;
+        static const f32 GFX_FLT_MAX = 3.402823466e+38F;
 
         namespace GfxRender
         {
@@ -668,7 +668,7 @@ namespace ncore
             float                   max_anisotropy    = 1.0f;
             float                   mip_bias          = 0.0f;
             float                   min_lod           = 0.0f;
-            float                   max_lod           = FLT_MAX;
+            float                   max_lod           = GFX_FLT_MAX;
             float                   border_color[4]   = {};
         };
 

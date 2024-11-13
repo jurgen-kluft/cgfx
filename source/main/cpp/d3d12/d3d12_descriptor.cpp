@@ -26,10 +26,10 @@ namespace ncore
 
             switch (m_desc.type)
             {
-                case GfxShaderResourceViewType::Texture2D:
+                case GfxShaderResourceView::Texture2D:
                     {
                         const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
-                        bool                  depth       = textureDesc.usage & GfxTextureUsageDepthStencil;
+                        bool                  depth       = textureDesc.usage & GfxTextureUsage::DepthStencil;
 
                         srvDesc.Format                    = dxgi_format(m_desc.format, depth);
                         srvDesc.ViewDimension             = D3D12_SRV_DIMENSION_TEXTURE2D;
@@ -38,7 +38,7 @@ namespace ncore
                         srvDesc.Texture2D.PlaneSlice      = m_desc.texture.plane_slice;
                         break;
                     }
-                case GfxShaderResourceViewType::Texture2DArray:
+                case GfxShaderResourceView::Texture2DArray:
                     {
                         srvDesc.Format                         = dxgi_format(m_desc.format);
                         srvDesc.ViewDimension                  = D3D12_SRV_DIMENSION_TEXTURE2DARRAY;
@@ -49,7 +49,7 @@ namespace ncore
                         srvDesc.Texture2DArray.PlaneSlice      = m_desc.texture.plane_slice;
                         break;
                     }
-                case GfxShaderResourceViewType::Texture3D:
+                case GfxShaderResourceView::Texture3D:
                     {
                         srvDesc.Format                    = dxgi_format(m_desc.format);
                         srvDesc.ViewDimension             = D3D12_SRV_DIMENSION_TEXTURE3D;
@@ -57,7 +57,7 @@ namespace ncore
                         srvDesc.Texture3D.MipLevels       = m_desc.texture.mip_levels;
                         break;
                     }
-                case GfxShaderResourceViewType::TextureCube:
+                case GfxShaderResourceView::TextureCube:
                     {
                         srvDesc.Format                      = dxgi_format(m_desc.format);
                         srvDesc.ViewDimension               = D3D12_SRV_DIMENSION_TEXTURECUBE;
@@ -65,7 +65,7 @@ namespace ncore
                         srvDesc.TextureCube.MipLevels       = m_desc.texture.mip_levels;
                         break;
                     }
-                case GfxShaderResourceViewType::TextureCubeArray:
+                case GfxShaderResourceView::TextureCubeArray:
                     {
                         srvDesc.Format                            = dxgi_format(m_desc.format);
                         srvDesc.ViewDimension                     = D3D12_SRV_DIMENSION_TEXTURECUBEARRAY;
@@ -75,11 +75,11 @@ namespace ncore
                         srvDesc.TextureCubeArray.NumCubes         = m_desc.texture.array_size / 6;
                         break;
                     }
-                case GfxShaderResourceViewType::StructuredBuffer:
+                case GfxShaderResourceView::StructuredBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageStructuredBuffer);
-                        ASSERT(m_desc.format == GfxFormat::Unknown);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
+                        ASSERT(m_desc.format == Gfx::Unknown);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
@@ -90,10 +90,10 @@ namespace ncore
                         srvDesc.Buffer.StructureByteStride = bufferDesc.stride;
                         break;
                     }
-                case GfxShaderResourceViewType::TypedBuffer:
+                case GfxShaderResourceView::TypedBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageTypedBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
@@ -103,10 +103,10 @@ namespace ncore
                         srvDesc.Buffer.NumElements  = m_desc.buffer.size / bufferDesc.stride;
                         break;
                     }
-                case GfxShaderResourceViewType::RawBuffer:
+                case GfxShaderResourceView::RawBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageRawBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
                         ASSERT(bufferDesc.stride % 4 == 0);
                         ASSERT(m_desc.buffer.offset % 4 == 0);
                         ASSERT(m_desc.buffer.size % 4 == 0);
@@ -118,7 +118,7 @@ namespace ncore
                         srvDesc.Buffer.Flags        = D3D12_BUFFER_SRV_FLAG_RAW;
                         break;
                     }
-                case GfxShaderResourceViewType::RayTracingTLAS:
+                case GfxShaderResourceView::RayTracingTLAS:
                     {
                         srvDesc.ViewDimension                            = D3D12_SRV_DIMENSION_RAYTRACING_ACCELERATION_STRUCTURE;
                         srvDesc.RaytracingAccelerationStructure.Location = ((D3D12RayTracingTLAS*)m_pResource)->GetGpuAddress();
@@ -130,7 +130,7 @@ namespace ncore
             m_descriptor = ((D3D12Device*)m_pDevice)->AllocateResourceDescriptor();
 
             ID3D12Device*   pDevice  = (ID3D12Device*)m_pDevice->GetHandle();
-            ID3D12Resource* resource = m_desc.type == GfxShaderResourceViewType::RayTracingTLAS ? nullptr : (ID3D12Resource*)m_pResource->GetHandle();
+            ID3D12Resource* resource = m_desc.type == GfxShaderResourceView::RayTracingTLAS ? nullptr : (ID3D12Resource*)m_pResource->GetHandle();
             pDevice->CreateShaderResourceView(resource, &srvDesc, m_descriptor.cpu_handle);
 
             return true;
@@ -156,10 +156,10 @@ namespace ncore
 
             switch (m_desc.type)
             {
-                case GfxUnorderedAccessViewType::Texture2D:
+                case GfxUnorderedAccessView::Texture2D:
                     {
                         const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
-                        ASSERT(textureDesc.usage & GfxTextureUsageUnorderedAccess);
+                        ASSERT(textureDesc.usage & GfxTextureUsage::UnorderedAccess);
 
                         uavDesc.Format               = dxgi_format(m_desc.format, false, true);
                         uavDesc.ViewDimension        = D3D12_UAV_DIMENSION_TEXTURE2D;
@@ -167,10 +167,10 @@ namespace ncore
                         uavDesc.Texture2D.PlaneSlice = m_desc.texture.plane_slice;
                         break;
                     }
-                case GfxUnorderedAccessViewType::Texture2DArray:
+                case GfxUnorderedAccessView::Texture2DArray:
                     {
                         const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
-                        ASSERT(textureDesc.usage & GfxTextureUsageUnorderedAccess);
+                        ASSERT(textureDesc.usage & GfxTextureUsage::UnorderedAccess);
 
                         uavDesc.Format                         = dxgi_format(m_desc.format, false, true);
                         uavDesc.ViewDimension                  = D3D12_UAV_DIMENSION_TEXTURE2DARRAY;
@@ -180,10 +180,10 @@ namespace ncore
                         uavDesc.Texture2DArray.PlaneSlice      = m_desc.texture.plane_slice;
                         break;
                     }
-                case GfxUnorderedAccessViewType::Texture3D:
+                case GfxUnorderedAccessView::Texture3D:
                     {
                         const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
-                        ASSERT(textureDesc.usage & GfxTextureUsageUnorderedAccess);
+                        ASSERT(textureDesc.usage & GfxTextureUsage::UnorderedAccess);
 
                         uavDesc.Format                = dxgi_format(m_desc.format, false, true);
                         uavDesc.ViewDimension         = D3D12_UAV_DIMENSION_TEXTURE3D;
@@ -192,12 +192,12 @@ namespace ncore
                         uavDesc.Texture3D.WSize       = textureDesc.depth;
                         break;
                     }
-                case GfxUnorderedAccessViewType::StructuredBuffer:
+                case GfxUnorderedAccessView::StructuredBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageStructuredBuffer);
-                        ASSERT(bufferDesc.usage & GfxBufferUsageUnorderedAccess);
-                        ASSERT(m_desc.format == GfxFormat::Unknown);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
+                        ASSERT(m_desc.format == Gfx::Unknown);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
@@ -208,11 +208,11 @@ namespace ncore
                         uavDesc.Buffer.StructureByteStride = bufferDesc.stride;
                         break;
                     }
-                case GfxUnorderedAccessViewType::TypedBuffer:
+                case GfxUnorderedAccessView::TypedBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageTypedBuffer);
-                        ASSERT(bufferDesc.usage & GfxBufferUsageUnorderedAccess);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
 
@@ -222,11 +222,11 @@ namespace ncore
                         uavDesc.Buffer.NumElements  = m_desc.buffer.size / bufferDesc.stride;
                         break;
                     }
-                case GfxUnorderedAccessViewType::RawBuffer:
+                case GfxUnorderedAccessView::RawBuffer:
                     {
                         const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
-                        ASSERT(bufferDesc.usage & GfxBufferUsageRawBuffer);
-                        ASSERT(bufferDesc.usage & GfxBufferUsageUnorderedAccess);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
+                        ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(bufferDesc.stride % 4 == 0);
                         ASSERT(m_desc.buffer.offset % 4 == 0);
                         ASSERT(m_desc.buffer.size % 4 == 0);
@@ -263,7 +263,7 @@ namespace ncore
 
         bool D3D12ConstantBufferView::Create()
         {
-            ASSERT(m_pBuffer->GetDesc().usage & GfxBufferUsageConstantBuffer);
+            ASSERT(m_pBuffer->GetDesc().usage & GfxBufferUsage::ConstantBuffer);
 
             D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
             cbvDesc.BufferLocation                  = m_pBuffer->GetGpuAddress() + m_desc.offset;

@@ -1,5 +1,9 @@
 #ifndef __CGFX_D3D12_TEXTURE_H__
 #define __CGFX_D3D12_TEXTURE_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_texture.h"
@@ -37,6 +41,14 @@ namespace ncore
         private:
             ID3D12Resource*      m_pTexture    = nullptr;
             D3D12MA::Allocation* m_pAllocation = nullptr;
+
+            template<typename T>
+            struct vector_t
+            {
+				T* data = nullptr;
+				u32 size = 0;
+                u32 capacity = 0;
+			};
 
             vector_t<D3D12Descriptor> m_RTV;
             vector_t<D3D12Descriptor> m_DSV;

@@ -1,6 +1,6 @@
 #include "cgfx/d3d12/d3d12_shader.h"
 #include "cgfx/d3d12/d3d12_device.h"
-#include "xxHash/xxhash.h"
+#include "cbase/c_hash.h"
 
 namespace ncore
 {
@@ -15,10 +15,10 @@ namespace ncore
 
         bool D3D12Shader::Create(byte* data_ptr, u32 data_len)
         {
-            m_data.resize(data.size());
-            memcpy(m_data.data(), data.data(), data.size());
+            m_data = {data_ptr, data_len, data_len};
 
-            m_hash = XXH3_64bits(data.data(), data.size());
+            //m_hash = XXH3_64bits(data.data(), data.size());
+            m_hash = nhash::datahash(data_ptr, data_len);
 
             return true;
         }

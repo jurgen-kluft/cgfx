@@ -1,5 +1,9 @@
 #ifndef __CGFX_D3D12_HEADER_H__
 #define __CGFX_D3D12_HEADER_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cd3d12/d3d12.h"
 #include "cd3d12/d3dx12.h"
@@ -35,10 +39,10 @@ namespace ncore
         {
             switch (memory_type)
             {
-                case GfxMemoryType::GpuOnly: return D3D12_HEAP_TYPE_DEFAULT;
-                case GfxMemoryType::CpuOnly:
-                case GfxMemoryType::CpuToGpu: return D3D12_HEAP_TYPE_UPLOAD;
-                case GfxMemoryType::GpuToCpu: return D3D12_HEAP_TYPE_READBACK;
+                case GfxMemory::GpuOnly: return D3D12_HEAP_TYPE_DEFAULT;
+                case GfxMemory::CpuOnly:
+                case GfxMemory::CpuToGpu: return D3D12_HEAP_TYPE_UPLOAD;
+                case GfxMemory::GpuToCpu: return D3D12_HEAP_TYPE_READBACK;
                 default: return D3D12_HEAP_TYPE_DEFAULT;
             }
         }
@@ -46,35 +50,35 @@ namespace ncore
         inline D3D12_BARRIER_SYNC d3d12_barrier_sync(GfxAccessFlags flags)
         {
             D3D12_BARRIER_SYNC sync    = D3D12_BARRIER_SYNC_NONE;
-            bool               discard = flags & GfxAccessDiscard;
+            bool               discard = flags & GfxAccess::Discard;
             if (!discard)
             {
                 // d3d validation : "SyncAfter bits D3D12_BARRIER_SYNC_CLEAR_UNORDERED_ACCESS_VIEW are incompatible with AccessAfter bits D3D12_BARRIER_ACCESS_NO_ACCESS"
-                if (flags & GfxAccessClearUAV)
+                if (flags & GfxAccess::ClearUAV)
                     sync |= D3D12_BARRIER_SYNC_CLEAR_UNORDERED_ACCESS_VIEW;
             }
 
-            if (flags & GfxAccessPresent)
+            if (flags & GfxAccess::Present)
                 sync |= D3D12_BARRIER_SYNC_ALL;
-            if (flags & GfxAccessRTV)
+            if (flags & GfxAccess::RTV)
                 sync |= D3D12_BARRIER_SYNC_RENDER_TARGET;
-            if (flags & GfxAccessMaskDSV)
+            if (flags & GfxAccess::MaskDSV)
                 sync |= D3D12_BARRIER_SYNC_DEPTH_STENCIL;
-            if (flags & GfxAccessMaskVS)
+            if (flags & GfxAccess::MaskVS)
                 sync |= D3D12_BARRIER_SYNC_VERTEX_SHADING;
-            if (flags & GfxAccessMaskPS)
+            if (flags & GfxAccess::MaskPS)
                 sync |= D3D12_BARRIER_SYNC_PIXEL_SHADING;
-            if (flags & GfxAccessMaskCS)
+            if (flags & GfxAccess::MaskCS)
                 sync |= D3D12_BARRIER_SYNC_COMPUTE_SHADING;
-            if (flags & GfxAccessMaskCopy)
+            if (flags & GfxAccess::MaskCopy)
                 sync |= D3D12_BARRIER_SYNC_COPY;
-            if (flags & GfxAccessShadingRate)
+            if (flags & GfxAccess::ShadingRate)
                 sync |= D3D12_BARRIER_SYNC_PIXEL_SHADING;
-            if (flags & GfxAccessIndexBuffer)
+            if (flags & GfxAccess::IndexBuffer)
                 sync |= D3D12_BARRIER_SYNC_INDEX_INPUT;
-            if (flags & GfxAccessIndirectArgs)
+            if (flags & GfxAccess::IndirectArgs)
                 sync |= D3D12_BARRIER_SYNC_EXECUTE_INDIRECT;
-            if (flags & GfxAccessMaskAS)
+            if (flags & GfxAccess::MaskAS)
                 sync |= D3D12_BARRIER_SYNC_BUILD_RAYTRACING_ACCELERATION_STRUCTURE;
 
             return sync;
@@ -82,38 +86,38 @@ namespace ncore
 
         inline D3D12_BARRIER_ACCESS d3d12_barrier_access(GfxAccessFlags flags)
         {
-            if (flags & GfxAccessDiscard)
+            if (flags & GfxAccess::Discard)
             {
                 return D3D12_BARRIER_ACCESS_NO_ACCESS;
             }
 
             D3D12_BARRIER_ACCESS access = D3D12_BARRIER_ACCESS_COMMON;
 
-            if (flags & GfxAccessRTV)
+            if (flags & GfxAccess::RTV)
                 access |= D3D12_BARRIER_ACCESS_RENDER_TARGET;
-            if (flags & GfxAccessDSV)
+            if (flags & GfxAccess::DSV)
                 access |= D3D12_BARRIER_ACCESS_DEPTH_STENCIL_WRITE;
-            if (flags & GfxAccessDSVReadOnly)
+            if (flags & GfxAccess::DSVReadOnly)
                 access |= D3D12_BARRIER_ACCESS_DEPTH_STENCIL_READ;
-            if (flags & GfxAccessMaskSRV)
+            if (flags & GfxAccess::MaskSRV)
                 access |= D3D12_BARRIER_ACCESS_SHADER_RESOURCE;
-            if (flags & GfxAccessMaskUAV)
+            if (flags & GfxAccess::MaskUAV)
                 access |= D3D12_BARRIER_ACCESS_UNORDERED_ACCESS;
-            if (flags & GfxAccessClearUAV)
+            if (flags & GfxAccess::ClearUAV)
                 access |= D3D12_BARRIER_ACCESS_UNORDERED_ACCESS;
-            if (flags & GfxAccessCopyDst)
+            if (flags & GfxAccess::CopyDst)
                 access |= D3D12_BARRIER_ACCESS_COPY_DEST;
-            if (flags & GfxAccessCopySrc)
+            if (flags & GfxAccess::CopySrc)
                 access |= D3D12_BARRIER_ACCESS_COPY_SOURCE;
-            if (flags & GfxAccessShadingRate)
+            if (flags & GfxAccess::ShadingRate)
                 access |= D3D12_BARRIER_ACCESS_SHADING_RATE_SOURCE;
-            if (flags & GfxAccessIndexBuffer)
+            if (flags & GfxAccess::IndexBuffer)
                 access |= D3D12_BARRIER_ACCESS_INDEX_BUFFER;
-            if (flags & GfxAccessIndirectArgs)
+            if (flags & GfxAccess::IndirectArgs)
                 access |= D3D12_BARRIER_ACCESS_INDIRECT_ARGUMENT;
-            if (flags & GfxAccessASRead)
+            if (flags & GfxAccess::ASRead)
                 access |= D3D12_BARRIER_ACCESS_RAYTRACING_ACCELERATION_STRUCTURE_READ;
-            if (flags & GfxAccessASWrite)
+            if (flags & GfxAccess::ASWrite)
                 access |= D3D12_BARRIER_ACCESS_RAYTRACING_ACCELERATION_STRUCTURE_WRITE;
 
             return access;
@@ -121,27 +125,27 @@ namespace ncore
 
         inline D3D12_BARRIER_LAYOUT d3d12_barrier_layout(GfxAccessFlags flags)
         {
-            if (flags & GfxAccessDiscard)
+            if (flags & GfxAccess::Discard)
                 return D3D12_BARRIER_LAYOUT_UNDEFINED;
-            if (flags & GfxAccessPresent)
+            if (flags & GfxAccess::Present)
                 return D3D12_BARRIER_LAYOUT_PRESENT;
-            if (flags & GfxAccessRTV)
+            if (flags & GfxAccess::RTV)
                 return D3D12_BARRIER_LAYOUT_RENDER_TARGET;
-            if (flags & GfxAccessDSV)
+            if (flags & GfxAccess::DSV)
                 return D3D12_BARRIER_LAYOUT_DEPTH_STENCIL_WRITE;
-            if (flags & GfxAccessDSVReadOnly)
+            if (flags & GfxAccess::DSVReadOnly)
                 return D3D12_BARRIER_LAYOUT_DEPTH_STENCIL_READ;
-            if (flags & GfxAccessMaskSRV)
+            if (flags & GfxAccess::MaskSRV)
                 return D3D12_BARRIER_LAYOUT_SHADER_RESOURCE;
-            if (flags & GfxAccessMaskUAV)
+            if (flags & GfxAccess::MaskUAV)
                 return D3D12_BARRIER_LAYOUT_UNORDERED_ACCESS;
-            if (flags & GfxAccessClearUAV)
+            if (flags & GfxAccess::ClearUAV)
                 return D3D12_BARRIER_LAYOUT_UNORDERED_ACCESS;
-            if (flags & GfxAccessCopyDst)
+            if (flags & GfxAccess::CopyDst)
                 return D3D12_BARRIER_LAYOUT_COPY_DEST;
-            if (flags & GfxAccessCopySrc)
+            if (flags & GfxAccess::CopySrc)
                 return D3D12_BARRIER_LAYOUT_COPY_SOURCE;
-            if (flags & GfxAccessShadingRate)
+            if (flags & GfxAccess::ShadingRate)
                 return D3D12_BARRIER_LAYOUT_SHADING_RATE_SOURCE;
 
             ASSERT(false);
@@ -152,70 +156,70 @@ namespace ncore
         {
             switch (format)
             {
-                case GfxFormat::Unknown: return DXGI_FORMAT_UNKNOWN;
-                case GfxFormat::RGBA32F: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-                case GfxFormat::RGBA32UI: return DXGI_FORMAT_R32G32B32A32_UINT;
-                case GfxFormat::RGBA32SI: return DXGI_FORMAT_R32G32B32A32_SINT;
-                case GfxFormat::RGBA16F: return DXGI_FORMAT_R16G16B16A16_FLOAT;
-                case GfxFormat::RGBA16UI: return DXGI_FORMAT_R16G16B16A16_UINT;
-                case GfxFormat::RGBA16SI: return DXGI_FORMAT_R16G16B16A16_SINT;
-                case GfxFormat::RGBA16UNORM: return DXGI_FORMAT_R16G16B16A16_UNORM;
-                case GfxFormat::RGBA16SNORM: return DXGI_FORMAT_R16G16B16A16_SNORM;
-                case GfxFormat::RGBA8UI: return DXGI_FORMAT_R8G8B8A8_UINT;
-                case GfxFormat::RGBA8SI: return DXGI_FORMAT_R8G8B8A8_SINT;
-                case GfxFormat::RGBA8UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM;
-                case GfxFormat::RGBA8SNORM: return DXGI_FORMAT_R8G8B8A8_SNORM;
-                case GfxFormat::RGBA8SRGB: return uav ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-                case GfxFormat::BGRA8UNORM: return DXGI_FORMAT_B8G8R8A8_UNORM;
-                case GfxFormat::BGRA8SRGB: return uav ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-                case GfxFormat::RGB10A2UI: return DXGI_FORMAT_R10G10B10A2_UINT;
-                case GfxFormat::RGB10A2UNORM: return DXGI_FORMAT_R10G10B10A2_UNORM;
-                case GfxFormat::RGB32F: return DXGI_FORMAT_R32G32B32_FLOAT;
-                case GfxFormat::RGB32UI: return DXGI_FORMAT_R32G32B32_UINT;
-                case GfxFormat::RGB32SI: return DXGI_FORMAT_R32G32B32_SINT;
-                case GfxFormat::R11G11B10F: return DXGI_FORMAT_R11G11B10_FLOAT;
-                case GfxFormat::RGB9E5: return DXGI_FORMAT_R9G9B9E5_SHAREDEXP;
-                case GfxFormat::RG32F: return DXGI_FORMAT_R32G32_FLOAT;
-                case GfxFormat::RG32UI: return DXGI_FORMAT_R32G32_UINT;
-                case GfxFormat::RG32SI: return DXGI_FORMAT_R32G32_SINT;
-                case GfxFormat::RG16F: return DXGI_FORMAT_R16G16_FLOAT;
-                case GfxFormat::RG16UI: return DXGI_FORMAT_R16G16_UINT;
-                case GfxFormat::RG16SI: return DXGI_FORMAT_R16G16_SINT;
-                case GfxFormat::RG16UNORM: return DXGI_FORMAT_R16G16_UNORM;
-                case GfxFormat::RG16SNORM: return DXGI_FORMAT_R16G16_SNORM;
-                case GfxFormat::RG8UI: return DXGI_FORMAT_R8G8_UINT;
-                case GfxFormat::RG8SI: return DXGI_FORMAT_R8G8_SINT;
-                case GfxFormat::RG8UNORM: return DXGI_FORMAT_R8G8_UNORM;
-                case GfxFormat::RG8SNORM: return DXGI_FORMAT_R8G8_SNORM;
-                case GfxFormat::R32F: return DXGI_FORMAT_R32_FLOAT;
-                case GfxFormat::R32UI: return DXGI_FORMAT_R32_UINT;
-                case GfxFormat::R32SI: return DXGI_FORMAT_R32_SINT;
-                case GfxFormat::R16F: return DXGI_FORMAT_R16_FLOAT;
-                case GfxFormat::R16UI: return DXGI_FORMAT_R16_UINT;
-                case GfxFormat::R16SI: return DXGI_FORMAT_R16_SINT;
-                case GfxFormat::R16UNORM: return DXGI_FORMAT_R16_UNORM;
-                case GfxFormat::R16SNORM: return DXGI_FORMAT_R16_SNORM;
-                case GfxFormat::R8UI: return DXGI_FORMAT_R8_UINT;
-                case GfxFormat::R8SI: return DXGI_FORMAT_R8_SINT;
-                case GfxFormat::R8UNORM: return DXGI_FORMAT_R8_UNORM;
-                case GfxFormat::R8SNORM: return DXGI_FORMAT_R8_SNORM;
-                case GfxFormat::D32F: return depth_srv ? DXGI_FORMAT_R32_FLOAT : DXGI_FORMAT_D32_FLOAT;
-                case GfxFormat::D32FS8: return depth_srv ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-                case GfxFormat::D16: return depth_srv ? DXGI_FORMAT_R16_UNORM : DXGI_FORMAT_D16_UNORM;
-                case GfxFormat::BC1UNORM: return DXGI_FORMAT_BC1_UNORM;
-                case GfxFormat::BC1SRGB: return DXGI_FORMAT_BC1_UNORM_SRGB;
-                case GfxFormat::BC2UNORM: return DXGI_FORMAT_BC2_UNORM;
-                case GfxFormat::BC2SRGB: return DXGI_FORMAT_BC2_UNORM_SRGB;
-                case GfxFormat::BC3UNORM: return DXGI_FORMAT_BC3_UNORM;
-                case GfxFormat::BC3SRGB: return DXGI_FORMAT_BC3_UNORM_SRGB;
-                case GfxFormat::BC4UNORM: return DXGI_FORMAT_BC4_UNORM;
-                case GfxFormat::BC4SNORM: return DXGI_FORMAT_BC4_SNORM;
-                case GfxFormat::BC5UNORM: return DXGI_FORMAT_BC5_UNORM;
-                case GfxFormat::BC5SNORM: return DXGI_FORMAT_BC5_SNORM;
-                case GfxFormat::BC6U16F: return DXGI_FORMAT_BC6H_UF16;
-                case GfxFormat::BC6S16F: return DXGI_FORMAT_BC6H_SF16;
-                case GfxFormat::BC7UNORM: return DXGI_FORMAT_BC7_UNORM;
-                case GfxFormat::BC7SRGB: return DXGI_FORMAT_BC7_UNORM_SRGB;
+                case Gfx::Unknown: return DXGI_FORMAT_UNKNOWN;
+                case Gfx::RGBA32F: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+                case Gfx::RGBA32UI: return DXGI_FORMAT_R32G32B32A32_UINT;
+                case Gfx::RGBA32SI: return DXGI_FORMAT_R32G32B32A32_SINT;
+                case Gfx::RGBA16F: return DXGI_FORMAT_R16G16B16A16_FLOAT;
+                case Gfx::RGBA16UI: return DXGI_FORMAT_R16G16B16A16_UINT;
+                case Gfx::RGBA16SI: return DXGI_FORMAT_R16G16B16A16_SINT;
+                case Gfx::RGBA16UNORM: return DXGI_FORMAT_R16G16B16A16_UNORM;
+                case Gfx::RGBA16SNORM: return DXGI_FORMAT_R16G16B16A16_SNORM;
+                case Gfx::RGBA8UI: return DXGI_FORMAT_R8G8B8A8_UINT;
+                case Gfx::RGBA8SI: return DXGI_FORMAT_R8G8B8A8_SINT;
+                case Gfx::RGBA8UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM;
+                case Gfx::RGBA8SNORM: return DXGI_FORMAT_R8G8B8A8_SNORM;
+                case Gfx::RGBA8SRGB: return uav ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+                case Gfx::BGRA8UNORM: return DXGI_FORMAT_B8G8R8A8_UNORM;
+                case Gfx::BGRA8SRGB: return uav ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+                case Gfx::RGB10A2UI: return DXGI_FORMAT_R10G10B10A2_UINT;
+                case Gfx::RGB10A2UNORM: return DXGI_FORMAT_R10G10B10A2_UNORM;
+                case Gfx::RGB32F: return DXGI_FORMAT_R32G32B32_FLOAT;
+                case Gfx::RGB32UI: return DXGI_FORMAT_R32G32B32_UINT;
+                case Gfx::RGB32SI: return DXGI_FORMAT_R32G32B32_SINT;
+                case Gfx::R11G11B10F: return DXGI_FORMAT_R11G11B10_FLOAT;
+                case Gfx::RGB9E5: return DXGI_FORMAT_R9G9B9E5_SHAREDEXP;
+                case Gfx::RG32F: return DXGI_FORMAT_R32G32_FLOAT;
+                case Gfx::RG32UI: return DXGI_FORMAT_R32G32_UINT;
+                case Gfx::RG32SI: return DXGI_FORMAT_R32G32_SINT;
+                case Gfx::RG16F: return DXGI_FORMAT_R16G16_FLOAT;
+                case Gfx::RG16UI: return DXGI_FORMAT_R16G16_UINT;
+                case Gfx::RG16SI: return DXGI_FORMAT_R16G16_SINT;
+                case Gfx::RG16UNORM: return DXGI_FORMAT_R16G16_UNORM;
+                case Gfx::RG16SNORM: return DXGI_FORMAT_R16G16_SNORM;
+                case Gfx::RG8UI: return DXGI_FORMAT_R8G8_UINT;
+                case Gfx::RG8SI: return DXGI_FORMAT_R8G8_SINT;
+                case Gfx::RG8UNORM: return DXGI_FORMAT_R8G8_UNORM;
+                case Gfx::RG8SNORM: return DXGI_FORMAT_R8G8_SNORM;
+                case Gfx::R32F: return DXGI_FORMAT_R32_FLOAT;
+                case Gfx::R32UI: return DXGI_FORMAT_R32_UINT;
+                case Gfx::R32SI: return DXGI_FORMAT_R32_SINT;
+                case Gfx::R16F: return DXGI_FORMAT_R16_FLOAT;
+                case Gfx::R16UI: return DXGI_FORMAT_R16_UINT;
+                case Gfx::R16SI: return DXGI_FORMAT_R16_SINT;
+                case Gfx::R16UNORM: return DXGI_FORMAT_R16_UNORM;
+                case Gfx::R16SNORM: return DXGI_FORMAT_R16_SNORM;
+                case Gfx::R8UI: return DXGI_FORMAT_R8_UINT;
+                case Gfx::R8SI: return DXGI_FORMAT_R8_SINT;
+                case Gfx::R8UNORM: return DXGI_FORMAT_R8_UNORM;
+                case Gfx::R8SNORM: return DXGI_FORMAT_R8_SNORM;
+                case Gfx::D32F: return depth_srv ? DXGI_FORMAT_R32_FLOAT : DXGI_FORMAT_D32_FLOAT;
+                case Gfx::D32FS8: return depth_srv ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+                case Gfx::D16: return depth_srv ? DXGI_FORMAT_R16_UNORM : DXGI_FORMAT_D16_UNORM;
+                case Gfx::BC1UNORM: return DXGI_FORMAT_BC1_UNORM;
+                case Gfx::BC1SRGB: return DXGI_FORMAT_BC1_UNORM_SRGB;
+                case Gfx::BC2UNORM: return DXGI_FORMAT_BC2_UNORM;
+                case Gfx::BC2SRGB: return DXGI_FORMAT_BC2_UNORM_SRGB;
+                case Gfx::BC3UNORM: return DXGI_FORMAT_BC3_UNORM;
+                case Gfx::BC3SRGB: return DXGI_FORMAT_BC3_UNORM_SRGB;
+                case Gfx::BC4UNORM: return DXGI_FORMAT_BC4_UNORM;
+                case Gfx::BC4SNORM: return DXGI_FORMAT_BC4_SNORM;
+                case Gfx::BC5UNORM: return DXGI_FORMAT_BC5_UNORM;
+                case Gfx::BC5SNORM: return DXGI_FORMAT_BC5_SNORM;
+                case Gfx::BC6U16F: return DXGI_FORMAT_BC6H_UF16;
+                case Gfx::BC6S16F: return DXGI_FORMAT_BC6H_SF16;
+                case Gfx::BC7UNORM: return DXGI_FORMAT_BC7_UNORM;
+                case Gfx::BC7SRGB: return DXGI_FORMAT_BC7_UNORM_SRGB;
                 default: ASSERT(false); return DXGI_FORMAT_UNKNOWN;
             }
         }
@@ -224,9 +228,9 @@ namespace ncore
         {
             switch (loadOp)
             {
-                case GfxRenderPassLoadOp::Load: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE;
-                case GfxRenderPassLoadOp::Clear: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_CLEAR;
-                case GfxRenderPassLoadOp::DontCare: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_DISCARD;
+                case GfxRenderPass::LoadLoad: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE;
+                case GfxRenderPass::LoadClear: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_CLEAR;
+                case GfxRenderPass::LoadDontCare: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_DISCARD;
                 default: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE;
             }
         }
@@ -235,8 +239,8 @@ namespace ncore
         {
             switch (storeOp)
             {
-                case GfxRenderPassStoreOp::Store: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_PRESERVE;
-                case GfxRenderPassStoreOp::DontCare: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_DISCARD;
+                case GfxRenderPass::StoreStore: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_PRESERVE;
+                case GfxRenderPass::StoreDontCare: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_DISCARD;
                 default: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_PRESERVE;
             }
         }
@@ -476,22 +480,22 @@ namespace ncore
             resourceDesc.Format              = dxgi_format(desc.format);
             resourceDesc.SampleDesc.Count    = 1;
 
-            if (desc.alloc_type == GfxAllocationType::Sparse)
+            if (desc.alloc_type == GfxAllocation::Sparse)
             {
                 resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_UNDEFINED_SWIZZLE;
             }
 
-            if (desc.usage & GfxTextureUsageRenderTarget)
+            if (desc.usage & GfxTextureUsage::RenderTarget)
             {
                 resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
             }
 
-            if (desc.usage & GfxTextureUsageDepthStencil)
+            if (desc.usage & GfxTextureUsage::DepthStencil)
             {
                 resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
             }
 
-            if (desc.usage & GfxTextureUsageUnorderedAccess)
+            if (desc.usage & GfxTextureUsage::UnorderedAccess)
             {
                 resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
             }
