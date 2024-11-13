@@ -41,7 +41,8 @@ namespace ncore
                 return false;
             }
 
-            m_pFence->SetName(string_to_wstring(m_name).c_str());
+            // TODO : set name
+            //m_pFence->SetName(string_to_wstring(m_name).c_str());
 
             m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 

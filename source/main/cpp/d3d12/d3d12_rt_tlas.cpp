@@ -1,13 +1,14 @@
 #include "cgfx/d3d12/d3d12_rt_tlas.h"
 #include "cgfx/d3d12/d3d12_rt_blas.h"
 #include "cgfx/d3d12/d3d12_device.h"
+
 #include "d3d12ma/D3D12MemAlloc.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        D3D12RayTracingTLAS::D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracingTLASDesc& desc, const char* name)
+        D3D12RayTracingTLAS::D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracing::TLASDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -53,8 +54,9 @@ namespace ncore
             CD3DX12_RESOURCE_DESC instanceBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(m_nInstanceBufferSize);
             pAllocator->CreateResource(&allocationDesc, &instanceBufferDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, &m_pInstanceAllocation, IID_PPV_ARGS(&m_pInstanceBuffer));
 
-            m_pASBuffer->SetName(string_to_wstring(m_name).c_str());
-            m_pASAllocation->SetName(string_to_wstring(m_name).c_str());
+            // TODO : set name
+            //m_pASBuffer->SetName(string_to_wstring(m_name).c_str());
+            //m_pASAllocation->SetName(string_to_wstring(m_name).c_str());
 
             CD3DX12_RANGE readRange(0, 0);
             m_pInstanceBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pInstanceBufferCpuAddress));
@@ -62,7 +64,7 @@ namespace ncore
             return true;
         }
 
-        void D3D12RayTracingTLAS::GetBuildDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const GfxRayTracingInstance* instances, u32 instance_count)
+        void D3D12RayTracingTLAS::GetBuildDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const GfxRayTracing::Instance* instances, u32 instance_count)
         {
             ASSERT(instance_count <= m_desc.instance_count);
 
@@ -86,7 +88,7 @@ namespace ncore
                 instanceDescs[i].InstanceID                          = instances[i].instance_id;
                 instanceDescs[i].InstanceMask                        = instances[i].instance_mask;
                 instanceDescs[i].InstanceContributionToHitGroupIndex = 0;  // DXR 1.1 does't need it
-                instanceDescs[i].Flags                               = d3d12_rt_instance_flags(instances[i].flags);
+                instanceDescs[i].Flags                               = d3d12_rt_instance_flags(instances[i].instance_flags);
                 instanceDescs[i].AccelerationStructure               = ((D3D12RayTracingBLAS*)instances[i].blas)->GetGpuAddress();
             }
 

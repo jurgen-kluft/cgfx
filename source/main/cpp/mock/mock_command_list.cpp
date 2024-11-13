@@ -124,7 +124,7 @@ namespace ncore
 
         void MockCommandList::UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset) {}
 
-        void MockCommandList::BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracingInstance* instances, u32 instance_count) {}
+        void MockCommandList::BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count) {}
 
 #if MICROPROFILE_GPU_TIMERS
         MicroProfileThreadLogGpu* MockCommandList::GetProfileLog() const { return nullptr; }

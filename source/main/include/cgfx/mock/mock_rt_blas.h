@@ -7,13 +7,12 @@ namespace ncore
 {
     namespace ngfx
     {
-
         class MockDevice;
 
         class MockRayTracingBLAS : public IGfxRayTracingBLAS
         {
         public:
-            MockRayTracingBLAS(MockDevice* pDevice, const GfxRayTracingBLASDesc& desc, const char* name);
+            MockRayTracingBLAS(MockDevice* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name);
             ~MockRayTracingBLAS();
 
             bool Create();

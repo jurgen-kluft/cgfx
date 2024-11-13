@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockRayTracingTLAS::MockRayTracingTLAS(MockDevice* pDevice, const GfxRayTracingTLASDesc& desc, const char* name)
+        MockRayTracingTLAS::MockRayTracingTLAS(MockDevice* pDevice, const GfxRayTracing::TLASDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

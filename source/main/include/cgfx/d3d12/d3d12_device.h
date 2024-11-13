@@ -82,8 +82,8 @@ namespace ncore
             virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) override;
             virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name) override;
             virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name) override;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name) override;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name) override;
+            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name) override;
+            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name) override;
 
             virtual u32  GetAllocationSize(const GfxTextureDesc& desc) override;
             virtual bool DumpMemoryStats(const char* file) override;

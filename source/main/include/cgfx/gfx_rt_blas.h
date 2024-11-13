@@ -7,14 +7,13 @@ namespace ncore
 {
     namespace ngfx
     {
-
         class IGfxRayTracingBLAS : public IGfxResource
         {
         public:
-            const GfxRayTracingBLASDesc& GetDesc() const { return m_desc; }
+            const GfxRayTracing::BLASDesc& GetDesc() const { return m_desc; }
 
         protected:
-            GfxRayTracingBLASDesc m_desc;
+            GfxRayTracing::BLASDesc m_desc;
         };
 
     }  // namespace ngfx

@@ -748,65 +748,70 @@ namespace ncore
             Apple,
         };
 
-        enum GfxRayTracingASFlagBit
+        namespace GfxRayTracing
         {
-            GfxRayTracingASFlagAllowUpdate     = 1 << 0,
-            GfxRayTracingASFlagAllowCompaction = 1 << 1,
-            GfxRayTracingASFlagPreferFastTrace = 1 << 2,
-            GfxRayTracingASFlagPreferFastBuild = 1 << 3,
-            GfxRayTracingASFlagLowMemory       = 1 << 4,
-        };
+            namespace AccStructure
+            {
+                typedef u8 Flag;
+                enum 
+                {
+                    FlagAllowUpdate     = 1 << 0,
+                    FlagAllowCompaction = 1 << 1,
+                    FlagPreferFastTrace = 1 << 2,
+                    FlagPreferFastBuild = 1 << 3,
+                    FlagLowMemory       = 1 << 4,
+                };
+            }
+            using AccStructureFlag = AccStructure::Flag;
 
-        using GfxRayTracingASFlag = u32;
+            struct Geometry
+            {
+                IGfxBuffer* vertex_buffer;
+                u32         vertex_buffer_offset;
+                u32         vertex_count;
+                u32         vertex_stride;
+                GfxFormat   vertex_format;
 
-        enum GfxRayTracingInstanceFlagBit
-        {
-            GfxRayTracingInstanceFlagDisableCull   = 1 << 0,
-            GfxRayTracingInstanceFlagFrontFaceCCW  = 1 << 1,
-            GfxRayTracingInstanceFlagForceOpaque   = 1 << 2,
-            GfxRayTracingInstanceFlagForceNoOpaque = 1 << 3,
-        };
+                IGfxBuffer* index_buffer;
+                u32         index_buffer_offset;
+                u32         index_count;
+                GfxFormat   index_format;
 
-        using GfxRayTracingInstanceFlag = u32;
+                bool opaque;
+            };
 
-        struct GfxRayTracingGeometry
-        {
-            IGfxBuffer* vertex_buffer;
-            u32         vertex_buffer_offset;
-            u32         vertex_count;
-            u32         vertex_stride;
-            GfxFormat   vertex_format;
+            struct Instance
+            {
+                typedef u8 Flag;
+                enum
+                {
+                    DisableCull   = 1 << 0,
+                    FrontFaceCCW  = 1 << 1,
+                    ForceOpaque   = 1 << 2,
+                    ForceNoOpaque = 1 << 3,
+                };
 
-            IGfxBuffer* index_buffer;
-            u32         index_buffer_offset;
-            u32         index_count;
-            GfxFormat   index_format;
+                IGfxRayTracingBLAS*       blas;
+                float                     transform[12];  // object to world 3x4 matrix
+                u32                       instance_id;
+                u8                        instance_mask;
+                Flag                      instance_flags;
+            };
+            using InstanceFlag = Instance::Flag;
 
-            bool opaque;
-        };
+            struct BLASDesc
+            {
+                Geometry*        geometries;
+                u32              geometries_count;
+                AccStructureFlag flags;
+            };
 
-        struct GfxRayTracingInstance
-        {
-            IGfxRayTracingBLAS*       blas;
-            float                     transform[12];  // object to world 3x4 matrix
-            u32                       instance_id;
-            u8                        instance_mask;
-            GfxRayTracingInstanceFlag flags;
-        };
-
-        struct GfxRayTracingBLASDesc
-        {
-            GfxRayTracingGeometry* geometries;
-            u32                    geometries_count;
-            GfxRayTracingASFlag    flags;
-        };
-
-        struct GfxRayTracingTLASDesc
-        {
-            u32                 instance_count;
-            GfxRayTracingASFlag flags;
-        };
-
+            struct TLASDesc
+            {
+                u32              instance_count;
+                AccStructureFlag flags;
+            };
+        }  // namespace GfxRayTracing
     }  // namespace ngfx
 }  // namespace ncore
 

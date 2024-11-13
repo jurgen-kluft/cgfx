@@ -22,14 +22,14 @@ namespace ncore
         class D3D12RayTracingTLAS : public IGfxRayTracingTLAS
         {
         public:
-            D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracingTLASDesc& desc, const char* name);
+            D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracing::TLASDesc& desc, const char* name);
             ~D3D12RayTracingTLAS();
 
             virtual void*             GetHandle() const override { return m_pASBuffer; }
             D3D12_GPU_VIRTUAL_ADDRESS GetGpuAddress() const { return m_pASBuffer->GetGPUVirtualAddress(); }
 
             bool Create();
-            void GetBuildDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const GfxRayTracingInstance* instances, u32 instance_count);
+            void GetBuildDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const GfxRayTracing::Instance* instances, u32 instance_count);
 
         private:
             ID3D12Resource*      m_pASBuffer          = nullptr;

@@ -182,7 +182,7 @@ namespace ncore
             return sampler;
         }
 
-        IGfxRayTracingBLAS* MockDevice::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name)
+        IGfxRayTracingBLAS* MockDevice::CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name)
         {
             MockRayTracingBLAS* blas = new MockRayTracingBLAS(this, desc, name);
             if (!blas->Create())
@@ -193,7 +193,7 @@ namespace ncore
             return blas;
         }
 
-        IGfxRayTracingTLAS* MockDevice::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name)
+        IGfxRayTracingTLAS* MockDevice::CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name)
         {
             MockRayTracingTLAS* tlas = new MockRayTracingTLAS(this, desc, name);
             if (!tlas->Create())
@@ -215,9 +215,9 @@ namespace ncore
             {
                 for (u32 mip = 0; mip < desc.mip_levels; ++mip)
                 {
-                    u32 width  = math::max(desc.width >> mip, min_width);
-                    u32 height = math::max(desc.height >> mip, min_height);
-                    u32 depth  = math::max(desc.depth >> mip, 1u);
+                    u32 width  = math::g_max(desc.width >> mip, min_width);
+                    u32 height = math::g_max(desc.height >> mip, min_height);
+                    u32 depth  = math::g_max(desc.depth >> mip, 1u);
 
                     size += GetFormatRowPitch(desc.format, width) * height * depth;
                 }

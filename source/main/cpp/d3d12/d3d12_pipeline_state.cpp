@@ -1,7 +1,7 @@
 #include "cgfx/d3d12/d3d12_pipeline_state.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_shader.h"
-#include "utils/log.h"
+//#include "utils/log.h"
 
 namespace ncore
 {
@@ -12,7 +12,7 @@ namespace ncore
         {
             for (int i = 0; i < 8; ++i)
             {
-                if (desc.rt_format[i] != GfxFormat::Unknown)
+                if (desc.rt_format[i] != Gfx::Unknown)
                 {
                     return true;
                 }
@@ -68,7 +68,8 @@ namespace ncore
                 return false;
             }
 
-            pipelineState->SetName(string_to_wstring(m_name).c_str());
+            // TODO: set name
+            //pipelineState->SetName(string_to_wstring(m_name).c_str());
 
             if (m_pPipelineState)
             {
@@ -107,7 +108,8 @@ namespace ncore
                 return false;
             }
 
-            pipelineState->SetName(string_to_wstring(m_name).c_str());
+            // TODO set name
+            //pipelineState->SetName(string_to_wstring(m_name).c_str());
 
             if (m_pPipelineState)
             {
@@ -177,7 +179,8 @@ namespace ncore
                 return false;
             }
 
-            pipelineState->SetName(string_to_wstring(m_name).c_str());
+            // TODO set name
+            //pipelineState->SetName(string_to_wstring(m_name).c_str());
 
             if (m_pPipelineState)
             {

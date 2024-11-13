@@ -6,7 +6,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MockRayTracingBLAS::MockRayTracingBLAS(MockDevice* pDevice, const GfxRayTracingBLASDesc& desc, const char* name)
+        MockRayTracingBLAS::MockRayTracingBLAS(MockDevice* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

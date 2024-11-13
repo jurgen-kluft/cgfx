@@ -89,7 +89,7 @@ namespace ncore
 
             virtual void BuildRayTracingBLAS(IGfxRayTracingBLAS* blas)                                                             = 0;
             virtual void UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)       = 0;
-            virtual void BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracingInstance* instances, u32 instance_count) = 0;
+            virtual void BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count) = 0;
 
 #if MICROPROFILE_GPU_TIMERS
             virtual struct MicroProfileThreadLogGpu* GetProfileLog() const = 0;

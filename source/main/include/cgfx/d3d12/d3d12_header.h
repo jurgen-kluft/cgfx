@@ -530,31 +530,31 @@ namespace ncore
             return resourceDesc;
         }
 
-        inline D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_rt_as_flags(GfxRayTracingASFlag flags)
+        inline D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_rt_as_flags(GfxRayTracing::AccStructureFlag flags)
         {
             D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_NONE;
 
-            if (flags & GfxRayTracingASFlagAllowUpdate)
+            if (flags & GfxRayTracing::AccStructure::FlagAllowUpdate)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE;
             }
 
-            if (flags & GfxRayTracingASFlagAllowCompaction)
+            if (flags & GfxRayTracing::AccStructure::FlagAllowCompaction)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_COMPACTION;
             }
 
-            if (flags & GfxRayTracingASFlagPreferFastTrace)
+            if (flags & GfxRayTracing::AccStructure::FlagPreferFastTrace)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
             }
 
-            if (flags & GfxRayTracingASFlagPreferFastBuild)
+            if (flags & GfxRayTracing::AccStructure::FlagPreferFastBuild)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_BUILD;
             }
 
-            if (flags & GfxRayTracingASFlagLowMemory)
+            if (flags & GfxRayTracing::AccStructure::FlagLowMemory)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_MINIMIZE_MEMORY;
             }
@@ -562,26 +562,26 @@ namespace ncore
             return d3d12_flags;
         }
 
-        inline D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_rt_instance_flags(GfxRayTracingInstanceFlag flags)
+        inline D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_rt_instance_flags(GfxRayTracing::InstanceFlag flags)
         {
             D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
 
-            if (flags & GfxRayTracingInstanceFlagDisableCull)
+            if (flags & GfxRayTracing::Instance::DisableCull)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_TRIANGLE_CULL_DISABLE;
             }
 
-            if (flags & GfxRayTracingInstanceFlagFrontFaceCCW)
+            if (flags & GfxRayTracing::Instance::FrontFaceCCW)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_TRIANGLE_FRONT_COUNTERCLOCKWISE;
             }
 
-            if (flags & GfxRayTracingInstanceFlagForceOpaque)
+            if (flags & GfxRayTracing::Instance::ForceOpaque)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_FORCE_OPAQUE;
             }
 
-            if (flags & GfxRayTracingInstanceFlagForceNoOpaque)
+            if (flags & GfxRayTracing::Instance::ForceNoOpaque)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_FORCE_NON_OPAQUE;
             }

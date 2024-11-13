@@ -13,7 +13,9 @@
 #include "cd3d12/c_pix_runtime.h"
 #include "cd3d12/amd/c_ags.h"
 #include "cgfx/gfx.h"
+
 #include "cbase/c_debug.h"
+#include "ccore/c_math.h"
 
 namespace ncore
 {
@@ -105,7 +107,7 @@ namespace ncore
 
         void D3D12CommandList::Submit()
         {
-            for (size_t i = 0; i < m_pendingWaits.size(); ++i)
+            for (size_t i = 0; i < m_pendingWaits.size; ++i)
             {
                 m_pCommandQueue->Wait((ID3D12Fence*)m_pendingWaits[i].first->GetHandle(), m_pendingWaits[i].second);
             }
@@ -117,13 +119,13 @@ namespace ncore
                 m_pCommandQueue->ExecuteCommandLists(1, ppCommandLists);
             }
 
-            for (size_t i = 0; i < m_pendingSwapchain.size(); ++i)
+            for (size_t i = 0; i < m_pendingSwapchain.size; ++i)
             {
                 ((D3D12Swapchain*)m_pendingSwapchain[i])->Present();
             }
             m_pendingSwapchain.clear();
 
-            for (size_t i = 0; i < m_pendingSignals.size(); ++i)
+            for (size_t i = 0; i < m_pendingSignals.size; ++i)
             {
                 m_pCommandQueue->Signal((ID3D12Fence*)m_pendingSignals[i].first->GetHandle(), m_pendingSignals[i].second);
             }
@@ -135,7 +137,7 @@ namespace ncore
             m_commandCount = 0;
             m_pCurrentPSO  = nullptr;
 
-            if (m_queueType == GfxCommandQueue::Graphics || m_queueType == GfxCommandQueue::Compute)
+            if (m_queueType == GfxCommand::Graphics || m_queueType == GfxCommand::Compute)
             {
                 D3D12Device*          pDevice  = (D3D12Device*)m_pDevice;
                 ID3D12DescriptorHeap* heaps[2] = {pDevice->GetResourceDescriptorHeap(), pDevice->GetSamplerDescriptorHeap()};
@@ -144,7 +146,7 @@ namespace ncore
                 ID3D12RootSignature* pRootSignature = pDevice->GetRootSignature();
                 m_pCommandList->SetComputeRootSignature(pRootSignature);
 
-                if (m_queueType == GfxCommandQueue::Graphics)
+                if (m_queueType == GfxCommand::Graphics)
                 {
                     m_pCommandList->SetGraphicsRootSignature(pRootSignature);
                 }
@@ -175,8 +177,8 @@ namespace ncore
 
         void D3D12CommandList::BeginEvent(const char* event_name)
         {
-            pix::BeginEvent(m_pCommandList, event_name.c_str());
-            ags::BeginEvent(m_pCommandList, event_name.c_str());
+            pix::BeginEvent(m_pCommandList, event_name);
+            ags::BeginEvent(m_pCommandList, event_name);
         }
 
         void D3D12CommandList::EndEvent()
@@ -193,9 +195,9 @@ namespace ncore
 
             u32 min_width  = GetFormatBlockWidth(desc.format);
             u32 min_height = GetFormatBlockHeight(desc.format);
-            u32 w          = math::max(desc.width >> mip_level, min_width);
-            u32 h          = math::max(desc.height >> mip_level, min_height);
-            u32 d          = math::max(desc.depth >> mip_level, 1u);
+            u32 w          = math::g_max(desc.width >> mip_level, min_width);
+            u32 h          = math::g_max(desc.height >> mip_level, min_height);
+            u32 d          = math::g_max(desc.depth >> mip_level, 1u);
 
             D3D12_TEXTURE_COPY_LOCATION dst = {};
             dst.pResource                   = (ID3D12Resource*)dst_texture->GetHandle();
@@ -224,9 +226,9 @@ namespace ncore
 
             u32 min_width  = GetFormatBlockWidth(desc.format);
             u32 min_height = GetFormatBlockHeight(desc.format);
-            u32 w          = math::max(desc.width >> mip_level, min_width);
-            u32 h          = math::max(desc.height >> mip_level, min_height);
-            u32 d          = math::max(desc.depth >> mip_level, 1u);
+            u32 w          = math::g_max((u32)(desc.width >> mip_level), min_width);
+            u32 h          = math::g_max((u32)(desc.height >> mip_level), min_height);
+            u32 d          = math::g_max((u32)(desc.depth >> mip_level), 1u);
 
             D3D12_TEXTURE_COPY_LOCATION dst        = {};
             dst.pResource                          = (ID3D12Resource*)dst_buffer->GetHandle();
@@ -371,7 +373,7 @@ namespace ncore
             barrier.pResource             = (ID3D12Resource*)texture->GetHandle();
             barrier.Subresources          = CD3DX12_BARRIER_SUBRESOURCE_RANGE(sub_resource);
 
-            if (access_before & GfxAccessDiscard)
+            if (access_before & GfxAccess::Discard)
             {
                 barrier.Flags = D3D12_TEXTURE_BARRIER_FLAG_DISCARD;
             }
@@ -562,7 +564,7 @@ namespace ncore
 
         void D3D12CommandList::SetIndexBuffer(IGfxBuffer* buffer, u32 offset, GfxFormat format)
         {
-            ASSERT(format == GfxFormat::R16UI || format == GfxFormat::R32UI);
+            ASSERT(format == Gfx::R16UI || format == Gfx::R32UI);
 
             D3D12_INDEX_BUFFER_VIEW ibv;
             ibv.BufferLocation = buffer->GetGpuAddress() + offset;
@@ -726,7 +728,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracingInstance* instances, u32 instance_count)
+        void D3D12CommandList::BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count)
         {
             FlushBarriers();
 

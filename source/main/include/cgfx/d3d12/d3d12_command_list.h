@@ -80,7 +80,7 @@ namespace ncore
 
             virtual void BuildRayTracingBLAS(IGfxRayTracingBLAS* blas) override;
             virtual void UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset) override;
-            virtual void BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracingInstance* instances, u32 instance_count) override;
+            virtual void BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count) override;
 
 #if MICROPROFILE_GPU_TIMERS
             virtual struct MicroProfileThreadLogGpu* GetProfileLog() const override;

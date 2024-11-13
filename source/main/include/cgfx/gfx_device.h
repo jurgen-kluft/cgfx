@@ -48,8 +48,8 @@ namespace ncore
             virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) = 0;
             virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)       = 0;
             virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name)                                                 = 0;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name)                                   = 0;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name)                                   = 0;
+            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name)                                         = 0;
+            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name)                                         = 0;
 
             virtual u32  GetAllocationSize(const GfxTextureDesc& desc) = 0;
             virtual bool DumpMemoryStats(const char* file)    = 0;

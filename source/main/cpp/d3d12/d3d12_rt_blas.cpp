@@ -1,13 +1,15 @@
 #include "cgfx/d3d12/d3d12_rt_blas.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_buffer.h"
+#include "ccore/c_math.h"
+
 #include "d3d12ma/D3D12MemAlloc.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        D3D12RayTracingBLAS::D3D12RayTracingBLAS(D3D12Device* pDevice, const GfxRayTracingBLASDesc& desc, const char* name)
+        D3D12RayTracingBLAS::D3D12RayTracingBLAS(D3D12Device* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -25,11 +27,11 @@ namespace ncore
 
         bool D3D12RayTracingBLAS::Create()
         {
-            m_geometries.reserve(m_desc.geometries.size());
+            m_geometries.reserve(m_desc.geometries.size);
 
-            for (size_t i = 0; i < m_desc.geometries.size(); ++i)
+            for (size_t i = 0; i < m_desc.geometries.size; ++i)
             {
-                const GfxRayTracingGeometry& geometry = m_desc.geometries[i];
+                const GfxRayTracing::Geometry& geometry = m_desc.geometries[i];
 
                 D3D12_RAYTRACING_GEOMETRY_DESC d3d12_geometry       = {};
                 d3d12_geometry.Type                                 = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;  // todo : support AABB
@@ -50,9 +52,9 @@ namespace ncore
             D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS buildInput;
             buildInput.Type           = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL;
             buildInput.Flags          = d3d12_rt_as_flags(m_desc.flags);
-            buildInput.NumDescs       = (UINT)m_geometries.size();
+            buildInput.NumDescs       = (UINT)m_geometries.size;
             buildInput.DescsLayout    = D3D12_ELEMENTS_LAYOUT_ARRAY;
-            buildInput.pGeometryDescs = m_geometries.data();
+            buildInput.pGeometryDescs = m_geometries.data;
 
             D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO info = {};
             device->GetRaytracingAccelerationStructurePrebuildInfo(&buildInput, &info);
@@ -67,8 +69,9 @@ namespace ncore
             pAllocator->CreateResource(&allocationDesc, &asBufferDesc, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, nullptr, &m_pASAllocation, IID_PPV_ARGS(&m_pASBuffer));
             pAllocator->CreateResource(&allocationDesc, &scratchBufferDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, &m_pScratchAllocation, IID_PPV_ARGS(&m_pScratchBuffer));
 
-            m_pASBuffer->SetName(string_to_wstring(m_name).c_str());
-            m_pASAllocation->SetName(string_to_wstring(m_name).c_str());
+            //TODO : set name
+            //m_pASBuffer->SetName(string_to_wstring(m_name).c_str());
+            //m_pASAllocation->SetName(string_to_wstring(m_name).c_str());
 
             m_buildDesc.Inputs                           = buildInput;
             m_buildDesc.DestAccelerationStructureData    = m_pASBuffer->GetGPUVirtualAddress();
@@ -80,10 +83,10 @@ namespace ncore
 
         void D3D12RayTracingBLAS::GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)
         {
-            ASSERT(m_desc.flags & GfxRayTracingASFlagAllowUpdate);
-            ASSERT(m_geometries.size() == 1);  // todo : suppport more than 1
+            ASSERT(m_desc.flags & GfxRayTracing::AccStructure::FlagAllowUpdate);
+            ASSERT(m_geometries.size == 1);  // todo : suppport more than 1
 
-            geometry                                     = m_geometries[0];
+            geometry                                     = m_geometries.data[0];
             geometry.Triangles.VertexBuffer.StartAddress = vertex_buffer->GetGpuAddress() + vertex_buffer_offset;
 
             D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS updateInputs;

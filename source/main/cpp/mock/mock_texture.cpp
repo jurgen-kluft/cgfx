@@ -26,7 +26,7 @@ namespace ncore
         u32 MockTexture::GetRowPitch(u32 mip_level) const
         {
             u32 min_width = GetFormatBlockWidth(m_desc.format);
-            u32 width     = math::max(m_desc.width >> mip_level, min_width);
+            u32 width     = math::g_max(m_desc.width >> mip_level, min_width);
 
             return GetFormatRowPitch(m_desc.format, width) * GetFormatBlockHeight(m_desc.format);
         }
