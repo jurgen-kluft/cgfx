@@ -1,8 +1,8 @@
 # Resources
 
-## IGfxDevice
+## device_t
 
-There is only one specific device, depending on the OS you are running on. For example, on Windows, there is a `D3D12Device` class that is derived from `IGfxDevice`. 
+There is only one specific device, depending on the OS you are running on. For example, on Windows, there is a `D3D12Device` class that is derived from `device_t`. 
 Currently you can have multiple devices, but only one is active at a time, we should change this to only have one device at compile time.
 
 
@@ -21,7 +21,7 @@ Is a GfxResource, and is used as a base class in the back-ends.
 
 Properties:
 
-- GfxBufferDesc
+- buffer_desc_t
 
 ## GfxCommandList
 
@@ -42,7 +42,7 @@ Is a base class and has a LOT of functions, and is used as a base class in the b
 
 Properties:
 
-- GfxDeviceDesc desc
+- device_desc_t desc
 - GfxVendor     vendor
 - u64           frameID
 
@@ -56,7 +56,7 @@ Is a GfxResource, and is used as a base class in the back-ends.
 
 Properties:
 
-- GfxHeapDesc
+- heap_desc_t
 
 ## GfxPipelineState
 
@@ -86,7 +86,7 @@ Properties:
 
 Is a GfxResource, and is used as a base class in the back-ends.
 
-- GfxShaderDesc desc
+- shader_desc_t desc
 - u64           hash
 
 ## GfxSwapChain
@@ -95,7 +95,7 @@ Is a GfxResource, and is used as a base class in the back-ends.
 
 Properties:
 
-- GfxSwapChainDesc
+- swapchain_desc_t
 
 ## GfxTexture
 
@@ -103,12 +103,12 @@ Is a GfxResource, and is used as a base class in the back-ends.
 
 Properties:
 
-- GfxTextureDesc
+- texture_desc_t
 
 
-## IGfxDescriptor
+## descriptor_t
 
-This is used in the back-ends as a base class. For example, in DX12, there is a class `D3D12ShaderResourceView` that is derived from `IGfxDescriptor`. 
+This is used in the back-ends as a base class. For example, in DX12, there is a class `D3D12ShaderResourceView` that is derived from `descriptor_t`. 
 This is used to create a shader resource view.
 
 There are only 4 type of descriptors:

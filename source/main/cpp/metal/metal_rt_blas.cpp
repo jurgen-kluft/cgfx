@@ -81,7 +81,7 @@ namespace ncore
             return true;
         }
 
-        void MetalRayTracingBLAS::UpdateVertexBuffer(IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)
+        void MetalRayTracingBLAS::UpdateVertexBuffer(buffer_t* vertex_buffer, u32 vertex_buffer_offset)
         {
             ASSERT(m_desc.flags & GfxRayTracingASFlagAllowUpdate);
             ASSERT(m_geometries_count == 1);  // todo : suppport more than 1

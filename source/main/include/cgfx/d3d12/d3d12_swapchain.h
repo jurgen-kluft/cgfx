@@ -14,15 +14,15 @@ namespace ncore
     {
         class D3D12Device;
 
-        class D3D12Swapchain : public IGfxSwapchain
+        class D3D12Swapchain : public swapchain_t
         {
         public:
-            D3D12Swapchain(D3D12Device* pDevice, const GfxSwapchainDesc& desc, const char* name);
+            D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name);
             ~D3D12Swapchain();
 
             virtual void*        GetHandle() const override { return m_pSwapChain; }
             virtual void         AcquireNextBackBuffer() override;
-            virtual IGfxTexture* GetBackBuffer() const override;
+            virtual texture_t* GetBackBuffer() const override;
             virtual bool         Resize(u32 width, u32 height) override;
             virtual void         SetVSyncEnabled(bool value) override { m_bEnableVsync = value; }
 
@@ -47,7 +47,7 @@ namespace ncore
             bool                        m_bSupportTearing    = false;
             bool                        m_bWindowMode        = true;
             u32                         m_nCurrentBackBuffer = 0;
-            vector_t<IGfxTexture*> m_backBuffers;
+            vector_t<texture_t*> m_backBuffers;
         };
     }  // namespace ngfx
 }  // namespace ncore

@@ -5,207 +5,218 @@
     #pragma once
 #endif
 
-#include "cgfx/d3d12/d3d12_header.h"
+//#include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_device.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        namespace D3D12MA
+        namespace nd3d12
         {
-            class Allocator;
-            class Allocation;
-        }  // namespace D3D12MA
+            bool                    Create(device_t* device);
+            void                    Destroy(device_t* device);
+            void*                   GetHandle(device_t* device);
+            void                    BeginFrame(device_t* device);
+            void                    EndFrame(device_t* device);
 
-        class D3D12DescriptorAllocator
-        {
-        public:
-            D3D12DescriptorAllocator(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE type, bool shader_visible, u32 descriptor_count, const char* name);
-            ~D3D12DescriptorAllocator();
+            bool                    DumpMemoryStats(device_t* device, const char* file);
+        }
 
-            D3D12Descriptor Allocate();
-            void            Free(const D3D12Descriptor& descriptor);
+//         namespace D3D12MA
+//         {
+//             class Allocator;
+//             class Allocation;
+//         }  // namespace D3D12MA
 
-            ID3D12DescriptorHeap* GetHeap() const { return m_pHeap; }
-            D3D12Descriptor       GetDescriptor(u32 index) const;
+//         class D3D12DescriptorAllocator
+//         {
+//         public:
+//             D3D12DescriptorAllocator(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE type, bool shader_visible, u32 descriptor_count, const char* name);
+//             ~D3D12DescriptorAllocator();
 
-        private:
-            ID3D12DescriptorHeap* m_pHeap           = nullptr;
-            u32                   m_descriptorSize  = 0;
-            u32                   m_descirptorCount = 0;
-            u32                   m_allocatedCount  = 0;
-            bool                  m_bShaderVisible  = false;
+//             D3D12Descriptor Allocate();
+//             void            Free(const D3D12Descriptor& descriptor);
 
-            u32              m_freeDescriptorSize;
-            u32              m_freeDescriptorMax;
-            D3D12Descriptor* m_freeDescriptors;
-        };
+//             ID3D12DescriptorHeap* GetHeap() const { return m_pHeap; }
+//             D3D12Descriptor       GetDescriptor(u32 index) const;
 
-        class D3D12Device;
+//         private:
+//             ID3D12DescriptorHeap* m_pHeap           = nullptr;
+//             u32                   m_descriptorSize  = 0;
+//             u32                   m_descirptorCount = 0;
+//             u32                   m_allocatedCount  = 0;
+//             bool                  m_bShaderVisible  = false;
 
-        class D3D12ConstantBufferAllocator
-        {
-        public:
-            D3D12ConstantBufferAllocator(D3D12Device* device, u32 buffer_size, const char* name);
+//             u32              m_freeDescriptorSize;
+//             u32              m_freeDescriptorMax;
+//             D3D12Descriptor* m_freeDescriptors;
+//         };
 
-            void Allocate(u32 size, void** cpu_address, u64* gpu_address);
-            void Reset();
+//         class D3D12Device;
 
-        private:
-            IGfxBuffer* m_pBuffer       = nullptr;
-            u32                           m_allocatedSize = 0;
-        };
+//         class D3D12ConstantBufferAllocator
+//         {
+//         public:
+//             D3D12ConstantBufferAllocator(D3D12Device* device, u32 buffer_size, const char* name);
 
-        class D3D12Device : public IGfxDevice
-        {
-        public:
-            D3D12Device(const GfxDeviceDesc& desc);
-            ~D3D12Device();
+//             void Allocate(u32 size, void** cpu_address, u64* gpu_address);
+//             void Reset();
 
-            virtual bool  Create() override;
-            virtual void* GetHandle() const override { return m_pDevice; }
-            virtual void  BeginFrame() override;
-            virtual void  EndFrame() override;
+//         private:
+//             buffer_t* m_pBuffer       = nullptr;
+//             u32                           m_allocatedSize = 0;
+//         };
 
-            virtual IGfxSwapchain*      CreateSwapchain(const GfxSwapchainDesc& desc, const char* name) override;
-            virtual IGfxCommandList*    CreateCommandList(GfxCommandQueue queue_type, const char* name) override;
-            virtual IGfxFence*          CreateFence(const char* name) override;
-            virtual IGfxHeap*           CreateHeap(const GfxHeapDesc& desc, const char* name) override;
-            virtual IGfxBuffer*         CreateBuffer(const GfxBufferDesc& desc, const char* name) override;
-            virtual IGfxTexture*        CreateTexture(const GfxTextureDesc& desc, const char* name) override;
-            virtual IGfxShader*         CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name) override;
-            virtual IGfxPipelineState*  CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name) override;
-            virtual IGfxPipelineState*  CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name) override;
-            virtual IGfxPipelineState*  CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name) override;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name) override;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name) override;
+//         class D3D12Device : public device_t
+//         {
+//         public:
+//             D3D12Device(const device_desc_t& desc);
+//             ~D3D12Device();
 
-            virtual u32  GetAllocationSize(const GfxTextureDesc& desc) override;
-            virtual bool DumpMemoryStats(const char* file) override;
+//             virtual bool  Create() override;
+//             virtual void* GetHandle() const override { return m_pDevice; }
+//             virtual void  BeginFrame() override;
+//             virtual void  EndFrame() override;
 
-            IDXGIFactory5*          GetDxgiFactory() const { return m_pDxgiFactory; }
-            ID3D12CommandQueue*     GetGraphicsQueue() const { return m_pGraphicsQueue; }
-            ID3D12CommandQueue*     GetComputeQueue() const { return m_pComputeQueue; }
-            ID3D12CommandQueue*     GetCopyQueue() const { return m_pCopyQueue; }
-            D3D12MA::Allocator*     GetResourceAllocator() const { return m_pResourceAllocator; }
-            ID3D12DescriptorHeap*   GetResourceDescriptorHeap() const { return m_pResDescriptorAllocator->GetHeap(); }
-            ID3D12DescriptorHeap*   GetSamplerDescriptorHeap() const { return m_pSamplerAllocator->GetHeap(); }
-            ID3D12RootSignature*    GetRootSignature() const { return m_pRootSignature; }
-            ID3D12CommandSignature* GetDrawSignature() const { return m_pDrawSignature; }
-            ID3D12CommandSignature* GetDrawIndexedSignature() const { return m_pDrawIndexedSignature; }
-            ID3D12CommandSignature* GetDispatchSignature() const { return m_pDispatchSignature; }
-            ID3D12CommandSignature* GetDispatchMeshSignature() const { return m_pDispatchMeshSignature; }
-            ID3D12CommandSignature* GetMultiDrawSignature() const { return m_pMultiDrawSignature; }
-            ID3D12CommandSignature* GetMultiDrawIndexedSignature() const { return m_pMultiDrawIndexedSignature; }
-            ID3D12CommandSignature* GetMultiDispatchSignature() const { return m_pMultiDispatchSignature; }
-            ID3D12CommandSignature* GetMultiDispatchMeshSignature() const { return m_pMultiDispatchMeshSignature; }
+//             virtual swapchain_t*      CreateSwapchain(const swapchain_desc_t& desc, const char* name) override;
+//             virtual command_list_t*    CreateCommandList(GfxCommandQueue queue_type, const char* name) override;
+//             virtual fence_t*          CreateFence(const char* name) override;
+//             virtual heap_t*           CreateHeap(const heap_desc_t& desc, const char* name) override;
+//             virtual buffer_t*         CreateBuffer(const buffer_desc_t& desc, const char* name) override;
+//             virtual texture_t*        CreateTexture(const texture_desc_t& desc, const char* name) override;
+//             virtual shader_t*         CreateShader(const shader_desc_t& desc, byte* data_ptr, u32 data_len, const char* name) override;
+//             virtual pipeline_state_t*  CreateGraphicsPipelineState(const graphics_pipeline_desc_t& desc, const char* name) override;
+//             virtual pipeline_state_t*  CreateMeshShadingPipelineState(const mesh_shading_pipeline_desc_t& desc, const char* name) override;
+//             virtual pipeline_state_t*  CreateComputePipelineState(const compute_pipeline_desc_t& desc, const char* name) override;
+//             virtual descriptor_t*     CreateShaderResourceView(resource_t* resource, const srv_desc_t& desc, const char* name) override;
+//             virtual descriptor_t*     CreateUnorderedAccessView(resource_t* resource, const uav_desc_t& desc, const char* name) override;
+//             virtual descriptor_t*     CreateConstantBufferView(buffer_t* buffer, const cbv_desc_t& desc, const char* name) override;
+//             virtual descriptor_t*     CreateSampler(const sampler_desc_t& desc, const char* name) override;
+//             virtual blas_t* CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name) override;
+//             virtual tlas_t* CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name) override;
 
-            D3D12_GPU_VIRTUAL_ADDRESS AllocateConstantBuffer(const void* data, size_t data_size);
+//             virtual u32  GetAllocationSize(const texture_desc_t& desc) override;
+//             virtual bool DumpMemoryStats(const char* file) override;
 
-            void FlushDeferredDeletions();
-            void Delete(IUnknown* object);
-            void Delete(D3D12MA::Allocation* allocation);
+//             IDXGIFactory5*          GetDxgiFactory() const { return m_pDxgiFactory; }
+//             ID3D12CommandQueue*     GetGraphicsQueue() const { return m_pGraphicsQueue; }
+//             ID3D12CommandQueue*     GetComputeQueue() const { return m_pComputeQueue; }
+//             ID3D12CommandQueue*     GetCopyQueue() const { return m_pCopyQueue; }
+//             D3D12MA::Allocator*     GetResourceAllocator() const { return m_pResourceAllocator; }
+//             ID3D12DescriptorHeap*   GetResourceDescriptorHeap() const { return m_pResDescriptorAllocator->GetHeap(); }
+//             ID3D12DescriptorHeap*   GetSamplerDescriptorHeap() const { return m_pSamplerAllocator->GetHeap(); }
+//             ID3D12RootSignature*    GetRootSignature() const { return m_pRootSignature; }
+//             ID3D12CommandSignature* GetDrawSignature() const { return m_pDrawSignature; }
+//             ID3D12CommandSignature* GetDrawIndexedSignature() const { return m_pDrawIndexedSignature; }
+//             ID3D12CommandSignature* GetDispatchSignature() const { return m_pDispatchSignature; }
+//             ID3D12CommandSignature* GetDispatchMeshSignature() const { return m_pDispatchMeshSignature; }
+//             ID3D12CommandSignature* GetMultiDrawSignature() const { return m_pMultiDrawSignature; }
+//             ID3D12CommandSignature* GetMultiDrawIndexedSignature() const { return m_pMultiDrawIndexedSignature; }
+//             ID3D12CommandSignature* GetMultiDispatchSignature() const { return m_pMultiDispatchSignature; }
+//             ID3D12CommandSignature* GetMultiDispatchMeshSignature() const { return m_pMultiDispatchMeshSignature; }
 
-            D3D12Descriptor AllocateRTV();
-            D3D12Descriptor AllocateDSV();
-            D3D12Descriptor AllocateResourceDescriptor();
-            D3D12Descriptor AllocateSampler();
-            D3D12Descriptor AllocateNonShaderVisibleUAV();
-            void            DeleteRTV(const D3D12Descriptor& descriptor);
-            void            DeleteDSV(const D3D12Descriptor& descriptor);
-            void            DeleteResourceDescriptor(const D3D12Descriptor& descriptor);
-            void            DeleteSampler(const D3D12Descriptor& descriptor);
-            void            DeleteNonShaderVisibleUAV(const D3D12Descriptor& descriptor);
+//             D3D12_GPU_VIRTUAL_ADDRESS AllocateConstantBuffer(const void* data, size_t data_size);
 
-#if MICROPROFILE_GPU_TIMERS_D3D12
-            int GetProfileGraphicsQueue() const { return m_nProfileGraphicsQueue; }
-            int GetProfileComputeQueue() const { return m_nProfileComputeQueue; }
-            int GetProfileCopyQueue() const { return m_nProfileCopyQueue; }
-#endif
+//             void FlushDeferredDeletions();
+//             void Delete(IUnknown* object);
+//             void Delete(D3D12MA::Allocation* allocation);
 
-            bool IsSteamDeck() const { return m_bSteamDeck; }
+//             D3D12Descriptor AllocateRTV();
+//             D3D12Descriptor AllocateDSV();
+//             D3D12Descriptor AllocateResourceDescriptor();
+//             D3D12Descriptor AllocateSampler();
+//             D3D12Descriptor AllocateNonShaderVisibleUAV();
+//             void            DeleteRTV(const D3D12Descriptor& descriptor);
+//             void            DeleteDSV(const D3D12Descriptor& descriptor);
+//             void            DeleteResourceDescriptor(const D3D12Descriptor& descriptor);
+//             void            DeleteSampler(const D3D12Descriptor& descriptor);
+//             void            DeleteNonShaderVisibleUAV(const D3D12Descriptor& descriptor);
 
-        private:
-            void DoDeferredDeletion(bool force_delete = false);
-            void CreateRootSignature();
+// #if MICROPROFILE_GPU_TIMERS_D3D12
+//             int GetProfileGraphicsQueue() const { return m_nProfileGraphicsQueue; }
+//             int GetProfileComputeQueue() const { return m_nProfileComputeQueue; }
+//             int GetProfileCopyQueue() const { return m_nProfileCopyQueue; }
+// #endif
 
-            void CreateIndirectCommandSignatures();
+//             bool IsSteamDeck() const { return m_bSteamDeck; }
 
-        private:
-            CD3DX12FeatureSupport m_featureSupport;
+//         private:
+//             void DoDeferredDeletion(bool force_delete = false);
+//             void CreateRootSignature();
 
-            IDXGIFactory6* m_pDxgiFactory = nullptr;
-            IDXGIAdapter1* m_pDxgiAdapter = nullptr;
+//             void CreateIndirectCommandSignatures();
 
-            ID3D12Device10*      m_pDevice        = nullptr;
-            ID3D12CommandQueue*  m_pGraphicsQueue = nullptr;
-            ID3D12CommandQueue*  m_pComputeQueue  = nullptr;
-            ID3D12CommandQueue*  m_pCopyQueue     = nullptr;
-            ID3D12RootSignature* m_pRootSignature = nullptr;
+//         private:
+//             CD3DX12FeatureSupport m_featureSupport;
 
-            ID3D12CommandSignature* m_pDrawSignature              = nullptr;
-            ID3D12CommandSignature* m_pDrawIndexedSignature       = nullptr;
-            ID3D12CommandSignature* m_pDispatchSignature          = nullptr;
-            ID3D12CommandSignature* m_pDispatchMeshSignature      = nullptr;
-            ID3D12CommandSignature* m_pMultiDrawSignature         = nullptr;
-            ID3D12CommandSignature* m_pMultiDrawIndexedSignature  = nullptr;
-            ID3D12CommandSignature* m_pMultiDispatchSignature     = nullptr;
-            ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
+//             IDXGIFactory6* m_pDxgiFactory = nullptr;
+//             IDXGIAdapter1* m_pDxgiAdapter = nullptr;
 
-            D3D12MA::Allocator*                             m_pResourceAllocator = nullptr;
-            D3D12ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
-            D3D12DescriptorAllocator*     m_pRTVAllocator;
-            D3D12DescriptorAllocator*     m_pDSVAllocator;
-            D3D12DescriptorAllocator*     m_pResDescriptorAllocator;
-            D3D12DescriptorAllocator*     m_pSamplerAllocator;
-            D3D12DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
+//             ID3D12Device10*      m_pDevice        = nullptr;
+//             ID3D12CommandQueue*  m_pGraphicsQueue = nullptr;
+//             ID3D12CommandQueue*  m_pComputeQueue  = nullptr;
+//             ID3D12CommandQueue*  m_pCopyQueue     = nullptr;
+//             ID3D12RootSignature* m_pRootSignature = nullptr;
 
-            template<typename T>
-            struct queue_t
-            {
-                u32 m_queueSize;
-                u32 m_queueMax;
-                T*  m_queue;
-            };
+//             ID3D12CommandSignature* m_pDrawSignature              = nullptr;
+//             ID3D12CommandSignature* m_pDrawIndexedSignature       = nullptr;
+//             ID3D12CommandSignature* m_pDispatchSignature          = nullptr;
+//             ID3D12CommandSignature* m_pDispatchMeshSignature      = nullptr;
+//             ID3D12CommandSignature* m_pMultiDrawSignature         = nullptr;
+//             ID3D12CommandSignature* m_pMultiDrawIndexedSignature  = nullptr;
+//             ID3D12CommandSignature* m_pMultiDispatchSignature     = nullptr;
+//             ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
 
-            struct ObjectDeletion
-            {
-                IUnknown* object;
-                u64       frame;
-            };
-            queue_t<ObjectDeletion> m_deletionQueue;
+//             D3D12MA::Allocator*                             m_pResourceAllocator = nullptr;
+//             D3D12ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+//             D3D12DescriptorAllocator*     m_pRTVAllocator;
+//             D3D12DescriptorAllocator*     m_pDSVAllocator;
+//             D3D12DescriptorAllocator*     m_pResDescriptorAllocator;
+//             D3D12DescriptorAllocator*     m_pSamplerAllocator;
+//             D3D12DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
 
-            struct AllocationDeletion
-            {
-                D3D12MA::Allocation* allocation;
-                u64                  frame;
-            };
-            queue_t<AllocationDeletion> m_allocationDeletionQueue;
+//             template<typename T>
+//             struct queue_t
+//             {
+//                 u32 m_queueSize;
+//                 u32 m_queueMax;
+//                 T*  m_queue;
+//             };
 
-            struct DescriptorDeletion
-            {
-                D3D12Descriptor descriptor;
-                u64             frame;
-            };
-            queue_t<DescriptorDeletion> m_rtvDeletionQueue;
-            queue_t<DescriptorDeletion> m_dsvDeletionQueue;
-            queue_t<DescriptorDeletion> m_resourceDeletionQueue;
-            queue_t<DescriptorDeletion> m_samplerDeletionQueue;
-            queue_t<DescriptorDeletion> m_nonShaderVisibleUAVDeletionQueue;
+//             struct ObjectDeletion
+//             {
+//                 IUnknown* object;
+//                 u64       frame;
+//             };
+//             queue_t<ObjectDeletion> m_deletionQueue;
 
-#if MICROPROFILE_GPU_TIMERS_D3D12
-            int m_nProfileGraphicsQueue = -1;
-            int m_nProfileComputeQueue  = -1;
-            int m_nProfileCopyQueue     = -1;
-#endif
+//             struct AllocationDeletion
+//             {
+//                 D3D12MA::Allocation* allocation;
+//                 u64                  frame;
+//             };
+//             queue_t<AllocationDeletion> m_allocationDeletionQueue;
 
-            bool m_bSteamDeck = false;
-        };
+//             struct DescriptorDeletion
+//             {
+//                 D3D12Descriptor descriptor;
+//                 u64             frame;
+//             };
+//             queue_t<DescriptorDeletion> m_rtvDeletionQueue;
+//             queue_t<DescriptorDeletion> m_dsvDeletionQueue;
+//             queue_t<DescriptorDeletion> m_resourceDeletionQueue;
+//             queue_t<DescriptorDeletion> m_samplerDeletionQueue;
+//             queue_t<DescriptorDeletion> m_nonShaderVisibleUAVDeletionQueue;
+
+// #if MICROPROFILE_GPU_TIMERS_D3D12
+//             int m_nProfileGraphicsQueue = -1;
+//             int m_nProfileComputeQueue  = -1;
+//             int m_nProfileCopyQueue     = -1;
+// #endif
+
+//             bool m_bSteamDeck = false;
+//         };
 
     }  // namespace ngfx
 }  // namespace ncore

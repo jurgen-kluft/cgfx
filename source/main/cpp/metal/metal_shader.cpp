@@ -10,7 +10,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalShader::MetalShader(MetalDevice* pDevice, const GfxShaderDesc& desc, const char* name)
+        MetalShader::MetalShader(MetalDevice* pDevice, const shader_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

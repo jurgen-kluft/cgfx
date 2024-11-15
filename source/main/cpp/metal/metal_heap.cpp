@@ -5,7 +5,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalHeap::MetalHeap(MetalDevice* pDevice, const GfxHeapDesc& desc, const char* name)
+        MetalHeap::MetalHeap(MetalDevice* pDevice, const heap_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

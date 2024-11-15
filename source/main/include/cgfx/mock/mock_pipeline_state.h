@@ -7,47 +7,16 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        class MockDevice;
-
-        class MockGraphicsPipelineState : public IGfxPipelineState
+        namespace nmock
         {
-        public:
-            MockGraphicsPipelineState(MockDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name);
-            ~MockGraphicsPipelineState();
+            ngfx::pipeline_state_t* CreateGraphicsPipelineState(device_t* device, resource_t* resource, pipeline_state_t* state, const graphics_pipeline_desc_t& desc);
+            ngfx::pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, resource_t* resource, pipeline_state_t* state, const mesh_shading_pipeline_desc_t& desc);
+            ngfx::pipeline_state_t* CreateComputePipelineState(device_t* device, resource_t* resource, pipeline_state_t* state, const compute_pipeline_desc_t& desc);
+            bool                    Create(device_t* device, ngfx::pipeline_state_t* state);
+            void                    Destroy(device_t* device, ngfx::pipeline_state_t* state);
+            void*                   GetHandle(device_t* device, ngfx::pipeline_state_t* state);
 
-            virtual void* GetHandle() const override;
-            virtual bool  Create() override;
-
-        private:
-            GfxGraphicsPipelineDesc m_desc;
-        };
-
-        class MockMeshShadingPipelineState : public IGfxPipelineState
-        {
-        public:
-            MockMeshShadingPipelineState(MockDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name);
-            ~MockMeshShadingPipelineState();
-
-            virtual void* GetHandle() const override;
-            virtual bool  Create() override;
-
-        private:
-            GfxMeshShadingPipelineDesc m_desc;
-        };
-
-        class MockComputePipelineState : public IGfxPipelineState
-        {
-        public:
-            MockComputePipelineState(MockDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name);
-            ~MockComputePipelineState();
-
-            virtual void* GetHandle() const override;
-            virtual bool  Create() override;
-
-        private:
-            GfxComputePipelineDesc m_desc;
-        };
+        }  // namespace nmock
 
     }  // namespace ngfx
 }  // namespace ncore

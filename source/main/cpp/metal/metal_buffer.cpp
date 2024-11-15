@@ -7,7 +7,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalBuffer::MetalBuffer(MetalDevice* pDevice, const GfxBufferDesc& desc, const char* name)
+        MetalBuffer::MetalBuffer(MetalDevice* pDevice, const buffer_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

@@ -12,10 +12,10 @@ namespace ncore
         class MetalDevice;
         class MetalTexture;
 
-        class MetalSwapchain : public IGfxSwapchain
+        class MetalSwapchain : public swapchain_t
         {
         public:
-            MetalSwapchain(MetalDevice* pDevice, const GfxSwapchainDesc& desc, const char* name);
+            MetalSwapchain(MetalDevice* pDevice, const swapchain_desc_t& desc, const char* name);
             ~MetalSwapchain();
 
             bool           Create();
@@ -23,7 +23,7 @@ namespace ncore
 
             virtual void*        GetHandle() const override { return m_pView; }
             virtual void         AcquireNextBackBuffer() override;
-            virtual IGfxTexture* GetBackBuffer() const override;
+            virtual texture_t* GetBackBuffer() const override;
             virtual bool         Resize(u32 width, u32 height) override;
             virtual void         SetVSyncEnabled(bool value) override;
 

@@ -19,7 +19,7 @@ namespace ncore
             class Allocation;
         }
 
-        class D3D12RayTracingTLAS : public IGfxRayTracingTLAS
+        class D3D12RayTracingTLAS : public tlas_t
         {
         public:
             D3D12RayTracingTLAS(D3D12Device* pDevice, const GfxRayTracing::TLASDesc& desc, const char* name);

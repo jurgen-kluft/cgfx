@@ -7,19 +7,13 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MockDevice;
-
-        class MockHeap : public IGfxHeap
+        namespace nmock
         {
-        public:
-            MockHeap(MockDevice* pDevice, const GfxHeapDesc& desc, const char* name);
-            ~MockHeap();
-
-            bool Create();
-
-            virtual void* GetHandle() const override;
-        };
-
+            heap_t* Alloc(device_t* pDevice, resource_t* resource, heap_t* heap);
+            bool    Create(device_t* pDevice, heap_t* pHeap);
+            void    Destroy(device_t* pDevice, heap_t* pHeap);
+            void*   GetHandle(device_t* pDevice, const heap_t* pHeap);
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore
 #endif

@@ -11,10 +11,10 @@ namespace ncore
 
         class MetalDevice;
 
-        class MetalTexture : public IGfxTexture
+        class MetalTexture : public texture_t
         {
         public:
-            MetalTexture(MetalDevice* pDevice, const GfxTextureDesc& desc, const char* name);
+            MetalTexture(MetalDevice* pDevice, const texture_desc_t& desc, const char* name);
             ~MetalTexture();
 
             bool Create();

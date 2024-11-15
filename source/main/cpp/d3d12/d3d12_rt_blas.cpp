@@ -81,7 +81,7 @@ namespace ncore
             return true;
         }
 
-        void D3D12RayTracingBLAS::GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)
+        void D3D12RayTracingBLAS::GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset)
         {
             ASSERT(m_desc.flags & GfxRayTracing::AccStructure::FlagAllowUpdate);
             ASSERT(m_geometries.size == 1);  // todo : suppport more than 1

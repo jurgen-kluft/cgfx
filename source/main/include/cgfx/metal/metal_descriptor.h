@@ -12,10 +12,10 @@ namespace ncore
 
         class MetalDevice;
 
-        class MetalShaderResourceView : public IGfxDescriptor
+        class MetalShaderResourceView : public descriptor_t
         {
         public:
-            MetalShaderResourceView(MetalDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name);
+            MetalShaderResourceView(MetalDevice* pDevice, resource_t* pResource, const srv_desc_t& desc, const char* name);
             ~MetalShaderResourceView();
 
             bool Create();
@@ -24,35 +24,35 @@ namespace ncore
             virtual u32   GetHeapIndex() const override { return m_heapIndex; }
 
         private:
-            IGfxResource*             m_pResource    = nullptr;
-            GfxShaderResourceViewDesc m_desc         = {};
+            resource_t*             m_pResource    = nullptr;
+            srv_desc_t m_desc         = {};
             MTL::Texture*             m_pTextureView = nullptr;
             u32                       m_heapIndex    = GFX_INVALID_RESOURCE;
         };
 
-        class MetalUnorderedAccessView : public IGfxDescriptor
+        class MetalUnorderedAccessView : public descriptor_t
         {
         public:
-            MetalUnorderedAccessView(MetalDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name);
+            MetalUnorderedAccessView(MetalDevice* pDevice, resource_t* pResource, const uav_desc_t& desc, const char* name);
             ~MetalUnorderedAccessView();
 
             bool                              Create();
-            const GfxUnorderedAccessViewDesc& GetDesc() const { return m_desc; }
+            const uav_desc_t& GetDesc() const { return m_desc; }
 
             virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
             virtual u32   GetHeapIndex() const override { return m_heapIndex; }
 
         private:
-            IGfxResource*              m_pResource    = nullptr;
-            GfxUnorderedAccessViewDesc m_desc         = {};
+            resource_t*              m_pResource    = nullptr;
+            uav_desc_t m_desc         = {};
             MTL::Texture*              m_pTextureView = nullptr;
             u32                        m_heapIndex    = GFX_INVALID_RESOURCE;
         };
 
-        class MetalConstantBufferView : public IGfxDescriptor
+        class MetalConstantBufferView : public descriptor_t
         {
         public:
-            MetalConstantBufferView(MetalDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name);
+            MetalConstantBufferView(MetalDevice* pDevice, buffer_t* buffer, const cbv_desc_t& desc, const char* name);
             ~MetalConstantBufferView();
 
             bool Create();
@@ -61,15 +61,15 @@ namespace ncore
             virtual u32   GetHeapIndex() const override { return m_heapIndex; }
 
         private:
-            IGfxBuffer*               m_pBuffer   = nullptr;
-            GfxConstantBufferViewDesc m_desc      = {};
+            buffer_t*               m_pBuffer   = nullptr;
+            cbv_desc_t m_desc      = {};
             u32                       m_heapIndex = GFX_INVALID_RESOURCE;
         };
 
-        class MetalSampler : public IGfxDescriptor
+        class MetalSampler : public descriptor_t
         {
         public:
-            MetalSampler(MetalDevice* pDevice, const GfxSamplerDesc& desc, const char* name);
+            MetalSampler(MetalDevice* pDevice, const sampler_desc_t& desc, const char* name);
             ~MetalSampler();
 
             bool Create();
@@ -78,7 +78,7 @@ namespace ncore
             virtual u32   GetHeapIndex() const override { return m_heapIndex; }
 
         private:
-            GfxSamplerDesc     m_desc;
+            sampler_desc_t     m_desc;
             MTL::SamplerState* m_pSampler  = nullptr;
             u32                m_heapIndex = GFX_INVALID_RESOURCE;
         };

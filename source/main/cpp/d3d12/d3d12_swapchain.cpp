@@ -6,7 +6,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Swapchain::D3D12Swapchain(D3D12Device* pDevice, const GfxSwapchainDesc& desc, const char* name)
+        D3D12Swapchain::D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -83,7 +83,7 @@ namespace ncore
             return CreateTextures();
         }
 
-        IGfxTexture* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers.data[m_nCurrentBackBuffer]; }
+        texture_t* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers.data[m_nCurrentBackBuffer]; }
 
         bool D3D12Swapchain::Create()
         {
@@ -124,7 +124,7 @@ namespace ncore
         {
             D3D12Device* pDevice = (D3D12Device*)m_pDevice;
 
-            GfxTextureDesc textureDesc;
+            texture_desc_t textureDesc;
             textureDesc.width  = m_desc.width;
             textureDesc.height = m_desc.height;
             textureDesc.format = m_desc.backbuffer_format;

@@ -5,38 +5,47 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockBuffer::MockBuffer(MockDevice* pDevice, const GfxBufferDesc& desc, const char* name)
+        namespace nmock
         {
-            m_pDevice = pDevice;
-            m_desc    = desc;
-            m_name    = name;
-        }
-
-        MockBuffer::~MockBuffer()
-        {
-            if (m_pCpuAddress)
+            struct buffer_t
             {
-                // TODO
-                // RE_FREE(m_pCpuAddress);
-            }
-        }
+                void* m_pCpuAddress = nullptr;
+            };
 
-        bool MockBuffer::Create()
-        {
-            if (m_desc.memory_type != GfxMemory::GpuOnly)
+            void Destroy(device_t* pDevice, ngfx::buffer_t* buffer)
             {
-                // TODO
-                //  m_pCpuAddress = RE_ALLOC(m_desc.size);
-                //  memset(m_pCpuAddress, 0, m_desc.size);
+                nmock::buffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmock::buffer_t>(pDevice, buffer);
+                if (mbuffer != nullptr && mbuffer->m_pCpuAddress)
+                {
+                    // TODO
+                    // RE_FREE(m_pCpuAddress);
+                }
             }
 
-            return true;
-        }
+            bool Create(ngfx::device_t* pDevice, ngfx::buffer_t* buffer)
+            {
+                if (buffer->m_desc.memory_type != enums::MemoryGpuOnly)
+                {
+                    nmock::buffer_t* mbuffer = AddComponent<ngfx::buffer_t, nmock::buffer_t>(pDevice, buffer);
+                    mbuffer->m_pCpuAddress  = nullptr;
 
-        void* MockBuffer::GetHandle() const { return nullptr; }
-        void* MockBuffer::GetCpuAddress() { return m_pCpuAddress; }
-        u64   MockBuffer::GetGpuAddress() { return 0; }
-        u32   MockBuffer::GetRequiredStagingBufferSize() const { return m_desc.size; }
+                    // TODO
+                    //  m_pCpuAddress = RE_ALLOC(m_desc.size);
+                    //  memset(m_pCpuAddress, 0, m_desc.size);
+                }
 
+                return true;
+            }
+
+            void* GetHandle(device_t* pDevice, ngfx::buffer_t* buffer) { return nullptr; }
+            void* GetCpuAddress(device_t* pDevice, ngfx::buffer_t* buffer)
+            {
+                nmock::buffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmock::buffer_t>(pDevice, buffer);
+                return mbuffer->m_pCpuAddress;
+            }
+            u64 GetGpuAddress(device_t* pDevice, ngfx::buffer_t* buffer) { return 0; }
+            u32 GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t* buffer) { return buffer->m_desc.size; }
+
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

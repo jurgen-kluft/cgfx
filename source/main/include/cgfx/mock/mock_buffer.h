@@ -7,26 +7,16 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        class MockDevice;
-
-        class MockBuffer : public IGfxBuffer
+        namespace nmock
         {
-        public:
-            MockBuffer(MockDevice* pDevice, const GfxBufferDesc& desc, const char* name);
-            ~MockBuffer();
+            bool            Create(device_t* pDevice, ngfx::buffer_t*);
+            void            Destroy(device_t*, ngfx::buffer_t*);
+            void*           GetHandle(device_t* pDevice, ngfx::buffer_t*);
+            void*           GetCpuAddress(device_t* pDevice, ngfx::buffer_t*);
+            u64             GetGpuAddress(device_t* pDevice, ngfx::buffer_t*);
+            u32             GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t*);
 
-            bool Create();
-
-            virtual void* GetHandle() const override;
-            virtual void* GetCpuAddress() override;
-            virtual u64   GetGpuAddress() override;
-            virtual u32   GetRequiredStagingBufferSize() const override;
-
-        private:
-            void* m_pCpuAddress = nullptr;
-        };
-
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore
 #endif

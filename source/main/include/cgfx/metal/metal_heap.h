@@ -12,21 +12,21 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MetalDevice;
+        // class MetalDevice;
 
-        class MetalHeap : public IGfxHeap
-        {
-        public:
-            MetalHeap(MetalDevice* pDevice, const GfxHeapDesc& desc, const char* name);
-            ~MetalHeap();
+        // class MetalHeap : public heap_t
+        // {
+        // public:
+        //     MetalHeap(MetalDevice* pDevice, const heap_desc_t& desc, const char* name);
+        //     ~MetalHeap();
 
-            bool Create();
+        //     bool Create();
 
-            virtual void* GetHandle() const override { return m_pHeap; }
+        //     virtual void* GetHandle() const override { return m_pHeap; }
 
-        private:
-            MTL::Heap* m_pHeap = nullptr;
-        };
+        // private:
+        //     MTL::Heap* m_pHeap = nullptr;
+        // };
 
     }  // namespace ngfx
 }  // namespace ncore

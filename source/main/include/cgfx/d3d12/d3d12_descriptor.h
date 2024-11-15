@@ -15,10 +15,10 @@ namespace ncore
     {
         class D3D12Device;
 
-        class D3D12ShaderResourceView : public IGfxDescriptor
+        class D3D12ShaderResourceView : public descriptor_t
         {
         public:
-            D3D12ShaderResourceView(D3D12Device* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name);
+            D3D12ShaderResourceView(D3D12Device* pDevice, resource_t* pResource, const srv_desc_t& desc, const char* name);
             ~D3D12ShaderResourceView();
 
             virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
@@ -27,15 +27,15 @@ namespace ncore
             bool Create();
 
         private:
-            IGfxResource*             m_pResource = nullptr;
-            GfxShaderResourceViewDesc m_desc      = {};
+            resource_t*             m_pResource = nullptr;
+            srv_desc_t m_desc      = {};
             D3D12Descriptor           m_descriptor;
         };
 
-        class D3D12UnorderedAccessView : public IGfxDescriptor
+        class D3D12UnorderedAccessView : public descriptor_t
         {
         public:
-            D3D12UnorderedAccessView(D3D12Device* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name);
+            D3D12UnorderedAccessView(D3D12Device* pDevice, resource_t* pResource, const uav_desc_t& desc, const char* name);
             ~D3D12UnorderedAccessView();
 
             virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
@@ -46,17 +46,17 @@ namespace ncore
             D3D12Descriptor GetNonShaderVisibleDescriptor() const { return m_nonShaderVisibleDescriptor; }
 
         private:
-            IGfxResource*              m_pResource = nullptr;
-            GfxUnorderedAccessViewDesc m_desc      = {};
+            resource_t*              m_pResource = nullptr;
+            uav_desc_t m_desc      = {};
             D3D12Descriptor            m_descriptor;
 
             D3D12Descriptor m_nonShaderVisibleDescriptor;  // for uav clear
         };
 
-        class D3D12ConstantBufferView : public IGfxDescriptor
+        class D3D12ConstantBufferView : public descriptor_t
         {
         public:
-            D3D12ConstantBufferView(D3D12Device* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name);
+            D3D12ConstantBufferView(D3D12Device* pDevice, buffer_t* buffer, const cbv_desc_t& desc, const char* name);
             ~D3D12ConstantBufferView();
 
             virtual void* GetHandle() const override { return m_pBuffer->GetHandle(); }
@@ -65,15 +65,15 @@ namespace ncore
             bool Create();
 
         private:
-            IGfxBuffer*               m_pBuffer = nullptr;
-            GfxConstantBufferViewDesc m_desc    = {};
+            buffer_t*               m_pBuffer = nullptr;
+            cbv_desc_t m_desc    = {};
             D3D12Descriptor           m_descriptor;
         };
 
-        class D3D12Sampler : public IGfxDescriptor
+        class D3D12Sampler : public descriptor_t
         {
         public:
-            D3D12Sampler(D3D12Device* pDevice, const GfxSamplerDesc& desc, const char* name);
+            D3D12Sampler(D3D12Device* pDevice, const sampler_desc_t& desc, const char* name);
             ~D3D12Sampler();
 
             virtual void* GetHandle() const override { return nullptr; }
@@ -82,7 +82,7 @@ namespace ncore
             bool Create();
 
         private:
-            GfxSamplerDesc  m_desc;
+            sampler_desc_t  m_desc;
             D3D12Descriptor m_descriptor;
         };
     }  // namespace ngfx

@@ -20,10 +20,10 @@ namespace ncore
             class Allocation;
         }
 
-        class D3D12Texture : public IGfxTexture
+        class D3D12Texture : public texture_t
         {
         public:
-            D3D12Texture(D3D12Device* pDevice, const GfxTextureDesc& desc, const char* name);
+            D3D12Texture(D3D12Device* pDevice, const texture_desc_t& desc, const char* name);
             ~D3D12Texture();
 
             virtual void*                    GetHandle() const override { return m_pTexture; }

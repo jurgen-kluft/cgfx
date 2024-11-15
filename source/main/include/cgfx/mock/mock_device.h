@@ -7,38 +7,16 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MockDevice : public IGfxDevice
+        namespace nmock
         {
-        public:
-            MockDevice(const GfxDeviceDesc& desc);
-            ~MockDevice();
+            bool                    Create(device_t* device);
+            void                    Destroy(device_t* device);
+            void*                   GetHandle(device_t* device);
+            void                    BeginFrame(device_t* device);
+            void                    EndFrame(device_t* device);
 
-            virtual bool  Create() override;
-            virtual void* GetHandle() const override;
-            virtual void  BeginFrame() override;
-            virtual void  EndFrame() override;
-
-            virtual IGfxSwapchain*      CreateSwapchain(const GfxSwapchainDesc& desc, const char* name) override;
-            virtual IGfxCommandList*    CreateCommandList(GfxCommandQueue queue_type, const char* name) override;
-            virtual IGfxFence*          CreateFence(const char* name) override;
-            virtual IGfxHeap*           CreateHeap(const GfxHeapDesc& desc, const char* name) override;
-            virtual IGfxBuffer*         CreateBuffer(const GfxBufferDesc& desc, const char* name) override;
-            virtual IGfxTexture*        CreateTexture(const GfxTextureDesc& desc, const char* name) override;
-            virtual IGfxShader*         CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name) override;
-            virtual IGfxPipelineState*  CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name) override;
-            virtual IGfxPipelineState*  CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name) override;
-            virtual IGfxPipelineState*  CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name) override;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name) override;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name) override;
-
-            virtual u32  GetAllocationSize(const GfxTextureDesc& desc) override;
-            virtual bool DumpMemoryStats(const char* file) override;
-        };
-
+            bool                    DumpMemoryStats(device_t* device, const char* file);
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore
 

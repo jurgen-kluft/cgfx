@@ -5,19 +5,11 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        MockRayTracingBLAS::MockRayTracingBLAS(MockDevice* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name)
+        namespace nmock
         {
-            m_pDevice = pDevice;
-            m_desc    = desc;
-            m_name    = name;
-        }
-
-        MockRayTracingBLAS::~MockRayTracingBLAS() {}
-
-        bool MockRayTracingBLAS::Create() { return true; }
-
-        void* MockRayTracingBLAS::GetHandle() const { return nullptr; }
-
+            void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pTLAS) {}
+            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pTLAS) { return true; }
+            void* GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pTLAS) { return nullptr; }
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

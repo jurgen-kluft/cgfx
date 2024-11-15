@@ -15,14 +15,14 @@ namespace ncore
 
         class MetalDevice;
 
-        class MetalRayTracingBLAS : public IGfxRayTracingBLAS
+        class MetalRayTracingBLAS : public blas_t
         {
         public:
             MetalRayTracingBLAS(MetalDevice* pDevice, const GfxRayTracingBLASDesc& desc, const char* name);
             ~MetalRayTracingBLAS();
 
             bool                                           Create();
-            void                                           UpdateVertexBuffer(IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset);
+            void                                           UpdateVertexBuffer(buffer_t* vertex_buffer, u32 vertex_buffer_offset);
             MTL::AccelerationStructure*                    GetAccelerationStructure() const { return m_pAccelerationStructure; }
             MTL::PrimitiveAccelerationStructureDescriptor* GetDescriptor() const { return m_pDescriptor; }
             MTL::Buffer*                                   GetScratchBuffer() const { return m_pScratchBuffer; }

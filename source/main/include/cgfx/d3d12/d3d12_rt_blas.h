@@ -19,7 +19,7 @@ namespace ncore
             class Allocation;
         }
 
-        class D3D12RayTracingBLAS : public IGfxRayTracingBLAS
+        class D3D12RayTracingBLAS : public blas_t
         {
         public:
             D3D12RayTracingBLAS(D3D12Device* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name);
@@ -31,7 +31,7 @@ namespace ncore
             const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC* GetBuildDesc() const { return &m_buildDesc; }
             D3D12_GPU_VIRTUAL_ADDRESS                                 GetGpuAddress() const { return m_pASBuffer->GetGPUVirtualAddress(); }
 
-            void GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset);
+            void GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
 
         private:
             template<typename T>

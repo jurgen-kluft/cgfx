@@ -10,76 +10,87 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MetalConstantBufferAllocator;
-        class MetalDescriptorAllocator;
-        class MetalDescriptorAllocator;
-
-        class MetalDevice : public IGfxDevice
+        namespace nmetal
         {
-        public:
-            MetalDevice(const GfxDeviceDesc& desc);
-            virtual ~MetalDevice();
+            bool                    Create(device_t* device);
+            void                    Destroy(device_t* device);
+            void*                   GetHandle(device_t* device);
+            void                    BeginFrame(device_t* device);
+            void                    EndFrame(device_t* device);
 
-            virtual bool  Create() override;
-            virtual void* GetHandle() const override { return m_pDevice; }
-            virtual void  BeginFrame() override;
-            virtual void  EndFrame() override;
+            bool                    DumpMemoryStats(device_t* device, const char* file);
+        }
+        
+        // class MetalConstantBufferAllocator;
+        // class MetalDescriptorAllocator;
+        // class MetalDescriptorAllocator;
 
-            virtual IGfxSwapchain*      CreateSwapchain(const GfxSwapchainDesc& desc, const char* name) override;
-            virtual IGfxCommandList*    CreateCommandList(GfxCommandQueue queue_type, const char* name) override;
-            virtual IGfxFence*          CreateFence(const char* name) override;
-            virtual IGfxHeap*           CreateHeap(const GfxHeapDesc& desc, const char* name) override;
-            virtual IGfxBuffer*         CreateBuffer(const GfxBufferDesc& desc, const char* name) override;
-            virtual IGfxTexture*        CreateTexture(const GfxTextureDesc& desc, const char* name) override;
-            virtual IGfxShader*         CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name) override;
-            virtual IGfxPipelineState*  CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name) override;
-            virtual IGfxPipelineState*  CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name) override;
-            virtual IGfxPipelineState*  CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name) override;
-            virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name) override;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name) override;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name) override;
+        // class MetalDevice : public device_t
+        // {
+        // public:
+        //     MetalDevice(const device_desc_t& desc);
+        //     virtual ~MetalDevice();
 
-            virtual u32  GetAllocationSize(const GfxTextureDesc& desc) override;
-            virtual bool DumpMemoryStats(const char* file) override;
+        //     virtual bool  Create() override;
+        //     virtual void* GetHandle() const override { return m_pDevice; }
+        //     virtual void  BeginFrame() override;
+        //     virtual void  EndFrame() override;
 
-            MTL::CommandQueue* GetQueue() const { return m_pQueue; }
+        //     virtual swapchain_t*      CreateSwapchain(const swapchain_desc_t& desc, const char* name) override;
+        //     virtual command_list_t*    CreateCommandList(GfxCommandQueue queue_type, const char* name) override;
+        //     virtual fence_t*          CreateFence(const char* name) override;
+        //     virtual heap_t*           CreateHeap(const heap_desc_t& desc, const char* name) override;
+        //     virtual buffer_t*         CreateBuffer(const buffer_desc_t& desc, const char* name) override;
+        //     virtual texture_t*        CreateTexture(const texture_desc_t& desc, const char* name) override;
+        //     virtual shader_t*         CreateShader(const shader_desc_t& desc, byte* data_ptr, u32 data_len, const char* name) override;
+        //     virtual pipeline_state_t*  CreateGraphicsPipelineState(const graphics_pipeline_desc_t& desc, const char* name) override;
+        //     virtual pipeline_state_t*  CreateMeshShadingPipelineState(const mesh_shading_pipeline_desc_t& desc, const char* name) override;
+        //     virtual pipeline_state_t*  CreateComputePipelineState(const compute_pipeline_desc_t& desc, const char* name) override;
+        //     virtual descriptor_t*     CreateShaderResourceView(resource_t* resource, const srv_desc_t& desc, const char* name) override;
+        //     virtual descriptor_t*     CreateUnorderedAccessView(resource_t* resource, const uav_desc_t& desc, const char* name) override;
+        //     virtual descriptor_t*     CreateConstantBufferView(buffer_t* buffer, const cbv_desc_t& desc, const char* name) override;
+        //     virtual descriptor_t*     CreateSampler(const sampler_desc_t& desc, const char* name) override;
+        //     virtual blas_t* CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name) override;
+        //     virtual tlas_t* CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name) override;
 
-            u64 AllocateConstantBuffer(const void* data, size_t data_size);
+        //     virtual u32  GetAllocationSize(const texture_desc_t& desc) override;
+        //     virtual bool DumpMemoryStats(const char* file) override;
 
-            u32          AllocateResourceDescriptor(IRDescriptorTableEntry** descriptor);
-            u32          AllocateSamplerDescriptor(IRDescriptorTableEntry** descriptor);
-            void         FreeResourceDescriptor(u32 index);
-            void         FreeSamplerDescriptor(u32 index);
-            MTL::Buffer* GetResourceDescriptorBuffer() const;
-            MTL::Buffer* GetSamplerDescriptorBuffer() const;
+        //     MTL::CommandQueue* GetQueue() const { return m_pQueue; }
 
-            void MakeResident(const MTL::Allocation* allocation);
-            void Evict(const MTL::Allocation* allocation);
+        //     u64 AllocateConstantBuffer(const void* data, size_t data_size);
 
-        private:
-            MTL::Device*       m_pDevice         = nullptr;
-            MTL::CommandQueue* m_pQueue          = nullptr;
-            MTL::ResidencySet* m_pResidencySet   = nullptr;
-            bool               m_bResidencyDirty = false;
+        //     u32          AllocateResourceDescriptor(IRDescriptorTableEntry** descriptor);
+        //     u32          AllocateSamplerDescriptor(IRDescriptorTableEntry** descriptor);
+        //     void         FreeResourceDescriptor(u32 index);
+        //     void         FreeSamplerDescriptor(u32 index);
+        //     MTL::Buffer* GetResourceDescriptorBuffer() const;
+        //     MTL::Buffer* GetSamplerDescriptorBuffer() const;
 
-            MetalConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
-            MetalDescriptorAllocator*     m_pResDescriptorAllocator;
-            MetalDescriptorAllocator*     m_pSamplerAllocator;
+        //     void MakeResident(const MTL::Allocation* allocation);
+        //     void Evict(const MTL::Allocation* allocation);
 
-            struct pair_t
-            {
-                u32 first;
-                u64 second;
-            };
-            // We may need a ring buffer or something of the sort
-            s32     m_resDescriptorDeletionQueueCount;
-            s32     m_samplerDescriptorDeletionQueueCount;
-            pair_t* m_resDescriptorDeletionQueue;
-            pair_t* m_samplerDescriptorDeletionQueue;
-        };
+        // private:
+        //     MTL::Device*       m_pDevice         = nullptr;
+        //     MTL::CommandQueue* m_pQueue          = nullptr;
+        //     MTL::ResidencySet* m_pResidencySet   = nullptr;
+        //     bool               m_bResidencyDirty = false;
+
+        //     MetalConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+        //     MetalDescriptorAllocator*     m_pResDescriptorAllocator;
+        //     MetalDescriptorAllocator*     m_pSamplerAllocator;
+
+        //     struct pair_t
+        //     {
+        //         u32 first;
+        //         u64 second;
+        //     };
+        //     // We may need a ring buffer or something of the sort
+        //     s32     m_resDescriptorDeletionQueueCount;
+        //     s32     m_samplerDescriptorDeletionQueueCount;
+        //     pair_t* m_resDescriptorDeletionQueue;
+        //     pair_t* m_samplerDescriptorDeletionQueue;
+        // };
 
     }  // namespace ngfx
 }  // namespace ncore

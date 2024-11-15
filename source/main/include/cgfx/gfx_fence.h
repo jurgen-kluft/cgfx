@@ -7,14 +7,15 @@ namespace ncore
 {
     namespace ngfx
     {
-        class IGfxFence : public IGfxResource
+        struct fence_t
         {
-        public:
-            virtual ~IGfxFence() {}
-
-            virtual void Wait(u64 value)   = 0;
-            virtual void Signal(u64 value) = 0;
+            D_GFX_OCS_COMPONENT;
         };
+
+        fence_t* CreateFence(device_t* device, const char* name);
+        void     Destroy(device_t* device, fence_t* resource);
+        void     Wait(device_t* device, fence_t* fence, u64 value);
+        void     Signal(device_t* device, fence_t* fence, u64 value);
 
     }  // namespace ngfx
 }  // namespace ncore

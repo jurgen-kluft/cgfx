@@ -7,7 +7,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Buffer::D3D12Buffer(D3D12Device* pDevice, const GfxBufferDesc& desc, const char* name)
+        D3D12Buffer::D3D12Buffer(D3D12Device* pDevice, const buffer_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

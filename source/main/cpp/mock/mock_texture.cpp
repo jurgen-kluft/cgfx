@@ -8,34 +8,26 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockTexture::MockTexture(MockDevice* pDevice, const GfxTextureDesc& desc, const char* name)
+        namespace nmock
         {
-            m_pDevice = pDevice;
-            m_desc    = desc;
-            m_name    = name;
-        }
+            bool Create(ngfx::device_t* pDevice, texture_t* pTexture) { return true; }
+            void Destroy(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) {}
 
-        MockTexture::~MockTexture() {}
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }
+            u32   GetRequiredStagingBufferSize(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return ngfx::GetAllocationSize(pDevice, pTexture->m_desc); }
 
-        bool MockTexture::Create() { return true; }
+            u32 GetRowPitch(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 mip_level)
+            {
+                u32 min_width = ngfx::GetFormatBlockWidth(enums::cast(pTexture->m_desc.format, enums::format::FORMAT_UNKNOWN));
+                u32 width     = math::g_max(pTexture->m_desc.width >> mip_level, min_width);
 
-        void* MockTexture::GetHandle() const { return nullptr; }
+                return GetFormatRowPitch(enums::cast(pTexture->m_desc.format, enums::format::FORMAT_UNKNOWN), width) * GetFormatBlockHeight(enums::cast(pTexture->m_desc.format, enums::format::FORMAT_UNKNOWN));
+            }
 
-        u32 MockTexture::GetRequiredStagingBufferSize() const { return m_pDevice->GetAllocationSize(m_desc); }
+            GfxTilingDesc            GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return GfxTilingDesc(); }
+            GfxSubresourceTilingDesc GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 subresource) { return GfxSubresourceTilingDesc(); }
+            void*                    GetSharedHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }
 
-        u32 MockTexture::GetRowPitch(u32 mip_level) const
-        {
-            u32 min_width = GetFormatBlockWidth(m_desc.format);
-            u32 width     = math::g_max(m_desc.width >> mip_level, min_width);
-
-            return GetFormatRowPitch(m_desc.format, width) * GetFormatBlockHeight(m_desc.format);
-        }
-
-        GfxTilingDesc MockTexture::GetTilingDesc() const { return GfxTilingDesc(); }
-
-        GfxSubresourceTilingDesc MockTexture::GetTilingDesc(u32 subresource) const { return GfxSubresourceTilingDesc(); }
-
-        void* MockTexture::GetSharedHandle() const { return nullptr; }
-
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

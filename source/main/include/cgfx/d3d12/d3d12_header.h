@@ -441,7 +441,7 @@ namespace ncore
             }
         }
 
-        inline D3D12_FILTER d3d12_filter(const GfxSamplerDesc& desc)
+        inline D3D12_FILTER d3d12_filter(const sampler_desc_t& desc)
         {
             D3D12_FILTER_REDUCTION_TYPE reduction = d3d12_filter_reduction_type(desc.reduction_mode);
 
@@ -471,7 +471,7 @@ namespace ncore
             }
         }
 
-        inline D3D12_RESOURCE_DESC d3d12_resource_desc(const GfxTextureDesc& desc)
+        inline D3D12_RESOURCE_DESC d3d12_resource_desc(const texture_desc_t& desc)
         {
             D3D12_RESOURCE_DESC resourceDesc = {};
             resourceDesc.Width               = desc.width;

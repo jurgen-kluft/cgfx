@@ -16,10 +16,10 @@ namespace ncore
 
         class MetalDevice;
 
-        class MetalShader : public IGfxShader
+        class MetalShader : public shader_t
         {
         public:
-            MetalShader(MetalDevice* pDevice, const GfxShaderDesc& desc, const char* name);
+            MetalShader(MetalDevice* pDevice, const shader_desc_t& desc, const char* name);
             ~MetalShader();
 
             const MetalShaderReflection& GetReflection() const { return m_reflection; }

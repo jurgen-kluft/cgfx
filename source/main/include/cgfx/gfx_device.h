@@ -1,64 +1,107 @@
 #ifndef __CGFX_GFX_DEVICE_H__
 #define __CGFX_GFX_DEVICE_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/gfx_defines.h"
+#include "callocator/c_allocator_ocs.h"
 
 namespace ncore
 {
+    class alloc_t;
+
     namespace ngfx
     {
-        class IGfxResource;
-        class IGfxBuffer;
-        class IGfxTexture;
-        class IGfxFence;
-        class IGfxSwapchain;
-        class IGfxCommandList;
-        class IGfxShader;
-        class IGfxPipelineState;
-        class IGfxDescriptor;
-        class IGfxHeap;
-        class IGfxRayTracingBLAS;
-        class IGfxRayTracingTLAS;
-
-        class IGfxDevice
+        struct device_t
         {
-        public:
-            virtual ~IGfxDevice() {}
-
-            const GfxDeviceDesc& GetDesc() const { return m_desc; }
-            u64                  GetFrameID() const { return m_frameID; }
-            GfxVendor            GetVendor() const { return m_vendor; }
-
-            virtual bool  Create()          = 0;
-            virtual void* GetHandle() const = 0;
-            virtual void  BeginFrame()      = 0;
-            virtual void  EndFrame()        = 0;
-
-            virtual IGfxSwapchain*      CreateSwapchain(const GfxSwapchainDesc& desc, const char* name)                                             = 0;
-            virtual IGfxCommandList*    CreateCommandList(GfxCommandQueue queue_type, const char* name)                                             = 0;
-            virtual IGfxFence*          CreateFence(const char* name)                                                                               = 0;
-            virtual IGfxHeap*           CreateHeap(const GfxHeapDesc& desc, const char* name)                                                       = 0;
-            virtual IGfxBuffer*         CreateBuffer(const GfxBufferDesc& desc, const char* name)                                                   = 0;
-            virtual IGfxTexture*        CreateTexture(const GfxTextureDesc& desc, const char* name)                                                 = 0;
-            virtual IGfxShader*         CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name)                             = 0;
-            virtual IGfxPipelineState*  CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name)                          = 0;
-            virtual IGfxPipelineState*  CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name)                    = 0;
-            virtual IGfxPipelineState*  CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name)                            = 0;
-            virtual IGfxDescriptor*     CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name)   = 0;
-            virtual IGfxDescriptor*     CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name) = 0;
-            virtual IGfxDescriptor*     CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)       = 0;
-            virtual IGfxDescriptor*     CreateSampler(const GfxSamplerDesc& desc, const char* name)                                                 = 0;
-            virtual IGfxRayTracingBLAS* CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name)                                         = 0;
-            virtual IGfxRayTracingTLAS* CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name)                                         = 0;
-
-            virtual u32  GetAllocationSize(const GfxTextureDesc& desc) = 0;
-            virtual bool DumpMemoryStats(const char* file)    = 0;
-
-        protected:
-            GfxDeviceDesc m_desc;
-            GfxVendor     m_vendor  = GfxVendor::Unkown;
-            u64           m_frameID = 0;
+            D_GFX_OCS_COMPONENT;
+            u64                m_frameID;
+            device_desc_t      m_desc;
+            enums::vendor_t    m_vendor;
+            alloc_t*           m_allocator;
+            nocs::allocator_t* m_allocatorOCS;
         };
+
+        device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc);
+        bool      Create(device_t* device);
+        void*     GetHandle(device_t* device);
+        void      BeginFrame(device_t* device);
+        void      EndFrame(device_t* device);
+
+        template <typename T, typename C>
+        T* GetObject(device_t* device, C* pComponent)
+        {
+            return device->m_allocatorOCS->get_object<T, C>(pComponent);
+        }
+
+        template <typename T>
+        T* CreateObject(device_t* device, const char* name)
+        {
+            T* resource = device->m_allocatorOCS->create_object<T>();
+            AttachName(device, resource, name);
+            return resource;
+        }
+
+        template <typename T>
+        void RemoveObject(device_t* device, T* pResource)
+        {
+            device->m_allocatorOCS->destroy_object<T>(pResource);
+        }
+
+        template <typename T, typename C>
+        C* AddComponent(device_t* device, T* pResource)
+        {
+            return device->m_allocatorOCS->add_component<C, T>(pResource, name);
+        }
+
+        template <typename T, typename C>
+        C* GetComponent(device_t* device, T* pResource)
+        {
+            return device->m_allocatorOCS->get_component<C, T>(pResource);
+        }
+
+        template <typename C1, typename C2>
+        C2* GetOtherComponent(device_t* device, C1* pComponent1)
+        {
+            return device->m_allocatorOCS->get_component<resource_t, C1, C2>(pComponent1);
+        }
+
+        template <typename C1, typename C2>
+        void RemoveOtherComponent(device_t* device, C1* pComponent1)
+        {
+            device->m_allocatorOCS->rem_component<resource_t, C1, C2>(pComponent1);
+        }
+
+
+        template <typename T, typename C>
+        bool HasComponent(device_t* device, T* pResource)
+        {
+            return device->m_allocatorOCS->has_component<C, T>(pResource);
+        }
+
+        template <typename T>
+        void SetTag(device_t* device, T* pResource, u16 tag)
+        {
+            device->m_allocatorOCS->set_tag<T>(pResource, tag);
+        }
+
+        template <typename T>
+        bool HasTag(device_t* device, T* pResource, u16 tag)
+        {
+            return device->m_allocatorOCS->has_tag<T>(pResource, tag);
+        }
+
+        template <typename T>
+        void AttachName(device_t* device, T* pResource, const char* name)
+        {
+            name_t* n = device->m_allocatorOCS->add_component<name_t, T>(pResource);
+            SetName(n, name);
+        }
+
+        // Debug
+        bool DumpMemoryStats(device_t* device, const char* file);
 
     }  // namespace ngfx
 }  // namespace ncore

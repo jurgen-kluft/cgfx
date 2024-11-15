@@ -12,7 +12,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalShaderResourceView::MetalShaderResourceView(MetalDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name)
+        MetalShaderResourceView::MetalShaderResourceView(MetalDevice* pDevice, resource_t* pResource, const srv_desc_t& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -42,7 +42,7 @@ namespace ncore
 
             if (m_pResource->IsTexture())
             {
-                const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
+                const texture_desc_t& textureDesc = ((texture_t*)m_pResource)->GetDesc();
                 levelRange                        = NS::Range(m_desc.texture.mip_slice, m_desc.texture.mip_levels == GFX_ALL_SUB_RESOURCE ? textureDesc.mip_levels - m_desc.texture.mip_slice : m_desc.texture.mip_levels);
 
                 texture = (MTL::Texture*)m_pResource->GetHandle();
@@ -86,7 +86,7 @@ namespace ncore
                     }
                 case GfxShaderResourceView::StructuredBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
                         ASSERT(m_desc.format == Gfx::Unknown);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
@@ -97,7 +97,7 @@ namespace ncore
                     }
                 case GfxShaderResourceView::TypedBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
@@ -118,7 +118,7 @@ namespace ncore
                     }
                 case GfxShaderResourceView::RawBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
                         ASSERT(bufferDesc.stride % 4 == 0);
                         ASSERT(m_desc.buffer.offset % 4 == 0);
@@ -139,7 +139,7 @@ namespace ncore
             return true;
         }
 
-        MetalUnorderedAccessView::MetalUnorderedAccessView(MetalDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name)
+        MetalUnorderedAccessView::MetalUnorderedAccessView(MetalDevice* pDevice, resource_t* pResource, const uav_desc_t& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -198,7 +198,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::StructuredBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
                         ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(m_desc.format == Gfx::Unknown);
@@ -210,7 +210,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::TypedBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
                         ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
@@ -233,7 +233,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::RawBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
                         ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(bufferDesc.stride % 4 == 0);
@@ -249,7 +249,7 @@ namespace ncore
             return true;
         }
 
-        MetalConstantBufferView::MetalConstantBufferView(MetalDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
+        MetalConstantBufferView::MetalConstantBufferView(MetalDevice* pDevice, buffer_t* buffer, const cbv_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -268,7 +268,7 @@ namespace ncore
             return true;
         }
 
-        MetalSampler::MetalSampler(MetalDevice* pDevice, const GfxSamplerDesc& desc, const char* name)
+        MetalSampler::MetalSampler(MetalDevice* pDevice, const sampler_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

@@ -9,7 +9,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12ShaderResourceView::D3D12ShaderResourceView(D3D12Device* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name)
+        D3D12ShaderResourceView::D3D12ShaderResourceView(D3D12Device* pDevice, resource_t* pResource, const srv_desc_t& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -28,7 +28,7 @@ namespace ncore
             {
                 case GfxShaderResourceView::Texture2D:
                     {
-                        const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
+                        const texture_desc_t& textureDesc = ((texture_t*)m_pResource)->GetDesc();
                         bool                  depth       = textureDesc.usage & GfxTextureUsage::DepthStencil;
 
                         srvDesc.Format                    = dxgi_format(m_desc.format, depth);
@@ -77,7 +77,7 @@ namespace ncore
                     }
                 case GfxShaderResourceView::StructuredBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
                         ASSERT(m_desc.format == Gfx::Unknown);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
@@ -92,7 +92,7 @@ namespace ncore
                     }
                 case GfxShaderResourceView::TypedBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
                         ASSERT(m_desc.buffer.size % bufferDesc.stride == 0);
@@ -105,7 +105,7 @@ namespace ncore
                     }
                 case GfxShaderResourceView::RawBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
                         ASSERT(bufferDesc.stride % 4 == 0);
                         ASSERT(m_desc.buffer.offset % 4 == 0);
@@ -136,7 +136,7 @@ namespace ncore
             return true;
         }
 
-        D3D12UnorderedAccessView::D3D12UnorderedAccessView(D3D12Device* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name)
+        D3D12UnorderedAccessView::D3D12UnorderedAccessView(D3D12Device* pDevice, resource_t* pResource, const uav_desc_t& desc, const char* name)
         {
             m_pDevice   = pDevice;
             m_name      = name;
@@ -158,7 +158,7 @@ namespace ncore
             {
                 case GfxUnorderedAccessView::Texture2D:
                     {
-                        const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
+                        const texture_desc_t& textureDesc = ((texture_t*)m_pResource)->GetDesc();
                         ASSERT(textureDesc.usage & GfxTextureUsage::UnorderedAccess);
 
                         uavDesc.Format               = dxgi_format(m_desc.format, false, true);
@@ -169,7 +169,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::Texture2DArray:
                     {
-                        const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
+                        const texture_desc_t& textureDesc = ((texture_t*)m_pResource)->GetDesc();
                         ASSERT(textureDesc.usage & GfxTextureUsage::UnorderedAccess);
 
                         uavDesc.Format                         = dxgi_format(m_desc.format, false, true);
@@ -182,7 +182,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::Texture3D:
                     {
-                        const GfxTextureDesc& textureDesc = ((IGfxTexture*)m_pResource)->GetDesc();
+                        const texture_desc_t& textureDesc = ((texture_t*)m_pResource)->GetDesc();
                         ASSERT(textureDesc.usage & GfxTextureUsage::UnorderedAccess);
 
                         uavDesc.Format                = dxgi_format(m_desc.format, false, true);
@@ -194,7 +194,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::StructuredBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::StructuredBuffer);
                         ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(m_desc.format == Gfx::Unknown);
@@ -210,7 +210,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::TypedBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::TypedBuffer);
                         ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(m_desc.buffer.offset % bufferDesc.stride == 0);
@@ -224,7 +224,7 @@ namespace ncore
                     }
                 case GfxUnorderedAccessView::RawBuffer:
                     {
-                        const GfxBufferDesc& bufferDesc = ((IGfxBuffer*)m_pResource)->GetDesc();
+                        const buffer_desc_t& bufferDesc = ((buffer_t*)m_pResource)->GetDesc();
                         ASSERT(bufferDesc.usage & GfxBufferUsage::RawBuffer);
                         ASSERT(bufferDesc.usage & GfxBufferUsage::UnorderedAccess);
                         ASSERT(bufferDesc.stride % 4 == 0);
@@ -251,7 +251,7 @@ namespace ncore
             return true;
         }
 
-        D3D12ConstantBufferView::D3D12ConstantBufferView(D3D12Device* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
+        D3D12ConstantBufferView::D3D12ConstantBufferView(D3D12Device* pDevice, buffer_t* buffer, const cbv_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -277,7 +277,7 @@ namespace ncore
             return true;
         }
 
-        D3D12Sampler::D3D12Sampler(D3D12Device* pDevice, const GfxSamplerDesc& desc, const char* name)
+        D3D12Sampler::D3D12Sampler(D3D12Device* pDevice, const sampler_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

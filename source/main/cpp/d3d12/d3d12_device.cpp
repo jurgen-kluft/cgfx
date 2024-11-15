@@ -1,3 +1,5 @@
+#ifdef TARGET_PC
+
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_buffer.h"
 #include "cgfx/d3d12/d3d12_texture.h"
@@ -75,7 +77,7 @@ namespace ncore
             return selectedAdapter == -1 ? nullptr : adapters[selectedAdapter];
         }
 
-        D3D12Device::D3D12Device(const GfxDeviceDesc& desc) { m_desc = desc; }
+        D3D12Device::D3D12Device(const device_desc_t& desc) { m_desc = desc; }
 
         D3D12Device::~D3D12Device()
         {
@@ -131,7 +133,7 @@ namespace ncore
 #endif
         }
 
-        IGfxBuffer* D3D12Device::CreateBuffer(const GfxBufferDesc& desc, const char* name)
+        buffer_t* D3D12Device::CreateBuffer(const buffer_desc_t& desc, const char* name)
         {
             D3D12Buffer* pBuffer = new D3D12Buffer(this, desc, name);
             if (!pBuffer->Create())
@@ -142,7 +144,7 @@ namespace ncore
             return pBuffer;
         }
 
-        IGfxTexture* D3D12Device::CreateTexture(const GfxTextureDesc& desc, const char* name)
+        texture_t* D3D12Device::CreateTexture(const texture_desc_t& desc, const char* name)
         {
             D3D12Texture* pTexture = new D3D12Texture(this, desc, name);
             if (!pTexture->Create())
@@ -153,7 +155,7 @@ namespace ncore
             return pTexture;
         }
 
-        IGfxFence* D3D12Device::CreateFence(const char* name)
+        fence_t* D3D12Device::CreateFence(const char* name)
         {
             D3D12Fence* pFence = new D3D12Fence(this, name);
             if (!pFence->Create())
@@ -164,7 +166,7 @@ namespace ncore
             return pFence;
         }
 
-        IGfxHeap* D3D12Device::CreateHeap(const GfxHeapDesc& desc, const char* name)
+        heap_t* D3D12Device::CreateHeap(const heap_desc_t& desc, const char* name)
         {
             D3D12Heap* pHeap = new D3D12Heap(this, desc, name);
             if (!pHeap->Create())
@@ -175,7 +177,7 @@ namespace ncore
             return pHeap;
         }
 
-        IGfxSwapchain* D3D12Device::CreateSwapchain(const GfxSwapchainDesc& desc, const char* name)
+        swapchain_t* D3D12Device::CreateSwapchain(const swapchain_desc_t& desc, const char* name)
         {
             D3D12Swapchain* pSwapchain = new D3D12Swapchain(this, desc, name);
             if (!pSwapchain->Create())
@@ -186,7 +188,7 @@ namespace ncore
             return pSwapchain;
         }
 
-        IGfxCommandList* D3D12Device::CreateCommandList(GfxCommandQueue queue_type, const char* name)
+        command_list_t* D3D12Device::CreateCommandList(GfxCommandQueue queue_type, const char* name)
         {
             D3D12CommandList* pCommandList = new D3D12CommandList(this, queue_type, name);
             if (!pCommandList->Create())
@@ -197,7 +199,7 @@ namespace ncore
             return pCommandList;
         }
 
-        IGfxShader* D3D12Device::CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name)
+        shader_t* D3D12Device::CreateShader(const shader_desc_t& desc, byte* data_ptr, u32 data_len, const char* name)
         {
             D3D12Shader* pShader = new D3D12Shader(this, desc, name);
             if (!pShader->Create(data))
@@ -208,7 +210,7 @@ namespace ncore
             return pShader;
         }
 
-        IGfxPipelineState* D3D12Device::CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name)
+        pipeline_state_t* D3D12Device::CreateGraphicsPipelineState(const graphics_pipeline_desc_t& desc, const char* name)
         {
             D3D12GraphicsPipelineState* pPipeline = new D3D12GraphicsPipelineState(this, desc, name);
             if (!pPipeline->Create())
@@ -219,7 +221,7 @@ namespace ncore
             return pPipeline;
         }
 
-        IGfxPipelineState* D3D12Device::CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name)
+        pipeline_state_t* D3D12Device::CreateMeshShadingPipelineState(const mesh_shading_pipeline_desc_t& desc, const char* name)
         {
             D3D12MeshShadingPipelineState* pPipeline = new D3D12MeshShadingPipelineState(this, desc, name);
             if (!pPipeline->Create())
@@ -230,7 +232,7 @@ namespace ncore
             return pPipeline;
         }
 
-        IGfxPipelineState* D3D12Device::CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name)
+        pipeline_state_t* D3D12Device::CreateComputePipelineState(const compute_pipeline_desc_t& desc, const char* name)
         {
             D3D12ComputePipelineState* pPipeline = new D3D12ComputePipelineState(this, desc, name);
             if (!pPipeline->Create())
@@ -241,7 +243,7 @@ namespace ncore
             return pPipeline;
         }
 
-        IGfxDescriptor* D3D12Device::CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name)
+        descriptor_t* D3D12Device::CreateShaderResourceView(resource_t* resource, const srv_desc_t& desc, const char* name)
         {
             D3D12ShaderResourceView* pSRV = new D3D12ShaderResourceView(this, resource, desc, name);
             if (!pSRV->Create())
@@ -252,7 +254,7 @@ namespace ncore
             return pSRV;
         }
 
-        IGfxDescriptor* D3D12Device::CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name)
+        descriptor_t* D3D12Device::CreateUnorderedAccessView(resource_t* resource, const uav_desc_t& desc, const char* name)
         {
             D3D12UnorderedAccessView* pUAV = new D3D12UnorderedAccessView(this, resource, desc, name);
             if (!pUAV->Create())
@@ -263,7 +265,7 @@ namespace ncore
             return pUAV;
         }
 
-        IGfxDescriptor* D3D12Device::CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
+        descriptor_t* D3D12Device::CreateConstantBufferView(buffer_t* buffer, const cbv_desc_t& desc, const char* name)
         {
             D3D12ConstantBufferView* pCBV = new D3D12ConstantBufferView(this, buffer, desc, name);
             if (!pCBV->Create())
@@ -274,7 +276,7 @@ namespace ncore
             return pCBV;
         }
 
-        IGfxDescriptor* D3D12Device::CreateSampler(const GfxSamplerDesc& desc, const char* name)
+        descriptor_t* D3D12Device::CreateSampler(const sampler_desc_t& desc, const char* name)
         {
             D3D12Sampler* pSampler = new D3D12Sampler(this, desc, name);
             if (!pSampler->Create())
@@ -285,7 +287,7 @@ namespace ncore
             return pSampler;
         }
 
-        IGfxRayTracingBLAS* D3D12Device::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name)
+        blas_t* D3D12Device::CreateRayTracingBLAS(const GfxRayTracingBLASDesc& desc, const char* name)
         {
             D3D12RayTracingBLAS* blas = new D3D12RayTracingBLAS(this, desc, name);
             if (!blas->Create())
@@ -296,7 +298,7 @@ namespace ncore
             return blas;
         }
 
-        IGfxRayTracingTLAS* D3D12Device::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name)
+        tlas_t* D3D12Device::CreateRayTracingTLAS(const GfxRayTracingTLASDesc& desc, const char* name)
         {
             D3D12RayTracingTLAS* tlas = new D3D12RayTracingTLAS(this, desc, name);
             if (!tlas->Create())
@@ -307,7 +309,7 @@ namespace ncore
             return tlas;
         }
 
-        u32 D3D12Device::GetAllocationSize(const GfxTextureDesc& desc)
+        u32 D3D12Device::GetAllocationSize(const texture_desc_t& desc)
         {
             D3D12_RESOURCE_DESC            resourceDesc = d3d12_resource_desc(desc);
             D3D12_RESOURCE_ALLOCATION_INFO info         = m_pDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
@@ -818,7 +820,7 @@ namespace ncore
 
         D3D12ConstantBufferAllocator::D3D12ConstantBufferAllocator(D3D12Device* device, u32 buffer_size, const char* name)
         {
-            GfxBufferDesc desc;
+            buffer_desc_t desc;
             desc.size        = buffer_size;
             desc.memory_type = GfxMemoryType::CpuToGpu;
             desc.usage       = GfxBufferUsageConstantBuffer;
@@ -840,3 +842,5 @@ namespace ncore
 
     }  // namespace ngfx
 }  // namespace ncore
+
+#endif

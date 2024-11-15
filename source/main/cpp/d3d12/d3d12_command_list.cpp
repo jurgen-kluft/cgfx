@@ -99,11 +99,11 @@ namespace ncore
             m_pCommandList->Close();
         }
 
-        void D3D12CommandList::Wait(IGfxFence* fence, u64 value) { m_pendingWaits.emplace_back(fence, value); }
+        void D3D12CommandList::Wait(fence_t* fence, u64 value) { m_pendingWaits.emplace_back(fence, value); }
 
-        void D3D12CommandList::Signal(IGfxFence* fence, u64 value) { m_pendingSignals.emplace_back(fence, value); }
+        void D3D12CommandList::Signal(fence_t* fence, u64 value) { m_pendingSignals.emplace_back(fence, value); }
 
-        void D3D12CommandList::Present(IGfxSwapchain* swapchain) { m_pendingSwapchain.push_back(swapchain); }
+        void D3D12CommandList::Present(swapchain_t* swapchain) { m_pendingSwapchain.push_back(swapchain); }
 
         void D3D12CommandList::Submit()
         {
@@ -187,11 +187,11 @@ namespace ncore
             ags::EndEvent(m_pCommandList);
         }
 
-        void D3D12CommandList::CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset)
+        void D3D12CommandList::CopyBufferToTexture(texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset)
         {
             FlushBarriers();
 
-            const GfxTextureDesc& desc = dst_texture->GetDesc();
+            const texture_desc_t& desc = dst_texture->GetDesc();
 
             u32 min_width  = GetFormatBlockWidth(desc.format);
             u32 min_height = GetFormatBlockHeight(desc.format);
@@ -218,11 +218,11 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::CopyTextureToBuffer(IGfxBuffer* dst_buffer, u32 offset, IGfxTexture* src_texture, u32 mip_level, u32 array_slice)
+        void D3D12CommandList::CopyTextureToBuffer(buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice)
         {
             FlushBarriers();
 
-            GfxTextureDesc desc = src_texture->GetDesc();
+            texture_desc_t desc = src_texture->GetDesc();
 
             u32 min_width  = GetFormatBlockWidth(desc.format);
             u32 min_height = GetFormatBlockHeight(desc.format);
@@ -249,7 +249,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::CopyBuffer(IGfxBuffer* dst, u32 dst_offset, IGfxBuffer* src, u32 src_offset, u32 size)
+        void D3D12CommandList::CopyBuffer(buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
         {
             FlushBarriers();
 
@@ -257,7 +257,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::CopyTexture(IGfxTexture* dst, u32 dst_mip, u32 dst_array, IGfxTexture* src, u32 src_mip, u32 src_array)
+        void D3D12CommandList::CopyTexture(texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
         {
             FlushBarriers();
 
@@ -275,7 +275,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const float* clear_value, IGfxClearUavApi* clear_api)
+        void D3D12CommandList::ClearUAV(resource_t* resource, descriptor_t* uav, const float* clear_value, IGfxClearUavApi* clear_api)
         {
             ASSERT(resource->IsTexture() || resource->IsBuffer());
 
@@ -288,7 +288,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const u32* clear_value, IGfxClearUavApi* clear_api)
+        void D3D12CommandList::ClearUAV(resource_t* resource, descriptor_t* uav, const u32* clear_value, IGfxClearUavApi* clear_api)
         {
             ASSERT(resource->IsTexture() || resource->IsBuffer());
 
@@ -301,7 +301,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::WriteBuffer(IGfxBuffer* buffer, u32 offset, u32 data)
+        void D3D12CommandList::WriteBuffer(buffer_t* buffer, u32 offset, u32 data)
         {
             FlushBarriers();
 
@@ -313,7 +313,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::UpdateTileMappings(IGfxTexture* texture, IGfxHeap* heap, u32 mapping_count, const GfxTileMapping* mappings)
+        void D3D12CommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings)
         {
             vector_t<D3D12_TILED_RESOURCE_COORDINATE> coordinates;
             vector_t<D3D12_TILE_REGION_SIZE>          sizes;
@@ -361,7 +361,7 @@ namespace ncore
                                                 D3D12_TILE_MAPPING_FLAG_NONE);
         }
 
-        void D3D12CommandList::TextureBarrier(IGfxTexture* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after)
+        void D3D12CommandList::TextureBarrier(texture_t* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after)
         {
             D3D12_TEXTURE_BARRIER barrier = {};
             barrier.SyncBefore            = d3d12_barrier_sync(access_before);
@@ -381,7 +381,7 @@ namespace ncore
             m_textureBarriers.push_back(barrier);
         }
 
-        void D3D12CommandList::BufferBarrier(IGfxBuffer* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after)
+        void D3D12CommandList::BufferBarrier(buffer_t* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after)
         {
             D3D12_BUFFER_BARRIER barrier = {};
             barrier.SyncBefore           = d3d12_barrier_sync(access_before);
@@ -543,7 +543,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::SetPipelineState(IGfxPipelineState* state)
+        void D3D12CommandList::SetPipelineState(pipeline_state_t* state)
         {
             if (m_pCurrentPSO != state)
             {
@@ -562,7 +562,7 @@ namespace ncore
 
         void D3D12CommandList::SetBlendFactor(const float* blend_factor) { m_pCommandList->OMSetBlendFactor(blend_factor); }
 
-        void D3D12CommandList::SetIndexBuffer(IGfxBuffer* buffer, u32 offset, GfxFormat format)
+        void D3D12CommandList::SetIndexBuffer(buffer_t* buffer, u32 offset, GfxFormat format)
         {
             ASSERT(format == Gfx::R16UI || format == Gfx::R32UI);
 
@@ -650,21 +650,21 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::DrawIndirect(IGfxBuffer* buffer, u32 offset)
+        void D3D12CommandList::DrawIndirect(buffer_t* buffer, u32 offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetDrawSignature();
             m_pCommandList->ExecuteIndirect(signature, 1, (ID3D12Resource*)buffer->GetHandle(), offset, nullptr, 0);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::DrawIndexedIndirect(IGfxBuffer* buffer, u32 offset)
+        void D3D12CommandList::DrawIndexedIndirect(buffer_t* buffer, u32 offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetDrawIndexedSignature();
             m_pCommandList->ExecuteIndirect(signature, 1, (ID3D12Resource*)buffer->GetHandle(), offset, nullptr, 0);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::DispatchIndirect(IGfxBuffer* buffer, u32 offset)
+        void D3D12CommandList::DispatchIndirect(buffer_t* buffer, u32 offset)
         {
             FlushBarriers();
 
@@ -673,42 +673,42 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::DispatchMeshIndirect(IGfxBuffer* buffer, u32 offset)
+        void D3D12CommandList::DispatchMeshIndirect(buffer_t* buffer, u32 offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetDispatchMeshSignature();
             m_pCommandList->ExecuteIndirect(signature, 1, (ID3D12Resource*)buffer->GetHandle(), offset, nullptr, 0);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::MultiDrawIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void D3D12CommandList::MultiDrawIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetMultiDrawSignature();
             m_pCommandList->ExecuteIndirect(signature, max_count, (ID3D12Resource*)args_buffer->GetHandle(), args_buffer_offset, (ID3D12Resource*)count_buffer->GetHandle(), count_buffer_offset);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::MultiDrawIndexedIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void D3D12CommandList::MultiDrawIndexedIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetMultiDrawIndexedSignature();
             m_pCommandList->ExecuteIndirect(signature, max_count, (ID3D12Resource*)args_buffer->GetHandle(), args_buffer_offset, (ID3D12Resource*)count_buffer->GetHandle(), count_buffer_offset);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::MultiDispatchIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void D3D12CommandList::MultiDispatchIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetMultiDispatchSignature();
             m_pCommandList->ExecuteIndirect(signature, max_count, (ID3D12Resource*)args_buffer->GetHandle(), args_buffer_offset, (ID3D12Resource*)count_buffer->GetHandle(), count_buffer_offset);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::MultiDispatchMeshIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void D3D12CommandList::MultiDispatchMeshIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ID3D12CommandSignature* signature = ((D3D12Device*)m_pDevice)->GetMultiDispatchMeshSignature();
             m_pCommandList->ExecuteIndirect(signature, max_count, (ID3D12Resource*)args_buffer->GetHandle(), args_buffer_offset, (ID3D12Resource*)count_buffer->GetHandle(), count_buffer_offset);
             ++m_commandCount;
         }
 
-        void D3D12CommandList::BuildRayTracingBLAS(IGfxRayTracingBLAS* blas)
+        void D3D12CommandList::BuildRayTracingBLAS(blas_t* blas)
         {
             FlushBarriers();
 
@@ -716,7 +716,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)
+        void D3D12CommandList::UpdateRayTracingBLAS(blas_t* blas, buffer_t* vertex_buffer, u32 vertex_buffer_offset)
         {
             FlushBarriers();
 
@@ -728,7 +728,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count)
+        void D3D12CommandList::BuildRayTracingTLAS(tlas_t* tlas, const GfxRayTracing::Instance* instances, u32 instance_count)
         {
             FlushBarriers();
 

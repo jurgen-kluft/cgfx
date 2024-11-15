@@ -15,7 +15,7 @@ namespace ncore
 
         class MetalDevice;
 
-        class MetalRayTracingTLAS : public IGfxRayTracingTLAS
+        class MetalRayTracingTLAS : public tlas_t
         {
         public:
             MetalRayTracingTLAS(MetalDevice* pDevice, const GfxRayTracingTLASDesc& desc, const char* name);

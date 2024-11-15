@@ -7,21 +7,12 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MockDevice;
-
-        class MockShader : public IGfxShader
+        namespace nmock
         {
-        public:
-            MockShader(MockDevice* pDevice, const GfxShaderDesc& desc, const char* name);
-
-            virtual void* GetHandle() const override;
-            virtual bool  Create(byte* data_ptr, u32 data_len) override;
-
-        private:
-            byte* m_data;
-            u32   m_len;
-        };
-
+            void  Destroy(ngfx::device_t* pDevice, ngfx::shader_t* pShader);
+            bool  Create(ngfx::device_t* pDevice, ngfx::shader_t* pShader, byte* data_ptr, u32 data_len);
+            void* GetHandle(ngfx::device_t* pDevice, const ngfx::shader_t* pShader);
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore
 

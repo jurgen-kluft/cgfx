@@ -7,23 +7,18 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MockDevice;
-
-        class MockTexture : public IGfxTexture
+        namespace nmock
         {
-        public:
-            MockTexture(MockDevice* pDevice, const GfxTextureDesc& desc, const char* name);
-            ~MockTexture();
+            bool                     Create(device_t* pDevice, ngfx::texture_t*);
+            void                     Destroy(device_t* pDevice, ngfx::texture_t*);
+            void*                    GetHandle(device_t* pDevice, ngfx::texture_t*);
+            u32                      GetRequiredStagingBufferSize(device_t* pDevice, ngfx::texture_t*);
+            u32                      GetRowPitch(device_t* pDevice, ngfx::texture_t* texture, u32 mip_level = 0);
+            GfxTilingDesc            GetTilingDesc(device_t* pDevice, ngfx::texture_t* texture);
+            GfxSubresourceTilingDesc GetTilingDesc(device_t* pDevice, ngfx::texture_t* texture, u32 subresource = 0);
+            void*                    GetSharedHandle(device_t* pDevice, ngfx::texture_t* texture);
 
-            bool Create();
-
-            virtual void*                    GetHandle() const override;
-            virtual u32                      GetRequiredStagingBufferSize() const override;
-            virtual u32                      GetRowPitch(u32 mip_level = 0) const override;
-            virtual GfxTilingDesc            GetTilingDesc() const override;
-            virtual GfxSubresourceTilingDesc GetTilingDesc(u32 subresource = 0) const override;
-            virtual void*                    GetSharedHandle() const override;
-        };
+        }  // namespace nmock
 
     }  // namespace ngfx
 }  // namespace ncore

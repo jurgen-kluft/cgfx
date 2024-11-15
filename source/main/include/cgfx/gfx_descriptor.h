@@ -7,12 +7,19 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        class IGfxDescriptor : public IGfxResource
+        struct descriptor_t
         {
-        public:
-            virtual u32 GetHeapIndex() const = 0;
+            D_GFX_OCS_COMPONENT;
         };
+
+        descriptor_t* CreateShaderResourceView(device_t* device, texture_t* resource, const srv_desc_t& desc, const char* name);
+        descriptor_t* CreateShaderResourceView(device_t* device, buffer_t* resource, const srv_desc_t& desc, const char* name);
+        descriptor_t* CreateUnorderedAccessView(device_t* device, texture_t* resource, const uav_desc_t& desc, const char* name);
+        descriptor_t* CreateUnorderedAccessView(device_t* device, buffer_t* resource, const uav_desc_t& desc, const char* name);
+        descriptor_t* CreateConstantBufferView(device_t* device, buffer_t* buffer, const cbv_desc_t& desc, const char* name);
+        descriptor_t* CreateSampler(device_t* device, const sampler_desc_t& desc, const char* name);
+        void          Destroy(device_t* device, descriptor_t* resource);
+        u32           GetHeapIndex(descriptor_t*);
 
     }  // namespace ngfx
 }  // namespace ncore

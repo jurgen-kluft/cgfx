@@ -7,24 +7,37 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockShader::MockShader(MockDevice* pDevice, const GfxShaderDesc& desc, const char* name)
+        namespace nmock
         {
-            m_pDevice = pDevice;
-            m_desc    = desc;
-            m_name    = name;
-        }
+            struct shader_t
+            {
+                byte* m_data;
+                u32   m_len;
+                u32   m_hash;
+            };
 
-        void* MockShader::GetHandle() const { return nullptr; }
+            void Destroy(ngfx::device_t* pDevice, ngfx::shader_t* pShader)
+            {
+                // TODO, release the CPU memory of our shader
+                nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(pDevice, pShader);
+            }
 
-        bool MockShader::Create(byte* data_ptr, u32 data_len)
-        {
-            // m_data.resize(data.size());
-            // nmem::memcpy(m_data.data(), data.data(), data.size());
-            m_data = data_ptr;
-            m_len  = data_len;
-            m_hash = nhash::datahash(data_ptr, data_len);
-            return true;
-        }
+            bool Create(ngfx::device_t* pDevice, ngfx::shader_t* pShader, byte* data_ptr, u32 data_len)
+            {
+                nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(pDevice, pShader);
 
+                // TODO, allocate CPU memory for our shader and copy the data
+                // m_data.resize(data.size());
+                // nmem::memcpy(m_data.data(), data.data(), data.size());
+
+                mshader->m_data = data_ptr;
+                mshader->m_len  = data_len;
+                mshader->m_hash = nhash::datahash(data_ptr, data_len);
+                return true;
+            }
+
+            void* GetHandle(ngfx::device_t* pDevice, const ngfx::shader_t* pShader) { return nullptr; }
+
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

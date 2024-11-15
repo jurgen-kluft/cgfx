@@ -5,34 +5,34 @@
     #pragma once
 #endif
 
-#include "cgfx/d3d12/d3d12_header.h"
+//#include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_heap.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        class D3D12Device;
+        // class D3D12Device;
 
-        namespace D3D12MA
-        {
-            class Allocation;
-        }
+        // namespace D3D12MA
+        // {
+        //     class Allocation;
+        // }
 
-        class D3D12Heap : public IGfxHeap
-        {
-        public:
-            D3D12Heap(D3D12Device* pDevice, const GfxHeapDesc& desc, const char* name);
-            ~D3D12Heap();
+        // class D3D12Heap : public heap_t
+        // {
+        // public:
+        //     D3D12Heap(D3D12Device* pDevice, const heap_desc_t& desc, const char* name);
+        //     ~D3D12Heap();
 
-            virtual void* GetHandle() const override;
-            ID3D12Heap*   GetHeap() const;
+        //     virtual void* GetHandle() const override;
+        //     ID3D12Heap*   GetHeap() const;
 
-            bool Create();
+        //     bool Create();
 
-        private:
-            D3D12MA::Allocation* m_pAllocation = nullptr;
-        };
+        // private:
+        //     D3D12MA::Allocation* m_pAllocation = nullptr;
+        // };
     }  // namespace ngfx
 }  // namespace ncore
 #endif

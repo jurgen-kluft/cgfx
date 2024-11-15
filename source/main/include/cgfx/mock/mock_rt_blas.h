@@ -7,19 +7,13 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MockDevice;
-
-        class MockRayTracingBLAS : public IGfxRayTracingBLAS
+        namespace nmock
         {
-        public:
-            MockRayTracingBLAS(MockDevice* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name);
-            ~MockRayTracingBLAS();
-
-            bool Create();
-
-            virtual void* GetHandle() const override;
-        };
-
+            void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pTLAS);
+            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pTLAS);
+            void* GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pTLAS);
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore
+
 #endif

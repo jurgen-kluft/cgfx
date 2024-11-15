@@ -18,215 +18,193 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockDevice::MockDevice(const GfxDeviceDesc& desc) { m_desc = desc; }
-        MockDevice::~MockDevice() {}
+        // swapchain_t* MockDevice::CreateSwapchain(const swapchain_desc_t& desc, const char* name)
+        // {
+        //     MockSwapchain* swapchain = new MockSwapchain(this, desc, name);
+        //     if (!swapchain->Create())
+        //     {
+        //         delete swapchain;
+        //         return nullptr;
+        //     }
+        //     return swapchain;
+        // }
 
-        bool MockDevice::Create() { return true; }
+        // command_list_t* MockDevice::CreateCommandList(GfxCommandQueue queue_type, const char* name)
+        // {
+        //     MockCommandList* commandList = new MockCommandList(this, queue_type, name);
+        //     if (!commandList->Create())
+        //     {
+        //         delete commandList;
+        //         return nullptr;
+        //     }
+        //     return commandList;
+        // }
 
-        void* MockDevice::GetHandle() const { return nullptr; }
+        // fence_t* MockDevice::CreateFence(const char* name)
+        // {
+        //     MockFence* fence = new MockFence(this, name);
+        //     if (!fence->Create())
+        //     {
+        //         delete fence;
+        //         return nullptr;
+        //     }
+        //     return fence;
+        // }
 
-        void MockDevice::BeginFrame() {}
-        void MockDevice::EndFrame() { ++m_frameID; }
+        // heap_t* MockDevice::CreateHeap(const heap_desc_t& desc, const char* name)
+        // {
+        //     MockHeap* heap = new MockHeap(this, desc, name);
+        //     if (!heap->Create())
+        //     {
+        //         delete heap;
+        //         return nullptr;
+        //     }
+        //     return heap;
+        // }
 
-        IGfxSwapchain* MockDevice::CreateSwapchain(const GfxSwapchainDesc& desc, const char* name)
+        // buffer_t* MockDevice::CreateBuffer(const buffer_desc_t& desc, const char* name)
+        // {
+        //     MockBuffer* buffer = new MockBuffer(this, desc, name);
+        //     if (!buffer->Create())
+        //     {
+        //         delete buffer;
+        //         return nullptr;
+        //     }
+        //     return buffer;
+        // }
+
+        // texture_t* MockDevice::CreateTexture(const texture_desc_t& desc, const char* name)
+        // {
+        //     MockTexture* texture = new MockTexture(this, desc, name);
+        //     if (!texture->Create())
+        //     {
+        //         delete texture;
+        //         return nullptr;
+        //     }
+        //     return texture;
+        // }
+
+        // shader_t* MockDevice::CreateShader(const shader_desc_t& desc, byte* data_ptr, u32 data_len, const char* name)
+        // {
+        //     MockShader* shader = new MockShader(this, desc, name);
+        //     if (!shader->Create(data_ptr, data_len))
+        //     {
+        //         delete shader;
+        //         return nullptr;
+        //     }
+        //     return shader;
+        // }
+
+        // pipeline_state_t* MockDevice::CreateGraphicsPipelineState(const graphics_pipeline_desc_t& desc, const char* name)
+        // {
+        //     MockGraphicsPipelineState* pso = new MockGraphicsPipelineState(this, desc, name);
+        //     if (!pso->Create())
+        //     {
+        //         delete pso;
+        //         return nullptr;
+        //     }
+        //     return pso;
+        // }
+
+        // pipeline_state_t* MockDevice::CreateMeshShadingPipelineState(const mesh_shading_pipeline_desc_t& desc, const char* name)
+        // {
+        //     MockMeshShadingPipelineState* pso = new MockMeshShadingPipelineState(this, desc, name);
+        //     if (!pso->Create())
+        //     {
+        //         delete pso;
+        //         return nullptr;
+        //     }
+        //     return pso;
+        // }
+
+        // pipeline_state_t* MockDevice::CreateComputePipelineState(const compute_pipeline_desc_t& desc, const char* name)
+        // {
+        //     MockComputePipelineState* pso = new MockComputePipelineState(this, desc, name);
+        //     if (!pso->Create())
+        //     {
+        //         delete pso;
+        //         return nullptr;
+        //     }
+        //     return pso;
+        // }
+
+        // descriptor_t* MockDevice::CreateShaderResourceView(resource_t* resource, const srv_desc_t& desc, const char* name)
+        // {
+        //     MockShaderResourceView* srv = new MockShaderResourceView(this, resource, desc, name);
+        //     if (!srv->Create())
+        //     {
+        //         delete srv;
+        //         return nullptr;
+        //     }
+        //     return srv;
+        // }
+
+        // descriptor_t* MockDevice::CreateUnorderedAccessView(resource_t* resource, const uav_desc_t& desc, const char* name)
+        // {
+        //     MockUnorderedAccessView* uav = new MockUnorderedAccessView(this, resource, desc, name);
+        //     if (!uav->Create())
+        //     {
+        //         delete uav;
+        //         return nullptr;
+        //     }
+        //     return uav;
+        // }
+
+        // descriptor_t* MockDevice::CreateConstantBufferView(buffer_t* buffer, const cbv_desc_t& desc, const char* name)
+        // {
+        //     MockConstantBufferView* cbv = new MockConstantBufferView(this, buffer, desc, name);
+        //     if (!cbv->Create())
+        //     {
+        //         delete cbv;
+        //         return nullptr;
+        //     }
+        //     return cbv;
+        // }
+
+        // descriptor_t* MockDevice::CreateSampler(const sampler_desc_t& desc, const char* name)
+        // {
+        //     MockSampler* sampler = new MockSampler(this, desc, name);
+        //     if (!sampler->Create())
+        //     {
+        //         delete sampler;
+        //         return nullptr;
+        //     }
+        //     return sampler;
+        // }
+
+        // blas_t* MockDevice::CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name)
+        // {
+        //     MockRayTracingBLAS* blas = new MockRayTracingBLAS(this, desc, name);
+        //     if (!blas->Create())
+        //     {
+        //         delete blas;
+        //         return nullptr;
+        //     }
+        //     return blas;
+        // }
+
+        // tlas_t* MockDevice::CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name)
+        // {
+        //     MockRayTracingTLAS* tlas = new MockRayTracingTLAS(this, desc, name);
+        //     if (!tlas->Create())
+        //     {
+        //         delete tlas;
+        //         return nullptr;
+        //     }
+        //     return tlas;
+        // }
+
+        namespace nmock
         {
-            MockSwapchain* swapchain = new MockSwapchain(this, desc, name);
-            if (!swapchain->Create())
-            {
-                delete swapchain;
-                return nullptr;
-            }
-            return swapchain;
-        }
+            bool  Create(device_t* device) { return true; }
+            void  Destroy(device_t* device) {}
+            void* GetHandle(device_t* device) { return nullptr; }
+            void  BeginFrame(device_t* device) {}
+            void  EndFrame(device_t* device) { ++device->m_frameID; }
 
-        IGfxCommandList* MockDevice::CreateCommandList(GfxCommandQueue queue_type, const char* name)
-        {
-            MockCommandList* commandList = new MockCommandList(this, queue_type, name);
-            if (!commandList->Create())
-            {
-                delete commandList;
-                return nullptr;
-            }
-            return commandList;
-        }
+            bool DumpMemoryStats(device_t* device, const char* file) { return false; }
 
-        IGfxFence* MockDevice::CreateFence(const char* name)
-        {
-            MockFence* fence = new MockFence(this, name);
-            if (!fence->Create())
-            {
-                delete fence;
-                return nullptr;
-            }
-            return fence;
-        }
-
-        IGfxHeap* MockDevice::CreateHeap(const GfxHeapDesc& desc, const char* name)
-        {
-            MockHeap* heap = new MockHeap(this, desc, name);
-            if (!heap->Create())
-            {
-                delete heap;
-                return nullptr;
-            }
-            return heap;
-        }
-
-        IGfxBuffer* MockDevice::CreateBuffer(const GfxBufferDesc& desc, const char* name)
-        {
-            MockBuffer* buffer = new MockBuffer(this, desc, name);
-            if (!buffer->Create())
-            {
-                delete buffer;
-                return nullptr;
-            }
-            return buffer;
-        }
-
-        IGfxTexture* MockDevice::CreateTexture(const GfxTextureDesc& desc, const char* name)
-        {
-            MockTexture* texture = new MockTexture(this, desc, name);
-            if (!texture->Create())
-            {
-                delete texture;
-                return nullptr;
-            }
-            return texture;
-        }
-
-        IGfxShader* MockDevice::CreateShader(const GfxShaderDesc& desc, byte* data_ptr, u32 data_len, const char* name)
-        {
-            MockShader* shader = new MockShader(this, desc, name);
-            if (!shader->Create(data_ptr, data_len))
-            {
-                delete shader;
-                return nullptr;
-            }
-            return shader;
-        }
-
-        IGfxPipelineState* MockDevice::CreateGraphicsPipelineState(const GfxGraphicsPipelineDesc& desc, const char* name)
-        {
-            MockGraphicsPipelineState* pso = new MockGraphicsPipelineState(this, desc, name);
-            if (!pso->Create())
-            {
-                delete pso;
-                return nullptr;
-            }
-            return pso;
-        }
-
-        IGfxPipelineState* MockDevice::CreateMeshShadingPipelineState(const GfxMeshShadingPipelineDesc& desc, const char* name)
-        {
-            MockMeshShadingPipelineState* pso = new MockMeshShadingPipelineState(this, desc, name);
-            if (!pso->Create())
-            {
-                delete pso;
-                return nullptr;
-            }
-            return pso;
-        }
-
-        IGfxPipelineState* MockDevice::CreateComputePipelineState(const GfxComputePipelineDesc& desc, const char* name)
-        {
-            MockComputePipelineState* pso = new MockComputePipelineState(this, desc, name);
-            if (!pso->Create())
-            {
-                delete pso;
-                return nullptr;
-            }
-            return pso;
-        }
-
-        IGfxDescriptor* MockDevice::CreateShaderResourceView(IGfxResource* resource, const GfxShaderResourceViewDesc& desc, const char* name)
-        {
-            MockShaderResourceView* srv = new MockShaderResourceView(this, resource, desc, name);
-            if (!srv->Create())
-            {
-                delete srv;
-                return nullptr;
-            }
-            return srv;
-        }
-
-        IGfxDescriptor* MockDevice::CreateUnorderedAccessView(IGfxResource* resource, const GfxUnorderedAccessViewDesc& desc, const char* name)
-        {
-            MockUnorderedAccessView* uav = new MockUnorderedAccessView(this, resource, desc, name);
-            if (!uav->Create())
-            {
-                delete uav;
-                return nullptr;
-            }
-            return uav;
-        }
-
-        IGfxDescriptor* MockDevice::CreateConstantBufferView(IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name)
-        {
-            MockConstantBufferView* cbv = new MockConstantBufferView(this, buffer, desc, name);
-            if (!cbv->Create())
-            {
-                delete cbv;
-                return nullptr;
-            }
-            return cbv;
-        }
-
-        IGfxDescriptor* MockDevice::CreateSampler(const GfxSamplerDesc& desc, const char* name)
-        {
-            MockSampler* sampler = new MockSampler(this, desc, name);
-            if (!sampler->Create())
-            {
-                delete sampler;
-                return nullptr;
-            }
-            return sampler;
-        }
-
-        IGfxRayTracingBLAS* MockDevice::CreateRayTracingBLAS(const GfxRayTracing::BLASDesc& desc, const char* name)
-        {
-            MockRayTracingBLAS* blas = new MockRayTracingBLAS(this, desc, name);
-            if (!blas->Create())
-            {
-                delete blas;
-                return nullptr;
-            }
-            return blas;
-        }
-
-        IGfxRayTracingTLAS* MockDevice::CreateRayTracingTLAS(const GfxRayTracing::TLASDesc& desc, const char* name)
-        {
-            MockRayTracingTLAS* tlas = new MockRayTracingTLAS(this, desc, name);
-            if (!tlas->Create())
-            {
-                delete tlas;
-                return nullptr;
-            }
-            return tlas;
-        }
-
-        u32 MockDevice::GetAllocationSize(const GfxTextureDesc& desc)
-        {
-            u32 size = 0;
-
-            u32 min_width  = GetFormatBlockWidth(desc.format);
-            u32 min_height = GetFormatBlockHeight(desc.format);
-
-            for (u32 layer = 0; layer < desc.array_size; ++layer)
-            {
-                for (u32 mip = 0; mip < desc.mip_levels; ++mip)
-                {
-                    u32 width  = math::g_max(desc.width >> mip, min_width);
-                    u32 height = math::g_max(desc.height >> mip, min_height);
-                    u32 depth  = math::g_max(desc.depth >> mip, 1u);
-
-                    size += GetFormatRowPitch(desc.format, width) * height * depth;
-                }
-            }
-
-            return size;
-        }
-
-        bool MockDevice::DumpMemoryStats(const char* file) { return false; }
+        }  // namespace nmock
 
     }  // namespace ngfx
 }  // namespace ncore

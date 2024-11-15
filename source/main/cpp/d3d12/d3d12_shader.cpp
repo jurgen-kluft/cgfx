@@ -6,7 +6,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Shader::D3D12Shader(D3D12Device* pDevice, const GfxShaderDesc& desc, const char* name)
+        D3D12Shader::D3D12Shader(D3D12Device* pDevice, const shader_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

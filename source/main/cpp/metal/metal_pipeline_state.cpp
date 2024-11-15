@@ -7,7 +7,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalGraphicsPipelineState::MetalGraphicsPipelineState(MetalDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name)
+        MetalGraphicsPipelineState::MetalGraphicsPipelineState(MetalDevice* pDevice, const graphics_pipeline_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -79,7 +79,7 @@ namespace ncore
             return true;
         }
 
-        MetalMeshShadingPipelineState::MetalMeshShadingPipelineState(MetalDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name)
+        MetalMeshShadingPipelineState::MetalMeshShadingPipelineState(MetalDevice* pDevice, const mesh_shading_pipeline_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;
@@ -163,7 +163,7 @@ namespace ncore
             return true;
         }
 
-        MetalComputePipelineState::MetalComputePipelineState(MetalDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name)
+        MetalComputePipelineState::MetalComputePipelineState(MetalDevice* pDevice, const compute_pipeline_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_name    = name;

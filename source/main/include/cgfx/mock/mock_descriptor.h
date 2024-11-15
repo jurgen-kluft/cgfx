@@ -7,73 +7,21 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        class MockDevice;
-
-        class MockShaderResourceView : public IGfxDescriptor
+        namespace nmock
         {
-        public:
-            MockShaderResourceView(MockDevice* pDevice, IGfxResource* pResource, const GfxShaderResourceViewDesc& desc, const char* name);
-            ~MockShaderResourceView();
+            ngfx::descriptor_t* Alloc(device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* Alloc(device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* Alloc(device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc);
+            ngfx::descriptor_t* Alloc(device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
+            ngfx::descriptor_t* Alloc(device_t* pDevice, resource_t* resource, descriptor_t* descriptor, const sampler_desc_t& desc);
 
-            bool Create();
+            void  Destroy(ngfx::descriptor_t* d);
+            bool  Create(ngfx::descriptor_t* d);
+            void* GetHandle(ngfx::descriptor_t* d);
+            u32   GetHeapIndex(ngfx::descriptor_t* d);
 
-            virtual void* GetHandle() const override;
-            virtual u32   GetHeapIndex() const override;
-
-        private:
-            IGfxResource*             m_pResource = nullptr;
-            GfxShaderResourceViewDesc m_desc      = {};
-        };
-
-        class MockUnorderedAccessView : public IGfxDescriptor
-        {
-        public:
-            MockUnorderedAccessView(MockDevice* pDevice, IGfxResource* pResource, const GfxUnorderedAccessViewDesc& desc, const char* name);
-            ~MockUnorderedAccessView();
-
-            bool Create();
-
-            virtual void* GetHandle() const override;
-            virtual u32   GetHeapIndex() const override;
-
-        private:
-            IGfxResource*              m_pResource = nullptr;
-            GfxUnorderedAccessViewDesc m_desc      = {};
-        };
-
-        class MockConstantBufferView : public IGfxDescriptor
-        {
-        public:
-            MockConstantBufferView(MockDevice* pDevice, IGfxBuffer* buffer, const GfxConstantBufferViewDesc& desc, const char* name);
-            ~MockConstantBufferView();
-
-            bool Create();
-
-            virtual void* GetHandle() const override;
-            virtual u32   GetHeapIndex() const override;
-
-        private:
-            IGfxBuffer*               m_pBuffer = nullptr;
-            GfxConstantBufferViewDesc m_desc    = {};
-        };
-
-        class MockSampler : public IGfxDescriptor
-        {
-        public:
-            MockSampler(MockDevice* pDevice, const GfxSamplerDesc& desc, const char* name);
-            ~MockSampler();
-
-            bool Create();
-
-            virtual void* GetHandle() const override;
-            virtual u32   GetHeapIndex() const override;
-
-        private:
-            GfxSamplerDesc m_desc;
-        };
-
-    }  // namespace ngfx
-}  // namespace ncore
+        }  // namespace ngfx
+    }  // namespace ncore
+}
 
 #endif

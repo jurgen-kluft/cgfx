@@ -5,31 +5,39 @@
     #pragma once
 #endif
 
-#include "cgfx/d3d12/d3d12_header.h"
+// #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_fence.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        class D3D12Device;
-
-        class D3D12Fence : public IGfxFence
+        namespace nd3d12
         {
-        public:
-            D3D12Fence(D3D12Device* pDevice, const char* name);
-            ~D3D12Fence();
+            fence_t* CreateFence(device_t* device, resource_t* resource, fence_t* fence);
+            void     Destroy(device_t* device, fence_t* fence);
+            void     Wait(device_t* device, fence_t* fence, u64 value);
+            void     Signal(device_t* device, fence_t* fence, u64 value);
+        }  // namespace nd3d12
 
-            virtual void* GetHandle() const override { return m_pFence; }
-            virtual void  Wait(u64 value) override;
-            virtual void  Signal(u64 value) override;
+        // class D3D12Device;
 
-            bool Create();
+        // class D3D12Fence : public fence_t
+        // {
+        // public:
+        //     D3D12Fence(D3D12Device* pDevice, const char* name);
+        //     ~D3D12Fence();
 
-        private:
-            ID3D12Fence* m_pFence = nullptr;
-            HANDLE       m_hEvent = nullptr;
-        };
+        //     virtual void* GetHandle() const override { return m_pFence; }
+        //     virtual void  Wait(u64 value) override;
+        //     virtual void  Signal(u64 value) override;
+
+        //     bool Create();
+
+        // private:
+        //     ID3D12Fence* m_pFence = nullptr;
+        //     HANDLE       m_hEvent = nullptr;
+        // };
     }  // namespace ngfx
 }  // namespace ncore
 #endif

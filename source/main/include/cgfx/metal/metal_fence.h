@@ -8,24 +8,31 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        class MetalDevice;
-
-        class MetalFence : public IGfxFence
+        namespace nmetal
         {
-        public:
-            MetalFence(MetalDevice* pDevice, const char* name);
-            ~MetalFence();
+            fence_t* CreateFence(device_t* device, resource_t* resource, fence_t* fence);
+            void     Destroy(device_t* device, fence_t* fence);
+            void     Wait(device_t* device, fence_t* fence, u64 value);
+            void     Signal(device_t* device, fence_t* fence, u64 value);
+        }  // namespace nmetal
 
-            bool Create();
+        // class MetalDevice;
 
-            virtual void* GetHandle() const override { return m_pEvent; }
-            virtual void  Wait(u64 value) override;
-            virtual void  Signal(u64 value) override;
+        // class MetalFence : public fence_t
+        // {
+        // public:
+        //     MetalFence(MetalDevice* pDevice, const char* name);
+        //     ~MetalFence();
 
-        private:
-            MTL::SharedEvent* m_pEvent = nullptr;
-        };
+        //     bool Create();
+
+        //     virtual void* GetHandle() const override { return m_pEvent; }
+        //     virtual void  Wait(u64 value) override;
+        //     virtual void  Signal(u64 value) override;
+
+        // private:
+        //     MTL::SharedEvent* m_pEvent = nullptr;
+        // };
 
     }  // namespace ngfx
 }  // namespace ncore

@@ -7,33 +7,19 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        class MockDevice;
-
-        class MockSwapchain : public IGfxSwapchain
+        namespace nmock
         {
-        public:
-            MockSwapchain(MockDevice* pDevice, const GfxSwapchainDesc& desc, const char* name);
-            ~MockSwapchain();
+            ngfx::swapchain_t* Alloc(device_t* pDevice, const swapchain_desc_t& desc, const char* name);
+            void               Destroy(ngfx::swapchain_t* pSwapchain);
+            bool               Create(ngfx::swapchain_t* pSwapchain);
+            void               Present(ngfx::swapchain_t* pSwapchain);
+            void*              GetHandle(ngfx::swapchain_t* pSwapchain);
+            void               AcquireNextBackBuffer(ngfx::swapchain_t* pSwapchain);
+            ngfx::texture_t*   GetBackBuffer(ngfx::swapchain_t* pSwapchain);
+            bool               Resize(ngfx::swapchain_t* pSwapchain, u32 width, u32 height);
+            void               SetVSyncEnabled(ngfx::swapchain_t* pSwapchain, bool value);
 
-            bool Create();
-            void Present();
-
-            virtual void*        GetHandle() const override;
-            virtual void         AcquireNextBackBuffer() override;
-            virtual IGfxTexture* GetBackBuffer() const override;
-            virtual bool         Resize(u32 width, u32 height) override;
-            virtual void         SetVSyncEnabled(bool value) override;
-
-        private:
-            bool CreateTextures();
-
-        private:
-            s32          m_currentBackBuffer  = -1;
-            s32          m_maxBackBufferCount = 8;
-            s32          m_numBackBufferCount = 0;
-            IGfxTexture* m_backBuffers[8];
-        };
+        }  // namespace nmock
 
     }  // namespace ngfx
 }  // namespace ncore

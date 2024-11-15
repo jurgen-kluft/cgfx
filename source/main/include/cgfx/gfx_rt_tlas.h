@@ -7,14 +7,14 @@ namespace ncore
 {
     namespace ngfx
     {
-        class IGfxRayTracingTLAS : public IGfxResource
+        struct tlas_t
         {
-        public:
-            const GfxRayTracing::TLASDesc& GetDesc() const { return m_desc; }
-
-        protected:
-            GfxRayTracing::TLASDesc m_desc;
+            D_GFX_OCS_COMPONENT;
+            tlas_desc_t m_desc;
         };
+
+        tlas_t* CreateRayTracingTLAS(device_t* device, const tlas_desc_t& desc, const char* name);
+        void    Destroy(device_t* device, tlas_t* resource);
 
     }  // namespace ngfx
 }  // namespace ncore

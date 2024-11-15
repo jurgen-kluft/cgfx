@@ -7,7 +7,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalSwapchain::MetalSwapchain(MetalDevice* pDevice, const GfxSwapchainDesc& desc, const char* name)
+        MetalSwapchain::MetalSwapchain(MetalDevice* pDevice, const swapchain_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;
@@ -27,7 +27,7 @@ namespace ncore
             m_pView->setColorPixelFormat(ToPixelFormat(m_desc.backbuffer_format));
             m_pView->retain();
 
-            GfxTextureDesc textureDesc;
+            texture_desc_t textureDesc;
             textureDesc.width  = m_desc.width;
             textureDesc.height = m_desc.height;
             textureDesc.format = m_desc.backbuffer_format;
@@ -48,7 +48,7 @@ namespace ncore
             m_pTexture->SetSwapchainTexture(texture);
         }
 
-        IGfxTexture* MetalSwapchain::GetBackBuffer() const { return m_pTexture; }
+        texture_t* MetalSwapchain::GetBackBuffer() const { return m_pTexture; }
 
         bool MetalSwapchain::Resize(u32 width, u32 height)
         {

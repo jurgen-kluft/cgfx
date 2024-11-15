@@ -52,11 +52,11 @@ namespace ncore
             EndRenderPass();
         }
 
-        void MetalCommandList::Wait(IGfxFence* fence, u64 value) { m_pCommandBuffer->encodeWait((const MTL::Event*)fence->GetHandle(), value); }
+        void MetalCommandList::Wait(fence_t* fence, u64 value) { m_pCommandBuffer->encodeWait((const MTL::Event*)fence->GetHandle(), value); }
 
-        void MetalCommandList::Signal(IGfxFence* fence, u64 value) { m_pCommandBuffer->encodeSignalEvent((const MTL::Event*)fence->GetHandle(), value); }
+        void MetalCommandList::Signal(fence_t* fence, u64 value) { m_pCommandBuffer->encodeSignalEvent((const MTL::Event*)fence->GetHandle(), value); }
 
-        void MetalCommandList::Present(IGfxSwapchain* swapchain) { m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable()); }
+        void MetalCommandList::Present(swapchain_t* swapchain) { m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable()); }
 
         void MetalCommandList::Submit()
         {
@@ -99,11 +99,11 @@ namespace ncore
 
         void MetalCommandList::EndEvent() { m_pCommandBuffer->popDebugGroup(); }
 
-        void MetalCommandList::CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset)
+        void MetalCommandList::CopyBufferToTexture(texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset)
         {
             BeginBlitEncoder();
 
-            const GfxTextureDesc& desc        = dst_texture->GetDesc();
+            const texture_desc_t& desc        = dst_texture->GetDesc();
             MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
 
             u32 bytesPerRow = ((MetalTexture*)dst_texture)->GetRowPitch(mip_level);
@@ -117,11 +117,11 @@ namespace ncore
                                                   MTL::Origin::Make(0, 0, 0));
         }
 
-        void MetalCommandList::CopyTextureToBuffer(IGfxBuffer* dst_buffer, u32 offset, IGfxTexture* src_texture, u32 mip_level, u32 array_slice)
+        void MetalCommandList::CopyTextureToBuffer(buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice)
         {
             BeginBlitEncoder();
 
-            const GfxTextureDesc& desc        = src_texture->GetDesc();
+            const texture_desc_t& desc        = src_texture->GetDesc();
             MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
 
             u32 bytesPerRow = ((MetalTexture*)src_texture)->GetRowPitch(mip_level);
@@ -135,41 +135,41 @@ namespace ncore
                                                    desc.type == GfxTextureType::Texture3D ? bytesPerImage : 0);
         }
 
-        void MetalCommandList::CopyBuffer(IGfxBuffer* dst, u32 dst_offset, IGfxBuffer* src, u32 src_offset, u32 size)
+        void MetalCommandList::CopyBuffer(buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
         {
             BeginBlitEncoder();
 
             m_pBlitCommandEncoder->copyFromBuffer((MTL::Buffer*)src->GetHandle(), src_offset, (MTL::Buffer*)dst->GetHandle(), dst_offset, size);
         }
 
-        void MetalCommandList::CopyTexture(IGfxTexture* dst, u32 dst_mip, u32 dst_array, IGfxTexture* src, u32 src_mip, u32 src_array)
+        void MetalCommandList::CopyTexture(texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
         {
             BeginBlitEncoder();
 
-            const GfxTextureDesc& desc     = src->GetDesc();
+            const texture_desc_t& desc     = src->GetDesc();
             MTL::Size             src_size = MTL::Size::Make(math::max(desc.width >> src_mip, 1u), math::max(desc.height >> src_mip, 1u), math::max(desc.depth >> src_mip, 1u));
 
             m_pBlitCommandEncoder->copyFromTexture((MTL::Texture*)src->GetHandle(), src_array, src_mip, MTL::Origin(0, 0, 0), src_size, (MTL::Texture*)dst->GetHandle(), dst_array, dst_mip, MTL::Origin(0, 0, 0));
         }
 
-        void MetalCommandList::ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const float* clear_value, IGfxClearUavApi* clear_api)
+        void MetalCommandList::ClearUAV(resource_t* resource, descriptor_t* uav, const float* clear_value, IGfxClearUavApi* clear_api)
         {
-            const GfxUnorderedAccessViewDesc& desc = ((MetalUnorderedAccessView*)uav)->GetDesc();
+            const uav_desc_t& desc = ((MetalUnorderedAccessView*)uav)->GetDesc();
             clear_api->ClearUAV(this, resource, uav, desc, clear_value);
         }
 
-        void MetalCommandList::ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const u32* clear_value, IGfxClearUavApi* clear_api)
+        void MetalCommandList::ClearUAV(resource_t* resource, descriptor_t* uav, const u32* clear_value, IGfxClearUavApi* clear_api)
         {
-            const GfxUnorderedAccessViewDesc& desc = ((MetalUnorderedAccessView*)uav)->GetDesc();
+            const uav_desc_t& desc = ((MetalUnorderedAccessView*)uav)->GetDesc();
             clear_api->ClearUAV(this, resource, uav, desc, clear_value);
         }
 
-        void MetalCommandList::WriteBuffer(IGfxBuffer* buffer, u32 offset, u32 data)
+        void MetalCommandList::WriteBuffer(buffer_t* buffer, u32 offset, u32 data)
         {
             BeginBlitEncoder();
 
             // TODO handle events
-            // BeginEvent("IGfxCommandList::WriteBuffer");
+            // BeginEvent("command_list_t::WriteBuffer");
 
             MTL::Buffer* mtlBuffer = (MTL::Buffer*)buffer->GetHandle();
             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 0, sizeof(u8)), u8(data >> 0));
@@ -180,14 +180,14 @@ namespace ncore
             // EndEvent();
         }
 
-        void MetalCommandList::UpdateTileMappings(IGfxTexture* texture, IGfxHeap* heap, u32 mapping_count, const GfxTileMapping* mappings)
+        void MetalCommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings)
         {
             // todo
         }
 
-        void MetalCommandList::TextureBarrier(IGfxTexture* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after) {}
+        void MetalCommandList::TextureBarrier(texture_t* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after) {}
 
-        void MetalCommandList::BufferBarrier(IGfxBuffer* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after) {}
+        void MetalCommandList::BufferBarrier(buffer_t* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after) {}
 
         void MetalCommandList::GlobalBarrier(GfxAccessFlags access_before, GfxAccessFlags access_after) {}
 
@@ -294,7 +294,7 @@ namespace ncore
             }
         }
 
-        void MetalCommandList::SetPipelineState(IGfxPipelineState* state)
+        void MetalCommandList::SetPipelineState(pipeline_state_t* state)
         {
             if (m_pCurrentPSO != state)
             {
@@ -309,7 +309,7 @@ namespace ncore
                     if (state->GetType() == GfxPipelineType::Graphics)
                     {
                         MetalGraphicsPipelineState*    graphicsPSO = (MetalGraphicsPipelineState*)state;
-                        const GfxGraphicsPipelineDesc& desc        = graphicsPSO->GetDesc();
+                        const graphics_pipeline_desc_t& desc        = graphicsPSO->GetDesc();
 
                         m_pRenderCommandEncoder->setDepthStencilState(graphicsPSO->GetDepthStencilState());
                         SetRasterizerState(desc.rasterizer_state);
@@ -318,7 +318,7 @@ namespace ncore
                     else
                     {
                         MetalMeshShadingPipelineState*    meshShadingPSO = (MetalMeshShadingPipelineState*)state;
-                        const GfxMeshShadingPipelineDesc& desc           = meshShadingPSO->GetDesc();
+                        const mesh_shading_pipeline_desc_t& desc           = meshShadingPSO->GetDesc();
 
                         m_pRenderCommandEncoder->setDepthStencilState(meshShadingPSO->GetDepthStencilState());
                         SetRasterizerState(desc.rasterizer_state);
@@ -339,7 +339,7 @@ namespace ncore
             m_pRenderCommandEncoder->setBlendColor(blend_factor[0], blend_factor[1], blend_factor[2], blend_factor[3]);
         }
 
-        void MetalCommandList::SetIndexBuffer(IGfxBuffer* buffer, u32 offset, GfxFormat format)
+        void MetalCommandList::SetIndexBuffer(buffer_t* buffer, u32 offset, GfxFormat format)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
@@ -483,7 +483,7 @@ namespace ncore
             m_pRenderCommandEncoder->drawMeshThreadgroups(threadgroupsPerGrid, threadsPerObjectThreadgroup, threadsPerMeshThreadgroup);
         }
 
-        void MetalCommandList::DrawIndirect(IGfxBuffer* buffer, u32 offset)
+        void MetalCommandList::DrawIndirect(buffer_t* buffer, u32 offset)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
@@ -493,7 +493,7 @@ namespace ncore
             IRRuntimeDrawPrimitives(m_pRenderCommandEncoder, m_primitiveType, (MTL::Buffer*)buffer->GetHandle(), offset);
         }
 
-        void MetalCommandList::DrawIndexedIndirect(IGfxBuffer* buffer, u32 offset)
+        void MetalCommandList::DrawIndexedIndirect(buffer_t* buffer, u32 offset)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
@@ -503,7 +503,7 @@ namespace ncore
             IRRuntimeDrawIndexedPrimitives(m_pRenderCommandEncoder, m_primitiveType, m_indexType, m_pIndexBuffer, m_indexBufferOffset, (MTL::Buffer*)buffer->GetHandle(), offset);
         }
 
-        void MetalCommandList::DispatchIndirect(IGfxBuffer* buffer, u32 offset)
+        void MetalCommandList::DispatchIndirect(buffer_t* buffer, u32 offset)
         {
             BeginComputeEncoder();
 
@@ -516,7 +516,7 @@ namespace ncore
             EndComputeEncoder();
         }
 
-        void MetalCommandList::DispatchMeshIndirect(IGfxBuffer* buffer, u32 offset)
+        void MetalCommandList::DispatchMeshIndirect(buffer_t* buffer, u32 offset)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
@@ -536,33 +536,33 @@ namespace ncore
             m_pRenderCommandEncoder->drawMeshThreadgroups((MTL::Buffer*)buffer->GetHandle(), offset, threadsPerObjectThreadgroup, threadsPerMeshThreadgroup);
         }
 
-        void MetalCommandList::MultiDrawIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void MetalCommandList::MultiDrawIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
             // todo
         }
 
-        void MetalCommandList::MultiDrawIndexedIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void MetalCommandList::MultiDrawIndexedIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
             // todo
         }
 
-        void MetalCommandList::MultiDispatchIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void MetalCommandList::MultiDispatchIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             // todo
         }
 
-        void MetalCommandList::MultiDispatchMeshIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)
+        void MetalCommandList::MultiDispatchMeshIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
         {
             ASSERT(m_pRenderCommandEncoder != nullptr);
 
             // todo
         }
 
-        void MetalCommandList::BuildRayTracingBLAS(IGfxRayTracingBLAS* blas)
+        void MetalCommandList::BuildRayTracingBLAS(blas_t* blas)
         {
             BeginASEncoder();
 
@@ -570,7 +570,7 @@ namespace ncore
             m_pASEncoder->buildAccelerationStructure(metalBLAS->GetAccelerationStructure(), metalBLAS->GetDescriptor(), metalBLAS->GetScratchBuffer(), 0);
         }
 
-        void MetalCommandList::UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)
+        void MetalCommandList::UpdateRayTracingBLAS(blas_t* blas, buffer_t* vertex_buffer, u32 vertex_buffer_offset)
         {
             BeginASEncoder();
 
@@ -580,7 +580,7 @@ namespace ncore
             m_pASEncoder->refitAccelerationStructure(metalBLAS->GetAccelerationStructure(), metalBLAS->GetDescriptor(), metalBLAS->GetAccelerationStructure(), metalBLAS->GetScratchBuffer(), 0);
         }
 
-        void MetalCommandList::BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracingInstance* instances, u32 instance_count)
+        void MetalCommandList::BuildRayTracingTLAS(tlas_t* tlas, const GfxRayTracingInstance* instances, u32 instance_count)
         {
             BeginASEncoder();
 

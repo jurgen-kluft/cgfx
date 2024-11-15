@@ -5,48 +5,127 @@ namespace ncore
 {
     namespace ngfx
     {
-
-        MockGraphicsPipelineState::MockGraphicsPipelineState(MockDevice* pDevice, const GfxGraphicsPipelineDesc& desc, const char* name)
+        namespace nmock
         {
-            m_pDevice = pDevice;
-            m_name    = name;
-            m_desc    = desc;
-            m_type    = GfxPipelineType::Graphics;
-        }
+            struct graphics_pipeline_state_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentBackEndGraphicsPipelineState);
+                graphics_pipeline_desc_t desc;
+            };
 
-        MockGraphicsPipelineState::~MockGraphicsPipelineState() {}
+            struct mesh_shading_pipeline_state_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentBackEndMeshShadingPipelineState);
+                mesh_shading_pipeline_desc_t desc;
+            };
 
-        void* MockGraphicsPipelineState::GetHandle() const { return nullptr; }
+            struct compute_pipeline_state_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentBackEndComputePipelineState);
+                compute_pipeline_desc_t desc;
+            };
 
-        bool MockGraphicsPipelineState::Create() { return true; }
+            ngfx::pipeline_state_t* Alloc(device_t* device, resource_t* resource, pipeline_state_t* state, const graphics_pipeline_desc_t& desc)
+            {
+                graphics_pipeline_state_t* gpstate = AddComponent<resource_t, graphics_pipeline_state_t>(device, resource);
+                gpstate->desc                      = desc;
+                return state;
+            }
 
-        MockMeshShadingPipelineState::MockMeshShadingPipelineState(MockDevice* pDevice, const GfxMeshShadingPipelineDesc& desc, const char* name)
-        {
-            m_pDevice = pDevice;
-            m_name    = name;
-            m_desc    = desc;
-            m_type    = GfxPipelineType::MeshShading;
-        }
+            ngfx::pipeline_state_t* Alloc(device_t* device, resource_t* resource, pipeline_state_t* state, const mesh_shading_pipeline_desc_t& desc)
+            {
+                mesh_shading_pipeline_state_t* mspstate = AddComponent<resource_t, mesh_shading_pipeline_state_t>(device, resource);
+                mspstate->desc                          = desc;
+                return state;
+            }
 
-        MockMeshShadingPipelineState::~MockMeshShadingPipelineState() {}
+            ngfx::pipeline_state_t* Alloc(device_t* device, resource_t* resource, pipeline_state_t* state, const compute_pipeline_desc_t& desc)
+            {
+                compute_pipeline_state_t* cpstate = AddComponent<resource_t, compute_pipeline_state_t>(device, resource);
+                cpstate->desc                     = desc;
+                return state;
+            }
 
-        void* MockMeshShadingPipelineState::GetHandle() const { return nullptr; }
+            bool Create(device_t* device, ngfx::pipeline_state_t* state)
+            {
+                switch (state->m_type)
+                {
+                    case enums::PipelineGraphics:
+                        {
+                            graphics_pipeline_state_t* gpstate = GetOtherComponent<pipeline_state_t, graphics_pipeline_state_t>(device, state);
+                            return gpstate != nullptr;
+                        }
+                    case enums::PipelineMeshShading:
+                        {
+                            mesh_shading_pipeline_state_t* mspstate = GetOtherComponent<pipeline_state_t, mesh_shading_pipeline_state_t>(device, state);
+                            return mspstate != nullptr;
+                        }
+                    case enums::PipelineCompute:
+                        {
+                            compute_pipeline_state_t* cpstate = GetOtherComponent<pipeline_state_t, compute_pipeline_state_t>(device, state);
+                            return cpstate != nullptr;
+                        }
+                }
+                return false;
+            }
 
-        bool MockMeshShadingPipelineState::Create() { return true; }
+            void Destroy(device_t* device, ngfx::pipeline_state_t* state)
+            {
+                switch (state->m_type)
+                {
+                    case enums::PipelineGraphics:
+                        {
+                            graphics_pipeline_state_t* gpstate = GetOtherComponent<pipeline_state_t, graphics_pipeline_state_t>(device, state);
+                            if (gpstate != nullptr)
+                            {
+                                RemoveOtherComponent<pipeline_state_t, graphics_pipeline_state_t>(device, state);
+                            }
+                        }
+                        break;
+                    case enums::PipelineMeshShading:
+                        {
+                            mesh_shading_pipeline_state_t* mspstate = GetOtherComponent<pipeline_state_t, mesh_shading_pipeline_state_t>(device, state);
+                            if (mspstate != nullptr)
+                            {
+                                RemoveOtherComponent<pipeline_state_t, mesh_shading_pipeline_state_t>(device, state);
+                            }
+                        }
+                        break;
+                    case enums::PipelineCompute:
+                        {
+                            compute_pipeline_state_t* cpstate = GetOtherComponent<pipeline_state_t, compute_pipeline_state_t>(device, state);
+                            if (cpstate != nullptr)
+                            {
+                                RemoveOtherComponent<pipeline_state_t, compute_pipeline_state_t>(device, state);
+                            }
+                        }
+                        break;
+                }
+            }
 
-        MockComputePipelineState::MockComputePipelineState(MockDevice* pDevice, const GfxComputePipelineDesc& desc, const char* name)
-        {
-            m_pDevice = pDevice;
-            m_name    = name;
-            m_desc    = desc;
-            m_type    = GfxPipelineType::Compute;
-        }
+            void* GetHandle(device_t* device, ngfx::pipeline_state_t* state)
+            {
+                switch (state->m_type)
+                {
+                    case enums::PipelineGraphics:
+                        {
+                            graphics_pipeline_state_t* gpstate = GetOtherComponent<pipeline_state_t, graphics_pipeline_state_t>(device, state);
+                            break;
+                        }
+                    case enums::PipelineMeshShading:
+                        {
+                            mesh_shading_pipeline_state_t* mspstate = GetOtherComponent<pipeline_state_t, mesh_shading_pipeline_state_t>(device, state);
+                            break;
+                        }
+                    case enums::PipelineCompute:
+                        {
+                            compute_pipeline_state_t* cpstate = GetOtherComponent<pipeline_state_t, compute_pipeline_state_t>(device, state);
+                            break;
+                        }
+                }
+                return nullptr;
+            }
 
-        MockComputePipelineState::~MockComputePipelineState() {}
-
-        void* MockComputePipelineState::GetHandle() const { return nullptr; }
-
-        bool MockComputePipelineState::Create() { return true; }
-
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

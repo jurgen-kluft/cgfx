@@ -7,81 +7,77 @@ namespace ncore
 {
     namespace ngfx
     {
-        class MockDevice;
+        struct device_t;
 
-        class MockCommandList : public IGfxCommandList
+        namespace nmock
         {
-        public:
-            MockCommandList(MockDevice* pDevice, GfxCommandQueue queue_type, const char* name);
-            ~MockCommandList();
+            bool  Create(ngfx::command_list_t*);
+            void  Destroy(ngfx::command_list_t*);
+            void* GetHandle(ngfx::command_list_t*);
 
-            bool Create();
+            void ResetAllocator(ngfx::command_list_t* commandList);
+            void Begin(ngfx::command_list_t* commandList);
+            void End(ngfx::command_list_t* commandList);
+            void Wait(ngfx::command_list_t* commandList, fence_t* fence, u64 value);
+            void Signal(ngfx::command_list_t* commandList, fence_t* fence, u64 value);
+            void Present(ngfx::command_list_t* commandList, swapchain_t* swapchain);
+            void Submit(ngfx::command_list_t* commandList);
+            void ResetState(ngfx::command_list_t* commandList);
 
-            virtual void* GetHandle() const override;
+            void BeginProfiling(ngfx::command_list_t* commandList);
+            void EndProfiling(ngfx::command_list_t* commandList);
+            void BeginEvent(ngfx::command_list_t* commandList, const char* event_name);
+            void EndEvent(ngfx::command_list_t* commandList);
 
-            virtual void ResetAllocator() override;
-            virtual void Begin() override;
-            virtual void End() override;
-            virtual void Wait(IGfxFence* fence, u64 value) override;
-            virtual void Signal(IGfxFence* fence, u64 value) override;
-            virtual void Present(IGfxSwapchain* swapchain) override;
-            virtual void Submit() override;
-            virtual void ResetState() override;
+            void CopyBufferToTexture(ngfx::command_list_t* commandList, texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset);
+            void CopyTextureToBuffer(ngfx::command_list_t* commandList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice);
+            void CopyBuffer(ngfx::command_list_t* commandList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size);
+            void CopyTexture(ngfx::command_list_t* commandList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array);
+            void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const float* clear_value);
+            void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
+            void WriteBuffer(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset, u32 data);
+            void UpdateTileMappings(ngfx::command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings);
 
-            virtual void BeginProfiling() override;
-            virtual void EndProfiling() override;
-            virtual void BeginEvent(const char* event_name) override;
-            virtual void EndEvent() override;
+            void TextureBarrier(ngfx::command_list_t* commandList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
+            void BufferBarrier(ngfx::command_list_t* commandList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);
+            void GlobalBarrier(ngfx::command_list_t* commandList, enums::access_flags access_before, enums::access_flags access_after);
+            void FlushBarriers(ngfx::command_list_t* commandList);
 
-            virtual void CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset) override;
-            virtual void CopyTextureToBuffer(IGfxBuffer* dst_buffer, u32 offset, IGfxTexture* src_texture, u32 mip_level, u32 array_slice) override;
-            virtual void CopyBuffer(IGfxBuffer* dst, u32 dst_offset, IGfxBuffer* src, u32 src_offset, u32 size) override;
-            virtual void CopyTexture(IGfxTexture* dst, u32 dst_mip, u32 dst_array, IGfxTexture* src, u32 src_mip, u32 src_array) override;
-            virtual void ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const float* clear_value, IGfxClearUavApi* clear_api) override;
-            virtual void ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const u32* clear_value, IGfxClearUavApi* clear_api) override;
-            virtual void WriteBuffer(IGfxBuffer* buffer, u32 offset, u32 data) override;
-            virtual void UpdateTileMappings(IGfxTexture* texture, IGfxHeap* heap, u32 mapping_count, const GfxTileMapping* mappings) override;
+            void BeginRenderPass(ngfx::command_list_t* commandList, const GfxRenderPassDesc& render_pass);
+            void EndRenderPass(ngfx::command_list_t* commandList);
+            void SetPipelineState(ngfx::command_list_t* commandList, pipeline_state_t* state);
+            void SetStencilReference(ngfx::command_list_t* commandList, u8 stencil);
+            void SetBlendFactor(ngfx::command_list_t* commandList, const float* blend_factor);
+            void SetIndexBuffer(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset, enums::format format);
+            void SetViewport(ngfx::command_list_t* commandList, u32 x, u32 y, u32 width, u32 height);
+            void SetScissorRect(ngfx::command_list_t* commandList, u32 x, u32 y, u32 width, u32 height);
+            void SetGraphicsConstants(ngfx::command_list_t* commandList, u32 slot, const void* data, s64 data_size);
+            void SetComputeConstants(ngfx::command_list_t* commandList, u32 slot, const void* data, s64 data_size);
 
-            virtual void TextureBarrier(IGfxTexture* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after) override;
-            virtual void BufferBarrier(IGfxBuffer* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after) override;
-            virtual void GlobalBarrier(GfxAccessFlags access_before, GfxAccessFlags access_after) override;
-            virtual void FlushBarriers() override;
+            void Draw(ngfx::command_list_t* commandList, u32 vertex_count, u32 instance_count = 1);
+            void DrawIndexed(ngfx::command_list_t* commandList, u32 index_count, u32 instance_count = 1, u32 index_offset = 0);
+            void Dispatch(ngfx::command_list_t* commandList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
+            void DispatchMesh(ngfx::command_list_t* commandList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
 
-            virtual void BeginRenderPass(const GfxRenderPassDesc& render_pass) override;
-            virtual void EndRenderPass() override;
-            virtual void SetPipelineState(IGfxPipelineState* state) override;
-            virtual void SetStencilReference(u8 stencil) override;
-            virtual void SetBlendFactor(const float* blend_factor) override;
-            virtual void SetIndexBuffer(IGfxBuffer* buffer, u32 offset, GfxFormat format) override;
-            virtual void SetViewport(u32 x, u32 y, u32 width, u32 height) override;
-            virtual void SetScissorRect(u32 x, u32 y, u32 width, u32 height) override;
-            virtual void SetGraphicsConstants(u32 slot, const void* data, s64 data_size) override;
-            virtual void SetComputeConstants(u32 slot, const void* data, s64 data_size) override;
+            void DrawIndirect(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset);
+            void DrawIndexedIndirect(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset);
+            void DispatchIndirect(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset);
+            void DispatchMeshIndirect(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset);
 
-            virtual void Draw(u32 vertex_count, u32 instance_count = 1) override;
-            virtual void DrawIndexed(u32 index_count, u32 instance_count = 1, u32 index_offset = 0) override;
-            virtual void Dispatch(u32 group_count_x, u32 group_count_y, u32 group_count_z) override;
-            virtual void DispatchMesh(u32 group_count_x, u32 group_count_y, u32 group_count_z) override;
+            void MultiDrawIndirect(ngfx::command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+            void MultiDrawIndexedIndirect(ngfx::command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+            void MultiDispatchIndirect(ngfx::command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+            void MultiDispatchMeshIndirect(ngfx::command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
 
-            virtual void DrawIndirect(IGfxBuffer* buffer, u32 offset) override;
-            virtual void DrawIndexedIndirect(IGfxBuffer* buffer, u32 offset) override;
-            virtual void DispatchIndirect(IGfxBuffer* buffer, u32 offset) override;
-            virtual void DispatchMeshIndirect(IGfxBuffer* buffer, u32 offset) override;
-
-            virtual void MultiDrawIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset) override;
-            virtual void MultiDrawIndexedIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset) override;
-            virtual void MultiDispatchIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset) override;
-            virtual void MultiDispatchMeshIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset) override;
-
-            virtual void BuildRayTracingBLAS(IGfxRayTracingBLAS* blas) override;
-            virtual void UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset) override;
-            virtual void BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count) override;
+            void BuildRayTracingBLAS(ngfx::command_list_t* commandList, blas_t* blas);
+            void UpdateRayTracingBLAS(ngfx::command_list_t* commandList, blas_t* blas, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+            void BuildRayTracingTLAS(ngfx::command_list_t* commandList, tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
 
 #if MICROPROFILE_GPU_TIMERS
-            virtual struct MicroProfileThreadLogGpu* GetProfileLog() const override;
+            MicroProfileThreadLogGpu* GetProfileLog();
 #endif
-        };
 
+        }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore
 #endif

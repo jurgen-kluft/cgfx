@@ -9,7 +9,7 @@ namespace ncore
     namespace ngfx
     {
 
-        MetalTexture::MetalTexture(MetalDevice* pDevice, const GfxTextureDesc& desc, const char* name)
+        MetalTexture::MetalTexture(MetalDevice* pDevice, const texture_desc_t& desc, const char* name)
         {
             m_pDevice = pDevice;
             m_desc    = desc;

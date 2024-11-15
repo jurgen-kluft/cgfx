@@ -7,24 +7,17 @@ namespace ncore
 {
     namespace ngfx
     {
-        class IGfxDevice;
-
-        class IGfxResource
+        struct resource_t
         {
-        public:
-            virtual ~IGfxResource() {}
-
-            virtual void* GetHandle() const = 0;
-            virtual bool  IsTexture() const { return false; }
-            virtual bool  IsBuffer() const { return false; }
-
-            IGfxDevice* GetDevice() const { return m_pDevice; }
-            const char* GetName() const { return m_name; }
-
-        protected:
-            IGfxDevice* m_pDevice = nullptr;
-            const char* m_name;
+            D_GFX_OCS_OBJECT;
         };
+
+        struct name_t
+        {
+            D_GFX_OCS_COMPONENT;
+            char m_name[128];
+        };
+        void SetName(name_t* name, const char* set);
 
     }  // namespace ngfx
 }  // namespace ncore

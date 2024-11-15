@@ -9,11 +9,31 @@ namespace ncore
 {
     namespace ngfx
     {
-        class IGfxBuffer;
-        class IGfxTexture;
-        class IGfxShader;
-        class IGfxRayTracingBLAS;
-        class IGfxHeap;
+#define D_GFX_OCS_OBJECT           static u16 const object_index
+#define D_GFX_OCS_OBJECT_SET(i)    static u16 const object_index = (i)
+#define D_GFX_OCS_COMPONENT        static u16 const component_index
+#define D_GFX_OCS_COMPONENT_SET(i) static u16 const component_index = (i)
+
+        struct device_t;
+        struct command_list_t;
+        struct resource_t;
+        struct descriptor_t;
+        struct fence_t;
+        struct heap_t;
+        struct heap_desc_t;
+        struct pipeline_state_t;
+        struct swapchain_t;
+        struct swapchain_desc_t;
+        struct buffer_t;
+        struct buffer_desc_t;
+        struct texture_t;
+        struct texture_desc_t;
+        struct shader_t;
+        struct shader_desc_t;
+        struct blas_t;
+        struct blas_desc_t;
+        struct tlas_t;
+        struct tlas_desc_t;
 
         static const u32 GFX_MAX_INFLIGHT_FRAMES           = 3;
         static const u32 GFX_MAX_ROOT_CONSTANTS            = 8;
@@ -23,333 +43,490 @@ namespace ncore
 
         static const f32 GFX_FLT_MAX = 3.402823466e+38F;
 
-        namespace GfxRender
+        namespace enums
         {
-            typedef u8 Backend;
-            enum
+            // Example:
+            // enums::backend_t b = enums::Backend_D3D12;
+            // enums::backend backend = enums::cast(b, enums::Backend_Default);
+            template <typename T, typename F>
+            inline static T cast(F type)
             {
-                D3D12,
-                Metal,
-                Mock,
-            };
-        }  // namespace GfxRender
-        using GfxRenderBackend = GfxRender::Backend;
+                return static_cast<T>(type);
+            }
 
-        namespace Gfx
-        {
-            typedef u32 Format;
-            enum
+            enum Component
             {
-                Unknown,
+                ComponentName,
+                ComponentBuffer,
+                ComponentTexture,
+                ComponentDevice,
+                ComponentFence,
+                ComponentSwapchain,
+                ComponentCommandList,
+                ComponentShader,
+                ComponentGraphicsPipelineState,
+                ComponentMeshShadingPipelineState,
+                ComponentComputePipelineState,
+                ComponentDescriptor,
+                ComponentHeap,
+                ComponentBlas,
+                ComponentTlas,
 
-                RGBA32F,
-                RGBA32UI,
-                RGBA32SI,
-                RGBA16F,
-                RGBA16UI,
-                RGBA16SI,
-                RGBA16UNORM,
-                RGBA16SNORM,
-                RGBA8UI,
-                RGBA8SI,
-                RGBA8UNORM,
-                RGBA8SNORM,
-                RGBA8SRGB,
-                BGRA8UNORM,
-                BGRA8SRGB,
-                RGB10A2UI,
-                RGB10A2UNORM,
+                ComponentBackEndBuffer,
+                ComponentBackEndTexture,
+                ComponentBackEndDevice,
+                ComponentBackEndFence,
+                ComponentBackEndSwapchain,
+                ComponentBackEndCommandList,
+                ComponentBackEndShader,
+                ComponentBackEndGraphicsPipelineState,
+                ComponentBackEndMeshShadingPipelineState,
+                ComponentBackEndComputePipelineState,
+                ComponentBackEndDescriptor,
+                ComponentBackEndHeap,
+                ComponentBackEndBlas,
+                ComponentBackEndTlas,
 
-                RGB32F,
-                RGB32UI,
-                RGB32SI,
-                R11G11B10F,
-                RGB9E5,
+                ComponentMaxCount = ComponentBackEndTlas + 1,
 
-                RG32F,
-                RG32UI,
-                RG32SI,
-                RG16F,
-                RG16UI,
-                RG16SI,
-                RG16UNORM,
-                RG16SNORM,
-                RG8UI,
-                RG8SI,
-                RG8UNORM,
-                RG8SNORM,
+                ComponentMockBuffer                   = ComponentBackEndBuffer,
+                ComponentMockTexture                  = ComponentBackEndTexture,
+                ComponentMockDevice                   = ComponentBackEndDevice,
+                ComponentMockFence                    = ComponentBackEndFence,
+                ComponentMockSwapchain                = ComponentBackEndSwapchain,
+                ComponentMockCommandList              = ComponentBackEndCommandList,
+                ComponentMockShader                   = ComponentBackEndShader,
+                ComponentMockGraphicsPipelineState    = ComponentBackEndGraphicsPipelineState,
+                ComponentMockMeshShadingPipelineState = ComponentBackEndMeshShadingPipelineState,
+                ComponentMockComputePipelineState     = ComponentBackEndComputePipelineState,
+                ComponentMockDescriptor               = ComponentBackEndDescriptor,
+                ComponentMockHeap                     = ComponentBackEndHeap,
+                ComponentMockBlas                     = ComponentBackEndBlas,
+                ComponentMockTlas                     = ComponentBackEndTlas,
 
-                R32F,
-                R32UI,
-                R32SI,
-                R16F,
-                R16UI,
-                R16SI,
-                R16UNORM,
-                R16SNORM,
-                R8UI,
-                R8SI,
-                R8UNORM,
-                R8SNORM,
+                ComponentMetalBuffer                   = ComponentBackEndBuffer,
+                ComponentMetalTexture                  = ComponentBackEndTexture,
+                ComponentMetalDevice                   = ComponentBackEndDevice,
+                ComponentMetalFence                    = ComponentBackEndFence,
+                ComponentMetalSwapchain                = ComponentBackEndSwapchain,
+                ComponentMetalCommandList              = ComponentBackEndCommandList,
+                ComponentMetalShader                   = ComponentBackEndShader,
+                ComponentMetalGraphicsPipelineState    = ComponentBackEndGraphicsPipelineState,
+                ComponentMetalMeshShadingPipelineState = ComponentBackEndMeshShadingPipelineState,
+                ComponentMetalComputePipelineState     = ComponentBackEndComputePipelineState,
+                ComponentMetalDescriptor               = ComponentBackEndDescriptor,
+                ComponentMetalHeap                     = ComponentBackEndHeap,
+                ComponentMetalBlas                     = ComponentBackEndBlas,
+                ComponentMetalTlas                     = ComponentBackEndTlas,
 
-                D32F,
-                D32FS8,
-                D16,
-
-                BC1UNORM,
-                BC1SRGB,
-                BC2UNORM,
-                BC2SRGB,
-                BC3UNORM,
-                BC3SRGB,
-                BC4UNORM,
-                BC4SNORM,
-                BC5UNORM,
-                BC5SNORM,
-                BC6U16F,
-                BC6S16F,
-                BC7UNORM,
-                BC7SRGB,
-
-            };
-        }  // namespace Gfx
-        using GfxFormat = Gfx::Format;
-
-        namespace GfxMemory
-        {
-            typedef u8 Type;
-            enum
-            {
-                GpuOnly,
-                CpuOnly,   // staging buffers
-                CpuToGpu,  // frequently updated buffers
-                GpuToCpu,  // readback
-            };
-        }  // namespace GfxMemory
-        using GfxMemoryType = GfxMemory::Type;
-
-        namespace GfxAllocation
-        {
-            typedef u8 Type;
-            enum
-            {
-                Committed,
-                Placed,
-                Sparse,
-            };
-        }  // namespace GfxAllocation
-        using GfxAllocationType = GfxAllocation::Type;
-
-        namespace GfxBufferUsage
-        {
-            typedef u32 Flags;
-            enum
-            {
-                ConstantBuffer   = 1 << 0,
-                StructuredBuffer = 1 << 1,
-                TypedBuffer      = 1 << 2,
-                RawBuffer        = 1 << 3,
-                UnorderedAccess  = 1 << 4,
-            };
-        }  // namespace GfxBufferUsage
-        using GfxBufferUsageFlags = GfxBufferUsage::Flags;
-
-        namespace GfxTextureUsage
-        {
-            typedef u8 Flags;
-            enum
-            {
-                RenderTarget    = 1 << 0,
-                DepthStencil    = 1 << 1,
-                UnorderedAccess = 1 << 2,
-                Shared          = 1 << 3,
-            };
-        }  // namespace GfxTextureUsage
-        using GfxTextureUsageFlags = GfxTextureUsage::Flags;
-
-        enum class GfxTextureType
-        {
-            Texture2D,
-            Texture2DArray,
-            Texture3D,
-            TextureCube,
-            TextureCubeArray,
-        };
-
-        namespace GfxCommand
-        {
-            typedef u8 Queue;
-            enum
-            {
-                Graphics,
-                Compute,
-                Copy,
-            };
-        }  // namespace GfxCommand
-        using GfxCommandQueue = GfxCommand::Queue;
-
-        namespace GfxAccess
-        {
-            typedef u32 Flags;
-            enum
-            {
-                Present         = 1 << 0,
-                RTV             = 1 << 1,
-                DSV             = 1 << 2,
-                DSVReadOnly     = 1 << 3,
-                VertexShaderSRV = 1 << 4,
-                PixelShaderSRV  = 1 << 5,
-                ComputeSRV      = 1 << 6,
-                VertexShaderUAV = 1 << 7,
-                PixelShaderUAV  = 1 << 8,
-                ComputeUAV      = 1 << 9,
-                ClearUAV        = 1 << 10,
-                CopyDst         = 1 << 11,
-                CopySrc         = 1 << 12,
-                ShadingRate     = 1 << 13,
-                IndexBuffer     = 1 << 14,
-                IndirectArgs    = 1 << 15,
-                ASRead          = 1 << 16,
-                ASWrite         = 1 << 17,
-                Discard         = 1 << 18,  // aliasing barrier
+                ComponentD3D12Buffer                   = ComponentBackEndBuffer,
+                ComponentD3D12Texture                  = ComponentBackEndTexture,
+                ComponentD3D12Device                   = ComponentBackEndDevice,
+                ComponentD3D12Fence                    = ComponentBackEndFence,
+                ComponentD3D12Swapchain                = ComponentBackEndSwapchain,
+                ComponentD3D12CommandList              = ComponentBackEndCommandList,
+                ComponentD3D12Shader                   = ComponentBackEndShader,
+                ComponentD3D12GraphicsPipelineState    = ComponentBackEndGraphicsPipelineState,
+                ComponentD3D12MeshShadingPipelineState = ComponentBackEndMeshShadingPipelineState,
+                ComponentD3D12ComputePipelineState     = ComponentBackEndComputePipelineState,
+                ComponentD3D12Descriptor               = ComponentBackEndDescriptor,
+                ComponentD3D12Heap                     = ComponentBackEndHeap,
+                ComponentD3D12Blas                     = ComponentBackEndBlas,
+                ComponentD3D12Tlas                     = ComponentBackEndTlas,
             };
 
-            const Flags MaskVS   = VertexShaderSRV | VertexShaderUAV;
-            const Flags MaskPS   = PixelShaderSRV | PixelShaderUAV;
-            const Flags MaskCS   = ComputeSRV | ComputeUAV;
-            const Flags MaskSRV  = VertexShaderSRV | PixelShaderSRV | ComputeSRV;
-            const Flags MaskUAV  = VertexShaderUAV | PixelShaderUAV | ComputeUAV;
-            const Flags MaskDSV  = DSV | DSVReadOnly;
-            const Flags MaskCopy = CopyDst | CopySrc;
-            const Flags MaskAS   = ASRead | ASWrite;
-        }  // namespace GfxAccess
-        using GfxAccessFlags = GfxAccess::Flags;
-
-        namespace GfxRenderPass
-        {
-            typedef u8 LoadOp;
-            enum
+            enum Tag
             {
-                LoadLoad,
-                LoadClear,
-                LoadDontCare,
+                TagNone,
+                TagBuffer,
+                TagTexture,
+                TagHeap,
+                TagSrv,
+                TagPipeline,
+                TagShader,
+                TagFence,
+                TagCommandList,
+                TagSwapchain,
+                TagBlas,
+                TagTlas,
+                TagMax,
             };
 
-            typedef u8 StoreOp;
-            enum
+            typedef u8 backend_t;
+            enum backend
             {
-                StoreStore,
-                StoreDontCare,
+                Backend_D3D12,
+                Backend_Metal,
+                Backend_Mock,
+                Backend_Default = Backend_Mock,
             };
-        }  // namespace GfxRenderPass
-        using GfxRenderPassLoadOp  = GfxRenderPass::LoadOp;
-        using GfxRenderPassStoreOp = GfxRenderPass::StoreOp;
 
-        namespace GfxShaderResourceView
-        {
-            typedef u8 Type;
-            enum
+            typedef u8 format_t;
+            enum format
             {
-                Texture2D,
-                Texture2DArray,
-                Texture3D,
-                TextureCube,
-                TextureCubeArray,
-                StructuredBuffer,
-                TypedBuffer,
-                RawBuffer,
-                RayTracingTLAS,
+                FORMAT_UNKNOWN,
+                FORMAT_RGBA32F,
+                FORMAT_RGBA32UI,
+                FORMAT_RGBA32SI,
+                FORMAT_RGBA16F,
+                FORMAT_RGBA16UI,
+                FORMAT_RGBA16SI,
+                FORMAT_RGBA16UNORM,
+                FORMAT_RGBA16SNORM,
+                FORMAT_RGBA8UI,
+                FORMAT_RGBA8SI,
+                FORMAT_RGBA8UNORM,
+                FORMAT_RGBA8SNORM,
+                FORMAT_RGBA8SRGB,
+                FORMAT_BGRA8UNORM,
+                FORMAT_BGRA8SRGB,
+                FORMAT_RGB10A2UI,
+                FORMAT_RGB10A2UNORM,
+                FORMAT_RGB32F,
+                FORMAT_RGB32UI,
+                FORMAT_RGB32SI,
+                FORMAT_R11G11B10F,
+                FORMAT_RGB9E5,
+                FORMAT_RG32F,
+                FORMAT_RG32UI,
+                FORMAT_RG32SI,
+                FORMAT_RG16F,
+                FORMAT_RG16UI,
+                FORMAT_RG16SI,
+                FORMAT_RG16UNORM,
+                FORMAT_RG16SNORM,
+                FORMAT_RG8UI,
+                FORMAT_RG8SI,
+                FORMAT_RG8UNORM,
+                FORMAT_RG8SNORM,
+                FORMAT_R32F,
+                FORMAT_R32UI,
+                FORMAT_R32SI,
+                FORMAT_R16F,
+                FORMAT_R16UI,
+                FORMAT_R16SI,
+                FORMAT_R16UNORM,
+                FORMAT_R16SNORM,
+                FORMAT_R8UI,
+                FORMAT_R8SI,
+                FORMAT_R8UNORM,
+                FORMAT_R8SNORM,
+                FORMAT_D32F,
+                FORMAT_D32FS8,
+                FORMAT_D16,
+                FORMAT_BC1UNORM,
+                FORMAT_BC1SRGB,
+                FORMAT_BC2UNORM,
+                FORMAT_BC2SRGB,
+                FORMAT_BC3UNORM,
+                FORMAT_BC3SRGB,
+                FORMAT_BC4UNORM,
+                FORMAT_BC4SNORM,
+                FORMAT_BC5UNORM,
+                FORMAT_BC5SNORM,
+                FORMAT_BC6U16F,
+                FORMAT_BC6S16F,
+                FORMAT_BC7UNORM,
+                FORMAT_BC7SRGB,
             };
-        }  // namespace GfxShaderResourceView
-        using GfxShaderResourceViewType = GfxShaderResourceView::Type;
 
-        namespace GfxUnorderedAccessView
-        {
-            typedef u8 Type;
-            enum
+            typedef u8 memory_t;
+            enum memory
             {
-                Texture2D,
-                Texture2DArray,
-                Texture3D,
-                StructuredBuffer,
-                TypedBuffer,
-                RawBuffer,
+                MemoryGpuOnly,
+                MemoryCpuOnly,   // staging buffers
+                MemoryCpuToGpu,  // frequently updated buffers
+                MemoryGpuToCpu,  // readback
             };
-        }  // namespace GfxUnorderedAccessView
-        using GfxUnorderedAccessViewType = GfxUnorderedAccessView::Type;
+
+            typedef u8 allocation_t;
+            enum allocation
+            {
+                AllocationCommitted,
+                AllocationPlaced,
+                AllocationSparse,
+            };
+
+            typedef u8 buffer_usage_t;
+            enum buffer_usage
+            {
+                BufferUsageNone             = 0,
+                BufferUsageConstantBuffer   = 1 << 0,
+                BufferUsageStructuredBuffer = 1 << 1,
+                BufferUsageTypedBuffer      = 1 << 2,
+                BufferUsageRawBuffer        = 1 << 3,
+                BufferUsageUnorderedAccess  = 1 << 4,
+            };
+
+            typedef u8 command_queue_type_t;
+            enum command_queue_type
+            {
+                CommandQueueGraphics,
+                CommandQueueCompute,
+                CommandQueueCopy,
+            };
+
+            typedef u32 access_flags_t;
+            enum access_flags
+            {
+                AccessPresent         = 1 << 0,
+                AccessRTV             = 1 << 1,
+                AccessDSV             = 1 << 2,
+                AccessDSVReadOnly     = 1 << 3,
+                AccessVertexShaderSRV = 1 << 4,
+                AccessPixelShaderSRV  = 1 << 5,
+                AccessComputeSRV      = 1 << 6,
+                AccessVertexShaderUAV = 1 << 7,
+                AccessPixelShaderUAV  = 1 << 8,
+                AccessComputeUAV      = 1 << 9,
+                AccessClearUAV        = 1 << 10,
+                AccessCopyDst         = 1 << 11,
+                AccessCopySrc         = 1 << 12,
+                AccessShadingRate     = 1 << 13,
+                AccessIndexBuffer     = 1 << 14,
+                AccessIndirectArgs    = 1 << 15,
+                AccessASRead          = 1 << 16,
+                AccessASWrite         = 1 << 17,
+                AccessDiscard         = 1 << 18,  // aliasing barrier
+
+                MaskVS   = VertexShaderSRV | VertexShaderUAV,
+                MaskPS   = PixelShaderSRV | PixelShaderUAV,
+                MaskCS   = ComputeSRV | ComputeUAV,
+                MaskSRV  = VertexShaderSRV | PixelShaderSRV | ComputeSRV,
+                MaskUAV  = VertexShaderUAV | PixelShaderUAV | ComputeUAV,
+                MaskDSV  = DSV | DSVReadOnly,
+                MaskCopy = CopyDst | CopySrc,
+                MaskAS   = ASRead | ASWrite,
+            };
+
+            typedef u8 load_op_t;
+            enum load_op
+            {
+                LoadOpLoad,
+                LoadOpClear,
+                LoadOpDontCare,
+            };
+
+            typedef u8 store_op_t;
+            enum store_op
+            {
+                StoreOpStore,
+                StoreOpDontCare,
+            };
+
+            typedef u8 shader_resource_view_t;
+            enum shader_resource_view
+            {
+                SRV_Texture2D,
+                SRV_Texture2DArray,
+                SRV_Texture3D,
+                SRV_TextureCube,
+                SRV_TextureCubeArray,
+                SRV_StructuredBuffer,
+                SRV_TypedBuffer,
+                SRV_RawBuffer,
+                SRV_RayTracingTLAS,
+            };
+
+            typedef u8 unordered_access_view_t;
+            enum unordered_access_view
+            {
+                UAV_Texture2D,
+                UAV_Texture2DArray,
+                UAV_Texture3D,
+                UAV_StructuredBuffer,
+                UAV_TypedBuffer,
+                UAV_RawBuffer,
+            };
+
+            typedef u8 filter_t;
+            enum filter
+            {
+                FilterPoint,
+                FilterLinear,
+            };
+
+            typedef u8 sampler_address_mode_t;
+            enum sampler_address_mode
+            {
+                SamplerAddressModeRepeat,
+                SamplerAddressModeMirroredRepeat,
+                SamplerAddressModeClampToEdge,
+                SamplerAddressModeClampToBorder,
+            };
+
+            typedef u8 sampler_reduction_mode_t;
+            enum sampler_reduction_mode
+            {
+                SamplerReductionModeStandard,
+                SamplerReductionModeCompare,
+                SamplerReductionModeMin,
+                SamplerReductionModeMax,
+            };
+
+            typedef u8 tile_mapping_type_t;
+            enum tile_mapping_type
+            {
+                TileMappingMap,
+                TileMappingUnmap,
+            };
+
+            typedef u8 cullmode_t;
+            enum cullmode
+            {
+                CullNone,
+                CullFront,
+                CullBack,
+            };
+
+            typedef u8 comparefunc_t;
+            enum comparefunc
+            {
+                CompareFuncNever,
+                CompareFuncLess,
+                CompareFuncEqual,
+                CompareFuncLessEqual,
+                CompareFuncGreater,
+                CompareFuncNotEqual,
+                CompareFuncGreaterEqual,
+                CompareFuncAlways,
+            };
+
+            typedef u8 stencil_t;
+            enum stencil
+            {
+                StencilKeep,
+                StencilZero,
+                StencilReplace,
+                StencilIncreaseClamp,
+                StencilDecreaseClamp,
+                StencilInvert,
+                StencilIncreaseWrap,
+                StencilDecreaseWrap,
+            };
+
+            typedef u8 blendfactor_t;
+            enum blendfactor
+            {
+                BlendFactorZero,
+                BlendFactorOne,
+                BlendFactorSrcColor,
+                BlendFactorInvSrcColor,
+                BlendFactorSrcAlpha,
+                BlendFactorInvSrcAlpha,
+                BlendFactorDstAlpha,
+                BlendFactorInvDstAlpha,
+                BlendFactorDstColor,
+                BlendFactorInvDstColor,
+                BlendFactorSrcAlphaClamp,
+                BlendFactorConstantFactor,
+                BlendFactorInvConstantFactor,
+            };
+
+            typedef u8 blendop_t;
+            enum blendop
+            {
+                BlendOpAdd,
+                BlendOpSubtract,
+                BlendOpReverseSubtract,
+                BlendOpMin,
+                BlendOpMax,
+            };
+
+            typedef u8 colorwritemask_t;
+            enum colorwritemask
+            {
+                ColorWriteMaskR   = 1,
+                ColorWriteMaskG   = 2,
+                ColorWriteMaskB   = 4,
+                ColorWriteMaskA   = 8,
+                ColorWriteMaskAll = (ColorWriteMaskR | ColorWriteMaskG | ColorWriteMaskB | ColorWriteMaskA),
+            };
+
+            typedef u8 primitive_t;
+            enum primitive
+            {
+                PrimitivePointList,
+                PrimitiveLineList,
+                PrimitiveLineStrip,
+                PrimitiveTriangleList,
+                PrimitiveTriangleTrip,
+            };
+
+            typedef u8 pipeline_t;
+            enum pipeline
+            {
+                PipelineGraphics,
+                PipelineMeshShading,
+                PipelineCompute,
+                PipelineDefault = PipelineGraphics,
+            };
+
+            typedef u8 shadertype_t;
+            enum shadertype
+            {
+                Shader_AS,
+                Shader_MS,
+                Shader_VS,
+                Shader_PS,
+                Shader_CS,
+            };
+
+            typedef u8 shadercompilerflag_t;
+            enum shadercompilerflag
+            {
+                ShaderCompilerFlagO0 = 1 << 0,
+                ShaderCompilerFlagO1 = 1 << 1,
+                ShaderCompilerFlagO2 = 1 << 2,
+                ShaderCompilerFlagO3 = 1 << 3
+            };
+
+            typedef u8 vendor_t;
+            enum vendor
+            {
+                VendorUnkown,
+                VendorAMD,
+                VendorNvidia,
+                VendorIntel,
+                VendorApple,
+                VendorMock,
+            };
+
+        }  // namespace enums
 
         static const u32 GFX_ALL_SUB_RESOURCE = 0xFFFFFFFF;
         static const u32 GFX_INVALID_RESOURCE = 0xFFFFFFFF;
 
-        struct GfxDeviceDesc
+        struct device_desc_t
         {
-            GfxRenderBackend backend = GfxRender::D3D12;
+            enums::backend backend = enums::Backend_D3D12;
         };
 
-        struct GfxSwapchainDesc
+        struct swapchain_desc_t
         {
-            void*     window_handle     = nullptr;
-            u32       width             = 1;
-            u32       height            = 1;
-            u32       backbuffer_count  = 3;
-            GfxFormat backbuffer_format = Gfx::RGBA8SRGB;
+            void*           window_handle     = nullptr;
+            u32             width             = 1;
+            u32             height            = 1;
+            u32             backbuffer_count  = 3;
+            enums::format_t backbuffer_format = enums::FORMAT_RGBA8SRGB;
         };
 
-        struct GfxHeapDesc
+        struct heap_desc_t
         {
-            u32           size        = 1;
-            GfxMemoryType memory_type = GfxMemory::GpuOnly;
+            u32             size        = 1;
+            enums::memory_t memory_type = enums::MemoryGpuOnly;
         };
 
-        struct GfxBufferDesc
-        {
-            u32                 stride      = 1;
-            u32                 size        = 1;
-            GfxFormat           format      = Gfx::Unknown;
-            GfxMemoryType       memory_type = GfxMemory::GpuOnly;
-            GfxAllocationType   alloc_type  = GfxAllocation::Placed;
-            GfxBufferUsageFlags usage       = 0;
-            IGfxHeap*           heap        = nullptr;
-            u32                 heap_offset = 0;
-        };
-
-        inline bool operator==(const GfxBufferDesc& lhs, const GfxBufferDesc& rhs)
-        {
-            return lhs.stride == rhs.stride && lhs.size == rhs.size && lhs.format == rhs.format && lhs.memory_type == rhs.memory_type && lhs.alloc_type == rhs.alloc_type && lhs.usage == rhs.usage;
-        }
-
-        struct GfxTextureDesc
-        {
-            u32                  width       = 1;
-            u32                  height      = 1;
-            u32                  depth       = 1;
-            u32                  mip_levels  = 1;
-            u32                  array_size  = 1;
-            GfxTextureType       type        = GfxTextureType::Texture2D;
-            GfxFormat            format      = Gfx::Unknown;
-            GfxMemoryType        memory_type = GfxMemory::GpuOnly;
-            GfxAllocationType    alloc_type  = GfxAllocation::Placed;
-            GfxTextureUsageFlags usage       = 0;
-            IGfxHeap*            heap        = nullptr;
-            u32                  heap_offset = 0;
-        };
-
-        inline bool operator==(const GfxTextureDesc& lhs, const GfxTextureDesc& rhs)
-        {
-            return lhs.width == rhs.width && lhs.height == rhs.height && lhs.depth == rhs.depth && lhs.mip_levels == rhs.mip_levels && lhs.array_size == rhs.array_size && lhs.type == rhs.type && lhs.format == rhs.format &&
-                   lhs.memory_type == rhs.memory_type && lhs.alloc_type == rhs.alloc_type && lhs.usage == rhs.usage;
-        }
-
-        struct GfxConstantBufferViewDesc
+        struct cbv_desc_t
         {
             u32 size   = 0;
             u32 offset = 0;
         };
 
-        struct GfxShaderResourceViewDesc
+        struct srv_desc_t
         {
-            GfxShaderResourceView::Type type   = GfxShaderResourceView::Texture2D;
-            GfxFormat                   format = Gfx::Unknown;
+            enums::shader_resource_view_t type   = enums::shader_resource_view::SRV_Texture2D;
+            enums::format_t               format = enums::FORMAT_UNKNOWN;
 
             union
             {
@@ -369,22 +546,22 @@ namespace ncore
                 } buffer;
             };
 
-            GfxShaderResourceViewDesc()
+            srv_desc_t()
                 : texture()
             {
             }
         };
 
-        inline bool operator==(const GfxShaderResourceViewDesc& lhs, const GfxShaderResourceViewDesc& rhs)
+        inline bool operator==(const srv_desc_t& lhs, const srv_desc_t& rhs)
         {
             return lhs.type == rhs.type && lhs.texture.mip_slice == rhs.texture.mip_slice && lhs.texture.mip_levels == rhs.texture.mip_levels && lhs.texture.array_slice == rhs.texture.array_slice && lhs.texture.array_size == rhs.texture.array_size &&
                    lhs.texture.plane_slice == rhs.texture.plane_slice;
         }
 
-        struct GfxUnorderedAccessViewDesc
+        struct uav_desc_t
         {
-            GfxUnorderedAccessView::Type type   = GfxUnorderedAccessView::Texture2D;
-            GfxFormat                    format = Gfx::Unknown;
+            enums::unordered_access_view type   = enums::unordered_access_view::UAV_Texture2D;
+            enums::format                format = enums::FORMAT_UNKNOWN;
 
             union
             {
@@ -403,39 +580,39 @@ namespace ncore
                 } buffer;
             };
 
-            GfxUnorderedAccessViewDesc()
+            uav_desc_t()
                 : texture()
             {
             }
         };
 
-        inline bool operator==(const GfxUnorderedAccessViewDesc& lhs, const GfxUnorderedAccessViewDesc& rhs)
+        inline bool operator==(const uav_desc_t& lhs, const uav_desc_t& rhs)
         {
             return lhs.type == rhs.type && lhs.texture.mip_slice == rhs.texture.mip_slice && lhs.texture.array_slice == rhs.texture.array_slice && lhs.texture.array_size == rhs.texture.array_size && lhs.texture.plane_slice == rhs.texture.plane_slice;
         }
 
         struct GfxRenderPassColorAttachment
         {
-            IGfxTexture*           texture        = nullptr;
-            u32                    mip_slice      = 0;
-            u32                    array_slice    = 0;
-            GfxRenderPass::LoadOp  load_op        = GfxRenderPass::LoadLoad;
-            GfxRenderPass::StoreOp store_op       = GfxRenderPass::StoreStore;
-            float                  clear_color[4] = {};
+            texture_t*      texture        = nullptr;
+            u32             mip_slice      = 0;
+            u32             array_slice    = 0;
+            enums::load_op  load_op        = enums::LoadOpLoad;
+            enums::store_op store_op       = enums::StoreOpStore;
+            float           clear_color[4] = {};
         };
 
         struct GfxRenderPassDepthAttachment
         {
-            IGfxTexture*           texture          = nullptr;
-            u32                    mip_slice        = 0;
-            u32                    array_slice      = 0;
-            GfxRenderPass::LoadOp  load_op          = GfxRenderPass::LoadLoad;
-            GfxRenderPass::StoreOp store_op         = GfxRenderPass::StoreStore;
-            GfxRenderPass::LoadOp  stencil_load_op  = GfxRenderPass::LoadLoad;
-            GfxRenderPass::StoreOp stencil_store_op = GfxRenderPass::StoreStore;
-            float                  clear_depth      = 0.0f;
-            u32                    clear_stencil    = 0;
-            bool                   read_only        = false;
+            texture_t*      texture          = nullptr;
+            u32             mip_slice        = 0;
+            u32             array_slice      = 0;
+            enums::load_op  load_op          = enums::LoadOpLoad;
+            enums::store_op store_op         = enums::StoreOpStore;
+            enums::load_op  stencil_load_op  = enums::LoadOpLoad;
+            enums::store_op stencil_store_op = enums::StoreOpStore;
+            float           clear_depth      = 0.0f;
+            u32             clear_stencil    = 0;
+            bool            read_only        = false;
         };
 
         struct GfxRenderPassDesc
@@ -444,232 +621,109 @@ namespace ncore
             GfxRenderPassDepthAttachment depth;
         };
 
-        enum class GfxShaderType
+        struct shader_desc_t
         {
-            AS,
-            MS,
-            VS,
-            PS,
-            CS,
-        };
-
-        enum GfxShaderCompilerFlagBit
-        {
-            GfxShaderCompilerFlagO0 = 1 << 0,
-            GfxShaderCompilerFlagO1 = 1 << 1,
-            GfxShaderCompilerFlagO2 = 1 << 2,
-            GfxShaderCompilerFlagO3 = 1 << 3
-        };
-        using GfxShaderCompilerFlags = u32;
-
-        struct GfxShaderDesc
-        {
-            GfxShaderType          type;
-            const char*            file;
-            const char*            entry_point;
-            const char**           defines;
-            u32                    define_count;
-            GfxShaderCompilerFlags flags = 0;
-        };
-
-        enum class GfxCullMode
-        {
-            None,
-            Front,
-            Back,
-        };
-
-        enum class GfxCompareFunc
-        {
-            Never,
-            Less,
-            Equal,
-            LessEqual,
-            Greater,
-            NotEqual,
-            GreaterEqual,
-            Always,
-        };
-
-        enum class GfxStencilOp
-        {
-            Keep,
-            Zero,
-            Replace,
-            IncreaseClamp,
-            DecreaseClamp,
-            Invert,
-            IncreaseWrap,
-            DecreaseWrap,
-        };
-
-        enum class GfxBlendFactor
-        {
-            Zero,
-            One,
-            SrcColor,
-            InvSrcColor,
-            SrcAlpha,
-            InvSrcAlpha,
-            DstAlpha,
-            InvDstAlpha,
-            DstColor,
-            InvDstColor,
-            SrcAlphaClamp,
-            ConstantFactor,
-            InvConstantFactor,
-        };
-
-        enum class GfxBlendOp
-        {
-            Add,
-            Subtract,
-            ReverseSubtract,
-            Min,
-            Max,
-        };
-
-        enum GfxColorWriteMaskBit
-        {
-            GfxColorWriteMaskR   = 1,
-            GfxColorWriteMaskG   = 2,
-            GfxColorWriteMaskB   = 4,
-            GfxColorWriteMaskA   = 8,
-            GfxColorWriteMaskAll = (GfxColorWriteMaskR | GfxColorWriteMaskG | GfxColorWriteMaskB | GfxColorWriteMaskA),
-        };
-
-        using GfxColorWriteMask = u8;
-
-        enum class GfxPrimitiveType
-        {
-            PointList,
-            LineList,
-            LineStrip,
-            TriangleList,
-            TriangleTrip,
-        };
-
-        enum class GfxPipelineType
-        {
-            Graphics,
-            MeshShading,
-            Compute,
+            enums::shadertype           type;
+            const char*                 file;
+            const char*                 entry_point;
+            const char**                defines;
+            u32                         define_count;
+            enums::shadercompilerflag_t flags = 0;
         };
 
 #pragma pack(push, 1)
         struct GfxRasterizerState
         {
-            GfxCullMode cull_mode           = GfxCullMode::None;
-            float       depth_bias          = 0.0f;
-            float       depth_bias_clamp    = 0.0f;
-            float       depth_slope_scale   = 0.0f;
-            bool        wireframe           = false;
-            bool        front_ccw           = false;
-            bool        depth_clip          = true;
-            bool        line_aa             = false;
-            bool        conservative_raster = false;
+            enums::cullmode_t cull_mode           = enums::CullNone;
+            float             depth_bias          = 0.0f;
+            float             depth_bias_clamp    = 0.0f;
+            float             depth_slope_scale   = 0.0f;
+            bool              wireframe           = false;
+            bool              front_ccw           = false;
+            bool              depth_clip          = true;
+            bool              line_aa             = false;
+            bool              conservative_raster = false;
         };
 
         struct GfxDepthStencilOp
         {
-            GfxStencilOp   stencil_fail = GfxStencilOp::Keep;
-            GfxStencilOp   depth_fail   = GfxStencilOp::Keep;
-            GfxStencilOp   pass         = GfxStencilOp::Keep;
-            GfxCompareFunc stencil_func = GfxCompareFunc::Always;
+            enums::stencil_t     stencil_fail = enums::StencilKeep;
+            enums::stencil_t     depth_fail   = enums::StencilKeep;
+            enums::stencil_t     pass         = enums::StencilKeep;
+            enums::comparefunc_t stencil_func = enums::CompareFuncAlways;
         };
 
         struct GfxDepthStencilState
         {
-            GfxCompareFunc    depth_func  = GfxCompareFunc::Always;
-            bool              depth_test  = false;
-            bool              depth_write = true;
-            GfxDepthStencilOp front;
-            GfxDepthStencilOp back;
-            bool              stencil_test       = false;
-            u8                stencil_read_mask  = 0xFF;
-            u8                stencil_write_mask = 0xFF;
+            enums::comparefunc_t depth_func  = enums::CompareFuncAlways;
+            bool                 depth_test  = false;
+            bool                 depth_write = true;
+            GfxDepthStencilOp    front;
+            GfxDepthStencilOp    back;
+            bool                 stencil_test       = false;
+            u8                   stencil_read_mask  = 0xFF;
+            u8                   stencil_write_mask = 0xFF;
         };
 
         struct GfxBlendState
         {
-            bool              blend_enable = false;
-            GfxBlendFactor    color_src    = GfxBlendFactor::One;
-            GfxBlendFactor    color_dst    = GfxBlendFactor::One;
-            GfxBlendOp        color_op     = GfxBlendOp::Add;
-            GfxBlendFactor    alpha_src    = GfxBlendFactor::One;
-            GfxBlendFactor    alpha_dst    = GfxBlendFactor::One;
-            GfxBlendOp        alpha_op     = GfxBlendOp::Add;
-            GfxColorWriteMask write_mask   = GfxColorWriteMaskAll;
+            bool                    blend_enable = false;
+            enums::blendfactor_t    color_src    = enums::BlendFactorOne;
+            enums::blendfactor_t    color_dst    = enums::BlendFactorOne;
+            enums::blendop_t        color_op     = enums::BlendOpAdd;
+            enums::blendfactor_t    alpha_src    = enums::BlendFactorOne;
+            enums::blendfactor_t    alpha_dst    = enums::BlendFactorOne;
+            enums::blendop_t        alpha_op     = enums::BlendOpAdd;
+            enums::colorwritemask_t write_mask   = enums::ColorWriteMaskAll;
         };
 
-        struct GfxGraphicsPipelineDesc
+        struct graphics_pipeline_desc_t
         {
-            IGfxShader*          vs = nullptr;
-            IGfxShader*          ps = nullptr;
+            shader_t*            vs = nullptr;
+            shader_t*            ps = nullptr;
             GfxRasterizerState   rasterizer_state;
             GfxDepthStencilState depthstencil_state;
             GfxBlendState        blend_state[8];
-            GfxFormat            rt_format[8]        = {Gfx::Unknown};
-            GfxFormat            depthstencil_format = Gfx::Unknown;
-            GfxPrimitiveType     primitive_type      = GfxPrimitiveType::TriangleList;
+            enums::format        rt_format[8]        = {enums::FORMAT_UNKNOWN};
+            enums::format        depthstencil_format = enums::FORMAT_UNKNOWN;
+            enums::primitive_t   primitive_type      = enums::PrimitiveTriangleList;
         };
 
-        struct GfxMeshShadingPipelineDesc
+        struct mesh_shading_pipeline_desc_t
         {
-            IGfxShader*          as = nullptr;
-            IGfxShader*          ms = nullptr;
-            IGfxShader*          ps = nullptr;
+            shader_t*            as = nullptr;
+            shader_t*            ms = nullptr;
+            shader_t*            ps = nullptr;
             GfxRasterizerState   rasterizer_state;
             GfxDepthStencilState depthstencil_state;
             GfxBlendState        blend_state[8];
-            GfxFormat            rt_format[8]        = {Gfx::Unknown};
-            GfxFormat            depthstencil_format = Gfx::Unknown;
+            enums::format        rt_format[8]        = {enums::FORMAT_UNKNOWN};
+            enums::format        depthstencil_format = enums::FORMAT_UNKNOWN;
         };
 
-        struct GfxComputePipelineDesc
+        struct compute_pipeline_desc_t
         {
-            IGfxShader* cs = nullptr;
+            shader_t* cs = nullptr;
         };
+
 #pragma pack(pop)
 
-        enum class GfxFilter
+        struct sampler_desc_t
         {
-            Point,
-            Linear,
-        };
-
-        enum class GfxSamplerAddressMode
-        {
-            Repeat,
-            MirroredRepeat,
-            ClampToEdge,
-            ClampToBorder,
-        };
-
-        enum class GfxSamplerReductionMode
-        {
-            Standard,
-            Compare,
-            Min,
-            Max,
-        };
-
-        struct GfxSamplerDesc
-        {
-            GfxFilter               min_filter        = GfxFilter::Point;
-            GfxFilter               mag_filter        = GfxFilter::Point;
-            GfxFilter               mip_filter        = GfxFilter::Point;
-            GfxSamplerReductionMode reduction_mode    = GfxSamplerReductionMode::Standard;
-            GfxSamplerAddressMode   address_u         = GfxSamplerAddressMode::Repeat;
-            GfxSamplerAddressMode   address_v         = GfxSamplerAddressMode::Repeat;
-            GfxSamplerAddressMode   address_w         = GfxSamplerAddressMode::Repeat;
-            GfxCompareFunc          compare_func      = GfxCompareFunc::Always;
-            bool                    enable_anisotropy = false;
-            float                   max_anisotropy    = 1.0f;
-            float                   mip_bias          = 0.0f;
-            float                   min_lod           = 0.0f;
-            float                   max_lod           = GFX_FLT_MAX;
-            float                   border_color[4]   = {};
+            enums::filter_t                 min_filter        = enums::FilterPoint;
+            enums::filter_t                 mag_filter        = enums::FilterPoint;
+            enums::filter_t                 mip_filter        = enums::FilterPoint;
+            enums::sampler_reduction_mode_t reduction_mode    = enums::SamplerReductionModeStandard;
+            enums::sampler_address_mode_t   address_u         = enums::SamplerAddressModeRepeat;
+            enums::sampler_address_mode_t   address_v         = enums::SamplerAddressModeRepeat;
+            enums::sampler_address_mode_t   address_w         = enums::SamplerAddressModeRepeat;
+            enums::comparefunc              compare_func      = enums::CompareFuncAlways;
+            bool                            enable_anisotropy = false;
+            float                           max_anisotropy    = 1.0f;
+            float                           mip_bias          = 0.0f;
+            float                           min_lod           = 0.0f;
+            float                           max_lod           = GFX_FLT_MAX;
+            float                           border_color[4]   = {};
         };
 
         struct GfxDrawCommand
@@ -696,15 +750,9 @@ namespace ncore
             u32 group_count_z;
         };
 
-        enum class GfxTileMappingType
-        {
-            Map,
-            Unmap,
-        };
-
         struct GfxTileMapping
         {
-            GfxTileMappingType type;
+            enums::tile_mapping_type_t type;
 
             u32 subresource;
             u32 x;  // in tiles
@@ -739,79 +787,67 @@ namespace ncore
             u32 tile_offset;
         };
 
-        enum class GfxVendor
+        namespace enums
         {
-            Unkown,
-            AMD,
-            Nvidia,
-            Intel,
-            Apple,
+            typedef u8 asflag_t;
+            enum asflag
+            {
+                AllowUpdate     = 1 << 0,
+                AllowCompaction = 1 << 1,
+                PreferFastTrace = 1 << 2,
+                PreferFastBuild = 1 << 3,
+                LowMemory       = 1 << 4,
+            };
+
+        }  // namespace enums
+
+        struct rt_geometry_t
+        {
+            buffer_t*     vertex_buffer;
+            u32           vertex_buffer_offset;
+            u32           vertex_count;
+            u32           vertex_stride;
+            enums::format vertex_format;
+
+            buffer_t*     index_buffer;
+            u32           index_buffer_offset;
+            u32           index_count;
+            enums::format index_format;
+
+            bool opaque;
         };
 
-        namespace GfxRayTracing
+        struct rt_instance_t
         {
-            namespace AccStructure
+            typedef u8 flag;
+            enum
             {
-                typedef u8 Flag;
-                enum 
-                {
-                    FlagAllowUpdate     = 1 << 0,
-                    FlagAllowCompaction = 1 << 1,
-                    FlagPreferFastTrace = 1 << 2,
-                    FlagPreferFastBuild = 1 << 3,
-                    FlagLowMemory       = 1 << 4,
-                };
-            }
-            using AccStructureFlag = AccStructure::Flag;
-
-            struct Geometry
-            {
-                IGfxBuffer* vertex_buffer;
-                u32         vertex_buffer_offset;
-                u32         vertex_count;
-                u32         vertex_stride;
-                GfxFormat   vertex_format;
-
-                IGfxBuffer* index_buffer;
-                u32         index_buffer_offset;
-                u32         index_count;
-                GfxFormat   index_format;
-
-                bool opaque;
+                DisableCull   = 1 << 0,
+                FrontFaceCCW  = 1 << 1,
+                ForceOpaque   = 1 << 2,
+                ForceNoOpaque = 1 << 3,
             };
 
-            struct Instance
-            {
-                typedef u8 Flag;
-                enum
-                {
-                    DisableCull   = 1 << 0,
-                    FrontFaceCCW  = 1 << 1,
-                    ForceOpaque   = 1 << 2,
-                    ForceNoOpaque = 1 << 3,
-                };
+            blas_t* blas;
+            float   transform[12];  // object to world 3x4 matrix
+            u32     instance_id;
+            u8      instance_mask;
+            flag    instance_flags;
+        };
 
-                IGfxRayTracingBLAS*       blas;
-                float                     transform[12];  // object to world 3x4 matrix
-                u32                       instance_id;
-                u8                        instance_mask;
-                Flag                      instance_flags;
-            };
-            using InstanceFlag = Instance::Flag;
+        struct blas_desc_t
+        {
+            rt_geometry_t*  geometries;
+            u32             geometries_count;
+            enums::asflag_t flags;
+        };
 
-            struct BLASDesc
-            {
-                Geometry*        geometries;
-                u32              geometries_count;
-                AccStructureFlag flags;
-            };
+        struct tlas_desc_t
+        {
+            u32             instance_count;
+            enums::asflag_t flags;
+        };
 
-            struct TLASDesc
-            {
-                u32              instance_count;
-                AccStructureFlag flags;
-            };
-        }  // namespace GfxRayTracing
     }  // namespace ngfx
 }  // namespace ncore
 

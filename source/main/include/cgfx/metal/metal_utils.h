@@ -141,7 +141,7 @@ namespace ncore
             return usage;
         }
 
-        inline MTL::TextureDescriptor* ToTextureDescriptor(const GfxTextureDesc& desc)
+        inline MTL::TextureDescriptor* ToTextureDescriptor(const texture_desc_t& desc)
         {
             MTL::TextureDescriptor* descriptor = MTL::TextureDescriptor::alloc()->init();
             descriptor->setWidth(desc.width);

@@ -12,28 +12,28 @@ namespace ncore
 {
     namespace ngfx
     {
-        void BeginMPGpuEvent(IGfxCommandList* pCommandList, const char* event_name);
-        void EndMPGpuEvent(IGfxCommandList* pCommandList);
+        void BeginMPGpuEvent(command_list_t* pCommandList, const char* event_name);
+        void EndMPGpuEvent(command_list_t* pCommandList);
 
         class RenderEvent
         {
         public:
-            RenderEvent(IGfxCommandList* pCommandList, const char* event_name)
+            RenderEvent(command_list_t* pCommandList, const char* event_name)
                 : m_pCommandList(pCommandList)
             {
-                pCommandList->BeginEvent(event_name);
+                BeginEvent(pCommandList, event_name);
             }
 
-            ~RenderEvent() { m_pCommandList->EndEvent(); }
+            ~RenderEvent() { EndEvent(m_pCommandList); }
 
         private:
-            IGfxCommandList* m_pCommandList;
+            command_list_t* m_pCommandList;
         };
 
         class MPRenderEvent
         {
         public:
-            MPRenderEvent(IGfxCommandList* pCommandList, const char* event_name)
+            MPRenderEvent(command_list_t* pCommandList, const char* event_name)
                 : m_pCommandList(pCommandList)
             {
                 BeginMPGpuEvent(pCommandList, event_name);
@@ -42,7 +42,7 @@ namespace ncore
             ~MPRenderEvent() { EndMPGpuEvent(m_pCommandList); }
 
         private:
-            IGfxCommandList* m_pCommandList;
+            command_list_t* m_pCommandList;
         };
 
 #if 1

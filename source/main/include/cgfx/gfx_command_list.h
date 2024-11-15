@@ -7,97 +7,82 @@ namespace ncore
 {
     namespace ngfx
     {
-        class IGfxBuffer;
-        class IGfxCommandList;
-        class IGfxDescriptor;
-        class IGfxFence;
-        class IGfxHeap;
-        class IGfxPipelineState;
-        class IGfxRayTracingBLAS;
-        class IGfxRayTracingTLAS;
-        class IGfxResource;
-        class IGfxSwapchain;
-        class IGfxTexture;
-
-        class IGfxClearUavApi
+        struct command_list_t
         {
-        public:
-            virtual void ClearUAV(IGfxCommandList* commandList, IGfxResource* resource, IGfxDescriptor* descriptor, const GfxUnorderedAccessViewDesc& uavDesc, const float* value) = 0;
-            virtual void ClearUAV(IGfxCommandList* commandList, IGfxResource* resource, IGfxDescriptor* descriptor, const GfxUnorderedAccessViewDesc& uavDesc, const u32* value)   = 0;
+            D_GFX_OCS_COMPONENT;
+            device_t*                 m_device;
+            enums::command_queue_type m_queueType;
         };
 
-        class IGfxCommandList : public IGfxResource
-        {
-        public:
-            virtual ~IGfxCommandList() {}
+        command_list_t* CreateCommandList(device_t* device, enums::command_queue_type queue_type, const char* name);
+        bool            Create(command_list_t* cl);
+        void            Destroy(command_list_t* resource);
 
-            GfxCommandQueue GetQueue() const { return m_queueType; }
+        // move to cpp file, implementation can be somewhere else ?
+        void ClearUAV(command_list_t* commandList, resource_t* resource, descriptor_t* descriptor, const uav_desc_t& uavDesc, const float* value);
+        void ClearUAV(command_list_t* commandList, resource_t* resource, descriptor_t* descriptor, const uav_desc_t& uavDesc, const u32* value);
 
-            virtual void ResetAllocator()                    = 0;
-            virtual void Begin()                             = 0;
-            virtual void End()                               = 0;
-            virtual void Wait(IGfxFence* fence, u64 value)   = 0;
-            virtual void Signal(IGfxFence* fence, u64 value) = 0;
-            virtual void Present(IGfxSwapchain* swapchain)   = 0;
-            virtual void Submit()                            = 0;
-            virtual void ResetState()                        = 0;
+        void ResetAllocator(command_list_t* commandList);
+        void Begin(command_list_t* commandList);
+        void End(command_list_t* commandList);
+        void Wait(command_list_t* commandList, fence_t* fence, u64 value);
+        void Signal(command_list_t* commandList, fence_t* fence, u64 value);
+        void Present(command_list_t* commandList, swapchain_t* swapchain);
+        void Submit(command_list_t* commandList);
+        void ResetState(command_list_t* commandList);
 
-            virtual void BeginProfiling()                            = 0;
-            virtual void EndProfiling()                              = 0;
-            virtual void BeginEvent(const char* event_name) = 0;
-            virtual void EndEvent()                                  = 0;
+        void BeginProfiling(command_list_t* commandList);
+        void EndProfiling(command_list_t* commandList);
+        void BeginEvent(command_list_t* commandList, const char* event_name);
+        void EndEvent(command_list_t* commandList);
 
-            virtual void CopyBufferToTexture(IGfxTexture* dst_texture, u32 mip_level, u32 array_slice, IGfxBuffer* src_buffer, u32 offset) = 0;
-            virtual void CopyTextureToBuffer(IGfxBuffer* dst_buffer, u32 offset, IGfxTexture* src_texture, u32 mip_level, u32 array_slice) = 0;
-            virtual void CopyBuffer(IGfxBuffer* dst, u32 dst_offset, IGfxBuffer* src, u32 src_offset, u32 size)                            = 0;
-            virtual void CopyTexture(IGfxTexture* dst, u32 dst_mip, u32 dst_array, IGfxTexture* src, u32 src_mip, u32 src_array)           = 0;
-            virtual void ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const float* clear_value, IGfxClearUavApi* clear_uav)       = 0;
-            virtual void ClearUAV(IGfxResource* resource, IGfxDescriptor* uav, const u32* clear_value, IGfxClearUavApi* clear_uav)         = 0;
-            virtual void WriteBuffer(IGfxBuffer* buffer, u32 offset, u32 data)                                                             = 0;
-            virtual void UpdateTileMappings(IGfxTexture* texture, IGfxHeap* heap, u32 mapping_count, const GfxTileMapping* mappings)       = 0;
+        void CopyBufferToTexture(command_list_t* commandList, texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset);
+        void CopyTextureToBuffer(command_list_t* commandList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice);
+        void CopyBuffer(command_list_t* commandList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size);
+        void CopyTexture(command_list_t* commandList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array);
+        void ClearUAV(command_list_t* commandList, resource_t* resource, descriptor_t* uav, const float* clear_value);
+        void ClearUAV(command_list_t* commandList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
+        void WriteBuffer(command_list_t* commandList, buffer_t* buffer, u32 offset, u32 data);
+        void UpdateTileMappings(command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings);
 
-            virtual void TextureBarrier(IGfxTexture* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after) = 0;
-            virtual void BufferBarrier(IGfxBuffer* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after)                      = 0;
-            virtual void GlobalBarrier(GfxAccessFlags access_before, GfxAccessFlags access_after)                                          = 0;
-            virtual void FlushBarriers()                                                                                                   = 0;
+        void TextureBarrier(command_list_t* commandList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
+        void BufferBarrier(command_list_t* commandList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);
+        void GlobalBarrier(command_list_t* commandList, enums::access_flags access_before, enums::access_flags access_after);
+        void FlushBarriers(command_list_t* commandList);
 
-            virtual void BeginRenderPass(const GfxRenderPassDesc& render_pass)            = 0;
-            virtual void EndRenderPass()                                                  = 0;
-            virtual void SetPipelineState(IGfxPipelineState* state)                       = 0;
-            virtual void SetStencilReference(u8 stencil)                                  = 0;
-            virtual void SetBlendFactor(const float* blend_factor)                        = 0;
-            virtual void SetIndexBuffer(IGfxBuffer* buffer, u32 offset, GfxFormat format) = 0;
-            virtual void SetViewport(u32 x, u32 y, u32 width, u32 height)                 = 0;
-            virtual void SetScissorRect(u32 x, u32 y, u32 width, u32 height)              = 0;
-            virtual void SetGraphicsConstants(u32 slot, const void* data, s64 data_size)  = 0;
-            virtual void SetComputeConstants(u32 slot, const void* data, s64 data_size)   = 0;
+        void BeginRenderPass(command_list_t* commandList, const GfxRenderPassDesc& render_pass);
+        void EndRenderPass(command_list_t* commandList);
+        void SetPipelineState(command_list_t* commandList, pipeline_state_t* state);
+        void SetStencilReference(command_list_t* commandList, u8 stencil);
+        void SetBlendFactor(command_list_t* commandList, const float* blend_factor);
+        void SetIndexBuffer(command_list_t* commandList, buffer_t* buffer, u32 offset, enums::format format);
+        void SetViewport(command_list_t* commandList, u32 x, u32 y, u32 width, u32 height);
+        void SetScissorRect(command_list_t* commandList, u32 x, u32 y, u32 width, u32 height);
+        void SetGraphicsConstants(command_list_t* commandList, u32 slot, const void* data, s64 data_size);
+        void SetComputeConstants(command_list_t* commandList, u32 slot, const void* data, s64 data_size);
 
-            virtual void Draw(u32 vertex_count, u32 instance_count = 1)                             = 0;
-            virtual void DrawIndexed(u32 index_count, u32 instance_count = 1, u32 index_offset = 0) = 0;
-            virtual void Dispatch(u32 group_count_x, u32 group_count_y, u32 group_count_z)          = 0;
-            virtual void DispatchMesh(u32 group_count_x, u32 group_count_y, u32 group_count_z)      = 0;
+        void Draw(command_list_t* commandList, u32 vertex_count, u32 instance_count = 1);
+        void DrawIndexed(command_list_t* commandList, u32 index_count, u32 instance_count = 1, u32 index_offset = 0);
+        void Dispatch(command_list_t* commandList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
+        void DispatchMesh(command_list_t* commandList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
 
-            virtual void DrawIndirect(IGfxBuffer* buffer, u32 offset)         = 0;
-            virtual void DrawIndexedIndirect(IGfxBuffer* buffer, u32 offset)  = 0;
-            virtual void DispatchIndirect(IGfxBuffer* buffer, u32 offset)     = 0;
-            virtual void DispatchMeshIndirect(IGfxBuffer* buffer, u32 offset) = 0;
+        void DrawIndirect(command_list_t* commandList, buffer_t* buffer, u32 offset);
+        void DrawIndexedIndirect(command_list_t* commandList, buffer_t* buffer, u32 offset);
+        void DispatchIndirect(command_list_t* commandList, buffer_t* buffer, u32 offset);
+        void DispatchMeshIndirect(command_list_t* commandList, buffer_t* buffer, u32 offset);
 
-            virtual void MultiDrawIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)         = 0;
-            virtual void MultiDrawIndexedIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)  = 0;
-            virtual void MultiDispatchIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset)     = 0;
-            virtual void MultiDispatchMeshIndirect(u32 max_count, IGfxBuffer* args_buffer, u32 args_buffer_offset, IGfxBuffer* count_buffer, u32 count_buffer_offset) = 0;
+        void MultiDrawIndirect(command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+        void MultiDrawIndexedIndirect(command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+        void MultiDispatchIndirect(command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+        void MultiDispatchMeshIndirect(command_list_t* commandList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
 
-            virtual void BuildRayTracingBLAS(IGfxRayTracingBLAS* blas)                                                             = 0;
-            virtual void UpdateRayTracingBLAS(IGfxRayTracingBLAS* blas, IGfxBuffer* vertex_buffer, u32 vertex_buffer_offset)       = 0;
-            virtual void BuildRayTracingTLAS(IGfxRayTracingTLAS* tlas, const GfxRayTracing::Instance* instances, u32 instance_count) = 0;
+        void BuildRayTracingBLAS(command_list_t* commandList, blas_t* blas);
+        void UpdateRayTracingBLAS(command_list_t* commandList, blas_t* blas, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+        void BuildRayTracingTLAS(command_list_t* commandList, tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
 
 #if MICROPROFILE_GPU_TIMERS
-            virtual struct MicroProfileThreadLogGpu* GetProfileLog() const = 0;
+        MicroProfileThreadLogGpu* GetProfileLog();
 #endif
-
-        protected:
-            GfxCommandQueue m_queueType;
-        };
 
     }  // namespace ngfx
 }  // namespace ncore
