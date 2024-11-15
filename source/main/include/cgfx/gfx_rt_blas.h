@@ -14,7 +14,8 @@ namespace ncore
         };
 
         blas_t* CreateRayTracingBLAS(device_t* device, const blas_desc_t& desc, const char* name);
-        void    Destroy(device_t* device, blas_t* resource);
+        bool    Create(device_t* device, blas_t* blas);
+        void    Destroy(device_t* device, blas_t* blas);
 
     }  // namespace ngfx
 }  // namespace ncore

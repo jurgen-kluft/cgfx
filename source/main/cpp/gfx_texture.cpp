@@ -8,8 +8,7 @@ namespace ncore
     {
         u32 GetAllocationSize(const texture_desc_t& desc)
         {
-            u32 size = 0;
-
+            u32 size       = 0;
             u32 min_width  = GetFormatBlockWidth(enums::cast<enums::format>(desc.format));
             u32 min_height = GetFormatBlockHeight(enums::cast<enums::format>(desc.format));
 
@@ -24,10 +23,8 @@ namespace ncore
                     size += GetFormatRowPitch(enums::cast<enums::format>(desc.format), width) * height * depth;
                 }
             }
-
             return size;
         }
 
-        
     }  // namespace ngfx
 }  // namespace ncore

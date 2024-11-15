@@ -14,7 +14,8 @@ namespace ncore
         };
 
         tlas_t* CreateRayTracingTLAS(device_t* device, const tlas_desc_t& desc, const char* name);
-        void    Destroy(device_t* device, tlas_t* resource);
+        bool    Create(device_t* device, tlas_t* tlas);
+        void    Destroy(device_t* device, tlas_t* tlas);
 
     }  // namespace ngfx
 }  // namespace ncore
