@@ -13,25 +13,22 @@ namespace ncore
 {
     namespace ngfx
     {
+        // class MetalDevice;
+        // class MetalShader : public shader_t
+        // {
+        // public:
+        //     MetalShader(MetalDevice* pDevice, const shader_desc_t& desc, const char* name);
+        //     ~MetalShader();
 
-        class MetalDevice;
+        //     const MetalShaderReflection& GetReflection() const { return m_reflection; }
 
-        class MetalShader : public shader_t
-        {
-        public:
-            MetalShader(MetalDevice* pDevice, const shader_desc_t& desc, const char* name);
-            ~MetalShader();
+        //     virtual void* GetHandle() const override { return m_pFunction; }
+        //     virtual bool  Create(byte* data_ptr, u32 data_len) override;
 
-            const MetalShaderReflection& GetReflection() const { return m_reflection; }
-
-            virtual void* GetHandle() const override { return m_pFunction; }
-            virtual bool  Create(byte* data_ptr, u32 data_len) override;
-
-        private:
-            MTL::Function*        m_pFunction = nullptr;
-            MetalShaderReflection m_reflection;
-        };
-
+        // private:
+        //     MTL::Function*        m_pFunction = nullptr;
+        //     MetalShaderReflection m_reflection;
+        // };
     }  // namespace ngfx
 }  // namespace ncore
 

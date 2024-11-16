@@ -13,63 +13,69 @@ namespace ncore
 {
     namespace ngfx
     {
-        buffer_t* Alloc(device_t* pDevice, const buffer_desc_t& desc, const char* name)
+        buffer_t* CreateBuffer(device_t* device, const buffer_desc_t& desc, const char* name)
         {
-            resource_t* pResource = CreateObject<resource_t>(pDevice, name);
-            buffer_t*   pBuffer   = AddComponent<resource_t, buffer_t>(pDevice, pResource);
-            return pBuffer;
+            resource_t* resource = CreateObject<resource_t>(device, name);
+            buffer_t*   buffer   = AddComponent<resource_t, buffer_t>(device, resource);
+            switch (device->m_desc.backend)
+            {
+                case enums::Backend_D3D12: return nd3d12::CreateBuffer(device, buffer);
+                case enums::Backend_Metal: return nmetal::CreateBuffer(device, buffer);
+                case enums::Backend_Mock: return nmock::CreateBuffer(device, buffer);
+            }
+            return buffer;
         }
 
-        bool Create(device_t* pDevice, buffer_t* pBuffer)
+        bool Create(device_t* device, buffer_t* buffer)
         {
-            switch (pDevice->m_desc.backend)
+            switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::Create(pDevice, pBuffer);
-                case enums::Backend_Metal: return nmetal::Create(pDevice, pBuffer);
-                case enums::Backend_Mock: return nmock::Create(pDevice, pBuffer);
+                case enums::Backend_D3D12: return nd3d12::Create(device, buffer);
+                case enums::Backend_Metal: return nmetal::Create(device, buffer);
+                case enums::Backend_Mock: return nmock::Create(device, buffer);
             }
             return false;
         }
 
-        void Destroy(device_t* pDevice, buffer_t* pBuffer)
+        void Destroy(device_t* device, buffer_t* buffer)
         {
-            switch (pDevice->m_desc.backend)
+            switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::Destroy(pDevice, pBuffer); break;
-                case enums::Backend_Metal: nmetal::Destroy(pDevice, pBuffer); break;
-                case enums::Backend_Mock: nmock::Destroy(pDevice, pBuffer); break;
+                case enums::Backend_D3D12: nd3d12::Destroy(device, buffer); break;
+                case enums::Backend_Metal: nmetal::Destroy(device, buffer); break;
+                case enums::Backend_Mock: nmock::Destroy(device, buffer); break;
             }
         }
 
-        void* GetCpuAddress(device_t* pDevice, buffer_t* buffer)
+        void* GetCpuAddress(device_t* device, buffer_t* buffer)
         {
-            switch (pDevice->m_desc.backend)
+            switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::GetCpuAddress(pDevice, buffer);
-                case enums::Backend_Metal: return nmetal::GetCpuAddress(pDevice, buffer);
-                case enums::Backend_Mock: return nmock::GetCpuAddress(pDevice, buffer);
+                case enums::Backend_D3D12: return nd3d12::GetCpuAddress(device, buffer);
+                case enums::Backend_Metal: return nmetal::GetCpuAddress(device, buffer);
+                case enums::Backend_Mock: return nmock::GetCpuAddress(device, buffer);
             }
             return nullptr;
         }
 
-        u64 GetGpuAddress(device_t* pDevice, buffer_t* buffer)
+        u64 GetGpuAddress(device_t* device, buffer_t* buffer)
         {
-            switch (pDevice->m_desc.backend)
+            switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::GetGpuAddress(pDevice, buffer);
-                case enums::Backend_Metal: return nmetal::GetGpuAddress(pDevice, buffer);
-                case enums::Backend_Mock: return nmock::GetGpuAddress(pDevice, buffer);
+                case enums::Backend_D3D12: return nd3d12::GetGpuAddress(device, buffer);
+                case enums::Backend_Metal: return nmetal::GetGpuAddress(device, buffer);
+                case enums::Backend_Mock: return nmock::GetGpuAddress(device, buffer);
             }
             return 0;
         }
 
-        u32 GetRequiredStagingBufferSize(device_t* pDevice, buffer_t* buffer)
+        u32 GetRequiredStagingBufferSize(device_t* device, buffer_t* buffer)
         {
-            switch (pDevice->m_desc.backend)
+            switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::GetRequiredStagingBufferSize(pDevice, buffer);
-                case enums::Backend_Metal: return nmetal::GetRequiredStagingBufferSize(pDevice, buffer);
-                case enums::Backend_Mock: return nmock::GetRequiredStagingBufferSize(pDevice, buffer);
+                case enums::Backend_D3D12: return nd3d12::GetRequiredStagingBufferSize(device, buffer);
+                case enums::Backend_Metal: return nmetal::GetRequiredStagingBufferSize(device, buffer);
+                case enums::Backend_Mock: return nmock::GetRequiredStagingBufferSize(device, buffer);
             }
             return 0;
         }

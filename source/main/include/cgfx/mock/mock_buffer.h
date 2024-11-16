@@ -9,6 +9,7 @@ namespace ncore
     {
         namespace nmock
         {
+            ngfx::buffer_t* CreateBuffer(device_t* pDevice, ngfx::buffer_t*);
             bool            Create(device_t* pDevice, ngfx::buffer_t*);
             void            Destroy(device_t*, ngfx::buffer_t*);
             void*           GetHandle(device_t* pDevice, ngfx::buffer_t*);

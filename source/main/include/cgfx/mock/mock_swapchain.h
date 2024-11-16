@@ -9,18 +9,16 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::swapchain_t* Alloc(device_t* pDevice, const swapchain_desc_t& desc, const char* name);
-            void               Destroy(ngfx::swapchain_t* pSwapchain);
-            bool               Create(ngfx::swapchain_t* pSwapchain);
-            void               Present(ngfx::swapchain_t* pSwapchain);
-            void*              GetHandle(ngfx::swapchain_t* pSwapchain);
-            void               AcquireNextBackBuffer(ngfx::swapchain_t* pSwapchain);
-            ngfx::texture_t*   GetBackBuffer(ngfx::swapchain_t* pSwapchain);
-            bool               Resize(ngfx::swapchain_t* pSwapchain, u32 width, u32 height);
-            void               SetVSyncEnabled(ngfx::swapchain_t* pSwapchain, bool value);
-
+            ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
+            bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
+            void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);
+            void               Present(device_t* device, ngfx::swapchain_t* swapchain);
+            void*              GetHandle(device_t* device, ngfx::swapchain_t* swapchain);
+            void               AcquireNextBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
+            ngfx::texture_t*   GetBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
+            bool               Resize(device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
+            void               SetVSyncEnabled(device_t* device, ngfx::swapchain_t* swapchain, bool value);
         }  // namespace nmock
-
     }  // namespace ngfx
 }  // namespace ncore
 #endif

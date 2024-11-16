@@ -16,11 +16,12 @@ namespace ncore
         };
 
         swapchain_t* CreateSwapchain(device_t* device, const swapchain_desc_t& desc, const char* name);
+        bool         Create(device_t* device, swapchain_t* resource);
         void         Destroy(device_t* device, swapchain_t* resource);
-        void         AcquireNextBackBuffer(swapchain_t* sc);
-        texture_t*   GetBackBuffer(swapchain_t* sc);
-        bool         Resize(swapchain_t* sc, u32 width, u32 height);
-        void         SetVSyncEnabled(swapchain_t* sc, bool value);
+        void         AcquireNextBackBuffer(device_t* device, swapchain_t* sc);
+        texture_t*   GetBackBuffer(device_t* device, swapchain_t* sc);
+        bool         Resize(device_t* device, swapchain_t* sc, u32 width, u32 height);
+        void         SetVSyncEnabled(device_t* device, swapchain_t* sc, bool value);
 
     }  // namespace ngfx
 }  // namespace ncore

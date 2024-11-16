@@ -5,60 +5,73 @@
     #pragma once
 #endif
 
-#include "cgfx/d3d12/d3d12_header.h"
+//#include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_texture.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        class D3D12Device;
-        class D3D12Heap;
-
-        namespace D3D12MA
+        namespace nd3d12
         {
-            class Allocation;
-        }
+            ngfx::texture_t*         CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
+            bool                     Create(device_t* device, ngfx::texture_t* texture);
+            void                     Destroy(device_t* device, ngfx::texture_t* texture);
+            void*                    GetHandle(device_t* device, ngfx::texture_t* texture);
+            u32                      GetRequiredStagingBufferSize(device_t* device, ngfx::texture_t* texture);
+            u32                      GetRowPitch(device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
+            GfxTilingDesc            GetTilingDesc(device_t* device, ngfx::texture_t* texture);
+            GfxSubresourceTilingDesc GetSubResourceTilingDesc(device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
+            void*                    GetSharedHandle(device_t* device, ngfx::texture_t* texture);
+        }  // namespace nmock
 
-        class D3D12Texture : public texture_t
-        {
-        public:
-            D3D12Texture(D3D12Device* pDevice, const texture_desc_t& desc, const char* name);
-            ~D3D12Texture();
+        // class D3D12Device;
+        // class D3D12Heap;
 
-            virtual void*                    GetHandle() const override { return m_pTexture; }
-            virtual u32                      GetRequiredStagingBufferSize() const override;
-            virtual u32                      GetRowPitch(u32 mip_level = 0) const override;
-            virtual GfxTilingDesc            GetTilingDesc() const override;
-            virtual GfxSubresourceTilingDesc GetTilingDesc(u32 subresource = 0) const override;
-            virtual void*                    GetSharedHandle() const { return m_sharedHandle; }
+        // namespace D3D12MA
+        // {
+        //     class Allocation;
+        // }
 
-            bool                        Create();
-            D3D12_CPU_DESCRIPTOR_HANDLE GetRTV(u32 mip_slice, u32 array_slice);
-            D3D12_CPU_DESCRIPTOR_HANDLE GetDSV(u32 mip_slice, u32 array_slice);
-            D3D12_CPU_DESCRIPTOR_HANDLE GetReadOnlyDSV(u32 mip_slice, u32 array_slice);
+        // class D3D12Texture : public texture_t
+        // {
+        // public:
+        //     D3D12Texture(D3D12Device* pDevice, const texture_desc_t& desc, const char* name);
+        //     ~D3D12Texture();
 
-        private:
-            ID3D12Resource*      m_pTexture    = nullptr;
-            D3D12MA::Allocation* m_pAllocation = nullptr;
+        //     virtual void*                    GetHandle() const override { return m_pTexture; }
+        //     virtual u32                      GetRequiredStagingBufferSize() const override;
+        //     virtual u32                      GetRowPitch(u32 mip_level = 0) const override;
+        //     virtual GfxTilingDesc            GetTilingDesc() const override;
+        //     virtual GfxSubresourceTilingDesc GetTilingDesc(u32 subresource = 0) const override;
+        //     virtual void*                    GetSharedHandle() const { return m_sharedHandle; }
 
-            template<typename T>
-            struct vector_t
-            {
-				T* data = nullptr;
-				u32 size = 0;
-                u32 capacity = 0;
-			};
+        //     bool                        Create();
+        //     D3D12_CPU_DESCRIPTOR_HANDLE GetRTV(u32 mip_slice, u32 array_slice);
+        //     D3D12_CPU_DESCRIPTOR_HANDLE GetDSV(u32 mip_slice, u32 array_slice);
+        //     D3D12_CPU_DESCRIPTOR_HANDLE GetReadOnlyDSV(u32 mip_slice, u32 array_slice);
 
-            vector_t<D3D12Descriptor> m_RTV;
-            vector_t<D3D12Descriptor> m_DSV;
-            vector_t<D3D12Descriptor> m_readonlyDSV;
+        // private:
+        //     ID3D12Resource*      m_pTexture    = nullptr;
+        //     D3D12MA::Allocation* m_pAllocation = nullptr;
 
-            HANDLE m_sharedHandle = 0;
+        //     template<typename T>
+        //     struct vector_t
+        //     {
+		// 		T* data = nullptr;
+		// 		u32 size = 0;
+        //         u32 capacity = 0;
+		// 	};
 
-        private:
-            friend class D3D12Swapchain;
-        };
+        //     vector_t<D3D12Descriptor> m_RTV;
+        //     vector_t<D3D12Descriptor> m_DSV;
+        //     vector_t<D3D12Descriptor> m_readonlyDSV;
+
+        //     HANDLE m_sharedHandle = 0;
+
+        // private:
+        //     friend class D3D12Swapchain;
+        // };
     }  // namespace ngfx
 }  // namespace ncore
 #endif

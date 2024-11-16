@@ -17,14 +17,9 @@ namespace ncore
                 texture_t* m_backBuffers[8];
             };
 
-            ngfx::swapchain_t* Alloc(device_t* pDevice, const swapchain_desc_t& desc, const char* name)
+            ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
             {
-                // m_pDevice = pDevice;
-                // m_desc    = desc;
-                // m_name    = name;
-                ngfx::swapchain_t* sc = mock::CreateSwapchain(pDevice, desc, name);
-
-                mock::swapchain_t* msc    = ngfx::AddComponent<ngfx::swapchain_t, mock::swapchain_t>(pDevice, sc);
+                nmock::swapchain_t* msc   = ngfx::AddComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, swapchain);
                 msc->m_currentBackBuffer  = -1;
                 msc->m_maxBackBufferCount = 8;
                 msc->m_numBackBufferCount = 0;
@@ -34,17 +29,23 @@ namespace ncore
                 }
             }
 
-            void Destroy(ngfx::swapchain_t* pSwapchain)
+            bool Create(device_t* device, ngfx::swapchain_t* sc)
             {
-                mock::swapchain_t* msc = ngfx::AddComponent<ngfx::swapchain_t, mock::swapchain_t>(pSwapchain->m_device, pSwapchain);
+                nmock::swapchain_t* msc = ngfx::GetComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
+                return CreateTextures(device, sc, msc);
+            }
+
+            void Destroy(device_t* device, ngfx::swapchain_t* sc)
+            {
+                nmock::swapchain_t* msc = ngfx::AddComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
                 for (s32 i = 0; i < msc->m_numBackBufferCount; ++i)
                 {
-                    Destroy(msc->m_backBuffers[i]);
+                    ngfx::Destroy(device, msc->m_backBuffers[i]);
                 }
                 msc->m_numBackBufferCount = 0;
             }
 
-            bool CreateTextures(ngfx::swapchain_t* sc, mock::swapchain_t* msc)
+            bool CreateTextures(device_t* device, ngfx::swapchain_t* sc, nmock::swapchain_t* msc)
             {
                 texture_desc_t textureDesc;
                 textureDesc.width  = sc->m_desc.width;
@@ -55,35 +56,29 @@ namespace ncore
                 for (u32 i = 0; i < sc->m_desc.backbuffer_count; ++i)
                 {
                     const char* name                                = "back-buffer";  // = fmt::format("{} texture {}", m_name, i).c_str();
-                    msc->m_backBuffers[msc->m_numBackBufferCount++] = Alloc(sc->m_device, textureDesc, name);
+                    msc->m_backBuffers[msc->m_numBackBufferCount++] = CreateTexture(device, textureDesc, name);
                 }
 
                 return true;
             }
 
-            bool Create(ngfx::swapchain_t* sc)
+            void Present(device_t* device, ngfx::swapchain_t* sc) {}
+
+            void* GetHandle(device_t* device, ngfx::swapchain_t* sc) { return nullptr; }
+
+            void AcquireNextBackBuffer(device_t* device, ngfx::swapchain_t* sc)
             {
-                mock::swapchain_t* msc = ngfx::GetComponent<ngfx::swapchain_t, mock::swapchain_t>(sc->m_device, sc);
-                return CreateTextures(sc, msc);
-            }
-
-            void Present(ngfx::swapchain_t* sc) {}
-
-            void* GetHandle(ngfx::swapchain_t* sc) { return nullptr; }
-
-            void AcquireNextBackBuffer(ngfx::swapchain_t* sc)
-            {
-                mock::swapchain_t* msc   = ngfx::GetComponent<ngfx::swapchain_t, mock::swapchain_t>(sc->m_device, sc);
+                nmock::swapchain_t* msc  = ngfx::GetComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
                 msc->m_currentBackBuffer = (msc->m_currentBackBuffer + 1) % sc->m_desc.backbuffer_count;
             }
 
-            texture_t* GetBackBuffer(ngfx::swapchain_t* sc)
+            texture_t* GetBackBuffer(device_t* device, ngfx::swapchain_t* sc)
             {
-                mock::swapchain_t* msc = ngfx::GetComponent<ngfx::swapchain_t, mock::swapchain_t>(sc->m_device, sc);
+                nmock::swapchain_t* msc = ngfx::GetComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
                 return msc->m_backBuffers[msc->m_currentBackBuffer];
             }
 
-            bool Resize(ngfx::swapchain_t* sc, u32 width, u32 height)
+            bool Resize(device_t* device, ngfx::swapchain_t* sc, u32 width, u32 height)
             {
                 if (sc->m_desc.width == width && sc->m_desc.height == height)
                 {
@@ -93,18 +88,18 @@ namespace ncore
                 sc->m_desc.width  = width;
                 sc->m_desc.height = height;
 
-                mock::swapchain_t* msc   = ngfx::GetComponent<ngfx::swapchain_t, mock::swapchain_t>(sc->m_device, sc);
+                nmock::swapchain_t* msc  = ngfx::GetComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
                 msc->m_currentBackBuffer = 0;
 
                 for (s32 i = 0; i < msc->m_numBackBufferCount; ++i)
                 {
-                    Destroy(msc->m_backBuffers[i]);
+                    ngfx::Destroy(device, msc->m_backBuffers[i]);
                 }
                 msc->m_numBackBufferCount = 0;
-                return CreateTextures(sc, msc);
+                return CreateTextures(device, sc, msc);
             }
 
-            void SetVSyncEnabled(ngfx::swapchain_t* sc, bool value) {}
+            void SetVSyncEnabled(device_t* device, ngfx::swapchain_t* sc, bool value) {}
 
         }  // namespace nmock
     }  // namespace ngfx

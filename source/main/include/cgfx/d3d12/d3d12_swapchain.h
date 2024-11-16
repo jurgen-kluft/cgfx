@@ -5,50 +5,63 @@
     #pragma once
 #endif
 
-#include "cgfx/d3d12/d3d12_header.h"
+//#include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_swapchain.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        class D3D12Device;
-
-        class D3D12Swapchain : public swapchain_t
+        namespace nd3d12
         {
-        public:
-            D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name);
-            ~D3D12Swapchain();
+            ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
+            bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
+            void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);
+            void               Present(device_t* device, ngfx::swapchain_t* swapchain);
+            void*              GetHandle(device_t* device, ngfx::swapchain_t* swapchain);
+            void               AcquireNextBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
+            ngfx::texture_t*   GetBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
+            bool               Resize(device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
+            void               SetVSyncEnabled(device_t* device, ngfx::swapchain_t* swapchain, bool value);
+        }  // namespace nmock
 
-            virtual void*        GetHandle() const override { return m_pSwapChain; }
-            virtual void         AcquireNextBackBuffer() override;
-            virtual texture_t* GetBackBuffer() const override;
-            virtual bool         Resize(u32 width, u32 height) override;
-            virtual void         SetVSyncEnabled(bool value) override { m_bEnableVsync = value; }
+        // class D3D12Device;
 
-            bool Create();
-            bool Present();
+        // class D3D12Swapchain : public swapchain_t
+        // {
+        // public:
+        //     D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name);
+        //     ~D3D12Swapchain();
 
-        private:
-            bool CreateTextures();
+        //     virtual void*        GetHandle() const override { return m_pSwapChain; }
+        //     virtual void         AcquireNextBackBuffer() override;
+        //     virtual texture_t* GetBackBuffer() const override;
+        //     virtual bool         Resize(u32 width, u32 height) override;
+        //     virtual void         SetVSyncEnabled(bool value) override { m_bEnableVsync = value; }
 
-        private:
-            IDXGISwapChain3* m_pSwapChain = nullptr;
+        //     bool Create();
+        //     bool Present();
 
-            template <typename T>
-            struct vector_t
-            {
-                T* data = nullptr;
-				u32 size = 0;
-				u32 capacity = 0;
-            };
+        // private:
+        //     bool CreateTextures();
 
-            bool                        m_bEnableVsync       = true;
-            bool                        m_bSupportTearing    = false;
-            bool                        m_bWindowMode        = true;
-            u32                         m_nCurrentBackBuffer = 0;
-            vector_t<texture_t*> m_backBuffers;
-        };
+        // private:
+        //     IDXGISwapChain3* m_pSwapChain = nullptr;
+
+        //     template <typename T>
+        //     struct vector_t
+        //     {
+        //         T* data = nullptr;
+		// 		u32 size = 0;
+		// 		u32 capacity = 0;
+        //     };
+
+        //     bool                        m_bEnableVsync       = true;
+        //     bool                        m_bSupportTearing    = false;
+        //     bool                        m_bWindowMode        = true;
+        //     u32                         m_nCurrentBackBuffer = 0;
+        //     vector_t<texture_t*> m_backBuffers;
+        // };
     }  // namespace ngfx
 }  // namespace ncore
 #endif
