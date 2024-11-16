@@ -3,6 +3,7 @@
 
 #include "cbase/c_debug.h"
 #include "cgfx/gfx_defines.h"
+#include "cgfx/gfx_texture.h"
 
 #include "cmacos/Foundation/Foundation.hpp"
 #include "cmacos/Metal/Metal.hpp"
@@ -23,123 +24,127 @@ namespace ncore
             label->release();
         }
 
-        inline MTL::ResourceOptions ToResourceOptions(GfxMemoryType type)
+        inline MTL::ResourceOptions ToResourceOptions(enums::memory type)
         {
             MTL::ResourceOptions options = MTL::ResourceHazardTrackingModeTracked;
 
             switch (type)
             {
-                case GfxMemory::GpuOnly: options |= MTL::ResourceStorageModePrivate; break;
-                case GfxMemory::CpuOnly:
-                case GfxMemory::CpuToGpu: options |= MTL::ResourceStorageModeShared | MTL::ResourceCPUCacheModeWriteCombined; break;
-                case GfxMemory::GpuToCpu: options |= MTL::ResourceStorageModeShared; break;
+                case enums::MemoryGpuOnly: options |= MTL::ResourceStorageModePrivate; break;
+                case enums::MemoryCpuOnly:
+                case enums::MemoryCpuToGpu: options |= MTL::ResourceStorageModeShared | MTL::ResourceCPUCacheModeWriteCombined; break;
+                case enums::MemoryGpuToCpu: options |= MTL::ResourceStorageModeShared; break;
                 default: break;
             }
 
             return options;
         }
+        inline MTL::ResourceOptions ToResourceOptions(enums::memory_t type) { return ToResourceOptions(enums::cast<enums::memory>(type)); }
 
-        inline MTL::TextureType ToTextureType(GfxTextureType type)
+        inline MTL::TextureType ToTextureType(enums::texture_type type)
         {
             switch (type)
             {
-                case GfxTextureType::Texture2D: return MTL::TextureType2D;
-                case GfxTextureType::Texture2DArray: return MTL::TextureType2DArray;
-                case GfxTextureType::Texture3D: return MTL::TextureType3D;
-                case GfxTextureType::TextureCube: return MTL::TextureTypeCube;
-                case GfxTextureType::TextureCubeArray: return MTL::TextureTypeCubeArray;
+                case enums::TextureType2D: return MTL::TextureType2D;
+                case enums::TextureType2DArray: return MTL::TextureType2DArray;
+                case enums::TextureType3D: return MTL::TextureType3D;
+                case enums::TextureTypeCube: return MTL::TextureTypeCube;
+                case enums::TextureTypeCubeArray: return MTL::TextureTypeCubeArray;
                 default: return MTL::TextureType2D;
             }
         }
+        inline MTL::TextureType ToTextureType(enums::texture_type_t type) { return ToTextureType(enums::cast<enums::texture_type>(type)); }
 
-        inline MTL::PixelFormat ToPixelFormat(GfxFormat format)
+        inline MTL::PixelFormat ToPixelFormat(enums::format format)
         {
             switch (format)
             {
-                case Gfx::Unknown: return MTL::PixelFormatInvalid;
-                case Gfx::RGBA32F: return MTL::PixelFormatRGBA32Float;
-                case Gfx::RGBA32UI: return MTL::PixelFormatRGBA32Uint;
-                case Gfx::RGBA32SI: return MTL::PixelFormatRGBA32Sint;
-                case Gfx::RGBA16F: return MTL::PixelFormatRGBA16Float;
-                case Gfx::RGBA16UI: return MTL::PixelFormatRGBA16Uint;
-                case Gfx::RGBA16SI: return MTL::PixelFormatRGBA16Sint;
-                case Gfx::RGBA16UNORM: return MTL::PixelFormatRGBA16Unorm;
-                case Gfx::RGBA16SNORM: return MTL::PixelFormatRGBA16Snorm;
-                case Gfx::RGBA8UI: return MTL::PixelFormatRGBA8Uint;
-                case Gfx::RGBA8SI: return MTL::PixelFormatRGBA8Sint;
-                case Gfx::RGBA8UNORM: return MTL::PixelFormatRGBA8Unorm;
-                case Gfx::RGBA8SNORM: return MTL::PixelFormatRGBA8Snorm;
-                case Gfx::RGBA8SRGB: return MTL::PixelFormatRGBA8Unorm_sRGB;
-                case Gfx::BGRA8UNORM: return MTL::PixelFormatBGRA8Unorm;
-                case Gfx::BGRA8SRGB: return MTL::PixelFormatBGRA8Unorm_sRGB;
-                case Gfx::RGB10A2UI: return MTL::PixelFormatRGB10A2Uint;
-                case Gfx::RGB10A2UNORM: return MTL::PixelFormatRGB10A2Unorm;
-                case Gfx::RGB32F: return MTL::PixelFormatInvalid;
-                case Gfx::RGB32UI: return MTL::PixelFormatInvalid;
-                case Gfx::RGB32SI: return MTL::PixelFormatInvalid;
-                case Gfx::R11G11B10F: return MTL::PixelFormatRG11B10Float;
-                case Gfx::RGB9E5: return MTL::PixelFormatRGB9E5Float;
-                case Gfx::RG32F: return MTL::PixelFormatRG32Float;
-                case Gfx::RG32UI: return MTL::PixelFormatRG32Uint;
-                case Gfx::RG32SI: return MTL::PixelFormatRG32Sint;
-                case Gfx::RG16F: return MTL::PixelFormatRG16Float;
-                case Gfx::RG16UI: return MTL::PixelFormatRG16Uint;
-                case Gfx::RG16SI: return MTL::PixelFormatRG16Sint;
-                case Gfx::RG16UNORM: return MTL::PixelFormatRG16Unorm;
-                case Gfx::RG16SNORM: return MTL::PixelFormatRG16Snorm;
-                case Gfx::RG8UI: return MTL::PixelFormatRG8Uint;
-                case Gfx::RG8SI: return MTL::PixelFormatRG8Sint;
-                case Gfx::RG8UNORM: return MTL::PixelFormatRG8Unorm;
-                case Gfx::RG8SNORM: return MTL::PixelFormatRG8Snorm;
-                case Gfx::R32F: return MTL::PixelFormatR32Float;
-                case Gfx::R32UI: return MTL::PixelFormatR32Uint;
-                case Gfx::R32SI: return MTL::PixelFormatR32Sint;
-                case Gfx::R16F: return MTL::PixelFormatR16Float;
-                case Gfx::R16UI: return MTL::PixelFormatR16Uint;
-                case Gfx::R16SI: return MTL::PixelFormatR16Sint;
-                case Gfx::R16UNORM: return MTL::PixelFormatR16Unorm;
-                case Gfx::R16SNORM: return MTL::PixelFormatR16Snorm;
-                case Gfx::R8UI: return MTL::PixelFormatR8Uint;
-                case Gfx::R8SI: return MTL::PixelFormatR8Sint;
-                case Gfx::R8UNORM: return MTL::PixelFormatR8Unorm;
-                case Gfx::R8SNORM: return MTL::PixelFormatR8Snorm;
-                case Gfx::D32F: return MTL::PixelFormatDepth32Float;
-                case Gfx::D32FS8: return MTL::PixelFormatDepth32Float_Stencil8;
-                case Gfx::D16: return MTL::PixelFormatDepth16Unorm;
-                case Gfx::BC1UNORM: return MTL::PixelFormatBC1_RGBA;
-                case Gfx::BC1SRGB: return MTL::PixelFormatBC1_RGBA_sRGB;
-                case Gfx::BC2UNORM: return MTL::PixelFormatBC2_RGBA;
-                case Gfx::BC2SRGB: return MTL::PixelFormatBC2_RGBA_sRGB;
-                case Gfx::BC3UNORM: return MTL::PixelFormatBC3_RGBA;
-                case Gfx::BC3SRGB: return MTL::PixelFormatBC3_RGBA_sRGB;
-                case Gfx::BC4UNORM: return MTL::PixelFormatBC4_RUnorm;
-                case Gfx::BC4SNORM: return MTL::PixelFormatBC4_RSnorm;
-                case Gfx::BC5UNORM: return MTL::PixelFormatBC5_RGUnorm;
-                case Gfx::BC5SNORM: return MTL::PixelFormatBC5_RGSnorm;
-                case Gfx::BC6U16F: return MTL::PixelFormatBC6H_RGBUfloat;
-                case Gfx::BC6S16F: return MTL::PixelFormatBC6H_RGBFloat;
-                case Gfx::BC7UNORM: return MTL::PixelFormatBC7_RGBAUnorm;
-                case Gfx::BC7SRGB: return MTL::PixelFormatBC7_RGBAUnorm_sRGB;
+                case enums::FORMAT_UNKNOWN: return MTL::PixelFormatInvalid;
+                case enums::FORMAT_RGBA32F: return MTL::PixelFormatRGBA32Float;
+                case enums::FORMAT_RGBA32UI: return MTL::PixelFormatRGBA32Uint;
+                case enums::FORMAT_RGBA32SI: return MTL::PixelFormatRGBA32Sint;
+                case enums::FORMAT_RGBA16F: return MTL::PixelFormatRGBA16Float;
+                case enums::FORMAT_RGBA16UI: return MTL::PixelFormatRGBA16Uint;
+                case enums::FORMAT_RGBA16SI: return MTL::PixelFormatRGBA16Sint;
+                case enums::FORMAT_RGBA16UNORM: return MTL::PixelFormatRGBA16Unorm;
+                case enums::FORMAT_RGBA16SNORM: return MTL::PixelFormatRGBA16Snorm;
+                case enums::FORMAT_RGBA8UI: return MTL::PixelFormatRGBA8Uint;
+                case enums::FORMAT_RGBA8SI: return MTL::PixelFormatRGBA8Sint;
+                case enums::FORMAT_RGBA8UNORM: return MTL::PixelFormatRGBA8Unorm;
+                case enums::FORMAT_RGBA8SNORM: return MTL::PixelFormatRGBA8Snorm;
+                case enums::FORMAT_RGBA8SRGB: return MTL::PixelFormatRGBA8Unorm_sRGB;
+                case enums::FORMAT_BGRA8UNORM: return MTL::PixelFormatBGRA8Unorm;
+                case enums::FORMAT_BGRA8SRGB: return MTL::PixelFormatBGRA8Unorm_sRGB;
+                case enums::FORMAT_RGB10A2UI: return MTL::PixelFormatRGB10A2Uint;
+                case enums::FORMAT_RGB10A2UNORM: return MTL::PixelFormatRGB10A2Unorm;
+                case enums::FORMAT_RGB32F: return MTL::PixelFormatInvalid;
+                case enums::FORMAT_RGB32UI: return MTL::PixelFormatInvalid;
+                case enums::FORMAT_RGB32SI: return MTL::PixelFormatInvalid;
+                case enums::FORMAT_R11G11B10F: return MTL::PixelFormatRG11B10Float;
+                case enums::FORMAT_RGB9E5: return MTL::PixelFormatRGB9E5Float;
+                case enums::FORMAT_RG32F: return MTL::PixelFormatRG32Float;
+                case enums::FORMAT_RG32UI: return MTL::PixelFormatRG32Uint;
+                case enums::FORMAT_RG32SI: return MTL::PixelFormatRG32Sint;
+                case enums::FORMAT_RG16F: return MTL::PixelFormatRG16Float;
+                case enums::FORMAT_RG16UI: return MTL::PixelFormatRG16Uint;
+                case enums::FORMAT_RG16SI: return MTL::PixelFormatRG16Sint;
+                case enums::FORMAT_RG16UNORM: return MTL::PixelFormatRG16Unorm;
+                case enums::FORMAT_RG16SNORM: return MTL::PixelFormatRG16Snorm;
+                case enums::FORMAT_RG8UI: return MTL::PixelFormatRG8Uint;
+                case enums::FORMAT_RG8SI: return MTL::PixelFormatRG8Sint;
+                case enums::FORMAT_RG8UNORM: return MTL::PixelFormatRG8Unorm;
+                case enums::FORMAT_RG8SNORM: return MTL::PixelFormatRG8Snorm;
+                case enums::FORMAT_R32F: return MTL::PixelFormatR32Float;
+                case enums::FORMAT_R32UI: return MTL::PixelFormatR32Uint;
+                case enums::FORMAT_R32SI: return MTL::PixelFormatR32Sint;
+                case enums::FORMAT_R16F: return MTL::PixelFormatR16Float;
+                case enums::FORMAT_R16UI: return MTL::PixelFormatR16Uint;
+                case enums::FORMAT_R16SI: return MTL::PixelFormatR16Sint;
+                case enums::FORMAT_R16UNORM: return MTL::PixelFormatR16Unorm;
+                case enums::FORMAT_R16SNORM: return MTL::PixelFormatR16Snorm;
+                case enums::FORMAT_R8UI: return MTL::PixelFormatR8Uint;
+                case enums::FORMAT_R8SI: return MTL::PixelFormatR8Sint;
+                case enums::FORMAT_R8UNORM: return MTL::PixelFormatR8Unorm;
+                case enums::FORMAT_R8SNORM: return MTL::PixelFormatR8Snorm;
+                case enums::FORMAT_D32F: return MTL::PixelFormatDepth32Float;
+                case enums::FORMAT_D32FS8: return MTL::PixelFormatDepth32Float_Stencil8;
+                case enums::FORMAT_D16: return MTL::PixelFormatDepth16Unorm;
+                case enums::FORMAT_BC1UNORM: return MTL::PixelFormatBC1_RGBA;
+                case enums::FORMAT_BC1SRGB: return MTL::PixelFormatBC1_RGBA_sRGB;
+                case enums::FORMAT_BC2UNORM: return MTL::PixelFormatBC2_RGBA;
+                case enums::FORMAT_BC2SRGB: return MTL::PixelFormatBC2_RGBA_sRGB;
+                case enums::FORMAT_BC3UNORM: return MTL::PixelFormatBC3_RGBA;
+                case enums::FORMAT_BC3SRGB: return MTL::PixelFormatBC3_RGBA_sRGB;
+                case enums::FORMAT_BC4UNORM: return MTL::PixelFormatBC4_RUnorm;
+                case enums::FORMAT_BC4SNORM: return MTL::PixelFormatBC4_RSnorm;
+                case enums::FORMAT_BC5UNORM: return MTL::PixelFormatBC5_RGUnorm;
+                case enums::FORMAT_BC5SNORM: return MTL::PixelFormatBC5_RGSnorm;
+                case enums::FORMAT_BC6U16F: return MTL::PixelFormatBC6H_RGBUfloat;
+                case enums::FORMAT_BC6S16F: return MTL::PixelFormatBC6H_RGBFloat;
+                case enums::FORMAT_BC7UNORM: return MTL::PixelFormatBC7_RGBAUnorm;
+                case enums::FORMAT_BC7SRGB: return MTL::PixelFormatBC7_RGBAUnorm_sRGB;
                 default: return MTL::PixelFormatInvalid;
             }
         }
+        inline MTL::PixelFormat ToPixelFormat(enums::format_t format) { return ToPixelFormat(enums::cast<enums::format>(format)); }
 
-        inline MTL::TextureUsage ToTextureUsage(GfxTextureUsageFlags flags)
+        inline MTL::TextureUsage ToTextureUsage(enums::texture_usage flags)
         {
             MTL::TextureUsage usage = MTL::TextureUsageShaderRead | MTL::TextureUsagePixelFormatView;
 
-            if (flags & (GfxTextureUsage::RenderTarget | GfxTextureUsage::DepthStencil))
+            if (flags & (enums::TextureUsageRenderTarget | enums::TextureUsageDepthStencil))
             {
                 usage |= MTL::TextureUsageRenderTarget;
             }
 
-            if (flags & GfxTextureUsage::UnorderedAccess)
+            if (flags & enums::TextureUsageUnorderedAccess)
             {
                 usage |= MTL::TextureUsageShaderWrite;  // todo TextureUsageShaderAtomic
             }
 
             return usage;
         }
+        inline MTL::TextureUsage ToTextureUsage(enums::texture_usage_t flags) { return ToTextureUsage(enums::cast<enums::texture_usage>(flags)); }
 
         inline MTL::TextureDescriptor* ToTextureDescriptor(const texture_desc_t& desc)
         {
@@ -148,7 +153,7 @@ namespace ncore
             descriptor->setHeight(desc.height);
             descriptor->setDepth(desc.depth);
             descriptor->setMipmapLevelCount(desc.mip_levels);
-            if (desc.type == GfxTextureType::TextureCube || desc.type == GfxTextureType::TextureCubeArray)
+            if (desc.type == enums::TextureTypeCube || desc.type == enums::TextureTypeCubeArray)
             {
                 ASSERT(desc.array_size % 6 == 0);
                 descriptor->setArrayLength(desc.array_size / 6);
@@ -165,134 +170,136 @@ namespace ncore
             return descriptor;
         }
 
-        inline MTL::LoadAction ToLoadAction(GfxRenderPassLoadOp loadOp)
+        inline MTL::LoadAction ToLoadAction(enums::load_op loadOp)
         {
             switch (loadOp)
             {
-                case GfxRenderPass::LoadLoad: return MTL::LoadActionLoad;
-                case GfxRenderPass::LoadClear: return MTL::LoadActionClear;
-                case GfxRenderPass::LoadDontCare: return MTL::LoadActionDontCare;
+                case enums::LoadOpLoad: return MTL::LoadActionLoad;
+                case enums::LoadOpClear: return MTL::LoadActionClear;
+                case enums::LoadOpDontCare: return MTL::LoadActionDontCare;
                 default: return MTL::LoadActionLoad;
             }
         }
 
-        inline MTL::StoreAction ToStoreAction(GfxRenderPassStoreOp storeOp)
+        inline MTL::StoreAction ToStoreAction(enums::store_op storeOp)
         {
             switch (storeOp)
             {
-                case GfxRenderPass::StoreStore: return MTL::StoreActionStore;
-                case GfxRenderPass::StoreDontCare: return MTL::StoreActionDontCare;
+                case enums::StoreOpStore: return MTL::StoreActionStore;
+                case enums::StoreOpDontCare: return MTL::StoreActionDontCare;
                 default: return MTL::StoreActionStore;
             }
         }
 
-        inline MTL::PrimitiveTopologyClass ToTopologyClass(GfxPrimitiveType type)
+        inline MTL::PrimitiveTopologyClass ToTopologyClass(enums::primitive type)
         {
             switch (type)
             {
-                case GfxPrimitiveType::PointList: return MTL::PrimitiveTopologyClassPoint;
-                case GfxPrimitiveType::LineList:
-                case GfxPrimitiveType::LineStrip: return MTL::PrimitiveTopologyClassLine;
-                case GfxPrimitiveType::TriangleList:
-                case GfxPrimitiveType::TriangleTrip: return MTL::PrimitiveTopologyClassTriangle;
+                case enums::PrimitivePointList: return MTL::PrimitiveTopologyClassPoint;
+                case enums::PrimitiveLineList:
+                case enums::PrimitiveLineStrip: return MTL::PrimitiveTopologyClassLine;
+                case enums::PrimitiveTriangleList:
+                case enums::PrimitiveTriangleTrip: return MTL::PrimitiveTopologyClassTriangle;
                 default: return MTL::PrimitiveTopologyClassUnspecified;
             }
         }
 
-        inline MTL::PrimitiveType ToPrimitiveType(GfxPrimitiveType type)
+        inline MTL::PrimitiveType ToPrimitiveType(enums::primitive type)
         {
             switch (type)
             {
-                case GfxPrimitiveType::PointList: return MTL::PrimitiveTypePoint;
-                case GfxPrimitiveType::LineList: return MTL::PrimitiveTypeLine;
-                case GfxPrimitiveType::LineStrip: return MTL::PrimitiveTypeLineStrip;
-                case GfxPrimitiveType::TriangleList: return MTL::PrimitiveTypeTriangle;
-                case GfxPrimitiveType::TriangleTrip: return MTL::PrimitiveTypeTriangleStrip;
+                case enums::PrimitivePointList: return MTL::PrimitiveTypePoint;
+                case enums::PrimitiveLineList: return MTL::PrimitiveTypeLine;
+                case enums::PrimitiveLineStrip: return MTL::PrimitiveTypeLineStrip;
+                case enums::PrimitiveTriangleList: return MTL::PrimitiveTypeTriangle;
+                case enums::PrimitiveTriangleTrip: return MTL::PrimitiveTypeTriangleStrip;
                 default: return MTL::PrimitiveTypeTriangle;
             }
         }
 
-        inline MTL::BlendFactor ToBlendFactor(GfxBlendFactor blend_factor)
+        inline MTL::BlendFactor ToBlendFactor(enums::blendfactor blend_factor)
         {
             switch (blend_factor)
             {
-                case GfxBlendFactor::Zero: return MTL::BlendFactorZero;
-                case GfxBlendFactor::One: return MTL::BlendFactorOne;
-                case GfxBlendFactor::SrcColor: return MTL::BlendFactorSourceColor;
-                case GfxBlendFactor::InvSrcColor: return MTL::BlendFactorOneMinusSourceColor;
-                case GfxBlendFactor::SrcAlpha: return MTL::BlendFactorSourceAlpha;
-                case GfxBlendFactor::InvSrcAlpha: return MTL::BlendFactorOneMinusSourceAlpha;
-                case GfxBlendFactor::DstAlpha: return MTL::BlendFactorDestinationAlpha;
-                case GfxBlendFactor::InvDstAlpha: return MTL::BlendFactorOneMinusDestinationAlpha;
-                case GfxBlendFactor::DstColor: return MTL::BlendFactorDestinationColor;
-                case GfxBlendFactor::InvDstColor: return MTL::BlendFactorOneMinusDestinationColor;
-                case GfxBlendFactor::SrcAlphaClamp: return MTL::BlendFactorSourceAlphaSaturated;
-                case GfxBlendFactor::ConstantFactor: return MTL::BlendFactorBlendColor;
-                case GfxBlendFactor::InvConstantFactor: return MTL::BlendFactorOneMinusBlendColor;
+                case enums::BlendFactorZero: return MTL::BlendFactorZero;
+                case enums::BlendFactorOne: return MTL::BlendFactorOne;
+                case enums::BlendFactorSrcColor: return MTL::BlendFactorSourceColor;
+                case enums::BlendFactorInvSrcColor: return MTL::BlendFactorOneMinusSourceColor;
+                case enums::BlendFactorSrcAlpha: return MTL::BlendFactorSourceAlpha;
+                case enums::BlendFactorInvSrcAlpha: return MTL::BlendFactorOneMinusSourceAlpha;
+                case enums::BlendFactorDstAlpha: return MTL::BlendFactorDestinationAlpha;
+                case enums::BlendFactorInvDstAlpha: return MTL::BlendFactorOneMinusDestinationAlpha;
+                case enums::BlendFactorDstColor: return MTL::BlendFactorDestinationColor;
+                case enums::BlendFactorInvDstColor: return MTL::BlendFactorOneMinusDestinationColor;
+                case enums::BlendFactorSrcAlphaClamp: return MTL::BlendFactorSourceAlphaSaturated;
+                case enums::BlendFactorConstantFactor: return MTL::BlendFactorBlendColor;
+                case enums::BlendFactorInvConstantFactor: return MTL::BlendFactorOneMinusBlendColor;
                 default: return MTL::BlendFactorZero;
             }
         }
 
-        inline MTL::BlendOperation ToBlendOperation(GfxBlendOp blend_op)
+        inline MTL::BlendOperation ToBlendOperation(enums::blendop blend_op)
         {
             switch (blend_op)
             {
-                case GfxBlendOp::Add: return MTL::BlendOperationAdd;
-                case GfxBlendOp::Subtract: return MTL::BlendOperationSubtract;
-                case GfxBlendOp::ReverseSubtract: return MTL::BlendOperationReverseSubtract;
-                case GfxBlendOp::Min: return MTL::BlendOperationMin;
-                case GfxBlendOp::Max: return MTL::BlendOperationMax;
+                case enums::BlendOpAdd: return MTL::BlendOperationAdd;
+                case enums::BlendOpSubtract: return MTL::BlendOperationSubtract;
+                case enums::BlendOpReverseSubtract: return MTL::BlendOperationReverseSubtract;
+                case enums::BlendOpMin: return MTL::BlendOperationMin;
+                case enums::BlendOpMax: return MTL::BlendOperationMax;
                 default: return MTL::BlendOperationAdd;
             }
         }
 
-        inline MTL::ColorWriteMask ToColorWriteMask(GfxColorWriteMask mask)
+        inline MTL::ColorWriteMask ToColorWriteMask(enums::colorwritemask mask)
         {
             MTL::ColorWriteMask mtlMask = MTL::ColorWriteMaskNone;
 
-            if (mask & GfxColorWriteMaskR)
+            if (mask & enums::ColorWriteMaskR)
                 mtlMask |= MTL::ColorWriteMaskRed;
-            if (mask & GfxColorWriteMaskG)
+            if (mask & enums::ColorWriteMaskG)
                 mtlMask |= MTL::ColorWriteMaskGreen;
-            if (mask & GfxColorWriteMaskB)
+            if (mask & enums::ColorWriteMaskB)
                 mtlMask |= MTL::ColorWriteMaskBlue;
-            if (mask & GfxColorWriteMaskA)
+            if (mask & enums::ColorWriteMaskA)
                 mtlMask |= MTL::ColorWriteMaskAlpha;
 
             return mtlMask;
         }
 
-        inline MTL::CompareFunction ToCompareFunction(GfxCompareFunc func)
+        inline MTL::CompareFunction ToCompareFunction(enums::comparefunc func)
         {
             switch (func)
             {
-                case GfxCompareFunc::Never: return MTL::CompareFunctionNever;
-                case GfxCompareFunc::Less: return MTL::CompareFunctionLess;
-                case GfxCompareFunc::Equal: return MTL::CompareFunctionEqual;
-                case GfxCompareFunc::LessEqual: return MTL::CompareFunctionLessEqual;
-                case GfxCompareFunc::Greater: return MTL::CompareFunctionGreater;
-                case GfxCompareFunc::NotEqual: return MTL::CompareFunctionNotEqual;
-                case GfxCompareFunc::GreaterEqual: return MTL::CompareFunctionGreaterEqual;
-                case GfxCompareFunc::Always: return MTL::CompareFunctionAlways;
+                case enums::CompareFuncNever: return MTL::CompareFunctionNever;
+                case enums::CompareFuncLess: return MTL::CompareFunctionLess;
+                case enums::CompareFuncEqual: return MTL::CompareFunctionEqual;
+                case enums::CompareFuncLessEqual: return MTL::CompareFunctionLessEqual;
+                case enums::CompareFuncGreater: return MTL::CompareFunctionGreater;
+                case enums::CompareFuncNotEqual: return MTL::CompareFunctionNotEqual;
+                case enums::CompareFuncGreaterEqual: return MTL::CompareFunctionGreaterEqual;
+                case enums::CompareFuncAlways: return MTL::CompareFunctionAlways;
                 default: return MTL::CompareFunctionAlways;
             }
         }
+        inline MTL::CompareFunction ToCompareFunction(enums::comparefunc_t func) { return ToCompareFunction(enums::cast<enums::comparefunc>(func)); }
 
-        inline MTL::StencilOperation ToStencilOperation(GfxStencilOp stencil_op)
+        inline MTL::StencilOperation ToStencilOperation(enums::stencil stencil_op)
         {
             switch (stencil_op)
             {
-                case GfxStencilOp::Keep: return MTL::StencilOperationKeep;
-                case GfxStencilOp::Zero: return MTL::StencilOperationZero;
-                case GfxStencilOp::Replace: return MTL::StencilOperationReplace;
-                case GfxStencilOp::IncreaseClamp: return MTL::StencilOperationIncrementClamp;
-                case GfxStencilOp::DecreaseClamp: return MTL::StencilOperationDecrementClamp;
-                case GfxStencilOp::Invert: return MTL::StencilOperationInvert;
-                case GfxStencilOp::IncreaseWrap: return MTL::StencilOperationIncrementWrap;
-                case GfxStencilOp::DecreaseWrap: return MTL::StencilOperationDecrementWrap;
+                case enums::StencilKeep: return MTL::StencilOperationKeep;
+                case enums::StencilZero: return MTL::StencilOperationZero;
+                case enums::StencilReplace: return MTL::StencilOperationReplace;
+                case enums::StencilIncreaseClamp: return MTL::StencilOperationIncrementClamp;
+                case enums::StencilDecreaseClamp: return MTL::StencilOperationDecrementClamp;
+                case enums::StencilInvert: return MTL::StencilOperationInvert;
+                case enums::StencilIncreaseWrap: return MTL::StencilOperationIncrementWrap;
+                case enums::StencilDecreaseWrap: return MTL::StencilOperationDecrementWrap;
                 default: return MTL::StencilOperationKeep;
             }
         }
+        inline MTL::StencilOperation ToStencilOperation(enums::stencil_t stencil_op) { return ToStencilOperation(enums::cast<enums::stencil>(stencil_op)); }
 
         inline MTL::DepthStencilDescriptor* ToDepthStencilDescriptor(depth_stencilstate_t state)
         {
@@ -322,59 +329,59 @@ namespace ncore
             return descriptor;
         }
 
-        inline MTL::CullMode ToCullMode(GfxCullMode mode)
+        inline MTL::CullMode ToCullMode(enums::cullmode mode)
         {
             switch (mode)
             {
-                case GfxCullMode::Front: return MTL::CullModeFront;
-                case GfxCullMode::Back: return MTL::CullModeBack;
-                case GfxCullMode::None:
+                case enums::CullFront: return MTL::CullModeFront;
+                case enums::CullBack: return MTL::CullModeBack;
+                case enums::CullNone:
                 default: return MTL::CullModeNone;
             }
         }
 
-        inline MTL::SamplerMinMagFilter ToSamplerMinMagFilter(GfxFilter filter)
+        inline MTL::SamplerMinMagFilter ToSamplerMinMagFilter(enums::filter filter)
         {
             switch (filter)
             {
-                case GfxFilter::Point: return MTL::SamplerMinMagFilterNearest;
-                case GfxFilter::Linear: return MTL::SamplerMinMagFilterLinear;
+                case enums::FilterPoint: return MTL::SamplerMinMagFilterNearest;
+                case enums::FilterLinear: return MTL::SamplerMinMagFilterLinear;
                 default: return MTL::SamplerMinMagFilterNearest;
             }
         }
 
-        inline MTL::SamplerMipFilter ToSamplerMipFilter(GfxFilter filter)
+        inline MTL::SamplerMipFilter ToSamplerMipFilter(enums::filter filter)
         {
             switch (filter)
             {
-                case GfxFilter::Point: return MTL::SamplerMipFilterNearest;
-                case GfxFilter::Linear: return MTL::SamplerMipFilterLinear;
+                case enums::FilterPoint: return MTL::SamplerMipFilterNearest;
+                case enums::FilterLinear: return MTL::SamplerMipFilterLinear;
                 default: return MTL::SamplerMipFilterNotMipmapped;
             }
         }
 
-        inline MTL::SamplerAddressMode ToSamplerAddressMode(GfxSamplerAddressMode mode)
+        inline MTL::SamplerAddressMode ToSamplerAddressMode(enums::sampler_address_mode mode)
         {
             switch (mode)
             {
-                case GfxSamplerAddressMode::Repeat: return MTL::SamplerAddressModeRepeat;
-                case GfxSamplerAddressMode::MirroredRepeat: return MTL::SamplerAddressModeMirrorRepeat;
-                case GfxSamplerAddressMode::ClampToEdge: return MTL::SamplerAddressModeClampToEdge;
-                case GfxSamplerAddressMode::ClampToBorder: return MTL::SamplerAddressModeClampToBorderColor;
+                case enums::SamplerAddressModeRepeat: return MTL::SamplerAddressModeRepeat;
+                case enums::SamplerAddressModeMirroredRepeat: return MTL::SamplerAddressModeMirrorRepeat;
+                case enums::SamplerAddressModeClampToEdge: return MTL::SamplerAddressModeClampToEdge;
+                case enums::SamplerAddressModeClampToBorder: return MTL::SamplerAddressModeClampToBorderColor;
                 default: return MTL::SamplerAddressModeRepeat;
             }
         }
 
-        inline MTL::AccelerationStructureUsage ToAccelerationStructureUsage(GfxRayTracingASFlag flags)
+        inline MTL::AccelerationStructureUsage ToAccelerationStructureUsage(enums::rt::accstruct_flag flags)
         {
             MTL::AccelerationStructureUsage usage = MTL::AccelerationStructureUsageNone;
 
-            if (flags & GfxRayTracingASFlagAllowUpdate)
+            if (flags & enums::rt::AsFlagAllowUpdate)
             {
                 usage |= MTL::AccelerationStructureUsageRefit;
             }
 
-            if (flags & GfxRayTracingASFlagPreferFastBuild)
+            if (flags & enums::rt::AsFlagPreferFastBuild)
             {
                 usage |= MTL::AccelerationStructureUsagePreferFastBuild;
             }
@@ -382,37 +389,37 @@ namespace ncore
             return usage;
         }
 
-        inline MTL::AttributeFormat ToAttributeFormat(GfxFormat format)
+        inline MTL::AttributeFormat ToAttributeFormat(enums::format format)
         {
             switch (format)
             {
-                case Gfx::RGB32F: return MTL::AttributeFormatFloat3;
-                case Gfx::RGBA32F: return MTL::AttributeFormatFloat4;
-                case Gfx::RGBA16F: return MTL::AttributeFormatHalf4;
+                case enums::FORMAT_RGB32F: return MTL::AttributeFormatFloat3;
+                case enums::FORMAT_RGBA32F: return MTL::AttributeFormatFloat4;
+                case enums::FORMAT_RGBA16F: return MTL::AttributeFormatHalf4;
                 default: ASSERT(false); return MTL::AttributeFormatInvalid;
             }
         }
 
-        inline MTL::AccelerationStructureInstanceOptions ToAccelerationStructureInstanceOptions(GfxRayTracingInstanceFlag flags)
+        inline MTL::AccelerationStructureInstanceOptions ToAccelerationStructureInstanceOptions(enums::rt::instance_flag flags)
         {
             MTL::AccelerationStructureInstanceOptions options = MTL::AccelerationStructureInstanceOptionNone;
 
-            if (flags & GfxRayTracingInstanceFlagDisableCull)
+            if (flags & enums::rt::DisableCull)
             {
                 options |= MTL::AccelerationStructureInstanceOptionDisableTriangleCulling;
             }
 
-            if (flags & GfxRayTracingInstanceFlagFrontFaceCCW)
+            if (flags & enums::rt::FrontFaceCCW)
             {
                 options |= MTL::AccelerationStructureInstanceOptionTriangleFrontFacingWindingCounterClockwise;
             }
 
-            if (flags & GfxRayTracingInstanceFlagForceOpaque)
+            if (flags & enums::rt::ForceOpaque)
             {
                 options |= MTL::AccelerationStructureInstanceOptionOpaque;
             }
 
-            if (flags & GfxRayTracingInstanceFlagForceNoOpaque)
+            if (flags & enums::rt::ForceNoOpaque)
             {
                 options |= MTL::AccelerationStructureInstanceOptionNonOpaque;
             }

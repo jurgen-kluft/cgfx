@@ -53,7 +53,13 @@ namespace ncore
         template <typename T, typename C>
         C* AddComponent(device_t* device, T* pResource)
         {
-            return device->m_allocatorOCS->add_component<C, T>(pResource, name);
+            return device->m_allocatorOCS->add_component<C, T>(pResource);
+        }
+
+        template <typename C1, typename C2>
+        C2* AddAnotherComponent(device_t* device, C1* pCp1)
+        {
+            return device->m_allocatorOCS->add_component<resource_t, C1, C2>(pCp1);
         }
 
         template <typename T, typename C>

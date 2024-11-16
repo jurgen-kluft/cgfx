@@ -12,6 +12,14 @@ namespace ncore
 {
     namespace ngfx
     {
+        namespace nmetal
+        {
+            heap_t* CreateHeap(device_t* pDevice, resource_t* resource, heap_t* heap);
+            bool    Create(device_t* pDevice, heap_t* pHeap);
+            void    Destroy(device_t* pDevice, heap_t* pHeap);
+            void*   GetHandle(device_t* pDevice, const heap_t* pHeap);
+        }  // namespace nmetal
+
         // class MetalDevice;
 
         // class MetalHeap : public heap_t

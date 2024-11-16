@@ -12,15 +12,43 @@ namespace ncore
     {
         namespace nmetal
         {
-            bool                    Create(device_t* device);
-            void                    Destroy(device_t* device);
-            void*                   GetHandle(device_t* device);
-            void                    BeginFrame(device_t* device);
-            void                    EndFrame(device_t* device);
+            class MetalConstantBufferAllocator;
+            class MetalDescriptorAllocator;
+            class MetalDescriptorAllocator;
 
-            bool                    DumpMemoryStats(device_t* device, const char* file);
-        }
-        
+            struct device_t
+            {
+                MTL::Device*       m_pDevice         = nullptr;
+                MTL::CommandQueue* m_pQueue          = nullptr;
+                MTL::ResidencySet* m_pResidencySet   = nullptr;
+                bool               m_bResidencyDirty = false;
+
+                MetalConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+                MetalDescriptorAllocator*     m_pResDescriptorAllocator;
+                MetalDescriptorAllocator*     m_pSamplerAllocator;
+
+                struct pair_t
+                {
+                    u32 first;
+                    u64 second;
+                };
+
+                // We may need a ring buffer or something of the sort
+                s32     m_resDescriptorDeletionQueueCount;
+                s32     m_samplerDescriptorDeletionQueueCount;
+                pair_t* m_resDescriptorDeletionQueue;
+                pair_t* m_samplerDescriptorDeletionQueue;
+            };
+
+            bool  Create(device_t* device);
+            void  Destroy(device_t* device);
+            void* GetHandle(device_t* device);
+            void  BeginFrame(device_t* device);
+            void  EndFrame(device_t* device);
+
+            bool DumpMemoryStats(device_t* device, const char* file);
+        }  // namespace nmetal
+
         // class MetalConstantBufferAllocator;
         // class MetalDescriptorAllocator;
         // class MetalDescriptorAllocator;

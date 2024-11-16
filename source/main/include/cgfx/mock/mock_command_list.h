@@ -73,11 +73,6 @@ namespace ncore
             void BuildRayTracingBLAS(ngfx::command_list_t* commandList, blas_t* blas);
             void UpdateRayTracingBLAS(ngfx::command_list_t* commandList, blas_t* blas, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
             void BuildRayTracingTLAS(ngfx::command_list_t* commandList, tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
-
-#if MICROPROFILE_GPU_TIMERS
-            MicroProfileThreadLogGpu* GetProfileLog();
-#endif
-
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

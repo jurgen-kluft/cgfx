@@ -5,13 +5,21 @@
     #pragma once
 #endif
 
-//#include "cgfx/d3d12/d3d12_header.h"
+// #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_heap.h"
 
 namespace ncore
 {
     namespace ngfx
     {
+        namespace nd3d12
+        {
+            heap_t* CreateHeap(device_t* pDevice, resource_t* resource, heap_t* heap);
+            bool    Create(device_t* pDevice, heap_t* pHeap);
+            void    Destroy(device_t* pDevice, heap_t* pHeap);
+            void*   GetHandle(device_t* pDevice, const heap_t* pHeap);
+        }  // namespace nd3d12
+
         // class D3D12Device;
 
         // namespace D3D12MA

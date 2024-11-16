@@ -15,7 +15,7 @@ namespace ncore
             ngfx::buffer_t* CreateBuffer(device_t* device, ngfx::buffer_t* buffer)
             {
                 // ...
-                nmock::buffer_t* mbuffer = AddComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
+                nmock::buffer_t* mbuffer = AddAnotherComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
 
                 return buffer;
             }

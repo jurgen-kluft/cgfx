@@ -1,5 +1,8 @@
 #include "cgfx/metal/metal_shader.h"
 #include "cgfx/metal/metal_device.h"
+#include "cgfx/metal/metal_utils.h"
+#include "cgfx/metal/metal_shader_reflection.h"
+
 #include "cbase/c_memory.h"
 #include "cbase/c_hash.h"
 
@@ -10,47 +13,78 @@ namespace ncore
 {
     namespace ngfx
     {
-        MetalShader::MetalShader(MetalDevice* pDevice, const shader_desc_t& desc, const char* name)
+        namespace nmetal
         {
-            m_pDevice = pDevice;
-            m_desc    = desc;
-            m_name    = name;
-        }
-
-        MetalShader::~MetalShader() { m_pFunction->release(); }
-
-        bool MetalShader::Create(byte* data_ptr, u32 data_len)
-        {
-            m_pFunction->release();
-
-            MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
-
-            nmem::memcpy(&m_reflection, data_ptr, sizeof(MetalShaderReflection));
-            dispatch_data_t metalIR = dispatch_data_create(data_ptr + sizeof(MetalShaderReflection), data_len - sizeof(MetalShaderReflection), dispatch_get_main_queue(), NULL);
-
-            NS::Error*    error;
-            MTL::Library* library = device->newLibrary(metalIR, &error);
-            CFRelease(metalIR);
-
-            if (library == nullptr)
+            struct mshader_t
             {
-                // RE_ERROR("[MetalShader] failed to create {} \r\n{}", m_name, error->localizedDescription()->utf8String());
+                MTL::Function*      m_pFunction = nullptr;
+                shader_reflection_t m_reflection;
+            };
 
-                error->release();
-                return false;
+            ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader)
+            {
+                nmetal::mshader_t* msc                     = AddAnotherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                msc->m_reflection.threadsPerThreadgroup[0] = 1;
+                msc->m_reflection.threadsPerThreadgroup[1] = 1;
+                msc->m_reflection.threadsPerThreadgroup[2] = 1;
+                return shader;
             }
 
-            NS::String* functionName = NS::String::alloc()->init(m_desc.entry_point, NS::StringEncoding::UTF8StringEncoding);
-            m_pFunction              = library->newFunction(functionName);
-            library->release();
-            functionName->release();
+            void Destroy(ngfx::device_t* device, ngfx::shader_t* shader)
+            {
+                nmetal::mshader_t* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                ms->m_pFunction->release();
+            }
 
-            SetDebugLabel(m_pFunction, m_name);
+            bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len)
+            {
+                nmetal::mshader_t* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                nmetal::device_t*  md = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
 
-            m_hash = nhash::datahash(data_ptr, data_len);
+                ms->m_pFunction->release();
 
-            return true;
-        }
+                nmem::memcpy(&ms->m_reflection, data_ptr, sizeof(shader_reflection_t));
+                dispatch_data_t metalIR = dispatch_data_create(data_ptr + sizeof(shader_reflection_t), data_len - sizeof(shader_reflection_t), dispatch_get_main_queue(), NULL);
 
+                NS::Error*    error;
+                MTL::Library* library = md->m_pDevice->newLibrary(metalIR, &error);
+                CFRelease(metalIR);
+
+                if (library == nullptr)
+                {
+                    // RE_ERROR("[MetalShader] failed to create {} \r\n{}", m_name, error->localizedDescription()->utf8String());
+
+                    error->release();
+                    return false;
+                }
+
+                NS::String* functionName = NS::String::alloc()->init(shader->m_desc.entry_point, NS::StringEncoding::UTF8StringEncoding);
+                ms->m_pFunction          = library->newFunction(functionName);
+                library->release();
+                functionName->release();
+
+                name_t const* name = GetOtherComponent<ngfx::shader_t, name_t>(device, shader);
+                SetDebugLabel(ms->m_pFunction, name->m_name);
+
+                shader->m_hash = nhash::datahash(data_ptr, data_len);
+
+                return true;
+            }
+
+            u64 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return shader->m_hash; }
+
+            void* GetHandle(ngfx::device_t const* device, const ngfx::shader_t* shader)
+            {
+                nmetal::mshader_t const* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                return ms->m_pFunction;
+            }
+
+            shader_reflection_t GetReflection(ngfx::device_t const* device, const ngfx::shader_t* shader)
+            {
+                nmetal::mshader_t const* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                return ms->m_reflection;
+            }
+
+        }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

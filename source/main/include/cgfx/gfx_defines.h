@@ -789,16 +789,26 @@ namespace ncore
 
         namespace enums
         {
-            typedef u8 asflag_t;
-            enum asflag
+            namespace rt
             {
-                AllowUpdate     = 1 << 0,
-                AllowCompaction = 1 << 1,
-                PreferFastTrace = 1 << 2,
-                PreferFastBuild = 1 << 3,
-                LowMemory       = 1 << 4,
-            };
-
+                typedef u8 accstruct_flag_t;
+                enum accstruct_flag
+                {
+                    AsFlagAllowUpdate     = 1 << 0,
+                    AsFlagAllowCompaction = 1 << 1,
+                    AsFlagPreferFastTrace = 1 << 2,
+                    AsFlagPreferFastBuild = 1 << 3,
+                    AsFlagLowMemory       = 1 << 4,
+                };
+                typedef u8 instance_flag;
+                enum instance_flag
+                {
+                    DisableCull   = 1 << 0,
+                    FrontFaceCCW  = 1 << 1,
+                    ForceOpaque   = 1 << 2,
+                    ForceNoOpaque = 1 << 3,
+                };
+            }  // namespace rt
         }  // namespace enums
 
         struct rt_geometry_t
@@ -819,33 +829,24 @@ namespace ncore
 
         struct rt_instance_t
         {
-            typedef u8 flag;
-            enum
-            {
-                DisableCull   = 1 << 0,
-                FrontFaceCCW  = 1 << 1,
-                ForceOpaque   = 1 << 2,
-                ForceNoOpaque = 1 << 3,
-            };
-
-            blas_t* blas;
-            float   transform[12];  // object to world 3x4 matrix
-            u32     instance_id;
-            u8      instance_mask;
-            flag    instance_flags;
+            blas_t*                  blas;
+            float                    transform[12];  // object to world 3x4 matrix
+            u32                      instance_id;
+            u8                       instance_mask;
+            enums::rt::instance_flag instance_flags;
         };
 
         struct blas_desc_t
         {
-            rt_geometry_t*  geometries;
-            u32             geometries_count;
-            enums::asflag_t flags;
+            rt_geometry_t*            geometries;
+            u32                       geometries_count;
+            enums::rt::accstruct_flag flags;
         };
 
         struct tlas_desc_t
         {
-            u32             instance_count;
-            enums::asflag_t flags;
+            u32                       instance_count;
+            enums::rt::accstruct_flag flags;
         };
 
     }  // namespace ngfx

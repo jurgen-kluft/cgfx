@@ -8,14 +8,6 @@ namespace ncore
 {
     namespace ngfx
     {
-        u16 const resource_t::object_index   = 0;
-        u16 const name_t::component_index    = 0;
-        u16 const texture_t::component_index = 0;
-        u16 const buffer_t::component_index  = 1;
-        u16 const device_t::component_index  = 1;
-
-        // ... TODO: other components
-
         void InitializeOcs(nocs::allocator_t* ocs)
         {
             // register object

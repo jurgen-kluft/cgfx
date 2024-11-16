@@ -10,6 +10,7 @@ namespace ncore
         struct shader_t
         {
             D_GFX_OCS_COMPONENT;
+            u64           m_hash;
             shader_desc_t m_desc = {};
         };
 
