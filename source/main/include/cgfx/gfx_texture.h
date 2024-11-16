@@ -64,8 +64,8 @@ namespace ncore
         u32                      GetAllocationSize(device_t* device, const texture_desc_t& desc);
         u32                      GetRequiredStagingBufferSize(device_t* device, texture_t* texture);
         u32                      GetRowPitch(device_t* device, texture_t* texture, u32 mip_level = 0);
-        GfxTilingDesc            GetTilingDesc(device_t* device, texture_t* texture);
-        GfxSubresourceTilingDesc GetSubResourceTilingDesc(device_t* device, texture_t* texture, u32 subresource = 0);
+        tiling_desc_t            GetTilingDesc(device_t* device, texture_t* texture);
+        subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, texture_t* texture, u32 subresource = 0);
         void*                    GetSharedHandle(device_t* device, texture_t* texture);
 
     }  // namespace ngfx

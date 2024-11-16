@@ -98,16 +98,16 @@ namespace ncore
             return GetFormatRowPitch(m_desc.format, width) * GetFormatBlockHeight(m_desc.format);
         }
 
-        GfxTilingDesc MetalTexture::GetTilingDesc() const
+        tiling_desc_t MetalTexture::GetTilingDesc() const
         {
             // todo
-            return GfxTilingDesc();
+            return tiling_desc_t();
         }
 
-        GfxSubresourceTilingDesc MetalTexture::GetTilingDesc(u32 subresource) const
+        subresource_tiling_desc_t MetalTexture::GetTilingDesc(u32 subresource) const
         {
             // todo
-            return GfxSubresourceTilingDesc();
+            return subresource_tiling_desc_t();
         }
 
         void* MetalTexture::GetSharedHandle() const

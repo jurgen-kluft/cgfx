@@ -9,9 +9,10 @@ namespace ncore
     {
         namespace nmock
         {
-            void  Destroy(ngfx::device_t* pDevice, ngfx::tlas_t* pTLAS);
-            bool  Create(ngfx::device_t* pDevice, ngfx::tlas_t* pTLAS);
-            void* GetHandle(ngfx::device_t* pDevice, const ngfx::tlas_t* pTLAS);
+            ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void          Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            bool          Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void*         GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

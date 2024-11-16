@@ -294,7 +294,7 @@ namespace ncore
             }
         }
 
-        inline MTL::DepthStencilDescriptor* ToDepthStencilDescriptor(GfxDepthStencilState state)
+        inline MTL::DepthStencilDescriptor* ToDepthStencilDescriptor(depth_stencilstate_t state)
         {
             MTL::DepthStencilDescriptor* descriptor = MTL::DepthStencilDescriptor::alloc()->init();
             descriptor->setDepthCompareFunction(state.depth_test ? ToCompareFunction(state.depth_func) : MTL::CompareFunctionAlways);

@@ -9,9 +9,10 @@ namespace ncore
     {
         namespace nmock
         {
-            void Destroy(ngfx::device_t* pDevice, ngfx::shader_t* pShader);
-            bool Create(ngfx::device_t* pDevice, ngfx::shader_t* pShader, byte* data_ptr, u32 data_len);
-            u64  GetHash(ngfx::device_t* pDevice, const ngfx::shader_t* pShader);
+            ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader);
+            void            Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
+            bool            Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
+            u64             GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader);
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

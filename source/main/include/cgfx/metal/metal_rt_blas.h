@@ -5,13 +5,21 @@
     #pragma once
 #endif
 
-//#include "cgfx/metal/metal_utils.h"
+// #include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_rt_blas.h"
 
 namespace ncore
 {
     namespace ngfx
     {
+        namespace nmetal
+        {
+            ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void*         GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pBLAS);
+        }  // namespace nmetal
+
         // class MetalDevice;
 
         // class MetalRayTracingBLAS : public blas_t

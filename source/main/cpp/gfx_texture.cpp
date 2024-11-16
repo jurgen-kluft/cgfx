@@ -94,7 +94,7 @@ namespace ncore
             return 0;
         }
 
-        GfxTilingDesc GetTilingDesc(device_t* device, texture_t* texture)
+        tiling_desc_t GetTilingDesc(device_t* device, texture_t* texture)
         {
             switch (device->m_desc.backend)
             {
@@ -105,7 +105,7 @@ namespace ncore
             return {};
         }
 
-        GfxSubresourceTilingDesc GetSubResourceTilingDesc(device_t* device, texture_t* texture, u32 subresource)
+        subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, texture_t* texture, u32 subresource)
         {
             switch (device->m_desc.backend)
             {

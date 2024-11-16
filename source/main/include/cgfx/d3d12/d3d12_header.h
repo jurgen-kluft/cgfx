@@ -279,7 +279,7 @@ namespace ncore
             }
         }
 
-        inline D3D12_RENDER_TARGET_BLEND_DESC d3d12_rt_blend_desc(const GfxBlendState& blendState)
+        inline D3D12_RENDER_TARGET_BLEND_DESC d3d12_rt_blend_desc(const blendstate_t& blendState)
         {
             D3D12_RENDER_TARGET_BLEND_DESC desc = {};
             desc.BlendEnable                    = blendState.blend_enable;
@@ -294,7 +294,7 @@ namespace ncore
             return desc;
         }
 
-        inline D3D12_BLEND_DESC d3d12_blend_desc(const GfxBlendState* blendStates)
+        inline D3D12_BLEND_DESC d3d12_blend_desc(const blendstate_t* blendStates)
         {
             D3D12_BLEND_DESC desc       = {};
             desc.AlphaToCoverageEnable  = false;
@@ -319,7 +319,7 @@ namespace ncore
             }
         }
 
-        inline D3D12_RASTERIZER_DESC d3d12_rasterizer_desc(const GfxRasterizerState& rasterizerState)
+        inline D3D12_RASTERIZER_DESC d3d12_rasterizer_desc(const rasterizer_state_t& rasterizerState)
         {
             D3D12_RASTERIZER_DESC desc = {};
             desc.FillMode              = rasterizerState.wireframe ? D3D12_FILL_MODE_WIREFRAME : D3D12_FILL_MODE_SOLID;
@@ -367,7 +367,7 @@ namespace ncore
             }
         }
 
-        inline D3D12_DEPTH_STENCILOP_DESC d3d12_depth_stencil_op(const GfxDepthStencilOp& depthStencilOp)
+        inline D3D12_DEPTH_STENCILOP_DESC d3d12_depth_stencil_op(const depth_stencilop_t& depthStencilOp)
         {
             D3D12_DEPTH_STENCILOP_DESC desc = {};
             desc.StencilFailOp              = d3d12_stencil_op(depthStencilOp.stencil_fail);
@@ -378,7 +378,7 @@ namespace ncore
             return desc;
         }
 
-        inline D3D12_DEPTH_STENCIL_DESC d3d12_depth_stencil_desc(const GfxDepthStencilState& depthStencilState)
+        inline D3D12_DEPTH_STENCIL_DESC d3d12_depth_stencil_desc(const depth_stencilstate_t& depthStencilState)
         {
             D3D12_DEPTH_STENCIL_DESC desc = {};
             desc.DepthEnable              = depthStencilState.depth_test;

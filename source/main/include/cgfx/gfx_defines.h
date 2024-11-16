@@ -47,7 +47,7 @@ namespace ncore
         {
             // Example:
             // enums::backend_t b = enums::Backend_D3D12;
-            // enums::backend backend = enums::cast(b, enums::Backend_Default);
+            // enums::backend backend = enums::cast<enums::backend>(b);
             template <typename T, typename F>
             inline static T cast(F type)
             {
@@ -591,7 +591,7 @@ namespace ncore
             return lhs.type == rhs.type && lhs.texture.mip_slice == rhs.texture.mip_slice && lhs.texture.array_slice == rhs.texture.array_slice && lhs.texture.array_size == rhs.texture.array_size && lhs.texture.plane_slice == rhs.texture.plane_slice;
         }
 
-        struct GfxRenderPassColorAttachment
+        struct renderpass_colorattachment_t
         {
             texture_t*      texture        = nullptr;
             u32             mip_slice      = 0;
@@ -601,7 +601,7 @@ namespace ncore
             float           clear_color[4] = {};
         };
 
-        struct GfxRenderPassDepthAttachment
+        struct renderpass_depthattachment_t
         {
             texture_t*      texture          = nullptr;
             u32             mip_slice        = 0;
@@ -615,10 +615,10 @@ namespace ncore
             bool            read_only        = false;
         };
 
-        struct GfxRenderPassDesc
+        struct renderpass_desc_t
         {
-            GfxRenderPassColorAttachment color[8];
-            GfxRenderPassDepthAttachment depth;
+            renderpass_colorattachment_t color[8];
+            renderpass_depthattachment_t depth;
         };
 
         struct shader_desc_t
@@ -632,7 +632,7 @@ namespace ncore
         };
 
 #pragma pack(push, 1)
-        struct GfxRasterizerState
+        struct rasterizer_state_t
         {
             enums::cullmode_t cull_mode           = enums::CullNone;
             float             depth_bias          = 0.0f;
@@ -645,7 +645,7 @@ namespace ncore
             bool              conservative_raster = false;
         };
 
-        struct GfxDepthStencilOp
+        struct depth_stencilop_t
         {
             enums::stencil_t     stencil_fail = enums::StencilKeep;
             enums::stencil_t     depth_fail   = enums::StencilKeep;
@@ -653,19 +653,19 @@ namespace ncore
             enums::comparefunc_t stencil_func = enums::CompareFuncAlways;
         };
 
-        struct GfxDepthStencilState
+        struct depth_stencilstate_t
         {
             enums::comparefunc_t depth_func  = enums::CompareFuncAlways;
             bool                 depth_test  = false;
             bool                 depth_write = true;
-            GfxDepthStencilOp    front;
-            GfxDepthStencilOp    back;
+            depth_stencilop_t    front;
+            depth_stencilop_t    back;
             bool                 stencil_test       = false;
             u8                   stencil_read_mask  = 0xFF;
             u8                   stencil_write_mask = 0xFF;
         };
 
-        struct GfxBlendState
+        struct blendstate_t
         {
             bool                    blend_enable = false;
             enums::blendfactor_t    color_src    = enums::BlendFactorOne;
@@ -681,9 +681,9 @@ namespace ncore
         {
             shader_t*            vs = nullptr;
             shader_t*            ps = nullptr;
-            GfxRasterizerState   rasterizer_state;
-            GfxDepthStencilState depthstencil_state;
-            GfxBlendState        blend_state[8];
+            rasterizer_state_t   rasterizer_state;
+            depth_stencilstate_t depthstencil_state;
+            blendstate_t         blend_state[8];
             enums::format        rt_format[8]        = {enums::FORMAT_UNKNOWN};
             enums::format        depthstencil_format = enums::FORMAT_UNKNOWN;
             enums::primitive_t   primitive_type      = enums::PrimitiveTriangleList;
@@ -694,9 +694,9 @@ namespace ncore
             shader_t*            as = nullptr;
             shader_t*            ms = nullptr;
             shader_t*            ps = nullptr;
-            GfxRasterizerState   rasterizer_state;
-            GfxDepthStencilState depthstencil_state;
-            GfxBlendState        blend_state[8];
+            rasterizer_state_t   rasterizer_state;
+            depth_stencilstate_t depthstencil_state;
+            blendstate_t         blend_state[8];
             enums::format        rt_format[8]        = {enums::FORMAT_UNKNOWN};
             enums::format        depthstencil_format = enums::FORMAT_UNKNOWN;
         };
@@ -726,7 +726,7 @@ namespace ncore
             float                           border_color[4]   = {};
         };
 
-        struct GfxDrawCommand
+        struct draw_command_t
         {
             u32 vertex_count;  // per instance
             u32 instance_count;
@@ -734,7 +734,7 @@ namespace ncore
             u32 start_instance;
         };
 
-        struct GfxDrawIndexedCommand
+        struct draw_indexed_command_t
         {
             u32 index_count;  // per instance
             u32 instance_count;
@@ -743,14 +743,14 @@ namespace ncore
             u32 start_instance;
         };
 
-        struct GfxDispatchCommand
+        struct dispatch_command_t
         {
             u32 group_count_x;
             u32 group_count_y;
             u32 group_count_z;
         };
 
-        struct GfxTileMapping
+        struct tile_mapping_t
         {
             enums::tile_mapping_type_t type;
 
@@ -768,7 +768,7 @@ namespace ncore
             u32 heap_offset;  // in tiles
         };
 
-        struct GfxTilingDesc
+        struct tiling_desc_t
         {
             u32 tile_count;
             u32 standard_mips;
@@ -779,7 +779,7 @@ namespace ncore
             u32 packed_mip_tiles;
         };
 
-        struct GfxSubresourceTilingDesc
+        struct subresource_tiling_desc_t
         {
             u32 width;  // in tiles
             u32 height;

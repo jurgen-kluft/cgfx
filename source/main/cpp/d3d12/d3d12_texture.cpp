@@ -270,7 +270,7 @@ namespace ncore
             return footprint.Footprint.RowPitch;
         }
 
-        GfxTilingDesc D3D12Texture::GetTilingDesc() const
+        tiling_desc_t D3D12Texture::GetTilingDesc() const
         {
             ASSERT(m_desc.alloc_type == GfxAllocationType::Sparse);
 
@@ -281,7 +281,7 @@ namespace ncore
             D3D12_TILE_SHAPE      tileShape;
             pDevice->GetResourceTiling(m_pTexture, &tile_count, &packedMipInfo, &tileShape, nullptr, 0, nullptr);
 
-            GfxTilingDesc info;
+            tiling_desc_t info;
             info.tile_count       = tile_count;
             info.standard_mips    = packedMipInfo.NumStandardMips;
             info.tile_width       = tileShape.WidthInTexels;
@@ -293,7 +293,7 @@ namespace ncore
             return info;
         }
 
-        GfxSubresourceTilingDesc D3D12Texture::GetTilingDesc(u32 subresource) const
+        subresource_tiling_desc_t D3D12Texture::GetTilingDesc(u32 subresource) const
         {
             ASSERT(m_desc.alloc_type == GfxAllocationType::Sparse);
 
@@ -303,7 +303,7 @@ namespace ncore
             D3D12_SUBRESOURCE_TILING tiling;
             pDevice->GetResourceTiling(m_pTexture, nullptr, nullptr, nullptr, &subresource_count, subresource, &tiling);
 
-            GfxSubresourceTilingDesc info;
+            subresource_tiling_desc_t info;
             info.width       = tiling.WidthInTiles;
             info.height      = tiling.HeightInTiles;
             info.depth       = tiling.DepthInTiles;

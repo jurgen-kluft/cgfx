@@ -11,7 +11,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        tlas_t* CreateRayTracingBLAS(device_t* device, const tlas_desc_t& desc, const char* name)
+        tlas_t* CreateRayTracingTLAS(device_t* device, const tlas_desc_t& desc, const char* name)
         {
             resource_t* resource = CreateObject<resource_t>(device, name);
             tlas_t*     tlas     = AddComponent<resource_t, tlas_t>(device, resource);
@@ -40,5 +40,17 @@ namespace ncore
                 case enums::Backend_Mock: nmock::Destroy(device, tlas); break;
             }
         }
+
+        void* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas)
+        {
+            switch (device->m_desc.backend)
+            {
+                case enums::Backend_D3D12: return nd3d12::GetHandle(device, tlas);
+                case enums::Backend_Metal: return nmetal::GetHandle(device, tlas);
+                case enums::Backend_Mock: return nmock::GetHandle(device, tlas);
+            }
+            return nullptr;
+        }
+
     }  // namespace ngfx
 }  // namespace ncore

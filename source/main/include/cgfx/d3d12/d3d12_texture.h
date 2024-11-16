@@ -20,8 +20,8 @@ namespace ncore
             void*                    GetHandle(device_t* device, ngfx::texture_t* texture);
             u32                      GetRequiredStagingBufferSize(device_t* device, ngfx::texture_t* texture);
             u32                      GetRowPitch(device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
-            GfxTilingDesc            GetTilingDesc(device_t* device, ngfx::texture_t* texture);
-            GfxSubresourceTilingDesc GetSubResourceTilingDesc(device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
+            tiling_desc_t            GetTilingDesc(device_t* device, ngfx::texture_t* texture);
+            subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
             void*                    GetSharedHandle(device_t* device, ngfx::texture_t* texture);
         }  // namespace nmock
 
@@ -42,8 +42,8 @@ namespace ncore
         //     virtual void*                    GetHandle() const override { return m_pTexture; }
         //     virtual u32                      GetRequiredStagingBufferSize() const override;
         //     virtual u32                      GetRowPitch(u32 mip_level = 0) const override;
-        //     virtual GfxTilingDesc            GetTilingDesc() const override;
-        //     virtual GfxSubresourceTilingDesc GetTilingDesc(u32 subresource = 0) const override;
+        //     virtual tiling_desc_t            GetTilingDesc() const override;
+        //     virtual subresource_tiling_desc_t GetTilingDesc(u32 subresource = 0) const override;
         //     virtual void*                    GetSharedHandle() const { return m_sharedHandle; }
 
         //     bool                        Create();

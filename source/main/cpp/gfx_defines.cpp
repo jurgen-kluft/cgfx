@@ -83,10 +83,7 @@ namespace ncore
         u32 GetFormatBlockHeight(enums::format format)
         {
             if (format >= enums::FORMAT_BC1UNORM && format <= enums::FORMAT_BC7SRGB)
-            {
                 return 4;
-            }
-
             return 1;
         }
 
@@ -140,8 +137,10 @@ namespace ncore
                 case enums::FORMAT_R8SI:
                 case enums::FORMAT_R8UNORM:
                 case enums::FORMAT_R8SNORM: return 1;
-                default: ASSERT(false); return 0;
+                default: break;
             }
+            ASSERT(false);
+            return 0;
         }
 
         bool IsDepthFormat(enums::format format) { return format == enums::FORMAT_D32FS8 || format == enums::FORMAT_D32F || format == enums::FORMAT_D16; }

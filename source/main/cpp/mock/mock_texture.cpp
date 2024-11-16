@@ -29,8 +29,8 @@ namespace ncore
                 return GetFormatRowPitch(enums::cast<enums::format>(pTexture->m_desc.format), width) * GetFormatBlockHeight(enums::cast<enums::format>(pTexture->m_desc.format));
             }
 
-            GfxTilingDesc            GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return GfxTilingDesc(); }
-            GfxSubresourceTilingDesc GetSubResourceTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 subresource) { return GfxSubresourceTilingDesc(); }
+            tiling_desc_t            GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return tiling_desc_t(); }
+            subresource_tiling_desc_t GetSubResourceTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 subresource) { return subresource_tiling_desc_t(); }
             void*                    GetSharedHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }
 
         }  // namespace nmock

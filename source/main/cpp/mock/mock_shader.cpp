@@ -16,15 +16,24 @@ namespace ncore
                 u32   m_hash;
             };
 
-            void Destroy(ngfx::device_t* pDevice, ngfx::shader_t* pShader)
+            ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader)
             {
-                // TODO, release the CPU memory of our shader
-                nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(pDevice, pShader);
+                nmock::shader_t* mshader = AddComponent<resource_t, nmock::shader_t>(device, resource);
+                mshader->m_data          = nullptr;
+                mshader->m_len           = 0;
+                mshader->m_hash          = 0;
+                return shader;
             }
 
-            bool Create(ngfx::device_t* pDevice, ngfx::shader_t* pShader, byte* data_ptr, u32 data_len)
+            void Destroy(ngfx::device_t* device, ngfx::shader_t* shader)
             {
-                nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(pDevice, pShader);
+                // TODO, release the CPU memory of our shader
+                nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(device, shader);
+            }
+
+            bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len)
+            {
+                nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(device, shader);
 
                 // TODO, allocate CPU memory for our shader and copy the data
                 // m_data.resize(data.size());
@@ -36,7 +45,11 @@ namespace ncore
                 return true;
             }
 
-            void* GetHandle(ngfx::device_t* pDevice, const ngfx::shader_t* pShader) { return nullptr; }
+            u64 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader)
+            {
+                const nmock::shader_t* mshader = GetOtherComponent<ngfx::shader_t, nmock::shader_t>(device, shader);
+                return mshader->m_hash;
+            }
 
         }  // namespace nmock
     }  // namespace ngfx

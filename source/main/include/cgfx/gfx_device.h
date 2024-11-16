@@ -69,6 +69,12 @@ namespace ncore
         }
 
         template <typename C1, typename C2>
+        C2 const* GetOtherComponent(device_t const* device, C1 const* pComponent1)
+        {
+            return device->m_allocatorOCS->get_component<resource_t, C1, C2>(pComponent1);
+        }
+
+        template <typename C1, typename C2>
         void RemoveOtherComponent(device_t* device, C1* pComponent1)
         {
             device->m_allocatorOCS->rem_component<resource_t, C1, C2>(pComponent1);

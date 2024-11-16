@@ -15,8 +15,8 @@ namespace ncore
             void*                    GetHandle(device_t* device, ngfx::texture_t* texture);
             u32                      GetRequiredStagingBufferSize(device_t* device, ngfx::texture_t* texture);
             u32                      GetRowPitch(device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
-            GfxTilingDesc            GetTilingDesc(device_t* device, ngfx::texture_t* texture);
-            GfxSubresourceTilingDesc GetSubResourceTilingDesc(device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
+            tiling_desc_t            GetTilingDesc(device_t* device, ngfx::texture_t* texture);
+            subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
             void*                    GetSharedHandle(device_t* device, ngfx::texture_t* texture);
         }  // namespace nmock
     }  // namespace ngfx

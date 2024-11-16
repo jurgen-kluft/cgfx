@@ -5,13 +5,21 @@
     #pragma once
 #endif
 
-//#include "cgfx/d3d12/d3d12_header.h"
+// #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_rt_tlas.h"
 
 namespace ncore
 {
     namespace ngfx
     {
+        namespace nd3d12
+        {
+            ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void          Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            bool          Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void*         GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
+        }  // namespace nd3d12
+
         // class D3D12Device;
 
         // namespace D3D12MA

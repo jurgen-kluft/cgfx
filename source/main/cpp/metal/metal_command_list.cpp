@@ -180,7 +180,7 @@ namespace ncore
             // EndEvent();
         }
 
-        void MetalCommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings)
+        void MetalCommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings)
         {
             // todo
         }
@@ -193,7 +193,7 @@ namespace ncore
 
         void MetalCommandList::FlushBarriers() {}
 
-        void MetalCommandList::BeginRenderPass(const GfxRenderPassDesc& render_pass)
+        void MetalCommandList::BeginRenderPass(const renderpass_desc_t& render_pass)
         {
             EndBlitEncoder();
             EndComputeEncoder();
@@ -666,7 +666,7 @@ namespace ncore
             }
         }
 
-        void MetalCommandList::SetRasterizerState(const GfxRasterizerState& state)
+        void MetalCommandList::SetRasterizerState(const rasterizer_state_t& state)
         {
             MTL::CullMode cullMode = ToCullMode(state.cull_mode);
             if (m_cullMode != cullMode)

@@ -11,9 +11,10 @@ namespace ncore
 
         namespace nmock
         {
-            bool  Create(ngfx::command_list_t*);
-            void  Destroy(ngfx::command_list_t*);
-            void* GetHandle(ngfx::command_list_t*);
+            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cmdList);
+            bool                  Create(ngfx::command_list_t*);
+            void                  Destroy(ngfx::command_list_t*);
+            void*                 GetHandle(ngfx::command_list_t*);
 
             void ResetAllocator(ngfx::command_list_t* commandList);
             void Begin(ngfx::command_list_t* commandList);
@@ -36,14 +37,14 @@ namespace ncore
             void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const float* clear_value);
             void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
             void WriteBuffer(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset, u32 data);
-            void UpdateTileMappings(ngfx::command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings);
+            void UpdateTileMappings(ngfx::command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings);
 
             void TextureBarrier(ngfx::command_list_t* commandList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
             void BufferBarrier(ngfx::command_list_t* commandList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);
             void GlobalBarrier(ngfx::command_list_t* commandList, enums::access_flags access_before, enums::access_flags access_after);
             void FlushBarriers(ngfx::command_list_t* commandList);
 
-            void BeginRenderPass(ngfx::command_list_t* commandList, const GfxRenderPassDesc& render_pass);
+            void BeginRenderPass(ngfx::command_list_t* commandList, const renderpass_desc_t& render_pass);
             void EndRenderPass(ngfx::command_list_t* commandList);
             void SetPipelineState(ngfx::command_list_t* commandList, pipeline_state_t* state);
             void SetStencilReference(ngfx::command_list_t* commandList, u8 stencil);

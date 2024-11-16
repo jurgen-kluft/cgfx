@@ -12,6 +12,8 @@ namespace ncore
 
         namespace nmetal
         {
+            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cl);
+
             bool  Create(ngfx::command_list_t*);
             void  Destroy(ngfx::command_list_t*);
             void* GetHandle(ngfx::command_list_t*);
@@ -37,14 +39,14 @@ namespace ncore
             void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const float* clear_value);
             void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
             void WriteBuffer(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset, u32 data);
-            void UpdateTileMappings(ngfx::command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings);
+            void UpdateTileMappings(ngfx::command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings);
 
             void TextureBarrier(ngfx::command_list_t* commandList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
             void BufferBarrier(ngfx::command_list_t* commandList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);
             void GlobalBarrier(ngfx::command_list_t* commandList, enums::access_flags access_before, enums::access_flags access_after);
             void FlushBarriers(ngfx::command_list_t* commandList);
 
-            void BeginRenderPass(ngfx::command_list_t* commandList, const GfxRenderPassDesc& render_pass);
+            void BeginRenderPass(ngfx::command_list_t* commandList, const renderpass_desc_t& render_pass);
             void EndRenderPass(ngfx::command_list_t* commandList);
             void SetPipelineState(ngfx::command_list_t* commandList, pipeline_state_t* state);
             void SetStencilReference(ngfx::command_list_t* commandList, u8 stencil);
@@ -78,7 +80,7 @@ namespace ncore
             MicroProfileThreadLogGpu* GetProfileLog();
 #endif
 
-        }  // namespace nmock
+        }  // namespace nmetal
 
         //         class MetalDevice;
 
@@ -113,14 +115,14 @@ namespace ncore
         //             virtual void ClearUAV(resource_t* resource, descriptor_t* uav, const float* clear_value, IGfxClearUavApi* clear_api) override;
         //             virtual void ClearUAV(resource_t* resource, descriptor_t* uav, const u32* clear_value, IGfxClearUavApi* clear_api) override;
         //             virtual void WriteBuffer(buffer_t* buffer, u32 offset, u32 data) override;
-        //             virtual void UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings) override;
+        //             virtual void UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings) override;
 
         //             virtual void TextureBarrier(texture_t* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after) override;
         //             virtual void BufferBarrier(buffer_t* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after) override;
         //             virtual void GlobalBarrier(GfxAccessFlags access_before, GfxAccessFlags access_after) override;
         //             virtual void FlushBarriers() override;
 
-        //             virtual void BeginRenderPass(const GfxRenderPassDesc& render_pass) override;
+        //             virtual void BeginRenderPass(const renderpass_desc_t& render_pass) override;
         //             virtual void EndRenderPass() override;
         //             virtual void SetPipelineState(pipeline_state_t* state) override;
         //             virtual void SetStencilReference(u8 stencil) override;
@@ -164,7 +166,7 @@ namespace ncore
         //             void BeginASEncoder();
         //             void EndASEncoder();
 
-        //             void SetRasterizerState(const GfxRasterizerState& state);
+        //             void SetRasterizerState(const rasterizer_state_t& state);
 
         //         private:
         //             MTL::CommandBuffer* m_pCommandBuffer = nullptr;

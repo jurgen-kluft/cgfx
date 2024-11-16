@@ -313,7 +313,7 @@ namespace ncore
             ++m_commandCount;
         }
 
-        void D3D12CommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const GfxTileMapping* mappings)
+        void D3D12CommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings)
         {
             vector_t<D3D12_TILED_RESOURCE_COORDINATE> coordinates;
             vector_t<D3D12_TILE_REGION_SIZE>          sizes;
@@ -437,7 +437,7 @@ namespace ncore
             m_globalBarriers.clear();
         }
 
-        void D3D12CommandList::BeginRenderPass(const GfxRenderPassDesc& render_pass)
+        void D3D12CommandList::BeginRenderPass(const renderpass_desc_t& render_pass)
         {
             FlushBarriers();
 

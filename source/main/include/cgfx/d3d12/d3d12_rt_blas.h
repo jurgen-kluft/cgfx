@@ -5,13 +5,21 @@
     #pragma once
 #endif
 
-//#include "cgfx/d3d12/d3d12_header.h"
+// #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_rt_blas.h"
 
 namespace ncore
 {
     namespace ngfx
     {
+        namespace nd3d12
+        {
+            ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void*         GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pBLAS);
+        }  // namespace nd3d12
+
         // class D3D12Device;
 
         // namespace D3D12MA
@@ -37,10 +45,10 @@ namespace ncore
         //     template<typename T>
         //     struct vector_t
         //     {
-		// 		T* data = nullptr;
-		// 		u32 size = 0;
-		// 		u32 capacity = 0;
-		// 	};
+        // 		T* data = nullptr;
+        // 		u32 size = 0;
+        // 		u32 capacity = 0;
+        // 	};
 
         //     vector_t<D3D12_RAYTRACING_GEOMETRY_DESC>      m_geometries;
         //     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC m_buildDesc;

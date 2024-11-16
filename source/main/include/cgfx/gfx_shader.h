@@ -10,13 +10,13 @@ namespace ncore
         struct shader_t
         {
             D_GFX_OCS_COMPONENT;
-            u64           m_hash = 0;
             shader_desc_t m_desc = {};
         };
 
-        shader_t* CreateShader(device_t* device, const shader_desc_t& desc, byte* data_ptr, u32 data_len, const char* name);
+        shader_t* CreateShader(device_t* device, const shader_desc_t& desc, const char* name);
+        bool      Create(device_t* device, shader_t* shader, byte* data_ptr, u32 data_len);
         void      Destroy(device_t* device, shader_t* resource);
-
+        u64       GetHash(device_t const* device, const shader_t* shader);
     }  // namespace ngfx
 }  // namespace ncore
 
