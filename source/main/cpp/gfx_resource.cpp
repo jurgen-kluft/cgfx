@@ -10,7 +10,7 @@ namespace ncore
         void SetName(name_t* name, const char* set)
         {
             u32 i = 0;
-            for (; i < 127; ++i)
+            for (; i < g_array_size(name->m_name) - 1; ++i)
             {
                 name->m_name[i] = set[i];
                 if (set[i] == '\0')
