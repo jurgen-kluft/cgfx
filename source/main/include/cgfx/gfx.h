@@ -24,15 +24,6 @@ namespace ncore
     namespace ngfx
     {
         device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc);
-        u32       GetFormatRowPitch(enums::format format, u32 width);
-        u32       GetFormatBlockWidth(enums::format format);
-        u32       GetFormatBlockHeight(enums::format format);
-        u32       GetFormatComponentNum(enums::format format);
-        bool      IsDepthFormat(enums::format format);
-        bool      IsStencilFormat(enums::format format);
-        bool      IsSRGBFormat(enums::format format);
-        u32       CalcSubresource(const texture_desc_t& desc, u32 mip, u32 slice);
-        void      DecomposeSubresource(const texture_desc_t& desc, u32 subresource, u32& mip, u32& slice);
 
     }  // namespace ngfx
 }  // namespace ncore

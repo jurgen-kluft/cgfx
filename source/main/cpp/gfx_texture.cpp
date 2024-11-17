@@ -35,6 +35,13 @@ namespace ncore
             return size;
         }
 
+        u32  CalcSubresource(const texture_desc_t& desc, u32 mip, u32 slice) { return mip + desc.mip_levels * slice; }
+        void DecomposeSubresource(const texture_desc_t& desc, u32 subresource, u32& mip, u32& slice)
+        {
+            mip   = subresource % desc.mip_levels;
+            slice = (subresource / desc.mip_levels) % desc.array_size;
+        }
+
         texture_t* CreateTexture(device_t* device, const texture_desc_t& desc, const char* name)
         {
             resource_t* resource = CreateObject<resource_t>(device, name);

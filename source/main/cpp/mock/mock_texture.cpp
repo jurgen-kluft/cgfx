@@ -10,12 +10,12 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::texture_t* CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
+            ngfx::texture_t* CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
             {
                 return texture;
             }
 
-            bool Create(ngfx::device_t* pDevice, texture_t* pTexture) { return true; }
+            bool Create(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return true; }
             void Destroy(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) {}
 
             void* GetHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }

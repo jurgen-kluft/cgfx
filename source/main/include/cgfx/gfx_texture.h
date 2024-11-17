@@ -7,6 +7,19 @@ namespace ncore
 {
     namespace ngfx
     {
+        struct texture_t;
+        struct texture_desc_t;
+
+        texture_t*                CreateTexture(device_t* device, const texture_desc_t& desc, const char* name);
+        bool                      Create(device_t* device, texture_t* resource);
+        void                      Destroy(device_t* device, texture_t* resource);
+        u32                       GetAllocationSize(device_t* device, const texture_desc_t& desc);
+        u32                       GetRequiredStagingBufferSize(device_t* device, texture_t* texture);
+        u32                       GetRowPitch(device_t* device, texture_t* texture, u32 mip_level = 0);
+        tiling_desc_t             GetTilingDesc(device_t* device, texture_t* texture);
+        subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, texture_t* texture, u32 subresource = 0);
+        void*                     GetSharedHandle(device_t* device, texture_t* texture);
+
         namespace enums
         {
             typedef u8 texture_usage_t;
@@ -38,13 +51,16 @@ namespace ncore
             u32                    mip_levels  = 1;
             u32                    array_size  = 1;
             enums::texture_type_t  type        = enums::TextureType2D;
+            enums::texture_usage_t usage       = enums::TextureUsageNone;
             enums::format_t        format      = enums::FORMAT_UNKNOWN;
             enums::memory_t        memory_type = enums::MemoryGpuOnly;
             enums::allocation_t    alloc_type  = enums::AllocationPlaced;
-            enums::texture_usage_t usage       = enums::TextureUsageNone;
             u32                    heap_offset = 0;
             heap_t*                heap        = nullptr;
         };
+
+        u32  CalcSubresource(const texture_desc_t& desc, u32 mip, u32 slice);
+        void DecomposeSubresource(const texture_desc_t& desc, u32 subresource, u32& mip, u32& slice);
 
         inline bool operator==(const texture_desc_t& lhs, const texture_desc_t& rhs)
         {
@@ -57,16 +73,6 @@ namespace ncore
             D_GFX_OCS_COMPONENT;
             texture_desc_t m_desc = {};
         };
-
-        texture_t*               CreateTexture(device_t* device, const texture_desc_t& desc, const char* name);
-        bool                     Create(device_t* device, texture_t* resource);
-        void                     Destroy(device_t* device, texture_t* resource);
-        u32                      GetAllocationSize(device_t* device, const texture_desc_t& desc);
-        u32                      GetRequiredStagingBufferSize(device_t* device, texture_t* texture);
-        u32                      GetRowPitch(device_t* device, texture_t* texture, u32 mip_level = 0);
-        tiling_desc_t            GetTilingDesc(device_t* device, texture_t* texture);
-        subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, texture_t* texture, u32 subresource = 0);
-        void*                    GetSharedHandle(device_t* device, texture_t* texture);
 
     }  // namespace ngfx
 }  // namespace ncore

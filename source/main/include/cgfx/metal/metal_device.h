@@ -40,13 +40,23 @@ namespace ncore
                 pair_t* m_samplerDescriptorDeletionQueue;
             };
 
-            bool  Create(device_t* device);
-            void  Destroy(device_t* device);
-            void* GetHandle(device_t* device);
-            void  BeginFrame(device_t* device);
-            void  EndFrame(device_t* device);
+            bool  Create(ngfx::device_t* device);
+            void  Destroy(ngfx::device_t* device);
+            void* GetHandle(ngfx::device_t* device);
+            void  BeginFrame(ngfx::device_t* device);
+            void  EndFrame(ngfx::device_t* device);
 
-            bool DumpMemoryStats(device_t* device, const char* file);
+            u32          AllocateResourceDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
+            u32          AllocateSamplerDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
+            void         FreeResourceDescriptor(ngfx::device_t* device, u32 index);
+            void         FreeSamplerDescriptor(ngfx::device_t* device, u32 index);
+            MTL::Buffer* GetResourceDescriptorBuffer(ngfx::device_t* device);
+            MTL::Buffer* GetSamplerDescriptorBuffer(ngfx::device_t* device);
+
+            void MakeResident(ngfx::device_t* device, const MTL::Allocation* allocation);
+            void Evict(ngfx::device_t* device, const MTL::Allocation* allocation);
+
+            bool DumpMemoryStats(ngfx::device_t* device, const char* file);
         }  // namespace nmetal
 
         // class MetalConstantBufferAllocator;
@@ -97,7 +107,7 @@ namespace ncore
 
         //     void MakeResident(const MTL::Allocation* allocation);
         //     void Evict(const MTL::Allocation* allocation);
-
+        
         // private:
         //     MTL::Device*       m_pDevice         = nullptr;
         //     MTL::CommandQueue* m_pQueue          = nullptr;

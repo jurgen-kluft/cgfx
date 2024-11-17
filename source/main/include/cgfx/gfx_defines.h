@@ -229,6 +229,23 @@ namespace ncore
                 FORMAT_BC7UNORM,
                 FORMAT_BC7SRGB,
             };
+            inline format cast(format_t type) { return static_cast<format>(type); }
+
+            u32  GetFormatRowPitch(enums::format format, u32 width);
+            u32  GetFormatBlockWidth(enums::format format);
+            u32  GetFormatBlockHeight(enums::format format);
+            u32  GetFormatComponentNum(enums::format format);
+            bool IsDepthFormat(enums::format format);
+            bool IsStencilFormat(enums::format format);
+            bool IsSRGBFormat(enums::format format);
+
+            inline u32  GetFormatRowPitch(enums::format_t format, u32 width) { return GetFormatRowPitch(cast(format), width); }
+            inline u32  GetFormatBlockWidth(enums::format_t format) { return GetFormatBlockWidth(cast(format)); }
+            inline u32  GetFormatBlockHeight(enums::format_t format) { return GetFormatBlockHeight(cast(format)); }
+            inline u32  GetFormatComponentNum(enums::format_t format) { return GetFormatComponentNum(cast(format)); }
+            inline bool IsDepthFormat(enums::format_t format) { return IsDepthFormat(cast(format)); }
+            inline bool IsStencilFormat(enums::format_t format) { return IsStencilFormat(cast(format)); }
+            inline bool IsSRGBFormat(enums::format_t format) { return IsSRGBFormat(cast(format)); }
 
             typedef u8 memory_t;
             enum memory
