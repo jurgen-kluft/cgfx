@@ -17,76 +17,10 @@ namespace ncore
 {
     namespace ngfx
     {
-        struct command_list_t
-        {
-            struct TopLevelArgumentBuffer
-            {
-                uint32_t cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
-                uint64_t cbv1;                          // gpu address
-                uint64_t cbv2;
-            };
-
-            MTL::CommandBuffer*                       m_pCommandBuffer         = nullptr;
-            MTL::BlitCommandEncoder*                  m_pBlitCommandEncoder    = nullptr;
-            MTL::RenderCommandEncoder*                m_pRenderCommandEncoder  = nullptr;
-            MTL::ComputeCommandEncoder*               m_pComputeCommandEncoder = nullptr;
-            MTL::AccelerationStructureCommandEncoder* m_pASEncoder             = nullptr;
-            MTL::Fence*                               m_pFence                 = nullptr;
-            pipeline_state_t*                         m_pCurrentPSO            = nullptr;
-            MTL::Buffer*                              m_pIndexBuffer           = nullptr;
-            NS::UInteger                              m_indexBufferOffset      = 0;
-            MTL::IndexType                            m_indexType              = MTL::IndexTypeUInt16;
-            MTL::PrimitiveType                        m_primitiveType          = MTL::PrimitiveTypeTriangle;
-            MTL::CullMode                             m_cullMode               = MTL::CullModeNone;
-            MTL::Winding                              m_frontFaceWinding       = MTL::WindingClockwise;
-            MTL::TriangleFillMode                     m_fillMode               = MTL::TriangleFillModeFill;
-            MTL::DepthClipMode                        m_clipMode               = MTL::DepthClipModeClip;
-            float                                     m_depthBias              = 0.0f;
-            float                                     m_depthBiasClamp         = 0.0f;
-            float                                     m_depthSlopeScale        = 0.0f;
-            TopLevelArgumentBuffer                    m_graphicsArgumentBuffer;
-            TopLevelArgumentBuffer                    m_computeArgumentBuffer;
-        };
-
         static bool nearly_equal(float a, float b, float epsilon = 0.0001f) { return fabs(a - b) < epsilon; }
 
-        //         MetalCommandList::MetalCommandList(MetalDevice* pDevice, GfxCommandQueue queue_type, const char* name)
-        //         {
-        //             m_pDevice   = pDevice;
-        //             m_name      = name;
-        //             m_queueType = queue_type;
-        //         }
-
-        //         MetalCommandList::~MetalCommandList() { m_pFence->release(); }
-
-        //         bool MetalCommandList::Create()
-        //         {
-        //             MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
-        //             m_pFence            = device->newFence();
-
-        //             return true;
-        //         }
-
-        //         void MetalCommandList::ResetAllocator() {}
-
-        //         void MetalCommandList::Begin()
-        //         {
-        //             MTL::CommandQueue* queue = ((MetalDevice*)m_pDevice)->GetQueue();
-
-        //             m_pCommandBuffer = queue->commandBuffer();
-        //         }
-
-        //         void MetalCommandList::End()
-        //         {
-        //             EndBlitEncoder();
-        //             EndComputeEncoder();
-        //             EndRenderPass();
-        //         }
-
         //         void MetalCommandList::Wait(fence_t* fence, u64 value) { m_pCommandBuffer->encodeWait((const MTL::Event*)fence->GetHandle(), value); }
-
         //         void MetalCommandList::Signal(fence_t* fence, u64 value) { m_pCommandBuffer->encodeSignalEvent((const MTL::Event*)fence->GetHandle(), value); }
-
         //         void MetalCommandList::Present(swapchain_t* swapchain) { m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable()); }
 
         //         void MetalCommandList::Submit()
@@ -101,9 +35,7 @@ namespace ncore
         //             m_pRenderCommandEncoder  = nullptr;
         //             m_pComputeCommandEncoder = nullptr;
         //             m_pASEncoder             = nullptr;
-
         //             m_pCurrentPSO = nullptr;
-
         //             m_pIndexBuffer      = nullptr;
         //             m_indexBufferOffset = 0;
         //             m_indexType         = MTL::IndexTypeUInt16;
@@ -118,9 +50,7 @@ namespace ncore
         //         }
 
         //         void MetalCommandList::BeginProfiling() {}
-
         //         void MetalCommandList::EndProfiling() {}
-
         //         void MetalCommandList::BeginEvent(const char* event_name)
         //         {
         //             NS::String* label = NS::String::alloc()->init(event_name, NS::StringEncoding::UTF8StringEncoding);
@@ -321,7 +251,6 @@ namespace ncore
         //                 m_pRenderCommandEncoder->updateFence(m_pFence, MTL::RenderStageFragment);
         //                 m_pRenderCommandEncoder->endEncoding();
         //                 m_pRenderCommandEncoder = nullptr;
-
         //                 ResetState();
         //             }
         //         }
@@ -737,6 +666,213 @@ namespace ncore
         //                 m_depthSlopeScale = state.depth_slope_scale;
         //             }
         //         }
+        namespace nmetal
+        {
+            struct command_list_t
+            {
+                struct TopLevelArgumentBuffer
+                {
+                    uint32_t cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
+                    uint64_t cbv1;                          // gpu address
+                    uint64_t cbv2;
+                };
 
+                MTL::CommandBuffer*                       m_pCommandBuffer         = nullptr;
+                MTL::BlitCommandEncoder*                  m_pBlitCommandEncoder    = nullptr;
+                MTL::RenderCommandEncoder*                m_pRenderCommandEncoder  = nullptr;
+                MTL::ComputeCommandEncoder*               m_pComputeCommandEncoder = nullptr;
+                MTL::AccelerationStructureCommandEncoder* m_pASEncoder             = nullptr;
+                MTL::Fence*                               m_pFence                 = nullptr;
+                pipeline_state_t*                         m_pCurrentPSO            = nullptr;
+                MTL::Buffer*                              m_pIndexBuffer           = nullptr;
+                NS::UInteger                              m_indexBufferOffset      = 0;
+                MTL::IndexType                            m_indexType              = MTL::IndexTypeUInt16;
+                MTL::PrimitiveType                        m_primitiveType          = MTL::PrimitiveTypeTriangle;
+                MTL::CullMode                             m_cullMode               = MTL::CullModeNone;
+                MTL::Winding                              m_frontFaceWinding       = MTL::WindingClockwise;
+                MTL::TriangleFillMode                     m_fillMode               = MTL::TriangleFillModeFill;
+                MTL::DepthClipMode                        m_clipMode               = MTL::DepthClipModeClip;
+                float                                     m_depthBias              = 0.0f;
+                float                                     m_depthBiasClamp         = 0.0f;
+                float                                     m_depthSlopeScale        = 0.0f;
+                TopLevelArgumentBuffer                    m_graphicsArgumentBuffer;
+                TopLevelArgumentBuffer                    m_computeArgumentBuffer;
+            };
+
+            ngfx::command_list_t* CreateCommandList(ngfx::device_t* device, ngfx::command_list_t* cmdList) { nmetal::command_list_t* mcmdList = AddAnotherComponent<ngfx::command_list_t, nmetal::command_list_t>(device, cmdList); }
+
+            bool Create(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList  = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::device_t*       mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                MTL::Device*            mtlDevice = mdevice->m_pDevice;
+                mcmdList->m_pFence                = mtlDevice->newFence();
+                return true;
+            }
+
+            void Destroy(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (mcmdList->m_pFence)
+                {
+                    mcmdList->m_pFence->release();
+                    mcmdList->m_pFence = nullptr;
+                }
+            }
+
+            void* GetHandle(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                return mcmdList->m_pCommandBuffer;
+            }
+
+            void ResetAllocator(ngfx::command_list_t* cmdList) {}
+
+            void Begin(ngfx::command_list_t* cmdList)
+            {
+                nmetal::device_t*       mdevice  = GetOtherComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                MTL::CommandQueue*      queue    = mdevice->m_pQueue;
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                mcmdList->m_pCommandBuffer       = queue->commandBuffer();
+            }
+
+            void ResetState(nmetal::command_list_t* cmdList)
+            {
+                cmdList->m_pBlitCommandEncoder    = nullptr;
+                cmdList->m_pRenderCommandEncoder  = nullptr;
+                cmdList->m_pComputeCommandEncoder = nullptr;
+                cmdList->m_pASEncoder             = nullptr;
+                cmdList->m_pCurrentPSO            = nullptr;
+                cmdList->m_pIndexBuffer           = nullptr;
+                cmdList->m_indexBufferOffset      = 0;
+                cmdList->m_indexType              = MTL::IndexTypeUInt16;
+                cmdList->m_primitiveType          = MTL::PrimitiveTypeTriangle;
+                cmdList->m_cullMode               = MTL::CullModeNone;
+                cmdList->m_frontFaceWinding       = MTL::WindingClockwise;
+                cmdList->m_fillMode               = MTL::TriangleFillModeFill;
+                cmdList->m_clipMode               = MTL::DepthClipModeClip;
+                cmdList->m_depthBias              = 0.0f;
+                cmdList->m_depthBiasClamp         = 0.0f;
+                cmdList->m_depthSlopeScale        = 0.0f;
+            }
+
+            void EndBlitEncoder(nmetal::command_list_t* cmdList)
+            {
+                if (cmdList->m_pBlitCommandEncoder)
+                {
+                    cmdList->m_pBlitCommandEncoder->updateFence(cmdList->m_pFence);
+                    cmdList->m_pBlitCommandEncoder->endEncoding();
+                    cmdList->m_pBlitCommandEncoder = nullptr;
+                }
+            }
+
+            void EndComputeEncoder(nmetal::command_list_t* cmdList)
+            {
+                if (cmdList->m_pComputeCommandEncoder)
+                {
+                    cmdList->m_pComputeCommandEncoder->updateFence(cmdList->m_pFence);
+                    cmdList->m_pComputeCommandEncoder->endEncoding();
+                    cmdList->m_pComputeCommandEncoder = nullptr;
+                }
+            }
+
+            void EndRenderPass(nmetal::command_list_t* cmdList)
+            {
+                if (cmdList->m_pRenderCommandEncoder)
+                {
+                    cmdList->m_pRenderCommandEncoder->updateFence(cmdList->m_pFence, MTL::RenderStageFragment);
+                    cmdList->m_pRenderCommandEncoder->endEncoding();
+                    cmdList->m_pRenderCommandEncoder = nullptr;
+                    ResetState(cmdList);
+                }
+            }
+
+            void End(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                EndBlitEncoder(mcmdList);
+                EndComputeEncoder(mcmdList);
+                EndRenderPass(mcmdList);
+            }
+
+            void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value);
+            void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value);
+            void Present(ngfx::command_list_t* cmdList, swapchain_t* swapchain);
+
+            void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::fence_t*        mfence   = GetOtherComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
+                mcmdList->m_pCommandBuffer->encodeWait(mfence->m_pEvent, value);
+            }
+
+            void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::fence_t*        mfence   = GetOtherComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
+                mcmdList->m_pCommandBuffer->encodeSignalEvent(mfence->m_pEvent, value);
+            }
+
+            void Present(ngfx::command_list_t* cmdList, ngfx::swapchain_t* swapchain)
+            {
+                nmetal::command_list_t* mcmdList   = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::swapchain_t*    mswapchain = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(cmdList->m_device, swapchain);
+                // mcmdList->m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable());
+                mcmdList->m_pCommandBuffer->presentDrawable(mswapchain->m_pView->currentDrawable());
+            }
+
+            void Submit(ngfx::command_list_t* cmdList);
+            void ResetState(ngfx::command_list_t* cmdList);
+
+            void BeginProfiling(ngfx::command_list_t* cmdList);
+            void EndProfiling(ngfx::command_list_t* cmdList);
+            void BeginEvent(ngfx::command_list_t* cmdList, const char* event_name);
+            void EndEvent(ngfx::command_list_t* cmdList);
+
+            void CopyBufferToTexture(ngfx::command_list_t* cmdList, texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset);
+            void CopyTextureToBuffer(ngfx::command_list_t* cmdList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice);
+            void CopyBuffer(ngfx::command_list_t* cmdList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size);
+            void CopyTexture(ngfx::command_list_t* cmdList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array);
+            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, descriptor_t* uav, const float* clear_value);
+            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
+            void WriteBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, u32 data);
+            void UpdateTileMappings(ngfx::command_list_t* cmdList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings);
+
+            void TextureBarrier(ngfx::command_list_t* cmdList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
+            void BufferBarrier(ngfx::command_list_t* cmdList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);
+            void GlobalBarrier(ngfx::command_list_t* cmdList, enums::access_flags access_before, enums::access_flags access_after);
+            void FlushBarriers(ngfx::command_list_t* cmdList);
+
+            void BeginRenderPass(ngfx::command_list_t* cmdList, const renderpass_desc_t& render_pass);
+            void EndRenderPass(ngfx::command_list_t* cmdList);
+            void SetPipelineState(ngfx::command_list_t* cmdList, pipeline_state_t* state);
+            void SetStencilReference(ngfx::command_list_t* cmdList, u8 stencil);
+            void SetBlendFactor(ngfx::command_list_t* cmdList, const float* blend_factor);
+            void SetIndexBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, enums::format format);
+            void SetViewport(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height);
+            void SetScissorRect(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height);
+            void SetGraphicsConstants(ngfx::command_list_t* cmdList, u32 slot, const void* data, s64 data_size);
+            void SetComputeConstants(ngfx::command_list_t* cmdList, u32 slot, const void* data, s64 data_size);
+
+            void Draw(ngfx::command_list_t* cmdList, u32 vertex_count, u32 instance_count = 1);
+            void DrawIndexed(ngfx::command_list_t* cmdList, u32 index_count, u32 instance_count = 1, u32 index_offset = 0);
+            void Dispatch(ngfx::command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
+            void DispatchMesh(ngfx::command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
+
+            void DrawIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
+            void DrawIndexedIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
+            void DispatchIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
+            void DispatchMeshIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
+
+            void MultiDrawIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+            void MultiDrawIndexedIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+            void MultiDispatchIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+            void MultiDispatchMeshIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+
+            void BuildRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas);
+            void UpdateRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas, ngfx::buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+            void BuildRayTracingTLAS(ngfx::command_list_t* cmdList, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
+
+        }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

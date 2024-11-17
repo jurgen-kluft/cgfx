@@ -89,8 +89,14 @@ namespace ncore
 
             void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value)
             {
-                // nmetal::swapchain_t* msc = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
+                nmetal::swapchain_t* msc = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
                 // msc->m_pView->setPreferredFramesPerSecond(value ? 60 : 0);
+            }
+
+            MTL::Drawable*     GetDrawable(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nmetal::swapchain_t* msc = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
+                return msc->m_pView->currentDrawable();
             }
 
         }  // namespace nmetal

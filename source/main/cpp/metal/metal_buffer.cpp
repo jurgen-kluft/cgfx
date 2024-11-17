@@ -6,55 +6,6 @@ namespace ncore
 {
     namespace ngfx
     {
-        // MetalBuffer::MetalBuffer(MetalDevice* device, const buffer_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = device;
-        //     m_desc    = desc;
-        //     m_name    = name;
-        // }
-
-        // MetalBuffer::~MetalBuffer()
-        // {
-        //     ((MetalDevice*)m_pDevice)->Evict(m_pBuffer);
-        //     m_pBuffer->release();
-        // }
-
-        // bool MetalBuffer::Create()
-        // {
-        //     if (m_desc.heap != nullptr)
-        //     {
-        //         ASSERT(m_desc.alloc_type == GfxAllocation::Placed);
-        //         ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
-        //         ASSERT(m_desc.size + m_desc.heap_offset <= m_desc.heap->GetDesc().size);
-
-        //         MTL::Heap* heap = (MTL::Heap*)m_desc.heap->GetHandle();
-        //         m_pBuffer       = heap->newBuffer(m_desc.size, ToResourceOptions(m_desc.memory_type), m_desc.heap_offset);
-        //     }
-        //     else
-        //     {
-        //         MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
-        //         m_pBuffer           = device->newBuffer(m_desc.size, ToResourceOptions(m_desc.memory_type));
-        //     }
-
-        //     if (m_pBuffer == nullptr)
-        //     {
-        //         // RE_ERROR("[MetalBuffer] failed to create {}", m_name);
-        //         return false;
-        //     }
-
-        //     ((MetalDevice*)m_pDevice)->MakeResident(m_pBuffer);
-
-        //     // TODO
-        //     // SetDebugLabel(m_pBuffer, m_name.c_str());
-
-        //     if (m_desc.memory_type != GfxMemory::GpuOnly)
-        //     {
-        //         m_pCpuAddress = m_pBuffer->contents();
-        //     }
-
-        //     return true;
-        // }
-
         namespace nmetal
         {
             struct mbuffer_t
@@ -69,6 +20,16 @@ namespace ncore
                 nmetal::mbuffer_t* mbuffer = AddAnotherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 // ..
                 return buffer;
+            }
+
+            void Destroy(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                if (mbuffer != nullptr && mbuffer->m_pCpuAddress)
+                {
+                    nmetal::Evict(device, mbuffer->m_pBuffer);
+                    mbuffer->m_pBuffer->release();
+                }
             }
 
             bool Create(ngfx::device_t* device, ngfx::buffer_t* buffer)
@@ -110,16 +71,6 @@ namespace ncore
                 }
 
                 return true;
-            }
-
-            void Destroy(ngfx::device_t* device, ngfx::buffer_t* buffer)
-            {
-                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
-                if (mbuffer != nullptr && mbuffer->m_pCpuAddress)
-                {
-                    nmetal::Evict(device, mbuffer->m_pBuffer);
-                    mbuffer->m_pBuffer->release();
-                }
             }
 
             void* GetHandle(ngfx::device_t* device, ngfx::buffer_t* buffer)
