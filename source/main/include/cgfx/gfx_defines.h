@@ -817,7 +817,8 @@ namespace ncore
                     AsFlagPreferFastBuild = 1 << 3,
                     AsFlagLowMemory       = 1 << 4,
                 };
-                typedef u8 instance_flag;
+                
+                typedef u8 instance_flag_t;
                 enum instance_flag
                 {
                     DisableCull   = 1 << 0,
@@ -846,24 +847,24 @@ namespace ncore
 
         struct rt_instance_t
         {
-            blas_t*                  blas;
-            float                    transform[12];  // object to world 3x4 matrix
-            u32                      instance_id;
-            u8                       instance_mask;
-            enums::rt::instance_flag instance_flags;
+            blas_t*                    blas;
+            f32                        transform[12];  // object to world 3x4 matrix
+            u32                        instance_id;
+            u8                         instance_mask;
+            enums::rt::instance_flag_t instance_flags;
         };
 
         struct blas_desc_t
         {
-            rt_geometry_t*            geometries;
-            u32                       geometries_count;
-            enums::rt::accstruct_flag flags;
+            rt_geometry_t*              geometries;
+            u32                         geometries_count;
+            enums::rt::accstruct_flag_t flags;
         };
 
         struct tlas_desc_t
         {
-            u32                       instance_count;
-            enums::rt::accstruct_flag flags;
+            u32                         instance_count;
+            enums::rt::accstruct_flag_t flags;
         };
 
     }  // namespace ngfx

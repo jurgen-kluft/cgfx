@@ -15,6 +15,7 @@ namespace ncore
         {
             struct shader_reflection_t
             {
+                D_GFX_OCS_COMPONENT;
                 uint32_t threadsPerThreadgroup[3];
             };
 

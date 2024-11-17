@@ -9,6 +9,13 @@ namespace ncore
     {
         namespace nmetal
         {
+            struct mtexture_t
+            {
+                D_GFX_OCS_COMPONENT;
+                MTL::Texture* m_pTexture          = nullptr;
+                bool          m_bSwapchainTexture = false;
+            };
+
             ngfx::texture_t*          CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
             bool                      Create(ngfx::device_t* device, ngfx::texture_t* texture);
             void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture);
@@ -18,6 +25,7 @@ namespace ncore
             tiling_desc_t             GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture);
             subresource_tiling_desc_t GetSubResourceTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
             void*                     GetSharedHandle(ngfx::device_t* device, ngfx::texture_t* texture);
+           
         }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

@@ -59,6 +59,7 @@ namespace ncore
         {
             struct mbuffer_t
             {
+                D_GFX_OCS_COMPONENT;
                 MTL::Buffer* m_pBuffer     = nullptr;
                 void*        m_pCpuAddress = nullptr;
             };

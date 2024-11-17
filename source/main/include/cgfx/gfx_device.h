@@ -69,7 +69,7 @@ namespace ncore
         }
 
         template <typename C1, typename C2>
-        C2* GetOtherComponent(device_t* device, C1* pComponent1)
+        C2* GetOtherComponent(device_t* device, C1 const* pComponent1)
         {
             return device->m_allocatorOCS->get_component<resource_t, C1, C2>(pComponent1);
         }

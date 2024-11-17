@@ -203,6 +203,7 @@ namespace ncore
                 default: return MTL::PrimitiveTopologyClassUnspecified;
             }
         }
+        inline MTL::PrimitiveTopologyClass ToTopologyClass(enums::primitive_t type) { return ToTopologyClass(enums::cast<enums::primitive>(type)); }
 
         inline MTL::PrimitiveType ToPrimitiveType(enums::primitive type)
         {
@@ -216,6 +217,7 @@ namespace ncore
                 default: return MTL::PrimitiveTypeTriangle;
             }
         }
+        inline MTL::PrimitiveType ToPrimitiveType(enums::primitive_t type) { return ToPrimitiveType(enums::cast<enums::primitive>(type)); }
 
         inline MTL::BlendFactor ToBlendFactor(enums::blendfactor blend_factor)
         {
@@ -237,6 +239,7 @@ namespace ncore
                 default: return MTL::BlendFactorZero;
             }
         }
+        inline MTL::BlendFactor ToBlendFactor(enums::blendfactor_t blend_factor) { return ToBlendFactor(enums::cast<enums::blendfactor>(blend_factor)); }
 
         inline MTL::BlendOperation ToBlendOperation(enums::blendop blend_op)
         {
@@ -250,6 +253,7 @@ namespace ncore
                 default: return MTL::BlendOperationAdd;
             }
         }
+        inline MTL::BlendOperation ToBlendOperation(enums::blendop_t blend_op) { return ToBlendOperation(enums::cast<enums::blendop>(blend_op)); }
 
         inline MTL::ColorWriteMask ToColorWriteMask(enums::colorwritemask mask)
         {
@@ -266,6 +270,7 @@ namespace ncore
 
             return mtlMask;
         }
+        inline MTL::ColorWriteMask ToColorWriteMask(enums::colorwritemask_t mask) { return ToColorWriteMask(enums::cast<enums::colorwritemask>(mask)); }
 
         inline MTL::CompareFunction ToCompareFunction(enums::comparefunc func)
         {
@@ -388,6 +393,7 @@ namespace ncore
 
             return usage;
         }
+        inline MTL::AccelerationStructureUsage ToAccelerationStructureUsage(enums::rt::accstruct_flag_t flags) { return ToAccelerationStructureUsage(enums::cast<enums::rt::accstruct_flag>(flags)); }
 
         inline MTL::AttributeFormat ToAttributeFormat(enums::format format)
         {
@@ -426,6 +432,7 @@ namespace ncore
 
             return options;
         }
+        inline MTL::AccelerationStructureInstanceOptions ToAccelerationStructureInstanceOptions(enums::rt::instance_flag_t flags) { return ToAccelerationStructureInstanceOptions(enums::cast<enums::rt::instance_flag>(flags)); }
 
     }  // namespace ngfx
 }  // namespace ncore

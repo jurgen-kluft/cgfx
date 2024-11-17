@@ -9,6 +9,13 @@ namespace ncore
     {
         namespace nmetal
         {
+            struct swapchain_t
+            {
+                D_GFX_OCS_COMPONENT;
+                MTK::View*       m_pView    = nullptr;
+                ngfx::texture_t* m_pTexture = nullptr;
+            };
+
             ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
             bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
             void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);

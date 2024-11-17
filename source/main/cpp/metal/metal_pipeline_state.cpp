@@ -7,198 +7,228 @@ namespace ncore
 {
     namespace ngfx
     {
-        // MetalGraphicsPipelineState::MetalGraphicsPipelineState(MetalDevice* pDevice, const graphics_pipeline_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_name    = name;
-        //     m_desc    = desc;
-        //     m_type    = GfxPipelineType::Graphics;
-        // }
+        namespace nmetal
+        {
+            pipeline_state_t* CreateGraphicsPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
+            {
+                nmetal::graphics_pipeline_state_t* mps = AddComponent<ngfx::resource_t, nmetal::graphics_pipeline_state_t>(device, resource);
+                mps->m_desc                            = desc;
+                return ps;
+            }
 
-        // MetalGraphicsPipelineState::~MetalGraphicsPipelineState()
-        // {
-        //     m_pPSO->release();
-        //     m_pDepthStencilState->release();
-        // }
+            pipeline_state_t* CreateMeshShadingPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
+            {
+                nmetal::meshshading_pipeline_state_t* mps = AddComponent<ngfx::resource_t, nmetal::meshshading_pipeline_state_t>(device, resource);
+                mps->m_desc                               = desc;
+                return ps;
+            }
 
-        // bool MetalGraphicsPipelineState::Create()
-        // {
-        //     m_pPSO->release();
-        //     m_pDepthStencilState->release();
+            pipeline_state_t* CreateComputePipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
+            {
+                nmetal::compute_pipeline_state_t* mps = AddComponent<ngfx::resource_t, nmetal::compute_pipeline_state_t>(device, resource);
+                mps->m_desc                           = desc;
+                return ps;
+            }
 
-        //     MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-        //     descriptor->setVertexFunction((MTL::Function*)m_desc.vs->GetHandle());
-        //     if (m_desc.ps)
-        //     {
-        //         descriptor->setFragmentFunction((MTL::Function*)m_desc.ps->GetHandle());
-        //     }
+            bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            {
+                if (ps->m_type == enums::PipelineGraphics)
+                {
+                    nmetal::graphics_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
 
-        //     for (u32 i = 0; i < 8; ++i)
-        //     {
-        //         if (m_desc.rt_format[i] != Gfx::Unknown)
-        //         {
-        //             MTL::RenderPipelineColorAttachmentDescriptor* colorAttachment = descriptor->colorAttachments()->object(i);
-        //             colorAttachment->setPixelFormat(ToPixelFormat(m_desc.rt_format[i]));
-        //             colorAttachment->setBlendingEnabled(m_desc.blend_state[i].blend_enable);
-        //             colorAttachment->setSourceRGBBlendFactor(ToBlendFactor(m_desc.blend_state[i].color_src));
-        //             colorAttachment->setDestinationRGBBlendFactor(ToBlendFactor(m_desc.blend_state[i].color_dst));
-        //             colorAttachment->setRgbBlendOperation(ToBlendOperation(m_desc.blend_state[i].color_op));
-        //             colorAttachment->setSourceAlphaBlendFactor(ToBlendFactor(m_desc.blend_state[i].alpha_src));
-        //             colorAttachment->setDestinationAlphaBlendFactor(ToBlendFactor(m_desc.blend_state[i].alpha_dst));
-        //             colorAttachment->setAlphaBlendOperation(ToBlendOperation(m_desc.blend_state[i].alpha_op));
-        //             colorAttachment->setWriteMask(ToColorWriteMask(m_desc.blend_state[i].write_mask));
-        //         }
-        //     }
+                    mps->m_pPSO->release();
+                    mps->m_pDepthStencilState->release();
 
-        //     descriptor->setDepthAttachmentPixelFormat(ToPixelFormat(m_desc.depthstencil_format));
-        //     if (IsStencilFormat(m_desc.depthstencil_format))
-        //     {
-        //         descriptor->setStencilAttachmentPixelFormat(ToPixelFormat(m_desc.depthstencil_format));
-        //     }
+                    MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
+                    descriptor->setVertexFunction((MTL::Function*)GetHandle(device, mps->m_desc.vs));
+                    if (mps->m_desc.ps)
+                    {
+                        descriptor->setFragmentFunction((MTL::Function*)GetHandle(device, mps->m_desc.ps));
+                    }
 
-        //     descriptor->setInputPrimitiveTopology(ToTopologyClass(m_desc.primitive_type));
-        //     descriptor->setRasterSampleCount(1);
-        //     SetDebugLabel(descriptor, m_name);
+                    for (u32 i = 0; i < 8; ++i)
+                    {
+                        if (mps->m_desc.rt_format[i] != enums::FORMAT_UNKNOWN)
+                        {
+                            MTL::RenderPipelineColorAttachmentDescriptor* colorAttachment = descriptor->colorAttachments()->object(i);
+                            colorAttachment->setPixelFormat(ToPixelFormat(mps->m_desc.rt_format[i]));
+                            colorAttachment->setBlendingEnabled(mps->m_desc.blend_state[i].blend_enable);
+                            colorAttachment->setSourceRGBBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].color_src));
+                            colorAttachment->setDestinationRGBBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].color_dst));
+                            colorAttachment->setRgbBlendOperation(ToBlendOperation(mps->m_desc.blend_state[i].color_op));
+                            colorAttachment->setSourceAlphaBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].alpha_src));
+                            colorAttachment->setDestinationAlphaBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].alpha_dst));
+                            colorAttachment->setAlphaBlendOperation(ToBlendOperation(mps->m_desc.blend_state[i].alpha_op));
+                            colorAttachment->setWriteMask(ToColorWriteMask(mps->m_desc.blend_state[i].write_mask));
+                        }
+                    }
 
-        //     MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
-        //     NS::Error*   pError = nullptr;
-        //     m_pPSO              = device->newRenderPipelineState(descriptor, &pError);
-        //     descriptor->release();
+                    descriptor->setDepthAttachmentPixelFormat(ToPixelFormat(mps->m_desc.depthstencil_format));
+                    if (IsStencilFormat(mps->m_desc.depthstencil_format))
+                    {
+                        descriptor->setStencilAttachmentPixelFormat(ToPixelFormat(mps->m_desc.depthstencil_format));
+                    }
 
-        //     if (!m_pPSO)
-        //     {
-        //         // RE_ERROR("[MetalGraphicsPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
-        //         pError->release();
-        //         return false;
-        //     }
+                    descriptor->setInputPrimitiveTopology(ToTopologyClass(mps->m_desc.primitive_type));
+                    descriptor->setRasterSampleCount(1);
 
-        //     MTL::DepthStencilDescriptor* depthStencilDescriptor = ToDepthStencilDescriptor(m_desc.depthstencil_state);
-        //     m_pDepthStencilState                                = device->newDepthStencilState(depthStencilDescriptor);
-        //     depthStencilDescriptor->release();
+                    name_t const* name = GetOtherComponent<ngfx::pipeline_state_t, name_t>(device, ps);
+                    SetDebugLabel(descriptor, name->m_name);
 
-        //     return true;
-        // }
+                    nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    MTL::Device*      mtlDevice = mdevice->m_pDevice;
+                    NS::Error*        pError    = nullptr;
+                    mps->m_pPSO                 = mtlDevice->newRenderPipelineState(descriptor, &pError);
+                    descriptor->release();
 
-        // MetalMeshShadingPipelineState::MetalMeshShadingPipelineState(MetalDevice* pDevice, const mesh_shading_pipeline_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_name    = name;
-        //     m_desc    = desc;
-        //     m_type    = GfxPipelineType::MeshShading;
-        // }
+                    if (!mps->m_pPSO)
+                    {
+                        // RE_ERROR("[MetalGraphicsPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
+                        pError->release();
+                        return false;
+                    }
 
-        // MetalMeshShadingPipelineState::~MetalMeshShadingPipelineState()
-        // {
-        //     m_pPSO->release();
-        //     m_pDepthStencilState->release();
-        // }
+                    MTL::DepthStencilDescriptor* depthStencilDescriptor = ToDepthStencilDescriptor(mps->m_desc.depthstencil_state);
+                    mps->m_pDepthStencilState                           = mtlDevice->newDepthStencilState(depthStencilDescriptor);
+                    depthStencilDescriptor->release();
 
-        // bool MetalMeshShadingPipelineState::Create()
-        // {
-        //     m_pPSO->release();
-        //     m_pDepthStencilState->release();
+                    return true;
+                }
+                else if (ps->m_type == enums::PipelineMeshShading)
+                {
+                    nmetal::meshshading_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
 
-        //     MTL::MeshRenderPipelineDescriptor* descriptor = MTL::MeshRenderPipelineDescriptor::alloc()->init();
-        //     descriptor->setMeshFunction((MTL::Function*)m_desc.ms->GetHandle());
-        //     if (m_desc.as)
-        //     {
-        //         descriptor->setObjectFunction((MTL::Function*)m_desc.as->GetHandle());
-        //     }
-        //     if (m_desc.ps)
-        //     {
-        //         descriptor->setFragmentFunction((MTL::Function*)m_desc.ps->GetHandle());
-        //     }
+                    mps->m_pPSO->release();
+                    mps->m_pDepthStencilState->release();
 
-        //     for (u32 i = 0; i < 8; ++i)
-        //     {
-        //         if (m_desc.rt_format[i] != Gfx::Unknown)
-        //         {
-        //             MTL::RenderPipelineColorAttachmentDescriptor* colorAttachment = descriptor->colorAttachments()->object(i);
-        //             colorAttachment->setPixelFormat(ToPixelFormat(m_desc.rt_format[i]));
-        //             colorAttachment->setBlendingEnabled(m_desc.blend_state[i].blend_enable);
-        //             colorAttachment->setSourceRGBBlendFactor(ToBlendFactor(m_desc.blend_state[i].color_src));
-        //             colorAttachment->setDestinationRGBBlendFactor(ToBlendFactor(m_desc.blend_state[i].color_dst));
-        //             colorAttachment->setRgbBlendOperation(ToBlendOperation(m_desc.blend_state[i].color_op));
-        //             colorAttachment->setSourceAlphaBlendFactor(ToBlendFactor(m_desc.blend_state[i].alpha_src));
-        //             colorAttachment->setDestinationAlphaBlendFactor(ToBlendFactor(m_desc.blend_state[i].alpha_dst));
-        //             colorAttachment->setAlphaBlendOperation(ToBlendOperation(m_desc.blend_state[i].alpha_op));
-        //             colorAttachment->setWriteMask(ToColorWriteMask(m_desc.blend_state[i].write_mask));
-        //         }
-        //     }
+                    MTL::MeshRenderPipelineDescriptor* descriptor = MTL::MeshRenderPipelineDescriptor::alloc()->init();
+                    descriptor->setMeshFunction((MTL::Function*)GetHandle(device, mps->m_desc.ms));
+                    if (mps->m_desc.as)
+                    {
+                        descriptor->setObjectFunction((MTL::Function*)GetHandle(device, mps->m_desc.as));
+                    }
 
-        //     descriptor->setDepthAttachmentPixelFormat(ToPixelFormat(m_desc.depthstencil_format));
-        //     if (IsStencilFormat(m_desc.depthstencil_format))
-        //     {
-        //         descriptor->setStencilAttachmentPixelFormat(ToPixelFormat(m_desc.depthstencil_format));
-        //     }
+                    if (mps->m_desc.ps)
+                    {
+                        descriptor->setFragmentFunction((MTL::Function*)GetHandle(device, mps->m_desc.ps));
+                    }
 
-        //     descriptor->setRasterSampleCount(1);
-        //     SetDebugLabel(descriptor, m_name);
+                    for (u32 i = 0; i < 8; ++i)
+                    {
+                        if (mps->m_desc.rt_format[i] != enums::FORMAT_UNKNOWN)
+                        {
+                            MTL::RenderPipelineColorAttachmentDescriptor* colorAttachment = descriptor->colorAttachments()->object(i);
+                            colorAttachment->setPixelFormat(ToPixelFormat(mps->m_desc.rt_format[i]));
+                            colorAttachment->setBlendingEnabled(mps->m_desc.blend_state[i].blend_enable);
+                            colorAttachment->setSourceRGBBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].color_src));
+                            colorAttachment->setDestinationRGBBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].color_dst));
+                            colorAttachment->setRgbBlendOperation(ToBlendOperation(mps->m_desc.blend_state[i].color_op));
+                            colorAttachment->setSourceAlphaBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].alpha_src));
+                            colorAttachment->setDestinationAlphaBlendFactor(ToBlendFactor(mps->m_desc.blend_state[i].alpha_dst));
+                            colorAttachment->setAlphaBlendOperation(ToBlendOperation(mps->m_desc.blend_state[i].alpha_op));
+                            colorAttachment->setWriteMask(ToColorWriteMask(mps->m_desc.blend_state[i].write_mask));
+                        }
+                    }
 
-        //     MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
-        //     NS::Error*   pError = nullptr;
-        //     m_pPSO              = device->newRenderPipelineState(descriptor, MTL::PipelineOptionNone, nullptr, &pError);
-        //     descriptor->release();
+                    descriptor->setDepthAttachmentPixelFormat(ToPixelFormat(mps->m_desc.depthstencil_format));
+                    if (IsStencilFormat(mps->m_desc.depthstencil_format))
+                    {
+                        descriptor->setStencilAttachmentPixelFormat(ToPixelFormat(mps->m_desc.depthstencil_format));
+                    }
 
-        //     if (!m_pPSO)
-        //     {
-        //         // RE_ERROR("[MetalMeshShadingPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
-        //         pError->release();
-        //         return false;
-        //     }
+                    descriptor->setRasterSampleCount(1);
 
-        //     MTL::DepthStencilDescriptor* depthStencilDescriptor = ToDepthStencilDescriptor(m_desc.depthstencil_state);
-        //     m_pDepthStencilState                                = device->newDepthStencilState(depthStencilDescriptor);
-        //     depthStencilDescriptor->release();
+                    name_t const* name = GetOtherComponent<ngfx::pipeline_state_t, name_t>(device, ps);
+                    SetDebugLabel(descriptor, name->m_name);
 
-        //     if (m_desc.as)
-        //     {
-        //         const MetalShaderReflection& reflection = ((MetalShader*)m_desc.as)->GetReflection();
-        //         m_threadsPerObjectThreadgroup           = MTL::Size::Make(reflection.threadsPerThreadgroup[0], reflection.threadsPerThreadgroup[1], reflection.threadsPerThreadgroup[2]);
-        //     }
+                    nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    MTL::Device*      mtlDevice = mdevice->m_pDevice;
+                    NS::Error*        pError    = nullptr;
+                    mps->m_pPSO                 = mtlDevice->newRenderPipelineState(descriptor, MTL::PipelineOptionNone, nullptr, &pError);
+                    descriptor->release();
 
-        //     const MetalShaderReflection& reflection = ((MetalShader*)m_desc.ms)->GetReflection();
-        //     m_threadsPerMeshThreadgroup             = MTL::Size::Make(reflection.threadsPerThreadgroup[0], reflection.threadsPerThreadgroup[1], reflection.threadsPerThreadgroup[2]);
+                    if (!mps->m_pPSO)
+                    {
+                        // RE_ERROR("[MetalMeshShadingPipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
+                        pError->release();
+                        return false;
+                    }
 
-        //     return true;
-        // }
+                    MTL::DepthStencilDescriptor* depthStencilDescriptor = ToDepthStencilDescriptor(mps->m_desc.depthstencil_state);
+                    mps->m_pDepthStencilState                           = mtlDevice->newDepthStencilState(depthStencilDescriptor);
+                    depthStencilDescriptor->release();
 
-        // MetalComputePipelineState::MetalComputePipelineState(MetalDevice* pDevice, const compute_pipeline_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_name    = name;
-        //     m_desc    = desc;
-        //     m_type    = GfxPipelineType::Compute;
-        // }
+                    if (mps->m_desc.as)
+                    {
+                        const nmetal::shader_reflection_t& reflection = GetReflection(device, mps->m_desc.as);
+                        mps->m_threadsPerObjectThreadgroup            = MTL::Size::Make(reflection.threadsPerThreadgroup[0], reflection.threadsPerThreadgroup[1], reflection.threadsPerThreadgroup[2]);
+                    }
 
-        // MetalComputePipelineState::~MetalComputePipelineState() { m_pPSO->release(); }
+                    {
+                        const nmetal::shader_reflection_t& reflection = GetReflection(device, mps->m_desc.ms);
+                        mps->m_threadsPerMeshThreadgroup              = MTL::Size::Make(reflection.threadsPerThreadgroup[0], reflection.threadsPerThreadgroup[1], reflection.threadsPerThreadgroup[2]);
+                    }
 
-        // bool MetalComputePipelineState::Create()
-        // {
-        //     m_pPSO->release();
+                    return true;
+                }
+                else if (ps->m_type == enums::PipelineCompute)
+                {
+                    nmetal::compute_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+                }
+                return false;
+            }
 
-        //     MTL::ComputePipelineDescriptor* descriptor = MTL::ComputePipelineDescriptor::alloc()->init();
-        //     descriptor->setComputeFunction((MTL::Function*)m_desc.cs->GetHandle());
-        //     SetDebugLabel(descriptor, m_name);
+            void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            {
+                if (ps->m_type == enums::PipelineGraphics)
+                {
+                    nmetal::graphics_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
+                    if (mps != nullptr)
+                    {
+                        mps->m_pPSO->release();
+                        mps->m_pDepthStencilState->release();
+                    }
+                }
+                else if (ps->m_type == enums::PipelineMeshShading)
+                {
+                    nmetal::meshshading_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
+                    if (mps != nullptr)
+                    {
+                        mps->m_pPSO->release();
+                        mps->m_pDepthStencilState->release();
+                    }
+                }
+                else if (ps->m_type == enums::PipelineCompute)
+                {
+                    nmetal::compute_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+                    if (mps != nullptr)
+                    {
+                        mps->m_pPSO->release();
+                    }
+                }
+            }
 
-        //     MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
+            void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            {
+                if (ps->m_type == enums::PipelineGraphics)
+                {
+                    nmetal::graphics_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
+                    return mps->m_pPSO;
+                }
+                else if (ps->m_type == enums::PipelineMeshShading)
+                {
+                    nmetal::meshshading_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
+                    return mps->m_pPSO;
+                }
+                else if (ps->m_type == enums::PipelineCompute)
+                {
+                    nmetal::compute_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+                    return mps->m_pPSO;
+                }
+                return nullptr;
+            }
 
-        //     NS::Error* pError = nullptr;
-        //     m_pPSO            = device->newComputePipelineState(descriptor, MTL::PipelineOptionNone, nullptr, &pError);
-        //     descriptor->release();
-
-        //     if (!m_pPSO)
-        //     {
-        //         // RE_ERROR("[MetalComputePipelineState] failed to create {} \r\n{}", m_name, pError->localizedDescription()->utf8String());
-        //         pError->release();
-        //         return false;
-        //     }
-
-        //     const MetalShaderReflection& reflection = ((MetalShader*)m_desc.cs)->GetReflection();
-        //     m_threadsPerThreadgroup                 = MTL::Size::Make(reflection.threadsPerThreadgroup[0], reflection.threadsPerThreadgroup[1], reflection.threadsPerThreadgroup[2]);
-
-        //     return true;
-        // }
+        }  // namespace nmetal
 
     }  // namespace ngfx
 }  // namespace ncore

@@ -7,91 +7,106 @@ namespace ncore
 {
     namespace ngfx
     {
-        // MetalRayTracingBLAS::MetalRayTracingBLAS(MetalDevice* pDevice, const GfxRayTracingBLASDesc& desc, const char* name)
-        // {
-        //     m_pDevice          = pDevice;
-        //     m_desc             = desc;
-        //     m_name             = name;
-        //     m_geometries       = nullptr;
-        //     m_geometries_count = 0;
-        // }
+        namespace nmetal
+        {
+            ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
+            {
+                mblas_t* mblas            = AddAnotherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas->m_geometries       = nullptr;
+                mblas->m_geometries_count = 0;
+                return pBLAS;
+            }
 
-        // MetalRayTracingBLAS::~MetalRayTracingBLAS()
-        // {
-        //     m_pAccelerationStructure->release();
-        //     m_pDescriptor->release();
-        //     m_pScratchBuffer->release();
+            void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
+            {
+                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                if (mblas)
+                {
+                    mblas->m_pAccelerationStructure->release();
+                    mblas->m_pDescriptor->release();
+                    mblas->m_pScratchBuffer->release();
+                    for (u32 i = 0; i < mblas->m_geometries_count; ++i)
+                    {
+                        mblas->m_geometries[i]->release();
+                    }
+                }
+            }
 
-        //     for (size_t i = 0; i < m_geometries_count; ++i)
-        //     {
-        //         m_geometries[i]->release();
-        //     }
-        // }
+            bool Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
+            {
+                // TODO, allocate memory for geometries
+                // m_geometries.reserve(m_desc.geometry_counth);
 
-        // bool MetalRayTracingBLAS::Create()
-        // {
-        //     // TODO, allocate memory for geometries
-        //     // m_geometries.reserve(m_desc.geometry_counth);
+                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                for (u32 i = 0; i < pBLAS->m_desc.geometries_count; ++i)
+                {
+                    const rt_geometry_t& geometry = pBLAS->m_desc.geometries[i];
 
-        //     for (size_t i = 0; i < m_desc.geometries_count; ++i)
-        //     {
-        //         const GfxRayTracingGeometry& geometry = m_desc.geometries[i];
+                    MTL::AccelerationStructureTriangleGeometryDescriptor* geometryDescriptor = MTL::AccelerationStructureTriangleGeometryDescriptor::alloc()->init();
+                    geometryDescriptor->setOpaque(geometry.opaque);
+                    geometryDescriptor->setVertexBuffer((MTL::Buffer*)GetHandle(pDevice, geometry.vertex_buffer));
+                    geometryDescriptor->setVertexBufferOffset((NS::UInteger)geometry.vertex_buffer_offset);
+                    geometryDescriptor->setVertexStride((NS::UInteger)geometry.vertex_stride);
+                    geometryDescriptor->setVertexFormat(ToAttributeFormat(geometry.vertex_format));
+                    geometryDescriptor->setIndexBuffer((MTL::Buffer*)GetHandle(pDevice, geometry.index_buffer));
+                    geometryDescriptor->setIndexBufferOffset((NS::UInteger)geometry.index_buffer_offset);
+                    geometryDescriptor->setIndexType(geometry.index_format == enums::FORMAT_R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32);
+                    geometryDescriptor->setTriangleCount((NS::UInteger)geometry.index_count / 3);
 
-        //         MTL::AccelerationStructureTriangleGeometryDescriptor* geometryDescriptor = MTL::AccelerationStructureTriangleGeometryDescriptor::alloc()->init();
-        //         geometryDescriptor->setOpaque(geometry.opaque);
-        //         geometryDescriptor->setVertexBuffer((MTL::Buffer*)geometry.vertex_buffer->GetHandle());
-        //         geometryDescriptor->setVertexBufferOffset((NS::UInteger)geometry.vertex_buffer_offset);
-        //         geometryDescriptor->setVertexStride((NS::UInteger)geometry.vertex_stride);
-        //         geometryDescriptor->setVertexFormat(ToAttributeFormat(geometry.vertex_format));
-        //         geometryDescriptor->setIndexBuffer((MTL::Buffer*)geometry.index_buffer->GetHandle());
-        //         geometryDescriptor->setIndexBufferOffset((NS::UInteger)geometry.index_buffer_offset);
-        //         geometryDescriptor->setIndexType(geometry.index_format == Gfx::R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32);
-        //         geometryDescriptor->setTriangleCount((NS::UInteger)geometry.index_count / 3);
+                    mblas->m_geometries[mblas->m_geometries_count++] = geometryDescriptor;
+                }
 
-        //         m_geometries[m_geometries_count++] = geometryDescriptor;
-        //     }
+                NS::Array* geometryDescriptors = NS::Array::alloc()->init((NS::Object**)mblas->m_geometries, (NS::UInteger)mblas->m_geometries_count);
 
-        //     NS::Array* geometryDescriptors = NS::Array::alloc()->init((NS::Object**)m_geometries, (NS::UInteger)m_geometries_count);
+                mblas->m_pDescriptor = MTL::PrimitiveAccelerationStructureDescriptor::alloc()->init();
+                mblas->m_pDescriptor->setGeometryDescriptors(geometryDescriptors);
+                mblas->m_pDescriptor->setUsage(ToAccelerationStructureUsage(pBLAS->m_desc.flags));
 
-        //     m_pDescriptor = MTL::PrimitiveAccelerationStructureDescriptor::alloc()->init();
-        //     m_pDescriptor->setGeometryDescriptors(geometryDescriptors);
-        //     m_pDescriptor->setUsage(ToAccelerationStructureUsage(m_desc.flags));
+                nmetal::device_t*               mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
+                MTL::Device*                    mtlDevice = mdevice->m_pDevice;
+                MTL::AccelerationStructureSizes asSizes   = mtlDevice->accelerationStructureSizes(mblas->m_pDescriptor);
 
-        //     MTL::Device*                    device  = (MTL::Device*)m_pDevice->GetHandle();
-        //     MTL::AccelerationStructureSizes asSizes = device->accelerationStructureSizes(m_pDescriptor);
+                mblas->m_pAccelerationStructure = mtlDevice->newAccelerationStructure(asSizes.accelerationStructureSize);
+                mblas->m_pScratchBuffer         = mtlDevice->newBuffer(math::g_max(asSizes.buildScratchBufferSize, asSizes.refitScratchBufferSize), MTL::ResourceStorageModePrivate);
 
-        //     m_pAccelerationStructure = device->newAccelerationStructure(asSizes.accelerationStructureSize);
-        //     m_pScratchBuffer         = device->newBuffer(math::max(asSizes.buildScratchBufferSize, asSizes.refitScratchBufferSize), MTL::ResourceStorageModePrivate);
+                geometryDescriptors->release();
 
-        //     geometryDescriptors->release();
+                if (mblas->m_pAccelerationStructure == nullptr || mblas->m_pScratchBuffer == nullptr)
+                {
+                    // RE_ERROR("[MetalRayTracingBLAS] failed to create : {}", m_name);
+                    return false;
+                }
 
-        //     if (m_pAccelerationStructure == nullptr || m_pScratchBuffer == nullptr)
-        //     {
-        //         // RE_ERROR("[MetalRayTracingBLAS] failed to create : {}", m_name);
-        //         return false;
-        //     }
+                MakeResident(pDevice, mblas->m_pAccelerationStructure);
+                MakeResident(pDevice, mblas->m_pScratchBuffer);
 
-        //     ((MetalDevice*)m_pDevice)->MakeResident(m_pAccelerationStructure);
-        //     ((MetalDevice*)m_pDevice)->MakeResident(m_pScratchBuffer);
+                name_t const* name  = GetOtherComponent<ngfx::blas_t, name_t>(pDevice, pBLAS);
+                NS::String*   label = NS::String::alloc()->init(name->m_name, NS::StringEncoding::UTF8StringEncoding);
+                mblas->m_pAccelerationStructure->setLabel(label);
+                label->release();
 
-        //     NS::String* label = NS::String::alloc()->init(m_name, NS::StringEncoding::UTF8StringEncoding);
-        //     m_pAccelerationStructure->setLabel(label);
-        //     label->release();
+                return true;
+            }
 
-        //     return true;
-        // }
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
+            {
+                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                return mblas->m_pAccelerationStructure;
+            }
 
-        // void MetalRayTracingBLAS::UpdateVertexBuffer(buffer_t* vertex_buffer, u32 vertex_buffer_offset)
-        // {
-        //     ASSERT(m_desc.flags & GfxRayTracingASFlagAllowUpdate);
-        //     ASSERT(m_geometries_count == 1);  // todo : suppport more than 1
+            void UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset)
+            {
+                ASSERT(pBLAS->m_desc.flags & enums::rt::AsFlagAllowUpdate);
+                ASSERT(pBLAS->m_geometries_count == 1);  // todo : suppport more than 1
 
-        //     m_geometries[0]->setVertexBuffer((MTL::Buffer*)vertex_buffer->GetHandle());
-        //     m_geometries[0]->setVertexBufferOffset((NS::UInteger)vertex_buffer_offset);
+                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas->m_geometries[0]->setVertexBuffer((MTL::Buffer*)GetHandle(pDevice, vertex_buffer));
+                mblas->m_geometries[0]->setVertexBufferOffset((NS::UInteger)vertex_buffer_offset);
 
-        //     NS::Array* geometryDescriptors = NS::Array::alloc()->init((NS::Object**)m_geometries, (NS::UInteger)m_geometries_count);
-        //     m_pDescriptor->setGeometryDescriptors(geometryDescriptors);
-        //     geometryDescriptors->release();
-        // }
+                NS::Array* geometryDescriptors = NS::Array::alloc()->init((NS::Object**)mblas->m_geometries, (NS::UInteger)mblas->m_geometries_count);
+                mblas->m_pDescriptor->setGeometryDescriptors(geometryDescriptors);
+                geometryDescriptors->release();
+            }
+        }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

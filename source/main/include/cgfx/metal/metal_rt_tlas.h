@@ -14,40 +14,25 @@ namespace ncore
     {
         namespace nmetal
         {
+            struct mtlas_t
+            {
+                D_GFX_OCS_COMPONENT;
+                MTL::AccelerationStructure*                   m_pAccelerationStructure      = nullptr;
+                MTL::InstanceAccelerationStructureDescriptor* m_pDescriptor                 = nullptr;
+                MTL::Buffer*                                  m_pScratchBuffer              = nullptr;
+                MTL::Buffer*                                  m_pInstanceBuffer             = nullptr;
+                MTL::Buffer*                                  m_pGPUHeaderBuffer            = nullptr;
+                u32                                           m_instanceBufferSize          = 0;
+                u32                                           m_currentInstanceBufferOffset = 0;
+                void*                                         m_instanceBufferCpuAddress    = nullptr;
+            };
+
             ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void          Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
             bool          Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void*         GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
+            void          UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
         }  // namespace nmetal
-
-        // class MetalDevice;
-
-        // class MetalRayTracingTLAS : public tlas_t
-        // {
-        // public:
-        //     MetalRayTracingTLAS(MetalDevice* pDevice, const GfxRayTracingTLASDesc& desc, const char* name);
-        //     ~MetalRayTracingTLAS();
-
-        //     bool                                          Create();
-        //     void                                          UpdateInstance(const GfxRayTracingInstance* instances, u32 instance_count);
-        //     MTL::AccelerationStructure*                   GetAccelerationStructure() const { return m_pAccelerationStructure; }
-        //     MTL::InstanceAccelerationStructureDescriptor* GetDescriptor() const { return m_pDescriptor; }
-        //     MTL::Buffer*                                  GetScratchBuffer() const { return m_pScratchBuffer; }
-        //     MTL::Buffer*                                  GetGPUHeaderBuffer() const { return m_pGPUHeaderBuffer; }
-
-        //     virtual void* GetHandle() const override { return m_pAccelerationStructure; }
-
-        // private:
-        //     MTL::AccelerationStructure*                   m_pAccelerationStructure      = nullptr;
-        //     MTL::InstanceAccelerationStructureDescriptor* m_pDescriptor                 = nullptr;
-        //     MTL::Buffer*                                  m_pScratchBuffer              = nullptr;
-        //     MTL::Buffer*                                  m_pInstanceBuffer             = nullptr;
-        //     MTL::Buffer*                                  m_pGPUHeaderBuffer            = nullptr;
-        //     u32                                           m_instanceBufferSize          = 0;
-        //     u32                                           m_currentInstanceBufferOffset = 0;
-        //     void*                                         m_instanceBufferCpuAddress    = nullptr;
-        // };
-
     }  // namespace ngfx
 }  // namespace ncore
 #endif

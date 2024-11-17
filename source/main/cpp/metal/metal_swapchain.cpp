@@ -9,12 +9,6 @@ namespace ncore
     {
         namespace nmetal
         {
-            struct swapchain_t
-            {
-                MTK::View*       m_pView    = nullptr;
-                ngfx::texture_t* m_pTexture = nullptr;
-            };
-
             ngfx::swapchain_t* CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
             {
                 nmetal::swapchain_t* msc = AddAnotherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
@@ -38,7 +32,6 @@ namespace ncore
                 textureDesc.format = swapchain->m_desc.backbuffer_format;
                 textureDesc.usage  = enums::TextureUsageRenderTarget;
 
-                // msc->m_pTexture = new MetalTexture((MetalDevice*)m_pDevice, textureDesc, m_name);
                 msc->m_pTexture = ngfx::CreateTexture(device, textureDesc, "MetalTexture");
             }
 
@@ -49,39 +42,57 @@ namespace ncore
                 msc->m_pView->release();
             }
 
-            void*            GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
-            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value);
+            void* GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nmetal::swapchain_t* msc = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
+                return msc->m_pView;
+            }
+
+            // Metal SPECIFIC
+            void SetSwapchainTexture(ngfx::device_t* device, ngfx::texture_t* texture, MTL::Texture* mtlTexture)
+            {
+                nmetal::mtexture_t* mtexture = GetOtherComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
+
+                mtexture->m_pTexture          = mtlTexture;
+                mtexture->m_bSwapchainTexture = true;
+
+                texture->m_desc.width  = (u32)mtlTexture->width();
+                texture->m_desc.height = (u32)mtlTexture->height();
+            }
+
+            void AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nmetal::swapchain_t* msc      = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
+                CA::MetalDrawable*   drawable = msc->m_pView->currentDrawable();  // this invokes CAMetalLayer::nextDrawable
+                MTL::Texture*        mtltexture  = drawable->texture();
+                SetSwapchainTexture(device, msc->m_pTexture, mtltexture);
+            }
+
+            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nmetal::swapchain_t* msc = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
+                return msc->m_pTexture;
+            }
+
+            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height)
+            {
+                if (swapchain->m_desc.width == width && swapchain->m_desc.height == height)
+                {
+                    return false;
+                }
+
+                swapchain->m_desc.width  = width;
+                swapchain->m_desc.height = height;
+
+                return true;
+            }
+
+            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value)
+            {
+                // nmetal::swapchain_t* msc = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
+                // msc->m_pView->setPreferredFramesPerSecond(value ? 60 : 0);
+            }
+
         }  // namespace nmetal
-
-        // MTL::Drawable* MetalSwapchain::GetDrawable() { return m_pView->currentDrawable(); }
-
-        // void MetalSwapchain::AcquireNextBackBuffer()
-        // {
-        //     CA::MetalDrawable* drawable = m_pView->currentDrawable();  // this invokes CAMetalLayer::nextDrawable
-        //     MTL::Texture*      texture  = drawable->texture();
-
-        //     m_pTexture->SetSwapchainTexture(texture);
-        // }
-
-        // texture_t* MetalSwapchain::GetBackBuffer() const { return m_pTexture; }
-
-        // bool MetalSwapchain::Resize(u32 width, u32 height)
-        // {
-        //     if (m_desc.width == width && m_desc.height == height)
-        //     {
-        //         return false;
-        //     }
-
-        //     m_desc.width  = width;
-        //     m_desc.height = height;
-
-        //     return true;
-        // }
-
-        // void MetalSwapchain::SetVSyncEnabled(bool value) {}
-
     }  // namespace ngfx
 }  // namespace ncore

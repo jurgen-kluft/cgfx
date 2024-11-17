@@ -5,7 +5,7 @@
     #pragma once
 #endif
 
-// #include "cgfx/metal/metal_utils.h"
+#include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_rt_blas.h"
 
 namespace ncore
@@ -14,36 +14,22 @@ namespace ncore
     {
         namespace nmetal
         {
+            struct mblas_t
+            {
+                D_GFX_OCS_COMPONENT;
+                MTL::AccelerationStructure*                            m_pAccelerationStructure = nullptr;
+                MTL::PrimitiveAccelerationStructureDescriptor*         m_pDescriptor            = nullptr;
+                MTL::Buffer*                                           m_pScratchBuffer         = nullptr;
+                MTL::AccelerationStructureTriangleGeometryDescriptor** m_geometries;
+                u32                                                    m_geometries_count;
+            };
+
             ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void*         GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pBLAS);
+            void*         GetHandle(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void          UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nmetal
-
-        // class MetalDevice;
-
-        // class MetalRayTracingBLAS : public blas_t
-        // {
-        // public:
-        //     MetalRayTracingBLAS(MetalDevice* pDevice, const GfxRayTracingBLASDesc& desc, const char* name);
-        //     ~MetalRayTracingBLAS();
-
-        //     bool                                           Create();
-        //     void                                           UpdateVertexBuffer(buffer_t* vertex_buffer, u32 vertex_buffer_offset);
-        //     MTL::AccelerationStructure*                    GetAccelerationStructure() const { return m_pAccelerationStructure; }
-        //     MTL::PrimitiveAccelerationStructureDescriptor* GetDescriptor() const { return m_pDescriptor; }
-        //     MTL::Buffer*                                   GetScratchBuffer() const { return m_pScratchBuffer; }
-
-        //     virtual void* GetHandle() const override { return m_pAccelerationStructure; }
-
-        // private:
-        //     MTL::AccelerationStructure*                    m_pAccelerationStructure = nullptr;
-        //     MTL::PrimitiveAccelerationStructureDescriptor* m_pDescriptor            = nullptr;
-        //     MTL::Buffer*                                   m_pScratchBuffer         = nullptr;
-
-        //     MTL::AccelerationStructureTriangleGeometryDescriptor** m_geometries;
-        //     u32                                                    m_geometries_count;
-        // };
     }  // namespace ngfx
 }  // namespace ncore
 #endif

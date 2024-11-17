@@ -17,6 +17,7 @@ namespace ncore
         {
             struct mshader_t
             {
+                D_GFX_OCS_COMPONENT;
                 MTL::Function*      m_pFunction = nullptr;
                 shader_reflection_t m_reflection;
             };

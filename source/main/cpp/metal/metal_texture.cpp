@@ -117,12 +117,6 @@ namespace ncore
 
         namespace nmetal
         {
-            struct mtexture_t
-            {
-                MTL::Texture* m_pTexture          = nullptr;
-                bool          m_bSwapchainTexture = false;
-            };
-
             ngfx::texture_t* CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
             {
                 nmetal::mtexture_t* mtexture = AddAnotherComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);

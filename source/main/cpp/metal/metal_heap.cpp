@@ -5,46 +5,63 @@ namespace ncore
 {
     namespace ngfx
     {
-        // MetalHeap::MetalHeap(MetalDevice* pDevice, const heap_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_desc    = desc;
-        //     m_name    = name;
-        // }
+        namespace nmetal
+        {
+            heap_t* CreateHeap(ngfx::device_t* pDevice, resource_t* resource, heap_t* heap)
+            {
+                mheap_t* mheap = AddAnotherComponent<ngfx::heap_t, mheap_t>(pDevice, heap);
+                mheap->m_pHeap = nullptr;
+                return heap;
+            }
 
-        // MetalHeap::~MetalHeap()
-        // {
-        //     ((MetalDevice*)m_pDevice)->Evict(m_pHeap);
+            bool Create(ngfx::device_t* pDevice, heap_t* pHeap)
+            {
+                ASSERT(m_desc.size % (64 * 1024) == 0);
 
-        //     m_pHeap->release();
-        // }
+                nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
+                MTL::Device*      mtlDevice = mdevice->m_pDevice;
+                ;
 
-        // bool MetalHeap::Create()
-        // {
-        //     ASSERT(m_desc.size % (64 * 1024) == 0);
+                MTL::HeapDescriptor* descriptor = MTL::HeapDescriptor::alloc()->init();
+                descriptor->setSize(pHeap->m_desc.size);
+                descriptor->setResourceOptions(ToResourceOptions(pHeap->m_desc.memory_type));
+                descriptor->setType(MTL::HeapTypePlacement);  // TODO : MTL::HeapTypeSparse for sparse textures
 
-        //     MTL::Device* device = (MTL::Device*)m_pDevice->GetHandle();
+                nmetal::mheap_t* mheap = GetOtherComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                mheap->m_pHeap         = mtlDevice->newHeap(descriptor);
+                descriptor->release();
 
-        //     MTL::HeapDescriptor* descriptor = MTL::HeapDescriptor::alloc()->init();
-        //     descriptor->setSize(m_desc.size);
-        //     descriptor->setResourceOptions(ToResourceOptions(m_desc.memory_type));
-        //     descriptor->setType(MTL::HeapTypePlacement);  // TODO : MTL::HeapTypeSparse for sparse textures
+                if (mheap->m_pHeap == nullptr)
+                {
+                    // RE_ERROR("[MetalHeap] failed to create {}", m_name);
+                    return false;
+                }
 
-        //     m_pHeap = device->newHeap(descriptor);
-        //     descriptor->release();
+                MakeResident(pDevice, mheap->m_pHeap);
 
-        //     if (m_pHeap == nullptr)
-        //     {
-        //         // RE_ERROR("[MetalHeap] failed to create {}", m_name);
-        //         return false;
-        //     }
+                name_t const* name = GetOtherComponent<ngfx::heap_t, name_t>(pDevice, pHeap);
+                SetDebugLabel(mheap->m_pHeap, name->m_name);
 
-        //     ((MetalDevice*)m_pDevice)->MakeResident(m_pHeap);
+                return true;
+            }
 
-        //     SetDebugLabel(m_pHeap, m_name);
+            void Destroy(ngfx::device_t* pDevice, heap_t* pHeap)
+            {
+                nmetal::mheap_t* mheap = GetOtherComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                if (mheap != nullptr)
+                {
+                    nmetal::Evict(pDevice, mheap->m_pHeap);
+                    mheap->m_pHeap->release();
+                }
+            }
 
-        //     return true;
-        // }
+            void* GetHandle(ngfx::device_t* pDevice, const heap_t* pHeap)
+            {
+                nmetal::mheap_t* mheap = GetOtherComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                return mheap->m_pHeap;
+            }
+            
+        }  // namespace nmetal
 
     }  // namespace ngfx
 }  // namespace ncore
