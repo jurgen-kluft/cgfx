@@ -821,8 +821,18 @@ namespace ncore
                 mcmdList->m_pCommandBuffer->presentDrawable(mswapchain->m_pView->currentDrawable());
             }
 
-            void Submit(ngfx::command_list_t* cmdList);
-            void ResetState(ngfx::command_list_t* cmdList);
+            void Submit(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                mcmdList->m_pCommandBuffer->commit();
+                mcmdList->m_pCommandBuffer = nullptr;
+            }
+
+            void ResetState(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ResetState(mcmdList);
+            }
 
             void BeginProfiling(ngfx::command_list_t* cmdList);
             void EndProfiling(ngfx::command_list_t* cmdList);
