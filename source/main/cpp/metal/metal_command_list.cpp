@@ -19,61 +19,16 @@ namespace ncore
     {
         static bool nearly_equal(float a, float b, float epsilon = 0.0001f) { return fabs(a - b) < epsilon; }
 
-        //         void MetalCommandList::Wait(fence_t* fence, u64 value) { m_pCommandBuffer->encodeWait((const MTL::Event*)fence->GetHandle(), value); }
-        //         void MetalCommandList::Signal(fence_t* fence, u64 value) { m_pCommandBuffer->encodeSignalEvent((const MTL::Event*)fence->GetHandle(), value); }
-        //         void MetalCommandList::Present(swapchain_t* swapchain) { m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable()); }
-
-        //         void MetalCommandList::Submit()
-        //         {
-        //             m_pCommandBuffer->commit();
-        //             m_pCommandBuffer = nullptr;
-        //         }
-
-        //         void MetalCommandList::ResetState()
-        //         {
-        //             m_pBlitCommandEncoder    = nullptr;
-        //             m_pRenderCommandEncoder  = nullptr;
-        //             m_pComputeCommandEncoder = nullptr;
-        //             m_pASEncoder             = nullptr;
-        //             m_pCurrentPSO = nullptr;
-        //             m_pIndexBuffer      = nullptr;
-        //             m_indexBufferOffset = 0;
-        //             m_indexType         = MTL::IndexTypeUInt16;
-        //             m_primitiveType     = MTL::PrimitiveTypeTriangle;
-        //             m_cullMode          = MTL::CullModeNone;
-        //             m_frontFaceWinding  = MTL::WindingClockwise;
-        //             m_fillMode          = MTL::TriangleFillModeFill;
-        //             m_clipMode          = MTL::DepthClipModeClip;
-        //             m_depthBias         = 0.0f;
-        //             m_depthBiasClamp    = 0.0f;
-        //             m_depthSlopeScale   = 0.0f;
-        //         }
-
-        //         void MetalCommandList::BeginProfiling() {}
-        //         void MetalCommandList::EndProfiling() {}
-        //         void MetalCommandList::BeginEvent(const char* event_name)
-        //         {
-        //             NS::String* label = NS::String::alloc()->init(event_name, NS::StringEncoding::UTF8StringEncoding);
-        //             m_pCommandBuffer->pushDebugGroup(label);
-        //             label->release();
-        //         }
-
-        //         void MetalCommandList::EndEvent() { m_pCommandBuffer->popDebugGroup(); }
-
         //         void MetalCommandList::CopyBufferToTexture(texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset)
         //         {
         //             BeginBlitEncoder();
-
         //             const texture_desc_t& desc        = dst_texture->GetDesc();
         //             MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
-
         //             u32 bytesPerRow = ((MetalTexture*)dst_texture)->GetRowPitch(mip_level);
-
         //             u32 block_height  = GetFormatBlockHeight(desc.format);
         //             u32 height        = math::max(desc.height >> mip_level, block_height);
         //             u32 row_num       = height / block_height;
         //             u32 bytesPerImage = bytesPerRow * row_num;
-
         //             m_pBlitCommandEncoder->copyFromBuffer((MTL::Buffer*)src_buffer->GetHandle(), offset, bytesPerRow, desc.type == GfxTextureType::Texture3D ? bytesPerImage : 0, textureSize, (MTL::Texture*)dst_texture->GetHandle(), array_slice,
         //             mip_level,
         //                                                   MTL::Origin::Make(0, 0, 0));
@@ -82,17 +37,13 @@ namespace ncore
         //         void MetalCommandList::CopyTextureToBuffer(buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice)
         //         {
         //             BeginBlitEncoder();
-
         //             const texture_desc_t& desc        = src_texture->GetDesc();
         //             MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
-
         //             u32 bytesPerRow = ((MetalTexture*)src_texture)->GetRowPitch(mip_level);
-
         //             u32 block_height  = GetFormatBlockHeight(desc.format);
         //             u32 height        = math::max(desc.height >> mip_level, block_height);
         //             u32 row_num       = height / block_height;
         //             u32 bytesPerImage = bytesPerRow * row_num;
-
         //             m_pBlitCommandEncoder->copyFromTexture((MTL::Texture*)src_texture->GetHandle(), array_slice, mip_level, MTL::Origin(0, 0, 0), textureSize, (MTL::Buffer*)dst_buffer->GetHandle(), offset, bytesPerRow,
         //                                                    desc.type == GfxTextureType::Texture3D ? bytesPerImage : 0);
         //         }
@@ -100,17 +51,14 @@ namespace ncore
         //         void MetalCommandList::CopyBuffer(buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
         //         {
         //             BeginBlitEncoder();
-
         //             m_pBlitCommandEncoder->copyFromBuffer((MTL::Buffer*)src->GetHandle(), src_offset, (MTL::Buffer*)dst->GetHandle(), dst_offset, size);
         //         }
 
         //         void MetalCommandList::CopyTexture(texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
         //         {
         //             BeginBlitEncoder();
-
         //             const texture_desc_t& desc     = src->GetDesc();
         //             MTL::Size             src_size = MTL::Size::Make(math::max(desc.width >> src_mip, 1u), math::max(desc.height >> src_mip, 1u), math::max(desc.depth >> src_mip, 1u));
-
         //             m_pBlitCommandEncoder->copyFromTexture((MTL::Texture*)src->GetHandle(), src_array, src_mip, MTL::Origin(0, 0, 0), src_size, (MTL::Texture*)dst->GetHandle(), dst_array, dst_mip, MTL::Origin(0, 0, 0));
         //         }
 
@@ -834,10 +782,22 @@ namespace ncore
                 ResetState(mcmdList);
             }
 
-            void BeginProfiling(ngfx::command_list_t* cmdList);
-            void EndProfiling(ngfx::command_list_t* cmdList);
-            void BeginEvent(ngfx::command_list_t* cmdList, const char* event_name);
-            void EndEvent(ngfx::command_list_t* cmdList);
+            void BeginProfiling(ngfx::command_list_t* cmdList) {}
+            void EndProfiling(ngfx::command_list_t* cmdList) {}
+
+            void BeginEvent(ngfx::command_list_t* cmdList, const char* event_name)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                NS::String*             label    = NS::String::alloc()->init(event_name, NS::StringEncoding::UTF8StringEncoding);
+                mcmdList->m_pCommandBuffer->pushDebugGroup(label);
+                label->release();
+            }
+
+            void EndEvent(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                mcmdList->m_pCommandBuffer->popDebugGroup();
+            }
 
             void CopyBufferToTexture(ngfx::command_list_t* cmdList, texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset);
             void CopyTextureToBuffer(ngfx::command_list_t* cmdList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice);
