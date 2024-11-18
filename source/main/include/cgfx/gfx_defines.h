@@ -306,14 +306,14 @@ namespace ncore
                 AccessASWrite         = 1 << 17,
                 AccessDiscard         = 1 << 18,  // aliasing barrier
 
-                MaskVS   = VertexShaderSRV | VertexShaderUAV,
-                MaskPS   = PixelShaderSRV | PixelShaderUAV,
-                MaskCS   = ComputeSRV | ComputeUAV,
-                MaskSRV  = VertexShaderSRV | PixelShaderSRV | ComputeSRV,
-                MaskUAV  = VertexShaderUAV | PixelShaderUAV | ComputeUAV,
-                MaskDSV  = DSV | DSVReadOnly,
-                MaskCopy = CopyDst | CopySrc,
-                MaskAS   = ASRead | ASWrite,
+                MaskVS   = AccessVertexShaderSRV | AccessVertexShaderUAV,
+                MaskPS   = AccessPixelShaderSRV | AccessPixelShaderUAV,
+                MaskCS   = AccessComputeSRV | AccessComputeUAV,
+                MaskSRV  = AccessVertexShaderSRV | AccessPixelShaderSRV | AccessComputeSRV,
+                MaskUAV  = AccessVertexShaderUAV | AccessPixelShaderUAV | AccessComputeUAV,
+                MaskDSV  = AccessDSV | AccessDSVReadOnly,
+                MaskCopy = AccessCopyDst | AccessCopySrc,
+                MaskAS   = AccessASRead | AccessASWrite,
             };
 
             typedef u8 load_op_t;

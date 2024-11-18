@@ -12,6 +12,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_PC
         namespace nd3d12
         {
             bool                    Create(device_t* device);
@@ -22,8 +23,19 @@ namespace ncore
 
             bool                    DumpMemoryStats(device_t* device, const char* file);
         }
+#else
+        namespace nd3d12
+        {
+            bool  Create(device_t* device) { return false; }
+            void  Destroy(device_t* device) {}
+            void* GetHandle(device_t* device) { return nullptr; }
+            void  BeginFrame(device_t* device) {}
+            void  EndFrame(device_t* device) {}
 
-//         namespace D3D12MA
+            bool DumpMemoryStats(device_t* device, const char* file) { return false; }
+        }  // namespace nd3d12
+#endif
+        //         namespace D3D12MA
 //         {
 //             class Allocator;
 //             class Allocation;

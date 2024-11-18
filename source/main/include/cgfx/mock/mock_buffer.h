@@ -16,7 +16,6 @@ namespace ncore
             void*           GetCpuAddress(device_t* pDevice, ngfx::buffer_t*);
             u64             GetGpuAddress(device_t* pDevice, ngfx::buffer_t*);
             u32             GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t*);
-
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

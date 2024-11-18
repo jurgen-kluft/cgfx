@@ -29,6 +29,16 @@ namespace ncore
         void*     GetHandle(device_t* device);
         void      BeginFrame(device_t* device);
         void      EndFrame(device_t* device);
+        
+        // NOTE: Gfx doesn't really need to have an 'object', everything is a component, we just need:
+        // - CreateInstance<C>, return C*
+        // - DestroyInstance<C>
+        // - AddComponent<C1, C2>(C1 const* cp)
+        // - GetComponent<C1, C2>(C1 const* cp), return C2*
+        // - HasComponent<C1, C2>(C1 const* cp)
+        // - SetTag<C>(C const* cp, u16 tag)
+        // - RemTag<C>(C const* cp, u16 tag)
+        // - HasTag<C>(C const* cp, u16 tag)
 
         template <typename T, typename C>
         T* GetObject(device_t* device, C* pComponent)

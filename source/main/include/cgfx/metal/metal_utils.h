@@ -5,6 +5,8 @@
 #include "cgfx/gfx_defines.h"
 #include "cgfx/gfx_texture.h"
 
+#ifdef TARGET_MAC
+
 #include "cmacos/Foundation/Foundation.hpp"
 #include "cmacos/Metal/Metal.hpp"
 #include "cmacos/MetalKit/MetalKit.hpp"
@@ -436,4 +438,7 @@ namespace ncore
 
     }  // namespace ngfx
 }  // namespace ncore
+
+#endif
+
 #endif

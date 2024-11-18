@@ -1,6 +1,7 @@
 #include "cgfx/metal/metal_buffer.h"
 #include "cgfx/metal/metal_device.h"
 #include "cgfx/metal/metal_heap.h"
+#include "cgfx/metal/metal_utils.h"
 
 namespace ncore
 {

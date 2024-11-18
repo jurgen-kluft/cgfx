@@ -42,20 +42,16 @@ namespace ncore
 
             switch (desc.backend)
             {
-#ifdef TARGET_PC
-                case enums::BackendD3D12:
-                    pDevice->m_vendor = enums::Vendor_NVIDIA;
+                case enums::Backend_D3D12:
+                    pDevice->m_vendor = enums::VendorNvidia;
                     // pDevice           = nd3d12::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "D3D12 Device");
                     break;
-#endif
-#ifdef TARGET_MAC
                 case enums::Backend_Metal:
                     pDevice->m_vendor = enums::VendorApple;
                     // pDevice           = nmetal::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "Metal Device");
                     break;
-#endif
                 case enums::Backend_Mock:
                     pDevice->m_vendor = enums::VendorMock;
                     // pDevice           = nmock::AllocDevice(allocator, desc);

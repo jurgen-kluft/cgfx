@@ -5,9 +5,11 @@
     #pragma once
 #endif
 
+#ifdef TARGET_PC
 #include "cd3d12/d3d12.h"
 #include "cd3d12/d3dx12.h"
 #include "dxgi1_6.h"
+#endif
 
 #include "cgfx/gfx_defines.h"
 #include "cbase/c_debug.h"
@@ -26,6 +28,7 @@ namespace ncore
         }
 #endif
 
+#ifdef TARGET_PC
         struct D3D12Descriptor
         {
             D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle = {};
@@ -588,6 +591,7 @@ namespace ncore
 
             return d3d12_flags;
         }
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 #endif
