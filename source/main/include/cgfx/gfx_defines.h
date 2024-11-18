@@ -9,10 +9,8 @@ namespace ncore
 {
     namespace ngfx
     {
-#define D_GFX_OCS_OBJECT           static u16 const object_index
-#define D_GFX_OCS_OBJECT_SET(i)    static u16 const object_index = (i)
-#define D_GFX_OCS_COMPONENT        static u16 const component_index
-#define D_GFX_OCS_COMPONENT_SET(i) static u16 const component_index = (i)
+#define D_GFX_OCS_COMPONENT        static u16 const __ncs_index__
+#define D_GFX_OCS_COMPONENT_SET(i) static u16 const __ncs_index__ = (i)
 
         struct device_t;
         struct command_list_t;

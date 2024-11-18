@@ -6,7 +6,7 @@
 #endif
 
 #include "cgfx/gfx_defines.h"
-#include "callocator/c_allocator_ocs.h"
+#include "callocator/c_allocator_cs.h"
 
 namespace ncore
 {
@@ -21,7 +21,7 @@ namespace ncore
             device_desc_t      m_desc;
             enums::vendor_t    m_vendor;
             alloc_t*           m_allocator;
-            nocs::allocator_t* m_allocatorOCS;
+            ncs::allocator_t* m_allocatorCS;
         };
 
         device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc);
@@ -30,96 +30,67 @@ namespace ncore
         void      BeginFrame(device_t* device);
         void      EndFrame(device_t* device);
         
-        // NOTE: Gfx doesn't really need to have an 'object', everything is a component, we just need:
-        // - CreateInstance<C>, return C*
-        // - DestroyInstance<C>
-        // - AddComponent<C1, C2>(C1 const* cp)
-        // - GetComponent<C1, C2>(C1 const* cp), return C2*
-        // - HasComponent<C1, C2>(C1 const* cp)
-        // - SetTag<C>(C const* cp, u16 tag)
-        // - RemTag<C>(C const* cp, u16 tag)
-        // - HasTag<C>(C const* cp, u16 tag)
-
-        template <typename T, typename C>
-        T* GetObject(device_t* device, C* pComponent)
+                template <typename C>
+        void AttachName(device_t* device, C* pResource, const char* name)
         {
-            return device->m_allocatorOCS->get_object<T, C>(pComponent);
-        }
-
-        template <typename T>
-        T* CreateObject(device_t* device, const char* name)
-        {
-            T* resource = device->m_allocatorOCS->create_object<T>();
-            AttachName(device, resource, name);
-            return resource;
-        }
-
-        template <typename T>
-        void RemoveObject(device_t* device, T* pResource)
-        {
-            device->m_allocatorOCS->destroy_object<T>(pResource);
-        }
-
-        template <typename T, typename C>
-        C* AddComponent(device_t* device, T* pResource)
-        {
-            return device->m_allocatorOCS->add_component<C, T>(pResource);
-        }
-
-        template <typename C1, typename C2>
-        C2* AddAnotherComponent(device_t* device, C1* pCp1)
-        {
-            return device->m_allocatorOCS->add_component<resource_t, C1, C2>(pCp1);
-        }
-
-        template <typename T, typename C>
-        C* GetComponent(device_t* device, T* pResource)
-        {
-            return device->m_allocatorOCS->get_component<C, T>(pResource);
-        }
-
-        template <typename C1, typename C2>
-        C2* GetOtherComponent(device_t* device, C1 const* pComponent1)
-        {
-            return device->m_allocatorOCS->get_component<resource_t, C1, C2>(pComponent1);
-        }
-
-        template <typename C1, typename C2>
-        C2 const* GetOtherComponent(device_t const* device, C1 const* pComponent1)
-        {
-            return device->m_allocatorOCS->get_component<resource_t, C1, C2>(pComponent1);
-        }
-
-        template <typename C1, typename C2>
-        void RemoveOtherComponent(device_t* device, C1* pComponent1)
-        {
-            device->m_allocatorOCS->rem_component<resource_t, C1, C2>(pComponent1);
-        }
-
-
-        template <typename T, typename C>
-        bool HasComponent(device_t* device, T* pResource)
-        {
-            return device->m_allocatorOCS->has_component<C, T>(pResource);
-        }
-
-        template <typename T>
-        void SetTag(device_t* device, T* pResource, u16 tag)
-        {
-            device->m_allocatorOCS->set_tag<T>(pResource, tag);
-        }
-
-        template <typename T>
-        bool HasTag(device_t* device, T* pResource, u16 tag)
-        {
-            return device->m_allocatorOCS->has_tag<T>(pResource, tag);
-        }
-
-        template <typename T>
-        void AttachName(device_t* device, T* pResource, const char* name)
-        {
-            name_t* n = device->m_allocatorOCS->add_component<name_t, T>(pResource);
+            name_t* n = device->m_allocatorOCS->add_component<name_t, C>(pResource);
             SetName(n, name);
+        }
+
+        template <typename C>
+        C* CreateInstance(device_t* device, const char* name)
+        {
+            C* instance = device->m_allocatorOCS->create_instance<C>();
+            AttachName<C>(device, instance, name);
+            return instance;
+        }
+
+        template <typename C>
+        void DestroyInstance(device_t* device, C* pInstance)
+        {
+            device->m_allocatorOCS->destroy_instance<C>(pInstance);
+        }
+
+        template <typename C1, typename C2>
+        C2* CreateComponent(device_t* device, C1* pResource)
+        {
+            return device->m_allocatorOCS->create_component<C1, C2>(pResource);
+        }
+
+        template <typename C1, typename C2>
+        void DestroyComponent(device_t* device, C1* pComponent1)
+        {
+            device->m_allocatorOCS->rem_component<C1, C2>(pComponent1);
+        }
+
+        template <typename C1, typename C2>
+        bool HasComponent(device_t* device, C1* pResource)
+        {
+            return device->m_allocatorOCS->has_component<C1, C2>(pResource);
+        }
+
+        template <typename C1, typename C2>
+        C2* GetComponent(device_t* device, C1* pResource)
+        {
+            return device->m_allocatorOCS->get_component<C1, C2>(pResource);
+        }
+
+        template <typename C1, typename C2>
+        C2 const* GetComponent(device_t const* device, C1 const* pResource)
+        {
+            return device->m_allocatorOCS->get_component<C1, C2>(pResource);
+        }        
+
+        template <typename C>
+        void SetTag(device_t* device, C* pResource, u16 tag)
+        {
+            device->m_allocatorOCS->set_tag<C>(pResource, tag);
+        }
+
+        template <typename C>
+        bool HasTag(device_t* device, C* pResource, u16 tag)
+        {
+            return device->m_allocatorOCS->has_tag<C>(pResource, tag);
         }
 
         // Debug

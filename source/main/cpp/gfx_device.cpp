@@ -8,31 +8,28 @@ namespace ncore
 {
     namespace ngfx
     {
-        void InitializeOcs(nocs::allocator_t* ocs)
+        void InitializeOcs(ncs::allocator_t* cs)
         {
-            // register object
-            ocs->register_object<resource_t>(2048, 256, 64);
-
             // register components
-            ocs->register_component<resource_t, name_t>(2048, "name");
-            ocs->register_component<resource_t, texture_t>(2048, "texture");
-            ocs->register_component<resource_t, buffer_t>(2048, "buffer");
-            ocs->register_component<resource_t, device_t>(4, "device");
+            cs->register_component<name_t>(2048);
+            cs->register_component<texture_t>(2048);
+            cs->register_component<buffer_t>(2048);
+            cs->register_component<device_t>(4);
 
             // ... TODO: register other components
         }
 
         device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc)
         {
-            nocs::allocator_t* ocs = g_allocate<nocs::allocator_t>(allocator);
-            InitializeOcs(ocs);
+            ncs::allocator_t* cs = g_allocate<ncs::allocator_t>(allocator);
+            InitializeOcs(cs);
 
-            ngfx::resource_t* device_resource = ocs->create_object<ngfx::resource_t>();
-            ngfx::device_t*   pDevice         = ocs->add_component<ngfx::device_t>(device_resource);
+            ngfx::resource_t* device_resource = cs->new_instance<ngfx::resource_t>();
+            ngfx::device_t*   pDevice         = cs->create_component<ngfx::resource_t, ngfx::device_t>(device_resource);
             pDevice->m_frameID                = 0;
             pDevice->m_desc                   = desc;
             pDevice->m_allocator              = allocator;
-            pDevice->m_allocatorOCS           = ocs;
+            pDevice->m_allocatorCS            = cs;
 
             // NOTE: The switch statement here are currently here for convenience, once we have
             //       refactored all the backend specific code into their respective files, and
