@@ -19,6 +19,7 @@ namespace ncore
 
             struct device_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDevice);
                 MTL::Device*       m_pDevice         = nullptr;
                 MTL::CommandQueue* m_pQueue          = nullptr;
                 MTL::ResidencySet* m_pResidencySet   = nullptr;
@@ -39,6 +40,7 @@ namespace ncore
                 s32     m_samplerDescriptorDeletionQueueCount;
                 pair_t* m_resDescriptorDeletionQueue;
                 pair_t* m_samplerDescriptorDeletionQueue;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             bool  Create(ngfx::device_t* device);

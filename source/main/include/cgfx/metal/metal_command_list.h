@@ -1,7 +1,7 @@
 #ifndef __CGFX_METAL_COMMAND_LIST_H__
 #define __CGFX_METAL_COMMAND_LIST_H__
 
-// #include "cgfx/metal/metal_utils.h"
+#include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_command_list.h"
 
 namespace ncore
@@ -15,9 +15,9 @@ namespace ncore
         {
             ngfx::command_list_t* CreateCommandList(ngfx::command_list_t*);
 
-            bool  Create(ngfx::command_list_t*);
-            void  Destroy(ngfx::command_list_t*);
-            void* GetHandle(ngfx::command_list_t*);
+            bool                Create(ngfx::command_list_t*);
+            void                Destroy(ngfx::command_list_t*);
+            MTL::CommandBuffer* GetHandle(ngfx::command_list_t*);
 
             void ResetAllocator(ngfx::command_list_t* cmdList);
             void Begin(ngfx::command_list_t* cmdList);
@@ -86,9 +86,9 @@ namespace ncore
             void  Destroy(ngfx::command_list_t*) {}
             void* GetHandle(ngfx::command_list_t*) { return nullptr; }
 
-            void ResetAllocator(ngfx::command_list_t* cmdList){}
-            void Begin(ngfx::command_list_t* cmdList){}
-            void End(ngfx::command_list_t* cmdList){}
+            void ResetAllocator(ngfx::command_list_t* cmdList) {}
+            void Begin(ngfx::command_list_t* cmdList) {}
+            void End(ngfx::command_list_t* cmdList) {}
             void Wait(ngfx::command_list_t* cmdList, fence_t* fence, u64 value) {}
             void Signal(ngfx::command_list_t* cmdList, fence_t* fence, u64 value) {}
             void Present(ngfx::command_list_t* cmdList, swapchain_t* swapchain) {}

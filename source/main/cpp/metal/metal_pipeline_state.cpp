@@ -11,21 +11,21 @@ namespace ncore
         {
             pipeline_state_t* CreateGraphicsPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
             {
-                nmetal::graphics_pipeline_state_t* mps = AddComponent<ngfx::resource_t, nmetal::graphics_pipeline_state_t>(device, resource);
+                nmetal::graphics_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::graphics_pipeline_state_t>(device, resource);
                 mps->m_desc                            = desc;
                 return ps;
             }
 
             pipeline_state_t* CreateMeshShadingPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
             {
-                nmetal::meshshading_pipeline_state_t* mps = AddComponent<ngfx::resource_t, nmetal::meshshading_pipeline_state_t>(device, resource);
+                nmetal::meshshading_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::meshshading_pipeline_state_t>(device, resource);
                 mps->m_desc                               = desc;
                 return ps;
             }
 
             pipeline_state_t* CreateComputePipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
             {
-                nmetal::compute_pipeline_state_t* mps = AddComponent<ngfx::resource_t, nmetal::compute_pipeline_state_t>(device, resource);
+                nmetal::compute_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::compute_pipeline_state_t>(device, resource);
                 mps->m_desc                           = desc;
                 return ps;
             }
@@ -34,7 +34,7 @@ namespace ncore
             {
                 if (ps->m_type == enums::PipelineGraphics)
                 {
-                    nmetal::graphics_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
+                    nmetal::graphics_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
 
                     mps->m_pPSO->release();
                     mps->m_pDepthStencilState->release();
@@ -72,10 +72,10 @@ namespace ncore
                     descriptor->setInputPrimitiveTopology(ToTopologyClass(mps->m_desc.primitive_type));
                     descriptor->setRasterSampleCount(1);
 
-                    name_t const* name = GetOtherComponent<ngfx::pipeline_state_t, name_t>(device, ps);
+                    name_t const* name = GetComponent<ngfx::pipeline_state_t, name_t>(device, ps);
                     SetDebugLabel(descriptor, name->m_name);
 
-                    nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     MTL::Device*      mtlDevice = mdevice->m_pDevice;
                     NS::Error*        pError    = nullptr;
                     mps->m_pPSO                 = mtlDevice->newRenderPipelineState(descriptor, &pError);
@@ -96,7 +96,7 @@ namespace ncore
                 }
                 else if (ps->m_type == enums::PipelineMeshShading)
                 {
-                    nmetal::meshshading_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
+                    nmetal::meshshading_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
 
                     mps->m_pPSO->release();
                     mps->m_pDepthStencilState->release();
@@ -138,10 +138,10 @@ namespace ncore
 
                     descriptor->setRasterSampleCount(1);
 
-                    name_t const* name = GetOtherComponent<ngfx::pipeline_state_t, name_t>(device, ps);
+                    name_t const* name = GetComponent<ngfx::pipeline_state_t, name_t>(device, ps);
                     SetDebugLabel(descriptor, name->m_name);
 
-                    nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     MTL::Device*      mtlDevice = mdevice->m_pDevice;
                     NS::Error*        pError    = nullptr;
                     mps->m_pPSO                 = mtlDevice->newRenderPipelineState(descriptor, MTL::PipelineOptionNone, nullptr, &pError);
@@ -173,7 +173,7 @@ namespace ncore
                 }
                 else if (ps->m_type == enums::PipelineCompute)
                 {
-                    nmetal::compute_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+                    nmetal::compute_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
                 }
                 return false;
             }
@@ -182,7 +182,7 @@ namespace ncore
             {
                 if (ps->m_type == enums::PipelineGraphics)
                 {
-                    nmetal::graphics_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
+                    nmetal::graphics_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
                     if (mps != nullptr)
                     {
                         mps->m_pPSO->release();
@@ -191,7 +191,7 @@ namespace ncore
                 }
                 else if (ps->m_type == enums::PipelineMeshShading)
                 {
-                    nmetal::meshshading_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
+                    nmetal::meshshading_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
                     if (mps != nullptr)
                     {
                         mps->m_pPSO->release();
@@ -200,7 +200,7 @@ namespace ncore
                 }
                 else if (ps->m_type == enums::PipelineCompute)
                 {
-                    nmetal::compute_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+                    nmetal::compute_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
                     if (mps != nullptr)
                     {
                         mps->m_pPSO->release();
@@ -212,17 +212,17 @@ namespace ncore
             {
                 if (ps->m_type == enums::PipelineGraphics)
                 {
-                    nmetal::graphics_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
+                    nmetal::graphics_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
                     return mps->m_pPSO;
                 }
                 else if (ps->m_type == enums::PipelineMeshShading)
                 {
-                    nmetal::meshshading_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
+                    nmetal::meshshading_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
                     return mps->m_pPSO;
                 }
                 else if (ps->m_type == enums::PipelineCompute)
                 {
-                    nmetal::compute_pipeline_state_t* mps = GetOtherComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+                    nmetal::compute_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
                     return mps->m_pPSO;
                 }
                 return nullptr;

@@ -16,13 +16,15 @@ namespace ncore
         {
             struct mheap_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalHeap);
                 MTL::Heap* m_pHeap = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             ngfx::heap_t* CreateHeap(ngfx::device_t* pDevice, resource_t* resource, ngfx::heap_t* heap);
             bool          Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
             void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            void*         GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            MTL::Heap*    GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
         }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

@@ -13,7 +13,7 @@ namespace ncore
         {
             struct mbuffer_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalBuffer);
                 MTL::Buffer* m_pBuffer     = nullptr;
                 void*        m_pCpuAddress = nullptr;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -22,7 +22,7 @@ namespace ncore
             ngfx::buffer_t* CreateBuffer(ngfx::device_t* device, ngfx::buffer_t*);
             bool            Create(ngfx::device_t* device, ngfx::buffer_t*);
             void            Destroy(ngfx::device_t*, ngfx::buffer_t*);
-            void*           GetHandle(ngfx::device_t* device, ngfx::buffer_t*);
+            MTL::Buffer*    GetHandle(ngfx::device_t* device, ngfx::buffer_t*);
             void*           GetCpuAddress(ngfx::device_t* device, ngfx::buffer_t*);
             u64             GetGpuAddress(ngfx::device_t* device, ngfx::buffer_t*);
             u32             GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::buffer_t*);

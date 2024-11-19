@@ -15,16 +15,9 @@ namespace ncore
     {
         namespace nmetal
         {
-            struct mshader_t
-            {
-                D_GFX_OCS_COMPONENT;
-                MTL::Function*      m_pFunction = nullptr;
-                shader_reflection_t m_reflection;
-            };
-
             ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader)
             {
-                nmetal::mshader_t* msc                     = AddAnotherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                nmetal::mshader_t* msc                     = CreateComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
                 msc->m_reflection.threadsPerThreadgroup[0] = 1;
                 msc->m_reflection.threadsPerThreadgroup[1] = 1;
                 msc->m_reflection.threadsPerThreadgroup[2] = 1;
@@ -33,14 +26,14 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::shader_t* shader)
             {
-                nmetal::mshader_t* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                nmetal::mshader_t* ms = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
                 ms->m_pFunction->release();
             }
 
             bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len)
             {
-                nmetal::mshader_t* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
-                nmetal::device_t*  md = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                nmetal::mshader_t* ms = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                nmetal::device_t*  md = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
 
                 ms->m_pFunction->release();
 
@@ -64,7 +57,7 @@ namespace ncore
                 library->release();
                 functionName->release();
 
-                name_t const* name = GetOtherComponent<ngfx::shader_t, name_t>(device, shader);
+                name_t const* name = GetComponent<ngfx::shader_t, name_t>(device, shader);
                 SetDebugLabel(ms->m_pFunction, name->m_name);
 
                 shader->m_hash = nhash::datahash(data_ptr, data_len);
@@ -74,15 +67,15 @@ namespace ncore
 
             u64 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return shader->m_hash; }
 
-            void* GetHandle(ngfx::device_t const* device, const ngfx::shader_t* shader)
+            MTL::Function* GetHandle(ngfx::device_t const* device, const ngfx::shader_t* shader)
             {
-                nmetal::mshader_t const* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                nmetal::mshader_t const* ms = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
                 return ms->m_pFunction;
             }
 
             shader_reflection_t GetReflection(ngfx::device_t const* device, const ngfx::shader_t* shader)
             {
-                nmetal::mshader_t const* ms = GetOtherComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
+                nmetal::mshader_t const* ms = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
                 return ms->m_reflection;
             }
 

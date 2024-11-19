@@ -55,7 +55,7 @@ namespace ncore
                 }
             }
 
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap)
+            MTL::Heap* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap)
             {
                 nmetal::mheap_t* mheap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
                 return mheap->m_pHeap;

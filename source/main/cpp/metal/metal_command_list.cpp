@@ -618,6 +618,8 @@ namespace ncore
         {
             struct command_list_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalCommandList);
+
                 struct TopLevelArgumentBuffer
                 {
                     uint32_t cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
@@ -645,6 +647,8 @@ namespace ncore
                 float                                     m_depthSlopeScale        = 0.0f;
                 TopLevelArgumentBuffer                    m_graphicsArgumentBuffer;
                 TopLevelArgumentBuffer                    m_computeArgumentBuffer;
+
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cmdList)
@@ -672,7 +676,7 @@ namespace ncore
                 }
             }
 
-            void* GetHandle(ngfx::command_list_t* cmdList)
+            MTL::CommandBuffer* GetHandle(ngfx::command_list_t* cmdList)
             {
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 return mcmdList->m_pCommandBuffer;

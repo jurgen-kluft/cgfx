@@ -119,7 +119,7 @@ namespace ncore
         {
             ngfx::texture_t* CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
             {
-                nmetal::mtexture_t* mtexture = AddAnotherComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
+                nmetal::mtexture_t* mtexture = CreateComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
 
                 return texture;
             }
@@ -130,18 +130,18 @@ namespace ncore
                 //      be part of the texture desc
                 MTL::TextureDescriptor* descriptor = ToTextureDescriptor(texture->m_desc);
 
-                mtexture_t* mtexture = GetOtherComponent<ngfx::texture_t, mtexture_t>(device, texture);
+                mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
                 if (texture->m_desc.heap)
                 {
                     ASSERT(texture->m_desc.alloc_type == enums::AllocationPlaced);
                     ASSERT(texture->m_desc.memory_type == texture->m_desc.heap->GetDesc().memory_type);
 
-                    MTL::Heap* heap      = (MTL::Heap*)GetHandle(device, texture->m_desc.heap);
+                    MTL::Heap* heap      = ngfx::nmetal::GetHandle(device, texture->m_desc.heap);
                     mtexture->m_pTexture = heap->newTexture(descriptor, texture->m_desc.heap_offset);
                 }
                 else
                 {
-                    nmetal::device_t* mdevice = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     mtexture->m_pTexture      = mdevice->m_pDevice->newTexture(descriptor);
                 }
 
@@ -155,7 +155,7 @@ namespace ncore
 
                 nmetal::MakeResident(device, mtexture->m_pTexture);
 
-                name_t const* name = GetOtherComponent<ngfx::texture_t, name_t>(device, texture);
+                name_t const* name = GetComponent<ngfx::texture_t, name_t>(device, texture);
                 SetDebugLabel(mtexture->m_pTexture, name->m_name);
 
                 return true;
@@ -163,7 +163,7 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::texture_t* texture)
             {
-                mtexture_t* mtexture = GetOtherComponent<ngfx::texture_t, mtexture_t>(device, texture);
+                mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
                 Evict(device, mtexture->m_pTexture);
                 if (!mtexture->m_bSwapchainTexture)
                 {
@@ -171,9 +171,9 @@ namespace ncore
                 }
             }
 
-            void* GetHandle(ngfx::device_t* device, ngfx::texture_t* texture)
+            MTL::Texture* GetHandle(ngfx::device_t* device, ngfx::texture_t* texture)
             {
-                mtexture_t* mtexture = GetOtherComponent<ngfx::texture_t, mtexture_t>(device, texture);
+                mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
                 return mtexture->m_pTexture;
             }
 

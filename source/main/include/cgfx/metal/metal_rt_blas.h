@@ -16,19 +16,20 @@ namespace ncore
         {
             struct mblas_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalBlas);
                 MTL::AccelerationStructure*                            m_pAccelerationStructure = nullptr;
                 MTL::PrimitiveAccelerationStructureDescriptor*         m_pDescriptor            = nullptr;
                 MTL::Buffer*                                           m_pScratchBuffer         = nullptr;
                 MTL::AccelerationStructureTriangleGeometryDescriptor** m_geometries;
                 u32                                                    m_geometries_count;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void*         GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
-            void          UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+            ngfx::blas_t*               CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void                        Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            bool                        Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            MTL::AccelerationStructure* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
+            void                        UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

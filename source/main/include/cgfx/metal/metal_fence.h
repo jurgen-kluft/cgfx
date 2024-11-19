@@ -13,7 +13,9 @@ namespace ncore
         {
             struct fence_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalFence);
                 MTL::SharedEvent* m_pEvent = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             ngfx::fence_t* CreateFence(ngfx::device_t* device, resource_t* resource, ngfx::fence_t* fence);

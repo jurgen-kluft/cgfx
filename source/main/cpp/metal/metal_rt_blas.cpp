@@ -88,7 +88,7 @@ namespace ncore
                 return true;
             }
 
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS)
+            MTL::AccelerationStructure* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS)
             {
                 mblas_t* mblas = GetComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 return mblas->m_pAccelerationStructure;

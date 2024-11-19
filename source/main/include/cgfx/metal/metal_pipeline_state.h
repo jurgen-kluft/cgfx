@@ -16,25 +16,31 @@ namespace ncore
         {
             struct graphics_pipeline_state_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalGraphicsPipelineState);
                 graphics_pipeline_desc_t  m_desc;
                 MTL::RenderPipelineState* m_pPSO               = nullptr;
                 MTL::DepthStencilState*   m_pDepthStencilState = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct meshshading_pipeline_state_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalMeshShadingPipelineState);
                 mesh_shading_pipeline_desc_t m_desc;
                 MTL::RenderPipelineState*    m_pPSO                        = nullptr;
                 MTL::DepthStencilState*      m_pDepthStencilState          = nullptr;
                 MTL::Size                    m_threadsPerObjectThreadgroup = {};
                 MTL::Size                    m_threadsPerMeshThreadgroup   = {};
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct compute_pipeline_state_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalComputePipelineState);
                 compute_pipeline_desc_t    m_desc;
                 MTL::ComputePipelineState* m_pPSO = nullptr;
                 MTL::Size                  m_threadsPerThreadgroup;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             pipeline_state_t* CreateGraphicsPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc);
@@ -42,7 +48,8 @@ namespace ncore
             pipeline_state_t* CreateComputePipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc);
             bool              Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
             void              Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
-            void*             GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
+
+            //void*             GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
 
         }  // namespace nmetal
     }  // namespace ngfx

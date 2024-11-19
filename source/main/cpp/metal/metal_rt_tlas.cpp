@@ -13,13 +13,13 @@ namespace ncore
         {
             ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas)
             {
-                mtlas_t* mtlas = AddAnotherComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
+                mtlas_t* mtlas = CreateComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
                 return tlas;
             }
 
             void Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas)
             {
-                mtlas_t* mtlas = GetOtherComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
+                mtlas_t* mtlas = GetComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
                 mtlas->m_pAccelerationStructure->release();
                 mtlas->m_pDescriptor->release();
                 mtlas->m_pScratchBuffer->release();
@@ -29,8 +29,8 @@ namespace ncore
 
             bool Create(ngfx::device_t* device, ngfx::tlas_t* tlas)
             {
-                mtlas_t*          mtlas     = GetOtherComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
-                nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                mtlas_t*          mtlas     = GetComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
+                nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                 MTL::Device*      mtlDevice = mdevice->m_pDevice;
 
                 mtlas->m_instanceBufferSize       = sizeof(MTL::AccelerationStructureUserIDInstanceDescriptor) * tlas->m_desc.instance_count * GFX_MAX_INFLIGHT_FRAMES;
@@ -58,7 +58,7 @@ namespace ncore
                 MakeResident(device, mtlas->m_pScratchBuffer);
                 MakeResident(device, mtlas->m_pInstanceBuffer);
 
-                name_t const* name  = GetOtherComponent<ngfx::tlas_t, name_t>(device, tlas);
+                name_t const* name  = GetComponent<ngfx::tlas_t, name_t>(device, tlas);
                 NS::String*   label = NS::String::alloc()->init(name->m_name, NS::StringEncoding::UTF8StringEncoding);
                 mtlas->m_pAccelerationStructure->setLabel(label);
                 label->release();
@@ -77,9 +77,9 @@ namespace ncore
                 return true;
             }
 
-            void* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas)
+            MTL::AccelerationStructure* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas)
             {
-                mtlas_t* mtlas = GetOtherComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
+                mtlas_t* mtlas = GetComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
                 return mtlas->m_pAccelerationStructure;
             }
 
@@ -87,7 +87,7 @@ namespace ncore
             {
                 ASSERT(instance_count <= m_desc.instance_count);
 
-                mtlas_t* mtlas = GetOtherComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
+                mtlas_t* mtlas = GetComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
                 if (mtlas->m_currentInstanceBufferOffset + sizeof(MTL::AccelerationStructureUserIDInstanceDescriptor) * instance_count > mtlas->m_instanceBufferSize)
                 {
                     mtlas->m_currentInstanceBufferOffset = 0;
@@ -103,7 +103,7 @@ namespace ncore
                 for (u32 i = 0; i < instance_count; ++i)
                 {
                     const rt_instance_t& instance = instances[i];
-                    nmetal::mblas_t*     blas     = GetOtherComponent<ngfx::blas_t, nmetal::mblas_t>(device, instance.blas);
+                    nmetal::mblas_t*     blas     = GetComponent<ngfx::blas_t, nmetal::mblas_t>(device, instance.blas);
                     // accelerationStructures[accelerationStructuresCount++] = ((MTL::AccelerationStructure*)instance.blas->GetHandle());
                     accelerationStructures[accelerationStructuresCount++] = blas->m_pAccelerationStructure;
 
