@@ -11,6 +11,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             enums::pipeline_t m_type;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         pipeline_state_t* CreateGraphicsPipelineState(device_t* device, const graphics_pipeline_desc_t& desc, const char* name);

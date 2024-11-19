@@ -18,6 +18,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             char m_name[128];
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         void SetName(name_t* name, const char* set);

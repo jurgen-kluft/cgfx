@@ -11,6 +11,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             blas_desc_t m_desc;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         blas_t* CreateRayTracingBLAS(device_t* device, const blas_desc_t& desc, const char* name);

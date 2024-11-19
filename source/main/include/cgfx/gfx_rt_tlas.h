@@ -11,6 +11,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             tlas_desc_t m_desc;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         tlas_t* CreateRayTracingTLAS(device_t* device, const tlas_desc_t& desc, const char* name);

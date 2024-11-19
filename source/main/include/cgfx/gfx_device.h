@@ -17,10 +17,10 @@ namespace ncore
         struct device_t
         {
             D_GFX_OCS_COMPONENT;
-            u64                m_frameID;
-            device_desc_t      m_desc;
-            enums::vendor_t    m_vendor;
-            alloc_t*           m_allocator;
+            u64               m_frameID;
+            device_desc_t     m_desc;
+            enums::vendor_t   m_vendor;
+            alloc_t*          m_allocator;
             ncs::allocator_t* m_allocatorCS;
         };
 
@@ -30,7 +30,7 @@ namespace ncore
         void      BeginFrame(device_t* device);
         void      EndFrame(device_t* device);
 
-                template <typename C>
+        template <typename C>
         void AttachName(device_t* device, C* pResource, const char* name)
         {
             name_t* n = device->m_allocatorCS->add_component<name_t, C>(pResource);

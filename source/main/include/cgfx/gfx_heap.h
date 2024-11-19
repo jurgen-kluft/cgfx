@@ -11,6 +11,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             heap_desc_t m_desc = {};
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         heap_t* CreateHeap(device_t* device, const heap_desc_t& desc, const char* name);

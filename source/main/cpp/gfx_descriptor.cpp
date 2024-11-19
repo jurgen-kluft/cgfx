@@ -101,7 +101,16 @@ namespace ncore
             }
         }
 
-        u32  GetHeapIndex(descriptor_t* descriptor);
+        u32  GetHeapIndex(device_t* device, descriptor_t* descriptor)
+        {
+            switch (device->m_desc.backend)
+            {
+                case enums::Backend_D3D12: return nd3d12::GetHeapIndex(device, descriptor);
+                case enums::Backend_Metal: return nmetal::GetHeapIndex(device, descriptor);
+                case enums::Backend_Mock: return nmock::GetHeapIndex(device, descriptor);
+            }
+            return 0;
+        }
 
     }  // namespace ngfx
 }  // namespace ncore

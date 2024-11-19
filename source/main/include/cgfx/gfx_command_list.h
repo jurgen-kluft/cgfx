@@ -12,6 +12,7 @@ namespace ncore
             D_GFX_OCS_COMPONENT;
             device_t*                 m_device;
             enums::command_queue_type m_queueType;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         command_list_t* CreateCommandList(device_t* device, enums::command_queue_type queue_type, const char* name);

@@ -6,12 +6,13 @@
 #endif
 
 #ifdef TARGET_PC
-#include "cd3d12/d3d12.h"
-#include "cd3d12/d3dx12.h"
-#include "dxgi1_6.h"
+    #include "cd3d12/d3d12.h"
+    #include "cd3d12/d3dx12.h"
+    #include "dxgi1_6.h"
 #endif
 
 #include "cgfx/gfx_defines.h"
+#include "cgfx/gfx_texture.h"
 #include "cbase/c_debug.h"
 
 namespace ncore
@@ -38,249 +39,252 @@ namespace ncore
 
         inline bool IsNullDescriptor(const D3D12Descriptor& descriptor) { return descriptor.cpu_handle.ptr == 0 && descriptor.gpu_handle.ptr == 0; }
 
-        inline D3D12_HEAP_TYPE d3d12_heap_type(GfxMemoryType memory_type)
+        inline D3D12_HEAP_TYPE d3d12_heap_type(enums::memory memory_type)
         {
             switch (memory_type)
             {
-                case GfxMemory::GpuOnly: return D3D12_HEAP_TYPE_DEFAULT;
-                case GfxMemory::CpuOnly:
-                case GfxMemory::CpuToGpu: return D3D12_HEAP_TYPE_UPLOAD;
-                case GfxMemory::GpuToCpu: return D3D12_HEAP_TYPE_READBACK;
+                case enums::MemoryGpuOnly: return D3D12_HEAP_TYPE_DEFAULT;
+                case enums::MemoryCpuOnly:
+                case enums::MemoryCpuToGpu: return D3D12_HEAP_TYPE_UPLOAD;
+                case enums::MemoryGpuToCpu: return D3D12_HEAP_TYPE_READBACK;
                 default: return D3D12_HEAP_TYPE_DEFAULT;
             }
         }
 
-        inline D3D12_BARRIER_SYNC d3d12_barrier_sync(GfxAccessFlags flags)
+        inline D3D12_BARRIER_SYNC d3d12_barrier_sync(enums::access_flags flags)
         {
             D3D12_BARRIER_SYNC sync    = D3D12_BARRIER_SYNC_NONE;
-            bool               discard = flags & GfxAccess::Discard;
+            bool               discard = flags & enums::AccessDiscard;
             if (!discard)
             {
                 // d3d validation : "SyncAfter bits D3D12_BARRIER_SYNC_CLEAR_UNORDERED_ACCESS_VIEW are incompatible with AccessAfter bits D3D12_BARRIER_ACCESS_NO_ACCESS"
-                if (flags & GfxAccess::ClearUAV)
+                if (flags & enums::AccessClearUAV)
                     sync |= D3D12_BARRIER_SYNC_CLEAR_UNORDERED_ACCESS_VIEW;
             }
 
-            if (flags & GfxAccess::Present)
+            if (flags & enums::AccessPresent)
                 sync |= D3D12_BARRIER_SYNC_ALL;
-            if (flags & GfxAccess::RTV)
+            if (flags & enums::AccessRTV)
                 sync |= D3D12_BARRIER_SYNC_RENDER_TARGET;
-            if (flags & GfxAccess::MaskDSV)
+            if (flags & enums::AccessMaskDSV)
                 sync |= D3D12_BARRIER_SYNC_DEPTH_STENCIL;
-            if (flags & GfxAccess::MaskVS)
+            if (flags & enums::AccessMaskVS)
                 sync |= D3D12_BARRIER_SYNC_VERTEX_SHADING;
-            if (flags & GfxAccess::MaskPS)
+            if (flags & enums::AccessMaskPS)
                 sync |= D3D12_BARRIER_SYNC_PIXEL_SHADING;
-            if (flags & GfxAccess::MaskCS)
+            if (flags & enums::AccessMaskCS)
                 sync |= D3D12_BARRIER_SYNC_COMPUTE_SHADING;
-            if (flags & GfxAccess::MaskCopy)
+            if (flags & enums::AccessMaskCopy)
                 sync |= D3D12_BARRIER_SYNC_COPY;
-            if (flags & GfxAccess::ShadingRate)
+            if (flags & enums::AccessShadingRate)
                 sync |= D3D12_BARRIER_SYNC_PIXEL_SHADING;
-            if (flags & GfxAccess::IndexBuffer)
+            if (flags & enums::AccessIndexBuffer)
                 sync |= D3D12_BARRIER_SYNC_INDEX_INPUT;
-            if (flags & GfxAccess::IndirectArgs)
+            if (flags & enums::AccessIndirectArgs)
                 sync |= D3D12_BARRIER_SYNC_EXECUTE_INDIRECT;
-            if (flags & GfxAccess::MaskAS)
+            if (flags & enums::AccessMaskAS)
                 sync |= D3D12_BARRIER_SYNC_BUILD_RAYTRACING_ACCELERATION_STRUCTURE;
 
             return sync;
         }
 
-        inline D3D12_BARRIER_ACCESS d3d12_barrier_access(GfxAccessFlags flags)
+        inline D3D12_BARRIER_ACCESS d3d12_barrier_access(enums::access_flags flags)
         {
-            if (flags & GfxAccess::Discard)
+            if (flags & enums::AccessDiscard)
             {
                 return D3D12_BARRIER_ACCESS_NO_ACCESS;
             }
 
             D3D12_BARRIER_ACCESS access = D3D12_BARRIER_ACCESS_COMMON;
 
-            if (flags & GfxAccess::RTV)
+            if (flags & enums::AccessRTV)
                 access |= D3D12_BARRIER_ACCESS_RENDER_TARGET;
-            if (flags & GfxAccess::DSV)
+            if (flags & enums::AccessDSV)
                 access |= D3D12_BARRIER_ACCESS_DEPTH_STENCIL_WRITE;
-            if (flags & GfxAccess::DSVReadOnly)
+            if (flags & enums::AccessDSVReadOnly)
                 access |= D3D12_BARRIER_ACCESS_DEPTH_STENCIL_READ;
-            if (flags & GfxAccess::MaskSRV)
+            if (flags & enums::AccessMaskSRV)
                 access |= D3D12_BARRIER_ACCESS_SHADER_RESOURCE;
-            if (flags & GfxAccess::MaskUAV)
+            if (flags & enums::AccessMaskUAV)
                 access |= D3D12_BARRIER_ACCESS_UNORDERED_ACCESS;
-            if (flags & GfxAccess::ClearUAV)
+            if (flags & enums::AccessClearUAV)
                 access |= D3D12_BARRIER_ACCESS_UNORDERED_ACCESS;
-            if (flags & GfxAccess::CopyDst)
+            if (flags & enums::AccessCopyDst)
                 access |= D3D12_BARRIER_ACCESS_COPY_DEST;
-            if (flags & GfxAccess::CopySrc)
+            if (flags & enums::AccessCopySrc)
                 access |= D3D12_BARRIER_ACCESS_COPY_SOURCE;
-            if (flags & GfxAccess::ShadingRate)
+            if (flags & enums::AccessShadingRate)
                 access |= D3D12_BARRIER_ACCESS_SHADING_RATE_SOURCE;
-            if (flags & GfxAccess::IndexBuffer)
+            if (flags & enums::AccessIndexBuffer)
                 access |= D3D12_BARRIER_ACCESS_INDEX_BUFFER;
-            if (flags & GfxAccess::IndirectArgs)
+            if (flags & enums::AccessIndirectArgs)
                 access |= D3D12_BARRIER_ACCESS_INDIRECT_ARGUMENT;
-            if (flags & GfxAccess::ASRead)
+            if (flags & enums::AccessASRead)
                 access |= D3D12_BARRIER_ACCESS_RAYTRACING_ACCELERATION_STRUCTURE_READ;
-            if (flags & GfxAccess::ASWrite)
+            if (flags & enums::AccessASWrite)
                 access |= D3D12_BARRIER_ACCESS_RAYTRACING_ACCELERATION_STRUCTURE_WRITE;
 
             return access;
         }
 
-        inline D3D12_BARRIER_LAYOUT d3d12_barrier_layout(GfxAccessFlags flags)
+        inline D3D12_BARRIER_LAYOUT d3d12_barrier_layout(enums::access_flags flags)
         {
-            if (flags & GfxAccess::Discard)
+            if (flags & enums::AccessDiscard)
                 return D3D12_BARRIER_LAYOUT_UNDEFINED;
-            if (flags & GfxAccess::Present)
+            if (flags & enums::AccessPresent)
                 return D3D12_BARRIER_LAYOUT_PRESENT;
-            if (flags & GfxAccess::RTV)
+            if (flags & enums::AccessRTV)
                 return D3D12_BARRIER_LAYOUT_RENDER_TARGET;
-            if (flags & GfxAccess::DSV)
+            if (flags & enums::AccessDSV)
                 return D3D12_BARRIER_LAYOUT_DEPTH_STENCIL_WRITE;
-            if (flags & GfxAccess::DSVReadOnly)
+            if (flags & enums::AccessDSVReadOnly)
                 return D3D12_BARRIER_LAYOUT_DEPTH_STENCIL_READ;
-            if (flags & GfxAccess::MaskSRV)
+            if (flags & enums::AccessMaskSRV)
                 return D3D12_BARRIER_LAYOUT_SHADER_RESOURCE;
-            if (flags & GfxAccess::MaskUAV)
+            if (flags & enums::AccessMaskUAV)
                 return D3D12_BARRIER_LAYOUT_UNORDERED_ACCESS;
-            if (flags & GfxAccess::ClearUAV)
+            if (flags & enums::AccessClearUAV)
                 return D3D12_BARRIER_LAYOUT_UNORDERED_ACCESS;
-            if (flags & GfxAccess::CopyDst)
+            if (flags & enums::AccessCopyDst)
                 return D3D12_BARRIER_LAYOUT_COPY_DEST;
-            if (flags & GfxAccess::CopySrc)
+            if (flags & enums::AccessCopySrc)
                 return D3D12_BARRIER_LAYOUT_COPY_SOURCE;
-            if (flags & GfxAccess::ShadingRate)
+            if (flags & enums::AccessShadingRate)
                 return D3D12_BARRIER_LAYOUT_SHADING_RATE_SOURCE;
 
             ASSERT(false);
             return D3D12_BARRIER_LAYOUT_UNDEFINED;
         }
 
-        inline DXGI_FORMAT dxgi_format(GfxFormat format, bool depth_srv = false, bool uav = false)
+        inline DXGI_FORMAT dxgi_format(enums::format format, bool depth_srv = false, bool uav = false)
         {
             switch (format)
             {
-                case Gfx::Unknown: return DXGI_FORMAT_UNKNOWN;
-                case Gfx::RGBA32F: return DXGI_FORMAT_R32G32B32A32_FLOAT;
-                case Gfx::RGBA32UI: return DXGI_FORMAT_R32G32B32A32_UINT;
-                case Gfx::RGBA32SI: return DXGI_FORMAT_R32G32B32A32_SINT;
-                case Gfx::RGBA16F: return DXGI_FORMAT_R16G16B16A16_FLOAT;
-                case Gfx::RGBA16UI: return DXGI_FORMAT_R16G16B16A16_UINT;
-                case Gfx::RGBA16SI: return DXGI_FORMAT_R16G16B16A16_SINT;
-                case Gfx::RGBA16UNORM: return DXGI_FORMAT_R16G16B16A16_UNORM;
-                case Gfx::RGBA16SNORM: return DXGI_FORMAT_R16G16B16A16_SNORM;
-                case Gfx::RGBA8UI: return DXGI_FORMAT_R8G8B8A8_UINT;
-                case Gfx::RGBA8SI: return DXGI_FORMAT_R8G8B8A8_SINT;
-                case Gfx::RGBA8UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM;
-                case Gfx::RGBA8SNORM: return DXGI_FORMAT_R8G8B8A8_SNORM;
-                case Gfx::RGBA8SRGB: return uav ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-                case Gfx::BGRA8UNORM: return DXGI_FORMAT_B8G8R8A8_UNORM;
-                case Gfx::BGRA8SRGB: return uav ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-                case Gfx::RGB10A2UI: return DXGI_FORMAT_R10G10B10A2_UINT;
-                case Gfx::RGB10A2UNORM: return DXGI_FORMAT_R10G10B10A2_UNORM;
-                case Gfx::RGB32F: return DXGI_FORMAT_R32G32B32_FLOAT;
-                case Gfx::RGB32UI: return DXGI_FORMAT_R32G32B32_UINT;
-                case Gfx::RGB32SI: return DXGI_FORMAT_R32G32B32_SINT;
-                case Gfx::R11G11B10F: return DXGI_FORMAT_R11G11B10_FLOAT;
-                case Gfx::RGB9E5: return DXGI_FORMAT_R9G9B9E5_SHAREDEXP;
-                case Gfx::RG32F: return DXGI_FORMAT_R32G32_FLOAT;
-                case Gfx::RG32UI: return DXGI_FORMAT_R32G32_UINT;
-                case Gfx::RG32SI: return DXGI_FORMAT_R32G32_SINT;
-                case Gfx::RG16F: return DXGI_FORMAT_R16G16_FLOAT;
-                case Gfx::RG16UI: return DXGI_FORMAT_R16G16_UINT;
-                case Gfx::RG16SI: return DXGI_FORMAT_R16G16_SINT;
-                case Gfx::RG16UNORM: return DXGI_FORMAT_R16G16_UNORM;
-                case Gfx::RG16SNORM: return DXGI_FORMAT_R16G16_SNORM;
-                case Gfx::RG8UI: return DXGI_FORMAT_R8G8_UINT;
-                case Gfx::RG8SI: return DXGI_FORMAT_R8G8_SINT;
-                case Gfx::RG8UNORM: return DXGI_FORMAT_R8G8_UNORM;
-                case Gfx::RG8SNORM: return DXGI_FORMAT_R8G8_SNORM;
-                case Gfx::R32F: return DXGI_FORMAT_R32_FLOAT;
-                case Gfx::R32UI: return DXGI_FORMAT_R32_UINT;
-                case Gfx::R32SI: return DXGI_FORMAT_R32_SINT;
-                case Gfx::R16F: return DXGI_FORMAT_R16_FLOAT;
-                case Gfx::R16UI: return DXGI_FORMAT_R16_UINT;
-                case Gfx::R16SI: return DXGI_FORMAT_R16_SINT;
-                case Gfx::R16UNORM: return DXGI_FORMAT_R16_UNORM;
-                case Gfx::R16SNORM: return DXGI_FORMAT_R16_SNORM;
-                case Gfx::R8UI: return DXGI_FORMAT_R8_UINT;
-                case Gfx::R8SI: return DXGI_FORMAT_R8_SINT;
-                case Gfx::R8UNORM: return DXGI_FORMAT_R8_UNORM;
-                case Gfx::R8SNORM: return DXGI_FORMAT_R8_SNORM;
-                case Gfx::D32F: return depth_srv ? DXGI_FORMAT_R32_FLOAT : DXGI_FORMAT_D32_FLOAT;
-                case Gfx::D32FS8: return depth_srv ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-                case Gfx::D16: return depth_srv ? DXGI_FORMAT_R16_UNORM : DXGI_FORMAT_D16_UNORM;
-                case Gfx::BC1UNORM: return DXGI_FORMAT_BC1_UNORM;
-                case Gfx::BC1SRGB: return DXGI_FORMAT_BC1_UNORM_SRGB;
-                case Gfx::BC2UNORM: return DXGI_FORMAT_BC2_UNORM;
-                case Gfx::BC2SRGB: return DXGI_FORMAT_BC2_UNORM_SRGB;
-                case Gfx::BC3UNORM: return DXGI_FORMAT_BC3_UNORM;
-                case Gfx::BC3SRGB: return DXGI_FORMAT_BC3_UNORM_SRGB;
-                case Gfx::BC4UNORM: return DXGI_FORMAT_BC4_UNORM;
-                case Gfx::BC4SNORM: return DXGI_FORMAT_BC4_SNORM;
-                case Gfx::BC5UNORM: return DXGI_FORMAT_BC5_UNORM;
-                case Gfx::BC5SNORM: return DXGI_FORMAT_BC5_SNORM;
-                case Gfx::BC6U16F: return DXGI_FORMAT_BC6H_UF16;
-                case Gfx::BC6S16F: return DXGI_FORMAT_BC6H_SF16;
-                case Gfx::BC7UNORM: return DXGI_FORMAT_BC7_UNORM;
-                case Gfx::BC7SRGB: return DXGI_FORMAT_BC7_UNORM_SRGB;
+                case enums::FORMAT_UNKNOWN: return DXGI_FORMAT_UNKNOWN;
+                case enums::FORMAT_RGBA32F: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+                case enums::FORMAT_RGBA32UI: return DXGI_FORMAT_R32G32B32A32_UINT;
+                case enums::FORMAT_RGBA32SI: return DXGI_FORMAT_R32G32B32A32_SINT;
+                case enums::FORMAT_RGBA16F: return DXGI_FORMAT_R16G16B16A16_FLOAT;
+                case enums::FORMAT_RGBA16UI: return DXGI_FORMAT_R16G16B16A16_UINT;
+                case enums::FORMAT_RGBA16SI: return DXGI_FORMAT_R16G16B16A16_SINT;
+                case enums::FORMAT_RGBA16UNORM: return DXGI_FORMAT_R16G16B16A16_UNORM;
+                case enums::FORMAT_RGBA16SNORM: return DXGI_FORMAT_R16G16B16A16_SNORM;
+                case enums::FORMAT_RGBA8UI: return DXGI_FORMAT_R8G8B8A8_UINT;
+                case enums::FORMAT_RGBA8SI: return DXGI_FORMAT_R8G8B8A8_SINT;
+                case enums::FORMAT_RGBA8UNORM: return DXGI_FORMAT_R8G8B8A8_UNORM;
+                case enums::FORMAT_RGBA8SNORM: return DXGI_FORMAT_R8G8B8A8_SNORM;
+                case enums::FORMAT_RGBA8SRGB: return uav ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+                case enums::FORMAT_BGRA8UNORM: return DXGI_FORMAT_B8G8R8A8_UNORM;
+                case enums::FORMAT_BGRA8SRGB: return uav ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+                case enums::FORMAT_RGB10A2UI: return DXGI_FORMAT_R10G10B10A2_UINT;
+                case enums::FORMAT_RGB10A2UNORM: return DXGI_FORMAT_R10G10B10A2_UNORM;
+                case enums::FORMAT_RGB32F: return DXGI_FORMAT_R32G32B32_FLOAT;
+                case enums::FORMAT_RGB32UI: return DXGI_FORMAT_R32G32B32_UINT;
+                case enums::FORMAT_RGB32SI: return DXGI_FORMAT_R32G32B32_SINT;
+                case enums::FORMAT_R11G11B10F: return DXGI_FORMAT_R11G11B10_FLOAT;
+                case enums::FORMAT_RGB9E5: return DXGI_FORMAT_R9G9B9E5_SHAREDEXP;
+                case enums::FORMAT_RG32F: return DXGI_FORMAT_R32G32_FLOAT;
+                case enums::FORMAT_RG32UI: return DXGI_FORMAT_R32G32_UINT;
+                case enums::FORMAT_RG32SI: return DXGI_FORMAT_R32G32_SINT;
+                case enums::FORMAT_RG16F: return DXGI_FORMAT_R16G16_FLOAT;
+                case enums::FORMAT_RG16UI: return DXGI_FORMAT_R16G16_UINT;
+                case enums::FORMAT_RG16SI: return DXGI_FORMAT_R16G16_SINT;
+                case enums::FORMAT_RG16UNORM: return DXGI_FORMAT_R16G16_UNORM;
+                case enums::FORMAT_RG16SNORM: return DXGI_FORMAT_R16G16_SNORM;
+                case enums::FORMAT_RG8UI: return DXGI_FORMAT_R8G8_UINT;
+                case enums::FORMAT_RG8SI: return DXGI_FORMAT_R8G8_SINT;
+                case enums::FORMAT_RG8UNORM: return DXGI_FORMAT_R8G8_UNORM;
+                case enums::FORMAT_RG8SNORM: return DXGI_FORMAT_R8G8_SNORM;
+                case enums::FORMAT_R32F: return DXGI_FORMAT_R32_FLOAT;
+                case enums::FORMAT_R32UI: return DXGI_FORMAT_R32_UINT;
+                case enums::FORMAT_R32SI: return DXGI_FORMAT_R32_SINT;
+                case enums::FORMAT_R16F: return DXGI_FORMAT_R16_FLOAT;
+                case enums::FORMAT_R16UI: return DXGI_FORMAT_R16_UINT;
+                case enums::FORMAT_R16SI: return DXGI_FORMAT_R16_SINT;
+                case enums::FORMAT_R16UNORM: return DXGI_FORMAT_R16_UNORM;
+                case enums::FORMAT_R16SNORM: return DXGI_FORMAT_R16_SNORM;
+                case enums::FORMAT_R8UI: return DXGI_FORMAT_R8_UINT;
+                case enums::FORMAT_R8SI: return DXGI_FORMAT_R8_SINT;
+                case enums::FORMAT_R8UNORM: return DXGI_FORMAT_R8_UNORM;
+                case enums::FORMAT_R8SNORM: return DXGI_FORMAT_R8_SNORM;
+                case enums::FORMAT_D32F: return depth_srv ? DXGI_FORMAT_R32_FLOAT : DXGI_FORMAT_D32_FLOAT;
+                case enums::FORMAT_D32FS8: return depth_srv ? DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS : DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+                case enums::FORMAT_D16: return depth_srv ? DXGI_FORMAT_R16_UNORM : DXGI_FORMAT_D16_UNORM;
+                case enums::FORMAT_BC1UNORM: return DXGI_FORMAT_BC1_UNORM;
+                case enums::FORMAT_BC1SRGB: return DXGI_FORMAT_BC1_UNORM_SRGB;
+                case enums::FORMAT_BC2UNORM: return DXGI_FORMAT_BC2_UNORM;
+                case enums::FORMAT_BC2SRGB: return DXGI_FORMAT_BC2_UNORM_SRGB;
+                case enums::FORMAT_BC3UNORM: return DXGI_FORMAT_BC3_UNORM;
+                case enums::FORMAT_BC3SRGB: return DXGI_FORMAT_BC3_UNORM_SRGB;
+                case enums::FORMAT_BC4UNORM: return DXGI_FORMAT_BC4_UNORM;
+                case enums::FORMAT_BC4SNORM: return DXGI_FORMAT_BC4_SNORM;
+                case enums::FORMAT_BC5UNORM: return DXGI_FORMAT_BC5_UNORM;
+                case enums::FORMAT_BC5SNORM: return DXGI_FORMAT_BC5_SNORM;
+                case enums::FORMAT_BC6U16F: return DXGI_FORMAT_BC6H_UF16;
+                case enums::FORMAT_BC6S16F: return DXGI_FORMAT_BC6H_SF16;
+                case enums::FORMAT_BC7UNORM: return DXGI_FORMAT_BC7_UNORM;
+                case enums::FORMAT_BC7SRGB: return DXGI_FORMAT_BC7_UNORM_SRGB;
                 default: ASSERT(false); return DXGI_FORMAT_UNKNOWN;
             }
         }
+        inline DXGI_FORMAT dxgi_format(enums::format_t format, bool depth_srv = false, bool uav = false) { return dxgi_format(enums::cast<enums::format>(format), depth_srv, uav); }
 
-        inline D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE d3d12_render_pass_loadop(GfxRenderPassLoadOp loadOp)
+        inline D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE d3d12_render_pass_loadop(enums::load_op loadOp)
         {
             switch (loadOp)
             {
-                case GfxRenderPass::LoadLoad: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE;
-                case GfxRenderPass::LoadClear: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_CLEAR;
-                case GfxRenderPass::LoadDontCare: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_DISCARD;
+                case enums::LoadOpLoad: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE;
+                case enums::LoadOpClear: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_CLEAR;
+                case enums::LoadOpDontCare: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_DISCARD;
                 default: return D3D12_RENDER_PASS_BEGINNING_ACCESS_TYPE_PRESERVE;
             }
         }
 
-        inline D3D12_RENDER_PASS_ENDING_ACCESS_TYPE d3d12_render_pass_storeop(GfxRenderPassStoreOp storeOp)
+        inline D3D12_RENDER_PASS_ENDING_ACCESS_TYPE d3d12_render_pass_storeop(enums::store_op storeOp)
         {
             switch (storeOp)
             {
-                case GfxRenderPass::StoreStore: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_PRESERVE;
-                case GfxRenderPass::StoreDontCare: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_DISCARD;
+                case enums::StoreOpStore: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_PRESERVE;
+                case enums::StoreOpDontCare: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_DISCARD;
                 default: return D3D12_RENDER_PASS_ENDING_ACCESS_TYPE_PRESERVE;
             }
         }
 
-        inline D3D12_BLEND d3d12_blend(GfxBlendFactor blend_factor)
+        inline D3D12_BLEND d3d12_blend(enums::blendfactor blend_factor)
         {
             switch (blend_factor)
             {
-                case GfxBlendFactor::Zero: return D3D12_BLEND_ZERO;
-                case GfxBlendFactor::One: return D3D12_BLEND_ONE;
-                case GfxBlendFactor::SrcColor: return D3D12_BLEND_SRC_COLOR;
-                case GfxBlendFactor::InvSrcColor: return D3D12_BLEND_INV_SRC_COLOR;
-                case GfxBlendFactor::SrcAlpha: return D3D12_BLEND_SRC_ALPHA;
-                case GfxBlendFactor::InvSrcAlpha: return D3D12_BLEND_INV_SRC_ALPHA;
-                case GfxBlendFactor::DstAlpha: return D3D12_BLEND_DEST_ALPHA;
-                case GfxBlendFactor::InvDstAlpha: return D3D12_BLEND_INV_DEST_ALPHA;
-                case GfxBlendFactor::DstColor: return D3D12_BLEND_DEST_COLOR;
-                case GfxBlendFactor::InvDstColor: return D3D12_BLEND_INV_DEST_COLOR;
-                case GfxBlendFactor::SrcAlphaClamp: return D3D12_BLEND_SRC_ALPHA_SAT;
-                case GfxBlendFactor::ConstantFactor: return D3D12_BLEND_BLEND_FACTOR;
-                case GfxBlendFactor::InvConstantFactor: return D3D12_BLEND_INV_BLEND_FACTOR;
+                case enums::BlendFactorZero: return D3D12_BLEND_ZERO;
+                case enums::BlendFactorOne: return D3D12_BLEND_ONE;
+                case enums::BlendFactorSrcColor: return D3D12_BLEND_SRC_COLOR;
+                case enums::BlendFactorInvSrcColor: return D3D12_BLEND_INV_SRC_COLOR;
+                case enums::BlendFactorSrcAlpha: return D3D12_BLEND_SRC_ALPHA;
+                case enums::BlendFactorInvSrcAlpha: return D3D12_BLEND_INV_SRC_ALPHA;
+                case enums::BlendFactorDstAlpha: return D3D12_BLEND_DEST_ALPHA;
+                case enums::BlendFactorInvDstAlpha: return D3D12_BLEND_INV_DEST_ALPHA;
+                case enums::BlendFactorDstColor: return D3D12_BLEND_DEST_COLOR;
+                case enums::BlendFactorInvDstColor: return D3D12_BLEND_INV_DEST_COLOR;
+                case enums::BlendFactorSrcAlphaClamp: return D3D12_BLEND_SRC_ALPHA_SAT;
+                case enums::BlendFactorConstantFactor: return D3D12_BLEND_BLEND_FACTOR;
+                case enums::BlendFactorInvConstantFactor: return D3D12_BLEND_INV_BLEND_FACTOR;
                 default: return D3D12_BLEND_ONE;
             }
         }
+        inline D3D12_BLEND d3d12_blend(enums::blendfactor_t blend_factor) { return d3d12_blend(enums::cast<enums::blendfactor>(blend_factor)); }
 
-        inline D3D12_BLEND_OP d3d12_blend_op(GfxBlendOp blend_op)
+        inline D3D12_BLEND_OP d3d12_blend_op(enums::blendop blend_op)
         {
             switch (blend_op)
             {
-                case GfxBlendOp::Add: return D3D12_BLEND_OP_ADD;
-                case GfxBlendOp::Subtract: return D3D12_BLEND_OP_SUBTRACT;
-                case GfxBlendOp::ReverseSubtract: return D3D12_BLEND_OP_REV_SUBTRACT;
-                case GfxBlendOp::Min: return D3D12_BLEND_OP_MIN;
-                case GfxBlendOp::Max: return D3D12_BLEND_OP_MAX;
+                case enums::BlendOpAdd: return D3D12_BLEND_OP_ADD;
+                case enums::BlendOpSubtract: return D3D12_BLEND_OP_SUBTRACT;
+                case enums::BlendOpReverseSubtract: return D3D12_BLEND_OP_REV_SUBTRACT;
+                case enums::BlendOpMin: return D3D12_BLEND_OP_MIN;
+                case enums::BlendOpMax: return D3D12_BLEND_OP_MAX;
                 default: return D3D12_BLEND_OP_ADD;
             }
         }
+        inline D3D12_BLEND_OP d3d12_blend_op(enums::blendop_t blend_op) { return d3d12_blend_op(enums::cast<enums::blendop>(blend_op)); }
 
         inline D3D12_RENDER_TARGET_BLEND_DESC d3d12_rt_blend_desc(const blendstate_t& blendState)
         {
@@ -311,16 +315,17 @@ namespace ncore
             return desc;
         }
 
-        inline D3D12_CULL_MODE d3d12_cull_mode(GfxCullMode cull_mode)
+        inline D3D12_CULL_MODE d3d12_cull_mode(enums::cullmode cull_mode)
         {
             switch (cull_mode)
             {
-                case GfxCullMode::None: return D3D12_CULL_MODE_NONE;
-                case GfxCullMode::Front: return D3D12_CULL_MODE_FRONT;
-                case GfxCullMode::Back: return D3D12_CULL_MODE_BACK;
+                case enums::CullNone: return D3D12_CULL_MODE_NONE;
+                case enums::CullFront: return D3D12_CULL_MODE_FRONT;
+                case enums::CullBack: return D3D12_CULL_MODE_BACK;
                 default: return D3D12_CULL_MODE_NONE;
             }
         }
+        inline D3D12_CULL_MODE d3d12_cull_mode(enums::cullmode_t cull_mode) { return d3d12_cull_mode(enums::cast<enums::cullmode>(cull_mode)); }
 
         inline D3D12_RASTERIZER_DESC d3d12_rasterizer_desc(const rasterizer_state_t& rasterizerState)
         {
@@ -338,37 +343,39 @@ namespace ncore
             return desc;
         }
 
-        inline D3D12_COMPARISON_FUNC d3d12_compare_func(GfxCompareFunc func)
+        inline D3D12_COMPARISON_FUNC d3d12_compare_func(enums::comparefunc func)
         {
             switch (func)
             {
-                case GfxCompareFunc::Never: return D3D12_COMPARISON_FUNC_NEVER;
-                case GfxCompareFunc::Less: return D3D12_COMPARISON_FUNC_LESS;
-                case GfxCompareFunc::Equal: return D3D12_COMPARISON_FUNC_EQUAL;
-                case GfxCompareFunc::LessEqual: return D3D12_COMPARISON_FUNC_LESS_EQUAL;
-                case GfxCompareFunc::Greater: return D3D12_COMPARISON_FUNC_GREATER;
-                case GfxCompareFunc::NotEqual: return D3D12_COMPARISON_FUNC_NOT_EQUAL;
-                case GfxCompareFunc::GreaterEqual: return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
-                case GfxCompareFunc::Always: return D3D12_COMPARISON_FUNC_ALWAYS;
+                case enums::CompareFuncNever: return D3D12_COMPARISON_FUNC_NEVER;
+                case enums::CompareFuncLess: return D3D12_COMPARISON_FUNC_LESS;
+                case enums::CompareFuncEqual: return D3D12_COMPARISON_FUNC_EQUAL;
+                case enums::CompareFuncLessEqual: return D3D12_COMPARISON_FUNC_LESS_EQUAL;
+                case enums::CompareFuncGreater: return D3D12_COMPARISON_FUNC_GREATER;
+                case enums::CompareFuncNotEqual: return D3D12_COMPARISON_FUNC_NOT_EQUAL;
+                case enums::CompareFuncGreaterEqual: return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+                case enums::CompareFuncAlways: return D3D12_COMPARISON_FUNC_ALWAYS;
                 default: return D3D12_COMPARISON_FUNC_NONE;
             }
         }
+        inline D3D12_COMPARISON_FUNC d3d12_compare_func(enums::comparefunc_t func) { return d3d12_compare_func(enums::cast<enums::comparefunc>(func)); }
 
-        inline D3D12_STENCIL_OP d3d12_stencil_op(GfxStencilOp stencil_op)
+        inline D3D12_STENCIL_OP d3d12_stencil_op(enums::stencil stencil_op)
         {
             switch (stencil_op)
             {
-                case GfxStencilOp::Keep: return D3D12_STENCIL_OP_KEEP;
-                case GfxStencilOp::Zero: return D3D12_STENCIL_OP_ZERO;
-                case GfxStencilOp::Replace: return D3D12_STENCIL_OP_REPLACE;
-                case GfxStencilOp::IncreaseClamp: return D3D12_STENCIL_OP_INCR_SAT;
-                case GfxStencilOp::DecreaseClamp: return D3D12_STENCIL_OP_DECR_SAT;
-                case GfxStencilOp::Invert: return D3D12_STENCIL_OP_INVERT;
-                case GfxStencilOp::IncreaseWrap: return D3D12_STENCIL_OP_INCR;
-                case GfxStencilOp::DecreaseWrap: return D3D12_STENCIL_OP_DECR;
+                case enums::StencilKeep: return D3D12_STENCIL_OP_KEEP;
+                case enums::StencilZero: return D3D12_STENCIL_OP_ZERO;
+                case enums::StencilReplace: return D3D12_STENCIL_OP_REPLACE;
+                case enums::StencilIncreaseClamp: return D3D12_STENCIL_OP_INCR_SAT;
+                case enums::StencilDecreaseClamp: return D3D12_STENCIL_OP_DECR_SAT;
+                case enums::StencilInvert: return D3D12_STENCIL_OP_INVERT;
+                case enums::StencilIncreaseWrap: return D3D12_STENCIL_OP_INCR;
+                case enums::StencilDecreaseWrap: return D3D12_STENCIL_OP_DECR;
                 default: return D3D12_STENCIL_OP_KEEP;
             }
         }
+        inline D3D12_STENCIL_OP d3d12_stencil_op(enums::stencil_t stencil_op) { return d3d12_stencil_op(enums::cast<enums::stencil>(stencil_op)); }
 
         inline D3D12_DEPTH_STENCILOP_DESC d3d12_depth_stencil_op(const depth_stencilop_t& depthStencilOp)
         {
@@ -396,53 +403,55 @@ namespace ncore
             return desc;
         }
 
-        inline D3D12_PRIMITIVE_TOPOLOGY_TYPE d3d12_topology_type(GfxPrimitiveType primitive_type)
+        inline D3D12_PRIMITIVE_TOPOLOGY_TYPE d3d12_topology_type(enums::primitive primitive_type)
         {
             switch (primitive_type)
             {
-                case GfxPrimitiveType::PointList: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
-                case GfxPrimitiveType::LineList:
-                case GfxPrimitiveType::LineStrip: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
-                case GfxPrimitiveType::TriangleList:
-                case GfxPrimitiveType::TriangleTrip: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+                case enums::PrimitivePointList: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+                case enums::PrimitiveLineList:
+                case enums::PrimitiveLineStrip: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+                case enums::PrimitiveTriangleList:
+                case enums::PrimitiveTriangleTrip: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
                 default: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
             }
         }
 
-        inline D3D_PRIMITIVE_TOPOLOGY d3d12_primitive_topology(GfxPrimitiveType primitive_type)
+        inline D3D_PRIMITIVE_TOPOLOGY d3d12_primitive_topology(enums::primitive primitive_type)
         {
             switch (primitive_type)
             {
-                case GfxPrimitiveType::PointList: return D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
-                case GfxPrimitiveType::LineList: return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-                case GfxPrimitiveType::LineStrip: return D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
-                case GfxPrimitiveType::TriangleList: return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-                case GfxPrimitiveType::TriangleTrip: return D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+                case enums::PrimitivePointList: return D3D_PRIMITIVE_TOPOLOGY_POINTLIST;
+                case enums::PrimitiveLineList: return D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+                case enums::PrimitiveLineStrip: return D3D_PRIMITIVE_TOPOLOGY_LINESTRIP;
+                case enums::PrimitiveTriangleList: return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+                case enums::PrimitiveTriangleTrip: return D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
                 default: return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
             }
         }
 
-        inline D3D12_FILTER_REDUCTION_TYPE d3d12_filter_reduction_type(GfxSamplerReductionMode mode)
+        inline D3D12_FILTER_REDUCTION_TYPE d3d12_filter_reduction_type(enums::sampler_reduction_mode mode)
         {
             switch (mode)
             {
-                case GfxSamplerReductionMode::Standard: return D3D12_FILTER_REDUCTION_TYPE_STANDARD;
-                case GfxSamplerReductionMode::Compare: return D3D12_FILTER_REDUCTION_TYPE_COMPARISON;
-                case GfxSamplerReductionMode::Min: return D3D12_FILTER_REDUCTION_TYPE_MINIMUM;
-                case GfxSamplerReductionMode::Max: return D3D12_FILTER_REDUCTION_TYPE_MAXIMUM;
+                case enums::SamplerReductionModeStandard: return D3D12_FILTER_REDUCTION_TYPE_STANDARD;
+                case enums::SamplerReductionModeCompare: return D3D12_FILTER_REDUCTION_TYPE_COMPARISON;
+                case enums::SamplerReductionModeMin: return D3D12_FILTER_REDUCTION_TYPE_MINIMUM;
+                case enums::SamplerReductionModeMax: return D3D12_FILTER_REDUCTION_TYPE_MAXIMUM;
                 default: return D3D12_FILTER_REDUCTION_TYPE_STANDARD;
             }
         }
+        inline D3D12_FILTER_REDUCTION_TYPE d3d12_filter_reduction_type(enums::sampler_reduction_mode_t mode) { return d3d12_filter_reduction_type(enums::cast<enums::sampler_reduction_mode>(mode)); }
 
-        inline D3D12_FILTER_TYPE d3d12_filter_type(GfxFilter filter)
+        inline D3D12_FILTER_TYPE d3d12_filter_type(enums::filter filter)
         {
             switch (filter)
             {
-                case GfxFilter::Point: return D3D12_FILTER_TYPE_POINT;
-                case GfxFilter::Linear: return D3D12_FILTER_TYPE_LINEAR;
+                case enums::FilterPoint: return D3D12_FILTER_TYPE_POINT;
+                case enums::FilterLinear: return D3D12_FILTER_TYPE_LINEAR;
                 default: return D3D12_FILTER_TYPE_POINT;
             }
         }
+        inline D3D12_FILTER_TYPE d3d12_filter_type(enums::filter_t filter) { return d3d12_filter_type(enums::cast<enums::filter>(filter)); }
 
         inline D3D12_FILTER d3d12_filter(const sampler_desc_t& desc)
         {
@@ -462,14 +471,14 @@ namespace ncore
             }
         }
 
-        inline D3D12_TEXTURE_ADDRESS_MODE d3d12_address_mode(GfxSamplerAddressMode mode)
+        inline D3D12_TEXTURE_ADDRESS_MODE d3d12_address_mode(enums::sampler_address_mode mode)
         {
             switch (mode)
             {
-                case GfxSamplerAddressMode::Repeat: return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-                case GfxSamplerAddressMode::MirroredRepeat: return D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
-                case GfxSamplerAddressMode::ClampToEdge: return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
-                case GfxSamplerAddressMode::ClampToBorder: return D3D12_TEXTURE_ADDRESS_MODE_BORDER;
+                case enums::SamplerAddressModeRepeat: return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+                case enums::SamplerAddressModeMirroredRepeat: return D3D12_TEXTURE_ADDRESS_MODE_MIRROR;
+                case enums::SamplerAddressModeClampToEdge: return D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+                case enums::SamplerAddressModeClampToBorder: return D3D12_TEXTURE_ADDRESS_MODE_BORDER;
                 default: return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
             }
         }
@@ -483,46 +492,46 @@ namespace ncore
             resourceDesc.Format              = dxgi_format(desc.format);
             resourceDesc.SampleDesc.Count    = 1;
 
-            if (desc.alloc_type == GfxAllocation::Sparse)
+            if (desc.alloc_type == enums::AllocationSparse)
             {
                 resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_UNDEFINED_SWIZZLE;
             }
 
-            if (desc.usage & GfxTextureUsage::RenderTarget)
+            if (desc.usage & enums::TextureUsageRenderTarget)
             {
                 resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
             }
 
-            if (desc.usage & GfxTextureUsage::DepthStencil)
+            if (desc.usage & enums::TextureUsageDepthStencil)
             {
                 resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
             }
 
-            if (desc.usage & GfxTextureUsage::UnorderedAccess)
+            if (desc.usage & enums::TextureUsageUnorderedAccess)
             {
                 resourceDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
             }
 
             switch (desc.type)
             {
-                case GfxTextureType::Texture2D:
+                case enums::TextureType2D:
                     resourceDesc.Dimension        = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
                     resourceDesc.DepthOrArraySize = 1;
                     break;
-                case GfxTextureType::Texture2DArray:
+                case enums::TextureType2DArray:
                     resourceDesc.Dimension        = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
                     resourceDesc.DepthOrArraySize = desc.array_size;
                     break;
-                case GfxTextureType::Texture3D:
+                case enums::TextureType3D:
                     resourceDesc.Dimension        = D3D12_RESOURCE_DIMENSION_TEXTURE3D;
                     resourceDesc.DepthOrArraySize = desc.depth;
                     break;
-                case GfxTextureType::TextureCube:
+                case enums::TextureTypeCube:
                     ASSERT(desc.array_size == 6);
                     resourceDesc.Dimension        = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
                     resourceDesc.DepthOrArraySize = 6;
                     break;
-                case GfxTextureType::TextureCubeArray:
+                case enums::TextureTypeCubeArray:
                     ASSERT(desc.array_size % 6 == 0);
                     resourceDesc.Dimension        = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
                     resourceDesc.DepthOrArraySize = desc.array_size;
@@ -533,31 +542,31 @@ namespace ncore
             return resourceDesc;
         }
 
-        inline D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_rt_as_flags(GfxRayTracing::AccStructureFlag flags)
+        inline D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_rt_as_flags(enums::rt::accstruct_flag flags)
         {
             D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_flags = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_NONE;
 
-            if (flags & GfxRayTracing::AccStructure::FlagAllowUpdate)
+            if (flags & enums::rt::AsFlagAllowUpdate)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_UPDATE;
             }
 
-            if (flags & GfxRayTracing::AccStructure::FlagAllowCompaction)
+            if (flags & enums::rt::AsFlagAllowCompaction)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_ALLOW_COMPACTION;
             }
 
-            if (flags & GfxRayTracing::AccStructure::FlagPreferFastTrace)
+            if (flags & enums::rt::AsFlagPreferFastTrace)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_TRACE;
             }
 
-            if (flags & GfxRayTracing::AccStructure::FlagPreferFastBuild)
+            if (flags & enums::rt::AsFlagPreferFastBuild)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_BUILD;
             }
 
-            if (flags & GfxRayTracing::AccStructure::FlagLowMemory)
+            if (flags & enums::rt::AsFlagLowMemory)
             {
                 d3d12_flags |= D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_MINIMIZE_MEMORY;
             }
@@ -565,26 +574,26 @@ namespace ncore
             return d3d12_flags;
         }
 
-        inline D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_rt_instance_flags(GfxRayTracing::InstanceFlag flags)
+        inline D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_rt_instance_flags(enums::rt::instance_flag flags)
         {
             D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_flags = D3D12_RAYTRACING_INSTANCE_FLAG_NONE;
 
-            if (flags & GfxRayTracing::Instance::DisableCull)
+            if (flags & enums::rt::DisableCull)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_TRIANGLE_CULL_DISABLE;
             }
 
-            if (flags & GfxRayTracing::Instance::FrontFaceCCW)
+            if (flags & enums::rt::FrontFaceCCW)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_TRIANGLE_FRONT_COUNTERCLOCKWISE;
             }
 
-            if (flags & GfxRayTracing::Instance::ForceOpaque)
+            if (flags & enums::rt::ForceOpaque)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_FORCE_OPAQUE;
             }
 
-            if (flags & GfxRayTracing::Instance::ForceNoOpaque)
+            if (flags & enums::rt::ForceNoOpaque)
             {
                 d3d12_flags |= D3D12_RAYTRACING_INSTANCE_FLAG_FORCE_NON_OPAQUE;
             }

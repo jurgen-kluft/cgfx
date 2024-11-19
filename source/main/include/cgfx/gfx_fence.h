@@ -10,6 +10,7 @@ namespace ncore
         struct fence_t
         {
             D_GFX_OCS_COMPONENT;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         fence_t* CreateFence(device_t* device, const char* name);

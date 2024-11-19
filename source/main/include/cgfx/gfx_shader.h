@@ -12,6 +12,7 @@ namespace ncore
             D_GFX_OCS_COMPONENT;
             u64           m_hash;
             shader_desc_t m_desc = {};
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         shader_t* CreateShader(device_t* device, const shader_desc_t& desc, const char* name);

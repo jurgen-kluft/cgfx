@@ -10,6 +10,7 @@ namespace ncore
         struct descriptor_t
         {
             D_GFX_OCS_COMPONENT;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         descriptor_t* CreateShaderResourceView(device_t* device, texture_t* resource, const srv_desc_t& desc, const char* name);

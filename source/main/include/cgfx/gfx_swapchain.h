@@ -13,6 +13,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             swapchain_desc_t m_desc = {};
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         swapchain_t* CreateSwapchain(device_t* device, const swapchain_desc_t& desc, const char* name);
