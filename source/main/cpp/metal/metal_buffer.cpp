@@ -9,23 +9,16 @@ namespace ncore
     {
         namespace nmetal
         {
-            struct mbuffer_t
-            {
-                D_GFX_OCS_COMPONENT;
-                MTL::Buffer* m_pBuffer     = nullptr;
-                void*        m_pCpuAddress = nullptr;
-            };
-
             ngfx::buffer_t* CreateBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
-                nmetal::mbuffer_t* mbuffer = AddAnotherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                nmetal::mbuffer_t* mbuffer = CreateComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 // ..
                 return buffer;
             }
 
             void Destroy(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
-                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 if (mbuffer != nullptr && mbuffer->m_pCpuAddress)
                 {
                     nmetal::Evict(device, mbuffer->m_pBuffer);
@@ -35,7 +28,7 @@ namespace ncore
 
             bool Create(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
-                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
 
                 // TODO We should introduce a component that holds heap and heap allocation information, this should not be part of the buffer
                 //      descriptor. This will allow us to remove the heap_offset and heap members from the buffer descriptor.
@@ -51,7 +44,7 @@ namespace ncore
                 }
                 else
                 {
-                    nmetal::device_t* mdevice = GetOtherComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     mbuffer->m_pBuffer        = mdevice->m_pDevice->newBuffer(buffer->m_desc.size, ToResourceOptions(buffer->m_desc.memory_type));
                 }
 
@@ -63,7 +56,7 @@ namespace ncore
 
                 MakeResident(device, mbuffer->m_pBuffer);
 
-                name_t const* name = GetOtherComponent<ngfx::buffer_t, name_t>(device, buffer);
+                name_t const* name = GetComponent<ngfx::buffer_t, name_t>(device, buffer);
                 SetDebugLabel(mbuffer->m_pBuffer, name->m_name);
 
                 if (buffer->m_desc.memory_type != enums::MemoryGpuOnly)
@@ -76,19 +69,19 @@ namespace ncore
 
             void* GetHandle(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
-                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 return mbuffer->m_pBuffer;
             }
 
             void* GetCpuAddress(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
-                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 return mbuffer->m_pCpuAddress;
             }
 
             u64 GetGpuAddress(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
-                nmetal::mbuffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
+                nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 return mbuffer->m_pBuffer->gpuAddress();
             }
 

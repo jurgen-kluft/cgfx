@@ -9,7 +9,7 @@ namespace ncore
         {
             heap_t* CreateHeap(ngfx::device_t* pDevice, resource_t* resource, heap_t* heap)
             {
-                mheap_t* mheap = AddAnotherComponent<ngfx::heap_t, mheap_t>(pDevice, heap);
+                mheap_t* mheap = CreateComponent<ngfx::heap_t, mheap_t>(pDevice, heap);
                 mheap->m_pHeap = nullptr;
                 return heap;
             }
@@ -18,7 +18,7 @@ namespace ncore
             {
                 ASSERT(m_desc.size % (64 * 1024) == 0);
 
-                nmetal::device_t* mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
+                nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
                 MTL::Device*      mtlDevice = mdevice->m_pDevice;
                 ;
 
@@ -27,7 +27,7 @@ namespace ncore
                 descriptor->setResourceOptions(ToResourceOptions(pHeap->m_desc.memory_type));
                 descriptor->setType(MTL::HeapTypePlacement);  // TODO : MTL::HeapTypeSparse for sparse textures
 
-                nmetal::mheap_t* mheap = GetOtherComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                nmetal::mheap_t* mheap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
                 mheap->m_pHeap         = mtlDevice->newHeap(descriptor);
                 descriptor->release();
 
@@ -39,7 +39,7 @@ namespace ncore
 
                 MakeResident(pDevice, mheap->m_pHeap);
 
-                name_t const* name = GetOtherComponent<ngfx::heap_t, name_t>(pDevice, pHeap);
+                name_t const* name = GetComponent<ngfx::heap_t, name_t>(pDevice, pHeap);
                 SetDebugLabel(mheap->m_pHeap, name->m_name);
 
                 return true;
@@ -47,7 +47,7 @@ namespace ncore
 
             void Destroy(ngfx::device_t* pDevice, heap_t* pHeap)
             {
-                nmetal::mheap_t* mheap = GetOtherComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                nmetal::mheap_t* mheap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
                 if (mheap != nullptr)
                 {
                     nmetal::Evict(pDevice, mheap->m_pHeap);
@@ -55,12 +55,12 @@ namespace ncore
                 }
             }
 
-            void* GetHandle(ngfx::device_t* pDevice, const heap_t* pHeap)
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap)
             {
-                nmetal::mheap_t* mheap = GetOtherComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                nmetal::mheap_t* mheap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
                 return mheap->m_pHeap;
             }
-            
+
         }  // namespace nmetal
 
     }  // namespace ngfx

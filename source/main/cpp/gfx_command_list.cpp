@@ -31,8 +31,8 @@ namespace ncore
 
         command_list_t* CreateCommandList(device_t* device, enums::command_queue_type queue_type, const char* name)
         {
-            resource_t*     resource = CreateObject<resource_t>(device, name);
-            command_list_t* cmdlist  = AddComponent<resource_t, command_list_t>(device, resource);
+            resource_t*     resource = CreateInstance<resource_t>(device, name);
+            command_list_t* cmdlist  = CreateComponent<resource_t, command_list_t>(device, resource);
             cmdlist->m_device        = device;
             cmdlist->m_queueType     = queue_type;
             D_CL_ROUTER1(CreateCommandList, cmdlist);

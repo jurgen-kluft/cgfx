@@ -44,8 +44,8 @@ namespace ncore
 
         texture_t* CreateTexture(device_t* device, const texture_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateObject<resource_t>(device, name);
-            texture_t*  texture  = AddComponent<resource_t, texture_t>(device, resource);
+            resource_t* resource = CreateInstance<resource_t>(device, name);
+            texture_t*  texture  = CreateComponent<resource_t, texture_t>(device, resource);
             texture->m_desc      = desc;
             switch (device->m_desc.backend)
             {

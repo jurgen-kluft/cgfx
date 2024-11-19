@@ -11,6 +11,14 @@ namespace ncore
 #ifdef TARGET_MAC
         namespace nmetal
         {
+            struct mbuffer_t
+            {
+                D_GFX_OCS_COMPONENT;
+                MTL::Buffer* m_pBuffer     = nullptr;
+                void*        m_pCpuAddress = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::buffer_t* CreateBuffer(ngfx::device_t* device, ngfx::buffer_t*);
             bool            Create(ngfx::device_t* device, ngfx::buffer_t*);
             void            Destroy(ngfx::device_t*, ngfx::buffer_t*);

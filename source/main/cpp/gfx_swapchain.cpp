@@ -17,8 +17,8 @@ namespace ncore
     {
         swapchain_t* CreateSwapchain(device_t* device, const swapchain_desc_t& desc, const char* name)
         {
-            resource_t*  resource = CreateObject<resource_t>(device, name);
-            swapchain_t* sc       = AddComponent<resource_t, swapchain_t>(device, resource);
+            resource_t*  resource = CreateInstance<resource_t>(device, name);
+            swapchain_t* sc       = CreateComponent<resource_t, swapchain_t>(device, resource);
             sc->m_desc            = desc;
             switch (device->m_desc.backend)
             {

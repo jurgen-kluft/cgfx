@@ -15,8 +15,8 @@ namespace ncore
     {
         fence_t* CreateFence(device_t* device, const char* name)
         {
-            resource_t* resource = CreateObject<resource_t>(device, name);
-            fence_t*    fence    = AddComponent<resource_t, fence_t>(device, resource);
+            resource_t* resource = CreateInstance<resource_t>(device, name);
+            fence_t*    fence    = CreateComponent<resource_t, fence_t>(device, resource);
             return fence;
         }
 

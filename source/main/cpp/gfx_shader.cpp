@@ -14,8 +14,8 @@ namespace ncore
     {
         shader_t* CreateShader(device_t* device, const shader_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateObject<resource_t>(device, name);
-            shader_t*   shader   = AddComponent<resource_t, shader_t>(device, resource);
+            resource_t* resource = CreateInstance<resource_t>(device, name);
+            shader_t*   shader   = CreateComponent<resource_t, shader_t>(device, resource);
             shader->m_desc       = desc;
 
             switch (device->m_desc.backend)

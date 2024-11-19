@@ -15,8 +15,8 @@ namespace ncore
     {
         buffer_t* CreateBuffer(device_t* device, const buffer_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateObject<resource_t>(device, name);
-            buffer_t*   buffer   = AddComponent<resource_t, buffer_t>(device, resource);
+            resource_t* resource = CreateInstance<resource_t>(device, name);
+            buffer_t*   buffer   = CreateComponent<resource_t, buffer_t>(device, resource);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: return nd3d12::CreateBuffer(device, buffer);

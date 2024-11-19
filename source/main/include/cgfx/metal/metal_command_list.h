@@ -13,7 +13,7 @@ namespace ncore
 #ifdef TARGET_MAC
         namespace nmetal
         {
-            ngfx::command_list_t* CreateCommandList(ngfx::device_t* device, ngfx::command_list_t*);
+            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t*);
 
             bool  Create(ngfx::command_list_t*);
             void  Destroy(ngfx::command_list_t*);

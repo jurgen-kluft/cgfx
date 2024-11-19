@@ -13,15 +13,14 @@ namespace ncore
     {
         tlas_t* CreateRayTracingTLAS(device_t* device, const tlas_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateObject<resource_t>(device, name);
-            tlas_t*     tlas     = AddComponent<resource_t, tlas_t>(device, resource);
+            resource_t* resource = CreateInstance<resource_t>(device, name);
+            tlas_t*     tlas     = CreateComponent<resource_t, tlas_t>(device, resource);
             tlas->m_desc         = desc;
             return tlas;
         }
 
         bool Create(device_t* device, tlas_t* tlas)
         {
-            resource_t* resource = GetObject<resource_t>(device, tlas);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::Create(device, tlas); break;

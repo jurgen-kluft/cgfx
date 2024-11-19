@@ -28,6 +28,7 @@ namespace ncore
         {
             D_GFX_OCS_COMPONENT;
             buffer_desc_t m_desc = {};
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         buffer_t* CreateBuffer(device_t* device, const buffer_desc_t& desc, const char* name);

@@ -16,7 +16,7 @@ namespace ncore
         heap_t* CreateHeap(device_t* device, const heap_desc_t& desc, const char* name);
         bool    Create(device_t* device, heap_t* heap);
         void    Destroy(device_t* device, heap_t* heap);
-        void*   GetHandle(device_t* device, const heap_t* heap);
+        void*   GetHandle(device_t* device, heap_t* heap);
 
     }  // namespace ngfx
 }  // namespace ncore

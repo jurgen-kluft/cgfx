@@ -647,12 +647,16 @@ namespace ncore
                 TopLevelArgumentBuffer                    m_computeArgumentBuffer;
             };
 
-            ngfx::command_list_t* CreateCommandList(ngfx::device_t* device, ngfx::command_list_t* cmdList) { nmetal::command_list_t* mcmdList = AddAnotherComponent<ngfx::command_list_t, nmetal::command_list_t>(device, cmdList); }
+            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cmdList)
+            {
+                // ...
+                nmetal::command_list_t* mcmdList = CreateComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+            }
 
             bool Create(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList  = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::device_t*       mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                nmetal::command_list_t* mcmdList  = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::device_t*       mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
                 MTL::Device*            mtlDevice = mdevice->m_pDevice;
                 mcmdList->m_pFence                = mtlDevice->newFence();
                 return true;
@@ -660,7 +664,7 @@ namespace ncore
 
             void Destroy(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 if (mcmdList->m_pFence)
                 {
                     mcmdList->m_pFence->release();
@@ -670,7 +674,7 @@ namespace ncore
 
             void* GetHandle(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 return mcmdList->m_pCommandBuffer;
             }
 
@@ -678,9 +682,9 @@ namespace ncore
 
             void Begin(ngfx::command_list_t* cmdList)
             {
-                nmetal::device_t*       mdevice  = GetOtherComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                nmetal::device_t*       mdevice  = GetComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
                 MTL::CommandQueue*      queue    = mdevice->m_pQueue;
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 mcmdList->m_pCommandBuffer       = queue->commandBuffer();
             }
 
@@ -737,7 +741,7 @@ namespace ncore
 
             void End(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 EndBlitEncoder(mcmdList);
                 EndComputeEncoder(mcmdList);
                 EndRenderPass(mcmdList);
@@ -749,36 +753,36 @@ namespace ncore
 
             void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::fence_t*        mfence   = GetOtherComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::fence_t*        mfence   = GetComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
                 mcmdList->m_pCommandBuffer->encodeWait(mfence->m_pEvent, value);
             }
 
             void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::fence_t*        mfence   = GetOtherComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::fence_t*        mfence   = GetComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
                 mcmdList->m_pCommandBuffer->encodeSignalEvent(mfence->m_pEvent, value);
             }
 
             void Present(ngfx::command_list_t* cmdList, ngfx::swapchain_t* swapchain)
             {
-                nmetal::command_list_t* mcmdList   = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::swapchain_t*    mswapchain = GetOtherComponent<ngfx::swapchain_t, nmetal::swapchain_t>(cmdList->m_device, swapchain);
+                nmetal::command_list_t* mcmdList   = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::swapchain_t*    mswapchain = GetComponent<ngfx::swapchain_t, nmetal::swapchain_t>(cmdList->m_device, swapchain);
                 // mcmdList->m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable());
                 mcmdList->m_pCommandBuffer->presentDrawable(mswapchain->m_pView->currentDrawable());
             }
 
             void Submit(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 mcmdList->m_pCommandBuffer->commit();
                 mcmdList->m_pCommandBuffer = nullptr;
             }
 
             void ResetState(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 ResetState(mcmdList);
             }
 
@@ -787,7 +791,7 @@ namespace ncore
 
             void BeginEvent(ngfx::command_list_t* cmdList, const char* event_name)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 NS::String*             label    = NS::String::alloc()->init(event_name, NS::StringEncoding::UTF8StringEncoding);
                 mcmdList->m_pCommandBuffer->pushDebugGroup(label);
                 label->release();
@@ -795,7 +799,7 @@ namespace ncore
 
             void EndEvent(ngfx::command_list_t* cmdList)
             {
-                nmetal::command_list_t* mcmdList = GetOtherComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 mcmdList->m_pCommandBuffer->popDebugGroup();
             }
 

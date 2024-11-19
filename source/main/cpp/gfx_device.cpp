@@ -8,7 +8,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        void InitializeOcs(ncs::allocator_t* cs)
+        void RegisterComponents(ncs::allocator_t* cs)
         {
             // register components
             cs->register_component<name_t>(2048);
@@ -22,7 +22,7 @@ namespace ncore
         device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc)
         {
             ncs::allocator_t* cs = g_allocate<ncs::allocator_t>(allocator);
-            InitializeOcs(cs);
+            RegisterComponents(cs);
 
             ngfx::resource_t* device_resource = cs->new_instance<ngfx::resource_t>();
             ngfx::device_t*   pDevice         = cs->create_component<ngfx::resource_t, ngfx::device_t>(device_resource);

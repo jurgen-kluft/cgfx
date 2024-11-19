@@ -13,8 +13,8 @@ namespace ncore
     {
         blas_t* CreateRayTracingBLAS(device_t* device, const blas_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateObject<resource_t>(device, name);
-            blas_t*     blas     = AddComponent<resource_t, blas_t>(device, resource);
+            resource_t* resource = CreateInstance<resource_t>(device, name);
+            blas_t*     blas     = CreateComponent<resource_t, blas_t>(device, resource);
             blas->m_desc         = desc;
             return blas;
         }

@@ -27,7 +27,7 @@ namespace ncore
             ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void*         GetHandle(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void*         GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
             void          UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nmetal
     }  // namespace ngfx

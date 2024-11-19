@@ -29,7 +29,7 @@ namespace ncore
         void*     GetHandle(device_t* device);
         void      BeginFrame(device_t* device);
         void      EndFrame(device_t* device);
-        
+
                 template <typename C>
         void AttachName(device_t* device, C* pResource, const char* name)
         {
@@ -70,7 +70,7 @@ namespace ncore
         }
 
         template <typename C1, typename C2>
-        C2* GetComponent(device_t* device, C1* pResource)
+        C2* GetComponent(device_t* device, C1 const* pResource)
         {
             return device->m_allocatorOCS->get_component<C1, C2>(pResource);
         }
@@ -79,7 +79,7 @@ namespace ncore
         C2 const* GetComponent(device_t const* device, C1 const* pResource)
         {
             return device->m_allocatorOCS->get_component<C1, C2>(pResource);
-        }        
+        }
 
         template <typename C>
         void SetTag(device_t* device, C* pResource, u16 tag)

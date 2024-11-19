@@ -19,10 +19,10 @@ namespace ncore
                 MTL::Heap* m_pHeap = nullptr;
             };
 
-            heap_t* CreateHeap(device_t* pDevice, resource_t* resource, heap_t* heap);
-            bool    Create(device_t* pDevice, heap_t* pHeap);
-            void    Destroy(device_t* pDevice, heap_t* pHeap);
-            void*   GetHandle(device_t* pDevice, const heap_t* pHeap);
+            ngfx::heap_t* CreateHeap(ngfx::device_t* pDevice, resource_t* resource, ngfx::heap_t* heap);
+            bool          Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void*         GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
         }  // namespace nmetal
     }  // namespace ngfx
 }  // namespace ncore

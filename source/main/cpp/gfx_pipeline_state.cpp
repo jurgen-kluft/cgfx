@@ -10,8 +10,8 @@ namespace ncore
     {
         pipeline_state_t* CreateGraphicsPipelineState(device_t* device, const graphics_pipeline_desc_t& desc, const char* name)
         {
-            resource_t*       resource = CreateObject<resource_t>(device, name);
-            pipeline_state_t* ps       = AddComponent<resource_t, pipeline_state_t>(device, resource);
+            resource_t*       resource = CreateInstance<resource_t>(device, name);
+            pipeline_state_t* ps       = CreateComponent<resource_t, pipeline_state_t>(device, resource);
 
             switch (device->m_desc.backend)
             {
@@ -24,8 +24,8 @@ namespace ncore
 
         pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, const mesh_shading_pipeline_desc_t& desc, const char* name)
         {
-            resource_t*       resource = CreateObject<resource_t>(device, name);
-            pipeline_state_t* ps       = AddComponent<resource_t, pipeline_state_t>(device, resource);
+            resource_t*       resource = CreateInstance<resource_t>(device, name);
+            pipeline_state_t* ps       = CreateComponent<resource_t, pipeline_state_t>(device, resource);
 
             switch (device->m_desc.backend)
             {
@@ -38,8 +38,8 @@ namespace ncore
 
         pipeline_state_t* CreateComputePipelineState(device_t* device, const compute_pipeline_desc_t& desc, const char* name)
         {
-            resource_t*       resource = CreateObject<resource_t>(device, name);
-            pipeline_state_t* ps       = AddComponent<resource_t, pipeline_state_t>(device, resource);
+            resource_t*       resource = CreateInstance<resource_t>(device, name);
+            pipeline_state_t* ps       = CreateComponent<resource_t, pipeline_state_t>(device, resource);
 
             switch (device->m_desc.backend)
             {

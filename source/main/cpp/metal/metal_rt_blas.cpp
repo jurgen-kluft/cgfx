@@ -11,7 +11,7 @@ namespace ncore
         {
             ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
             {
-                mblas_t* mblas            = AddAnotherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas_t* mblas            = CreateComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 mblas->m_geometries       = nullptr;
                 mblas->m_geometries_count = 0;
                 return pBLAS;
@@ -19,7 +19,7 @@ namespace ncore
 
             void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
             {
-                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas_t* mblas = GetComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 if (mblas)
                 {
                     mblas->m_pAccelerationStructure->release();
@@ -37,7 +37,7 @@ namespace ncore
                 // TODO, allocate memory for geometries
                 // m_geometries.reserve(m_desc.geometry_counth);
 
-                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas_t* mblas = GetComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 for (u32 i = 0; i < pBLAS->m_desc.geometries_count; ++i)
                 {
                     const rt_geometry_t& geometry = pBLAS->m_desc.geometries[i];
@@ -62,7 +62,7 @@ namespace ncore
                 mblas->m_pDescriptor->setGeometryDescriptors(geometryDescriptors);
                 mblas->m_pDescriptor->setUsage(ToAccelerationStructureUsage(pBLAS->m_desc.flags));
 
-                nmetal::device_t*               mdevice   = GetOtherComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
+                nmetal::device_t*               mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
                 MTL::Device*                    mtlDevice = mdevice->m_pDevice;
                 MTL::AccelerationStructureSizes asSizes   = mtlDevice->accelerationStructureSizes(mblas->m_pDescriptor);
 
@@ -80,7 +80,7 @@ namespace ncore
                 MakeResident(pDevice, mblas->m_pAccelerationStructure);
                 MakeResident(pDevice, mblas->m_pScratchBuffer);
 
-                name_t const* name  = GetOtherComponent<ngfx::blas_t, name_t>(pDevice, pBLAS);
+                name_t const* name  = GetComponent<ngfx::blas_t, name_t>(pDevice, pBLAS);
                 NS::String*   label = NS::String::alloc()->init(name->m_name, NS::StringEncoding::UTF8StringEncoding);
                 mblas->m_pAccelerationStructure->setLabel(label);
                 label->release();
@@ -88,9 +88,9 @@ namespace ncore
                 return true;
             }
 
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS)
             {
-                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas_t* mblas = GetComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 return mblas->m_pAccelerationStructure;
             }
 
@@ -99,7 +99,7 @@ namespace ncore
                 ASSERT(pBLAS->m_desc.flags & enums::rt::AsFlagAllowUpdate);
                 ASSERT(pBLAS->m_geometries_count == 1);  // todo : suppport more than 1
 
-                mblas_t* mblas = GetOtherComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
+                mblas_t* mblas = GetComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 mblas->m_geometries[0]->setVertexBuffer((MTL::Buffer*)GetHandle(pDevice, vertex_buffer));
                 mblas->m_geometries[0]->setVertexBufferOffset((NS::UInteger)vertex_buffer_offset);
 
