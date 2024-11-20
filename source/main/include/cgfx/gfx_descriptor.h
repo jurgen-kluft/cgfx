@@ -10,6 +10,7 @@ namespace ncore
         struct descriptor_t
         {
             D_GFX_OCS_COMPONENT;
+            enums::descriptor_type m_type;
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 

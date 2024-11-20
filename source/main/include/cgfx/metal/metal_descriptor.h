@@ -1,7 +1,7 @@
 #ifndef __CGFX_METAL_DESCRIPTOR_H__
 #define __CGFX_METAL_DESCRIPTOR_H__
 
-//#include "cgfx/metal/metal_utils.h"
+#include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_descriptor.h"
 #include "cgfx/gfx_buffer.h"
 
@@ -11,6 +11,73 @@ namespace ncore
     {
         namespace nmetal
         {
+            struct mbuffer_t;
+            struct mtexture_t;
+
+            struct srv_base_t
+            {
+                MTL::Texture* m_textureView;
+                u32           m_heapIndex = GFX_INVALID_RESOURCE;
+                srv_desc_t    m_desc      = {};
+            };
+
+            struct srv_texture_t
+            {
+                D_GFX_OCS_COMPONENT;
+                nmetal::mtexture_t* m_texture;
+                srv_base_t          m_base;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct srv_buffer_t
+            {
+                D_GFX_OCS_COMPONENT;
+                nmetal::mbuffer_t* m_buffer;
+                srv_base_t         m_base;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct uav_base_t
+            {
+                MTL::Texture*    m_textureView;
+                u32              m_heapIndex = GFX_INVALID_RESOURCE;
+                ngfx::uav_desc_t m_desc      = {};
+            };
+
+            struct uav_texture_t
+            {
+                D_GFX_OCS_COMPONENT;
+                nmetal::mtexture_t* m_texture;
+                uav_base_t          m_base;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct uav_buffer_t
+            {
+                D_GFX_OCS_COMPONENT;
+                nmetal::mbuffer_t* m_buffer;
+                uav_base_t         m_base;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct cbv_t
+            {
+                D_GFX_OCS_COMPONENT;
+                nmetal::mbuffer_t* m_buffer;
+                u32                m_heapIndex = GFX_INVALID_RESOURCE;
+                ngfx::cbv_desc_t   m_desc      = {};
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct sampler_t
+            {
+                D_GFX_OCS_COMPONENT;
+                MTL::SamplerState*   m_pSampler  = nullptr;
+                u32                  m_heapIndex = GFX_INVALID_RESOURCE;
+                ngfx::sampler_desc_t m_desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
             ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
             ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc);

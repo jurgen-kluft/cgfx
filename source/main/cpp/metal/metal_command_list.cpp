@@ -1,4 +1,6 @@
 #include "cbase/c_integer.h"
+#include "cgfx/gfx_defines.h"
+#include "cgfx/metal/metal_buffer.h"
 #include "cgfx/metal/metal_command_list.h"
 #include "cgfx/metal/metal_device.h"
 #include "cgfx/metal/metal_swapchain.h"
@@ -17,615 +19,18 @@ namespace ncore
 {
     namespace ngfx
     {
-        static bool nearly_equal(float a, float b, float epsilon = 0.0001f) { return fabs(a - b) < epsilon; }
-
-        //         void MetalCommandList::CopyBufferToTexture(texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset)
-        //         {
-        //             BeginBlitEncoder();
-        //             const texture_desc_t& desc        = dst_texture->GetDesc();
-        //             MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
-        //             u32 bytesPerRow = ((MetalTexture*)dst_texture)->GetRowPitch(mip_level);
-        //             u32 block_height  = GetFormatBlockHeight(desc.format);
-        //             u32 height        = math::max(desc.height >> mip_level, block_height);
-        //             u32 row_num       = height / block_height;
-        //             u32 bytesPerImage = bytesPerRow * row_num;
-        //             m_pBlitCommandEncoder->copyFromBuffer((MTL::Buffer*)src_buffer->GetHandle(), offset, bytesPerRow, desc.type == GfxTextureType::Texture3D ? bytesPerImage : 0, textureSize, (MTL::Texture*)dst_texture->GetHandle(), array_slice,
-        //             mip_level,
-        //                                                   MTL::Origin::Make(0, 0, 0));
-        //         }
-
-        //         void MetalCommandList::CopyTextureToBuffer(buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice)
-        //         {
-        //             BeginBlitEncoder();
-        //             const texture_desc_t& desc        = src_texture->GetDesc();
-        //             MTL::Size             textureSize = MTL::Size::Make(math::max(desc.width >> mip_level, 1u), math::max(desc.height >> mip_level, 1u), math::max(desc.depth >> mip_level, 1u));
-        //             u32 bytesPerRow = ((MetalTexture*)src_texture)->GetRowPitch(mip_level);
-        //             u32 block_height  = GetFormatBlockHeight(desc.format);
-        //             u32 height        = math::max(desc.height >> mip_level, block_height);
-        //             u32 row_num       = height / block_height;
-        //             u32 bytesPerImage = bytesPerRow * row_num;
-        //             m_pBlitCommandEncoder->copyFromTexture((MTL::Texture*)src_texture->GetHandle(), array_slice, mip_level, MTL::Origin(0, 0, 0), textureSize, (MTL::Buffer*)dst_buffer->GetHandle(), offset, bytesPerRow,
-        //                                                    desc.type == GfxTextureType::Texture3D ? bytesPerImage : 0);
-        //         }
-
-        //         void MetalCommandList::CopyBuffer(buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
-        //         {
-        //             BeginBlitEncoder();
-        //             m_pBlitCommandEncoder->copyFromBuffer((MTL::Buffer*)src->GetHandle(), src_offset, (MTL::Buffer*)dst->GetHandle(), dst_offset, size);
-        //         }
-
-        //         void MetalCommandList::CopyTexture(texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
-        //         {
-        //             BeginBlitEncoder();
-        //             const texture_desc_t& desc     = src->GetDesc();
-        //             MTL::Size             src_size = MTL::Size::Make(math::max(desc.width >> src_mip, 1u), math::max(desc.height >> src_mip, 1u), math::max(desc.depth >> src_mip, 1u));
-        //             m_pBlitCommandEncoder->copyFromTexture((MTL::Texture*)src->GetHandle(), src_array, src_mip, MTL::Origin(0, 0, 0), src_size, (MTL::Texture*)dst->GetHandle(), dst_array, dst_mip, MTL::Origin(0, 0, 0));
-        //         }
-
-        //         void MetalCommandList::ClearUAV(resource_t* resource, descriptor_t* uav, const float* clear_value, IGfxClearUavApi* clear_api)
-        //         {
-        //             const uav_desc_t& desc = ((MetalUnorderedAccessView*)uav)->GetDesc();
-        //             clear_api->ClearUAV(this, resource, uav, desc, clear_value);
-        //         }
-
-        //         void MetalCommandList::ClearUAV(resource_t* resource, descriptor_t* uav, const u32* clear_value, IGfxClearUavApi* clear_api)
-        //         {
-        //             const uav_desc_t& desc = ((MetalUnorderedAccessView*)uav)->GetDesc();
-        //             clear_api->ClearUAV(this, resource, uav, desc, clear_value);
-        //         }
-
-        //         void MetalCommandList::WriteBuffer(buffer_t* buffer, u32 offset, u32 data)
-        //         {
-        //             BeginBlitEncoder();
-
-        //             // TODO handle events
-        //             // BeginEvent("command_list_t::WriteBuffer");
-
-        //             MTL::Buffer* mtlBuffer = (MTL::Buffer*)buffer->GetHandle();
-        //             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 0, sizeof(u8)), u8(data >> 0));
-        //             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 1, sizeof(u8)), u8(data >> 8));
-        //             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 2, sizeof(u8)), u8(data >> 16));
-        //             m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 3, sizeof(u8)), u8(data >> 24));
-
-        //             // EndEvent();
-        //         }
-
-        //         void MetalCommandList::UpdateTileMappings(texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings)
-        //         {
-        //             // todo
-        //         }
-
-        //         void MetalCommandList::TextureBarrier(texture_t* texture, u32 sub_resource, GfxAccessFlags access_before, GfxAccessFlags access_after) {}
-
-        //         void MetalCommandList::BufferBarrier(buffer_t* buffer, GfxAccessFlags access_before, GfxAccessFlags access_after) {}
-
-        //         void MetalCommandList::GlobalBarrier(GfxAccessFlags access_before, GfxAccessFlags access_after) {}
-
-        //         void MetalCommandList::FlushBarriers() {}
-
-        //         void MetalCommandList::BeginRenderPass(const renderpass_desc_t& render_pass)
-        //         {
-        //             EndBlitEncoder();
-        //             EndComputeEncoder();
-        //             EndASEncoder();
-
-        //             u32 width  = 0;
-        //             u32 height = 0;
-
-        //             MTL::RenderPassDescriptor*                     descriptor        = MTL::RenderPassDescriptor::alloc()->init();
-        //             MTL::RenderPassColorAttachmentDescriptorArray* colorAttachements = descriptor->colorAttachments();
-
-        //             for (u32 i = 0; i < 8; ++i)
-        //             {
-        //                 if (render_pass.color[i].texture == nullptr)
-        //                 {
-        //                     continue;
-        //                 }
-
-        //                 if (width == 0)
-        //                 {
-        //                     width = render_pass.color[i].texture->GetDesc().width;
-        //                 }
-
-        //                 if (height == 0)
-        //                 {
-        //                     height = render_pass.color[i].texture->GetDesc().height;
-        //                 }
-
-        //                 ASSERT(width == render_pass.color[i].texture->GetDesc().width);
-        //                 ASSERT(height == render_pass.color[i].texture->GetDesc().height);
-
-        //                 colorAttachements->object(i)->setTexture((MTL::Texture*)render_pass.color[i].texture->GetHandle());
-        //                 colorAttachements->object(i)->setLevel(render_pass.color[i].mip_slice);
-        //                 colorAttachements->object(i)->setSlice(render_pass.color[i].array_slice);
-        //                 colorAttachements->object(i)->setLoadAction(ToLoadAction(render_pass.color[i].load_op));
-        //                 colorAttachements->object(i)->setStoreAction(ToStoreAction(render_pass.color[i].store_op));
-        //                 colorAttachements->object(i)->setClearColor(MTL::ClearColor::Make(render_pass.color[i].clear_color[0], render_pass.color[i].clear_color[1], render_pass.color[i].clear_color[2], render_pass.color[i].clear_color[3]));
-        //             }
-
-        //             if (render_pass.depth.texture != nullptr)
-        //             {
-        //                 if (width == 0)
-        //                 {
-        //                     width = render_pass.depth.texture->GetDesc().width;
-        //                 }
-
-        //                 if (height == 0)
-        //                 {
-        //                     height = render_pass.depth.texture->GetDesc().height;
-        //                 }
-
-        //                 ASSERT(width == render_pass.depth.texture->GetDesc().width);
-        //                 ASSERT(height == render_pass.depth.texture->GetDesc().height);
-
-        //                 MTL::RenderPassDepthAttachmentDescriptor* depthAttachment = descriptor->depthAttachment();
-        //                 depthAttachment->setTexture((MTL::Texture*)render_pass.depth.texture->GetHandle());
-        //                 depthAttachment->setLevel(render_pass.depth.mip_slice);
-        //                 depthAttachment->setSlice(render_pass.depth.array_slice);
-        //                 depthAttachment->setLoadAction(ToLoadAction(render_pass.depth.load_op));
-        //                 depthAttachment->setStoreAction(ToStoreAction(render_pass.depth.store_op));
-        //                 depthAttachment->setClearDepth(render_pass.depth.clear_depth);
-
-        //                 if (IsStencilFormat(render_pass.depth.texture->GetDesc().format))
-        //                 {
-        //                     MTL::RenderPassStencilAttachmentDescriptor* stencilAttachment = descriptor->stencilAttachment();
-        //                     stencilAttachment->setTexture((MTL::Texture*)render_pass.depth.texture->GetHandle());
-        //                     stencilAttachment->setLevel(render_pass.depth.mip_slice);
-        //                     stencilAttachment->setSlice(render_pass.depth.array_slice);
-        //                     stencilAttachment->setLoadAction(ToLoadAction(render_pass.depth.stencil_load_op));
-        //                     stencilAttachment->setStoreAction(ToStoreAction(render_pass.depth.stencil_store_op));
-        //                     stencilAttachment->setClearStencil(render_pass.depth.clear_stencil);
-        //                 }
-        //             }
-
-        //             ASSERT(m_pRenderCommandEncoder == nullptr);
-        //             m_pRenderCommandEncoder = m_pCommandBuffer->renderCommandEncoder(descriptor);
-        //             m_pRenderCommandEncoder->waitForFence(m_pFence, MTL::RenderStageVertex | MTL::RenderStageObject);
-        //             descriptor->release();
-
-        //             MetalDevice* pDevice = (MetalDevice*)m_pDevice;
-        //             m_pRenderCommandEncoder->setVertexBuffer(pDevice->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //             m_pRenderCommandEncoder->setVertexBuffer(pDevice->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBuffer(pDevice->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBuffer(pDevice->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-
-        //             SetViewport(0, 0, width, height);
-        //         }
-
-        //         void MetalCommandList::EndRenderPass()
-        //         {
-        //             if (m_pRenderCommandEncoder)
-        //             {
-        //                 m_pRenderCommandEncoder->updateFence(m_pFence, MTL::RenderStageFragment);
-        //                 m_pRenderCommandEncoder->endEncoding();
-        //                 m_pRenderCommandEncoder = nullptr;
-        //                 ResetState();
-        //             }
-        //         }
-
-        //         void MetalCommandList::SetPipelineState(pipeline_state_t* state)
-        //         {
-        //             if (m_pCurrentPSO != state)
-        //             {
-        //                 m_pCurrentPSO = state;
-
-        //                 if (state->GetType() != GfxPipelineType::Compute)
-        //                 {
-        //                     ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //                     m_pRenderCommandEncoder->setRenderPipelineState((MTL::RenderPipelineState*)state->GetHandle());
-
-        //                     if (state->GetType() == GfxPipelineType::Graphics)
-        //                     {
-        //                         MetalGraphicsPipelineState*    graphicsPSO = (MetalGraphicsPipelineState*)state;
-        //                         const graphics_pipeline_desc_t& desc        = graphicsPSO->GetDesc();
-
-        //                         m_pRenderCommandEncoder->setDepthStencilState(graphicsPSO->GetDepthStencilState());
-        //                         SetRasterizerState(desc.rasterizer_state);
-        //                         m_primitiveType = ToPrimitiveType(desc.primitive_type);
-        //                     }
-        //                     else
-        //                     {
-        //                         MetalMeshShadingPipelineState*    meshShadingPSO = (MetalMeshShadingPipelineState*)state;
-        //                         const mesh_shading_pipeline_desc_t& desc           = meshShadingPSO->GetDesc();
-
-        //                         m_pRenderCommandEncoder->setDepthStencilState(meshShadingPSO->GetDepthStencilState());
-        //                         SetRasterizerState(desc.rasterizer_state);
-        //                     }
-        //                 }
-        //             }
-        //         }
-
-        //         void MetalCommandList::SetStencilReference(u8 stencil)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-        //             m_pRenderCommandEncoder->setStencilReferenceValue(stencil);
-        //         }
-
-        //         void MetalCommandList::SetBlendFactor(const float* blend_factor)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-        //             m_pRenderCommandEncoder->setBlendColor(blend_factor[0], blend_factor[1], blend_factor[2], blend_factor[3]);
-        //         }
-
-        //         void MetalCommandList::SetIndexBuffer(buffer_t* buffer, u32 offset, GfxFormat format)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             m_pIndexBuffer      = (MTL::Buffer*)buffer->GetHandle();
-        //             m_indexBufferOffset = offset;
-        //             m_indexType         = format == Gfx::R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32;
-        //         }
-
-        //         void MetalCommandList::SetViewport(u32 x, u32 y, u32 width, u32 height)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             MTL::Viewport viewport;  // = {x, y, width, height, 0.0, 1.0};
-        //             viewport.originX = x;
-        //             viewport.originY = y;
-        //             viewport.width   = width;
-        //             viewport.height  = height;
-        //             viewport.znear   = 0.0;
-        //             viewport.zfar    = 1.0;
-        //             m_pRenderCommandEncoder->setViewport(viewport);
-
-        //             SetScissorRect(x, y, width, height);
-        //         }
-
-        //         void MetalCommandList::SetScissorRect(u32 x, u32 y, u32 width, u32 height)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             MTL::ScissorRect scissorRect = {x, y, width, height};
-        //             m_pRenderCommandEncoder->setScissorRect(scissorRect);
-        //         }
-
-        //         void MetalCommandList::SetGraphicsConstants(u32 slot, const void* data, s64 data_size)
-        //         {
-        //             if (slot == 0)
-        //             {
-        //                 ASSERT(data_size <= GFX_MAX_ROOT_CONSTANTS * sizeof(u32));
-        //                 memcpy(m_graphicsArgumentBuffer.cbv0, data, data_size);
-        //             }
-        //             else
-        //             {
-        //                 ASSERT(slot < GFX_MAX_CBV_BINDINGS);
-        //                 u64 gpuAddress = ((MetalDevice*)m_pDevice)->AllocateConstantBuffer(data, data_size);
-
-        //                 if (slot == 1)
-        //                 {
-        //                     m_graphicsArgumentBuffer.cbv1 = gpuAddress;
-        //                 }
-        //                 else
-        //                 {
-        //                     m_graphicsArgumentBuffer.cbv2 = gpuAddress;
-        //                 }
-        //             }
-        //         }
-
-        //         void MetalCommandList::SetComputeConstants(u32 slot, const void* data, s64 data_size)
-        //         {
-        //             if (slot == 0)
-        //             {
-        //                 ASSERT(data_size <= GFX_MAX_ROOT_CONSTANTS * sizeof(u32));
-        //                 memcpy(m_computeArgumentBuffer.cbv0, data, data_size);
-        //             }
-        //             else
-        //             {
-        //                 ASSERT(slot < GFX_MAX_CBV_BINDINGS);
-        //                 u64 gpuAddress = ((MetalDevice*)m_pDevice)->AllocateConstantBuffer(data, data_size);
-
-        //                 if (slot == 1)
-        //                 {
-        //                     m_computeArgumentBuffer.cbv1 = gpuAddress;
-        //                 }
-        //                 else
-        //                 {
-        //                     m_computeArgumentBuffer.cbv2 = gpuAddress;
-        //                 }
-        //             }
-        //         }
-
-        //         void MetalCommandList::Draw(u32 vertex_count, u32 instance_count)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             m_pRenderCommandEncoder->setVertexBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             IRRuntimeDrawPrimitives(m_pRenderCommandEncoder, m_primitiveType, 0, vertex_count, instance_count);
-        //         }
-
-        //         void MetalCommandList::DrawIndexed(u32 index_count, u32 instance_count, u32 index_offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             m_pRenderCommandEncoder->setVertexBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             u64 indexBufferOffset = m_indexBufferOffset;
-        //             if (m_indexType == MTL::IndexTypeUInt16)
-        //             {
-        //                 indexBufferOffset += sizeof(uint16_t) * index_offset;
-        //             }
-        //             else
-        //             {
-        //                 indexBufferOffset += sizeof(u32) * index_offset;
-        //             }
-
-        //             IRRuntimeDrawIndexedPrimitives(m_pRenderCommandEncoder, m_primitiveType, index_count, m_indexType, m_pIndexBuffer, indexBufferOffset, instance_count, 0, 0);
-        //         }
-
-        //         void MetalCommandList::Dispatch(u32 group_count_x, u32 group_count_y, u32 group_count_z)
-        //         {
-        //             BeginComputeEncoder();
-
-        //             m_pComputeCommandEncoder->setComputePipelineState((MTL::ComputePipelineState*)m_pCurrentPSO->GetHandle());
-        //             m_pComputeCommandEncoder->setBytes(&m_computeArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             MTL::Size threadgroupsPerGrid   = MTL::Size::Make(group_count_x, group_count_y, group_count_z);
-        //             MTL::Size threadsPerThreadgroup = ((MetalComputePipelineState*)m_pCurrentPSO)->GetThreadsPerThreadgroup();
-        //             m_pComputeCommandEncoder->dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup);
-
-        //             EndComputeEncoder();
-        //         }
-
-        //         void MetalCommandList::DispatchMesh(u32 group_count_x, u32 group_count_y, u32 group_count_z)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             MetalDevice* pDevice = (MetalDevice*)m_pDevice;
-        //             m_pRenderCommandEncoder->setObjectBuffer(pDevice->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //             m_pRenderCommandEncoder->setObjectBuffer(pDevice->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-        //             m_pRenderCommandEncoder->setMeshBuffer(pDevice->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //             m_pRenderCommandEncoder->setMeshBuffer(pDevice->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-
-        //             m_pRenderCommandEncoder->setObjectBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setMeshBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             MTL::Size threadgroupsPerGrid         = MTL::Size::Make(group_count_x, group_count_y, group_count_z);
-        //             MTL::Size threadsPerObjectThreadgroup = ((MetalMeshShadingPipelineState*)m_pCurrentPSO)->GetThreadsPerObjectThreadgroup();
-        //             MTL::Size threadsPerMeshThreadgroup   = ((MetalMeshShadingPipelineState*)m_pCurrentPSO)->GetThreadsPerMeshThreadgroup();
-
-        //             m_pRenderCommandEncoder->drawMeshThreadgroups(threadgroupsPerGrid, threadsPerObjectThreadgroup, threadsPerMeshThreadgroup);
-        //         }
-
-        //         void MetalCommandList::DrawIndirect(buffer_t* buffer, u32 offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             m_pRenderCommandEncoder->setVertexBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             IRRuntimeDrawPrimitives(m_pRenderCommandEncoder, m_primitiveType, (MTL::Buffer*)buffer->GetHandle(), offset);
-        //         }
-
-        //         void MetalCommandList::DrawIndexedIndirect(buffer_t* buffer, u32 offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             m_pRenderCommandEncoder->setVertexBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             IRRuntimeDrawIndexedPrimitives(m_pRenderCommandEncoder, m_primitiveType, m_indexType, m_pIndexBuffer, m_indexBufferOffset, (MTL::Buffer*)buffer->GetHandle(), offset);
-        //         }
-
-        //         void MetalCommandList::DispatchIndirect(buffer_t* buffer, u32 offset)
-        //         {
-        //             BeginComputeEncoder();
-
-        //             m_pComputeCommandEncoder->setComputePipelineState((MTL::ComputePipelineState*)m_pCurrentPSO->GetHandle());
-        //             m_pComputeCommandEncoder->setBytes(&m_computeArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             MTL::Size threadsPerThreadgroup = ((MetalComputePipelineState*)m_pCurrentPSO)->GetThreadsPerThreadgroup();
-        //             m_pComputeCommandEncoder->dispatchThreadgroups((MTL::Buffer*)buffer->GetHandle(), offset, threadsPerThreadgroup);
-
-        //             EndComputeEncoder();
-        //         }
-
-        //         void MetalCommandList::DispatchMeshIndirect(buffer_t* buffer, u32 offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             MetalDevice* pDevice = (MetalDevice*)m_pDevice;
-        //             m_pRenderCommandEncoder->setObjectBuffer(pDevice->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //             m_pRenderCommandEncoder->setObjectBuffer(pDevice->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-        //             m_pRenderCommandEncoder->setMeshBuffer(pDevice->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //             m_pRenderCommandEncoder->setMeshBuffer(pDevice->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-
-        //             m_pRenderCommandEncoder->setObjectBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setMeshBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-        //             m_pRenderCommandEncoder->setFragmentBytes(&m_graphicsArgumentBuffer, sizeof(TopLevelArgumentBuffer), kIRArgumentBufferBindPoint);
-
-        //             MTL::Size threadsPerObjectThreadgroup = ((MetalMeshShadingPipelineState*)m_pCurrentPSO)->GetThreadsPerObjectThreadgroup();
-        //             MTL::Size threadsPerMeshThreadgroup   = ((MetalMeshShadingPipelineState*)m_pCurrentPSO)->GetThreadsPerMeshThreadgroup();
-
-        //             m_pRenderCommandEncoder->drawMeshThreadgroups((MTL::Buffer*)buffer->GetHandle(), offset, threadsPerObjectThreadgroup, threadsPerMeshThreadgroup);
-        //         }
-
-        //         void MetalCommandList::MultiDrawIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             // todo
-        //         }
-
-        //         void MetalCommandList::MultiDrawIndexedIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             // todo
-        //         }
-
-        //         void MetalCommandList::MultiDispatchIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
-        //         {
-        //             // todo
-        //         }
-
-        //         void MetalCommandList::MultiDispatchMeshIndirect(u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
-        //         {
-        //             ASSERT(m_pRenderCommandEncoder != nullptr);
-
-        //             // todo
-        //         }
-
-        //         void MetalCommandList::BuildRayTracingBLAS(blas_t* blas)
-        //         {
-        //             BeginASEncoder();
-
-        //             MetalRayTracingBLAS* metalBLAS = (MetalRayTracingBLAS*)blas;
-        //             m_pASEncoder->buildAccelerationStructure(metalBLAS->GetAccelerationStructure(), metalBLAS->GetDescriptor(), metalBLAS->GetScratchBuffer(), 0);
-        //         }
-
-        //         void MetalCommandList::UpdateRayTracingBLAS(blas_t* blas, buffer_t* vertex_buffer, u32 vertex_buffer_offset)
-        //         {
-        //             BeginASEncoder();
-
-        //             MetalRayTracingBLAS* metalBLAS = (MetalRayTracingBLAS*)blas;
-        //             metalBLAS->UpdateVertexBuffer(vertex_buffer, vertex_buffer_offset);
-
-        //             m_pASEncoder->refitAccelerationStructure(metalBLAS->GetAccelerationStructure(), metalBLAS->GetDescriptor(), metalBLAS->GetAccelerationStructure(), metalBLAS->GetScratchBuffer(), 0);
-        //         }
-
-        //         void MetalCommandList::BuildRayTracingTLAS(tlas_t* tlas, const GfxRayTracingInstance* instances, u32 instance_count)
-        //         {
-        //             BeginASEncoder();
-
-        //             MetalRayTracingTLAS* metalTLAS = (MetalRayTracingTLAS*)tlas;
-        //             metalTLAS->UpdateInstance(instances, instance_count);
-
-        //             m_pASEncoder->buildAccelerationStructure(metalTLAS->GetAccelerationStructure(), metalTLAS->GetDescriptor(), metalTLAS->GetScratchBuffer(), 0);
-        //         }
-
-        // #if MICROPROFILE_GPU_TIMERS
-        //         MicroProfileThreadLogGpu* MetalCommandList::GetProfileLog() const { return nullptr; }
-        // #endif
-
-        //         void MetalCommandList::BeginBlitEncoder()
-        //         {
-        //             EndRenderPass();
-        //             EndComputeEncoder();
-        //             EndASEncoder();
-
-        //             if (m_pBlitCommandEncoder == nullptr)
-        //             {
-        //                 m_pBlitCommandEncoder = m_pCommandBuffer->blitCommandEncoder();
-        //                 m_pBlitCommandEncoder->waitForFence(m_pFence);
-        //             }
-        //         }
-
-        //         void MetalCommandList::EndBlitEncoder()
-        //         {
-        //             if (m_pBlitCommandEncoder)
-        //             {
-        //                 m_pBlitCommandEncoder->updateFence(m_pFence);
-        //                 m_pBlitCommandEncoder->endEncoding();
-        //                 m_pBlitCommandEncoder = nullptr;
-        //             }
-        //         }
-
-        //         void MetalCommandList::BeginComputeEncoder()
-        //         {
-        //             EndRenderPass();
-        //             EndBlitEncoder();
-        //             EndASEncoder();
-
-        //             if (m_pComputeCommandEncoder == nullptr)
-        //             {
-        //                 m_pComputeCommandEncoder = m_pCommandBuffer->computeCommandEncoder();
-        //                 m_pComputeCommandEncoder->waitForFence(m_pFence);
-
-        //                 m_pComputeCommandEncoder->setBuffer(((MetalDevice*)m_pDevice)->GetResourceDescriptorBuffer(), 0, kIRDescriptorHeapBindPoint);
-        //                 m_pComputeCommandEncoder->setBuffer(((MetalDevice*)m_pDevice)->GetSamplerDescriptorBuffer(), 0, kIRSamplerHeapBindPoint);
-        //             }
-        //         }
-
-        //         void MetalCommandList::EndComputeEncoder()
-        //         {
-        //             if (m_pComputeCommandEncoder)
-        //             {
-        //                 m_pComputeCommandEncoder->updateFence(m_pFence);
-        //                 m_pComputeCommandEncoder->endEncoding();
-        //                 m_pComputeCommandEncoder = nullptr;
-        //             }
-        //         }
-
-        //         void MetalCommandList::BeginASEncoder()
-        //         {
-        //             EndRenderPass();
-        //             EndBlitEncoder();
-        //             EndComputeEncoder();
-
-        //             if (m_pASEncoder == nullptr)
-        //             {
-        //                 m_pASEncoder = m_pCommandBuffer->accelerationStructureCommandEncoder();
-        //                 m_pASEncoder->waitForFence(m_pFence);
-        //             }
-        //         }
-
-        //         void MetalCommandList::EndASEncoder()
-        //         {
-        //             if (m_pASEncoder)
-        //             {
-        //                 m_pASEncoder->updateFence(m_pFence);
-        //                 m_pASEncoder->endEncoding();
-        //                 m_pASEncoder = nullptr;
-        //             }
-        //         }
-
-        //         void MetalCommandList::SetRasterizerState(const rasterizer_state_t& state)
-        //         {
-        //             MTL::CullMode cullMode = ToCullMode(state.cull_mode);
-        //             if (m_cullMode != cullMode)
-        //             {
-        //                 m_pRenderCommandEncoder->setCullMode(cullMode);
-        //                 m_cullMode = cullMode;
-        //             }
-
-        //             MTL::Winding frontFaceWinding = state.front_ccw ? MTL::WindingCounterClockwise : MTL::WindingClockwise;
-        //             if (m_frontFaceWinding != frontFaceWinding)
-        //             {
-        //                 m_pRenderCommandEncoder->setFrontFacingWinding(frontFaceWinding);
-        //                 m_frontFaceWinding = frontFaceWinding;
-        //             }
-
-        //             MTL::TriangleFillMode fillMode = state.wireframe ? MTL::TriangleFillModeLines : MTL::TriangleFillModeFill;
-        //             if (m_fillMode != fillMode)
-        //             {
-        //                 m_pRenderCommandEncoder->setTriangleFillMode(fillMode);
-        //                 m_fillMode = fillMode;
-        //             }
-
-        //             MTL::DepthClipMode clipMode = state.depth_clip ? MTL::DepthClipModeClip : MTL::DepthClipModeClamp;
-        //             if (m_clipMode != clipMode)
-        //             {
-        //                 m_pRenderCommandEncoder->setDepthClipMode(clipMode);
-        //                 m_clipMode = clipMode;
-        //             }
-
-        //             if (!nearly_equal(state.depth_bias, m_depthBias) || !nearly_equal(state.depth_bias_clamp, m_depthBiasClamp) || !nearly_equal(state.depth_slope_scale, m_depthSlopeScale))
-        //             {
-        //                 m_pRenderCommandEncoder->setDepthBias(state.depth_bias, state.depth_slope_scale, state.depth_bias_clamp);
-
-        //                 m_depthBias       = state.depth_bias;
-        //                 m_depthBiasClamp  = state.depth_bias_clamp;
-        //                 m_depthSlopeScale = state.depth_slope_scale;
-        //             }
-        //         }
         namespace nmetal
         {
+            struct top_level_argument_buffer_t
+            {
+                u32      cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
+                uint64_t cbv1;                          // gpu address
+                uint64_t cbv2;
+            };
+
             struct command_list_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalCommandList);
-
-                struct TopLevelArgumentBuffer
-                {
-                    uint32_t cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
-                    uint64_t cbv1;                          // gpu address
-                    uint64_t cbv2;
-                };
 
                 MTL::CommandBuffer*                       m_pCommandBuffer         = nullptr;
                 MTL::BlitCommandEncoder*                  m_pBlitCommandEncoder    = nullptr;
@@ -645,11 +50,53 @@ namespace ncore
                 float                                     m_depthBias              = 0.0f;
                 float                                     m_depthBiasClamp         = 0.0f;
                 float                                     m_depthSlopeScale        = 0.0f;
-                TopLevelArgumentBuffer                    m_graphicsArgumentBuffer;
-                TopLevelArgumentBuffer                    m_computeArgumentBuffer;
+                top_level_argument_buffer_t               m_graphicsArgumentBuffer;
+                top_level_argument_buffer_t               m_computeArgumentBuffer;
 
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
+
+            static bool s_nearly_equal(float a, float b, float epsilon = 0.0001f) { return fabs(a - b) < epsilon; }
+
+            void SetRasterizerState(nmetal::command_list_t* cmdList, const rasterizer_state_t& state)
+            {
+                MTL::CullMode cullMode = ToCullMode(state.cull_mode);
+                if (cmdList->m_cullMode != cullMode)
+                {
+                    cmdList->m_pRenderCommandEncoder->setCullMode(cullMode);
+                    cmdList->m_cullMode = cullMode;
+                }
+
+                MTL::Winding frontFaceWinding = state.front_ccw ? MTL::WindingCounterClockwise : MTL::WindingClockwise;
+                if (cmdList->m_frontFaceWinding != frontFaceWinding)
+                {
+                    cmdList->m_pRenderCommandEncoder->setFrontFacingWinding(frontFaceWinding);
+                    cmdList->m_frontFaceWinding = frontFaceWinding;
+                }
+
+                MTL::TriangleFillMode fillMode = state.wireframe ? MTL::TriangleFillModeLines : MTL::TriangleFillModeFill;
+                if (cmdList->m_fillMode != fillMode)
+                {
+                    cmdList->m_pRenderCommandEncoder->setTriangleFillMode(fillMode);
+                    cmdList->m_fillMode = fillMode;
+                }
+
+                MTL::DepthClipMode clipMode = state.depth_clip ? MTL::DepthClipModeClip : MTL::DepthClipModeClamp;
+                if (cmdList->m_clipMode != clipMode)
+                {
+                    cmdList->m_pRenderCommandEncoder->setDepthClipMode(clipMode);
+                    cmdList->m_clipMode = clipMode;
+                }
+
+                if (!s_nearly_equal(state.depth_bias, cmdList->m_depthBias) || !s_nearly_equal(state.depth_bias_clamp, cmdList->m_depthBiasClamp) || !s_nearly_equal(state.depth_slope_scale, cmdList->m_depthSlopeScale))
+                {
+                    cmdList->m_pRenderCommandEncoder->setDepthBias(state.depth_bias, state.depth_slope_scale, state.depth_bias_clamp);
+
+                    cmdList->m_depthBias       = state.depth_bias;
+                    cmdList->m_depthBiasClamp  = state.depth_bias_clamp;
+                    cmdList->m_depthSlopeScale = state.depth_slope_scale;
+                }
+            }
 
             ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cmdList)
             {
@@ -743,6 +190,16 @@ namespace ncore
                 }
             }
 
+            void EndASEncoder(nmetal::command_list_t* cmdList)
+            {
+                if (cmdList->m_pASEncoder)
+                {
+                    cmdList->m_pASEncoder->updateFence(cmdList->m_pFence);
+                    cmdList->m_pASEncoder->endEncoding();
+                    cmdList->m_pASEncoder = nullptr;
+                }
+            }
+
             void End(ngfx::command_list_t* cmdList)
             {
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
@@ -751,9 +208,76 @@ namespace ncore
                 EndRenderPass(mcmdList);
             }
 
-            void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value);
-            void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value);
-            void Present(ngfx::command_list_t* cmdList, swapchain_t* swapchain);
+            void BeginASEncoder(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                EndRenderPass(mcmdList);
+                EndBlitEncoder(mcmdList);
+                EndComputeEncoder(mcmdList);
+
+                if (mcmdList->m_pASEncoder == nullptr)
+                {
+                    mcmdList->m_pASEncoder = mcmdList->m_pCommandBuffer->accelerationStructureCommandEncoder();
+                    mcmdList->m_pASEncoder->waitForFence(mcmdList->m_pFence);
+                }
+            }
+
+            void BeginComputeEncoder(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                EndRenderPass(mcmdList);
+                EndBlitEncoder(mcmdList);
+                EndASEncoder(mcmdList);
+
+                if (mcmdList->m_pComputeCommandEncoder == nullptr)
+                {
+                    mcmdList->m_pComputeCommandEncoder = mcmdList->m_pCommandBuffer->computeCommandEncoder();
+                    mcmdList->m_pComputeCommandEncoder->waitForFence(mcmdList->m_pFence);
+
+                    nmetal::device_t* mdevice           = GetComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                    MTL::Buffer*      mtlResDescrBuffer = nmetal::GetResourceDescriptorBuffer(mdevice);
+                    MTL::Buffer*      mtlSamDescrBuffer = nmetal::GetSamplerDescriptorBuffer(mdevice);
+
+                    mcmdList->m_pComputeCommandEncoder->setBuffer(mtlResDescrBuffer, 0, kIRDescriptorHeapBindPoint);
+                    mcmdList->m_pComputeCommandEncoder->setBuffer(mtlSamDescrBuffer, 0, kIRSamplerHeapBindPoint);
+                }
+            }
+
+            void BeginBlitEncoder(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                EndRenderPass(mcmdList);
+                EndComputeEncoder(mcmdList);
+                EndASEncoder(mcmdList);
+
+                if (mcmdList->m_pBlitCommandEncoder == nullptr)
+                {
+                    mcmdList->m_pBlitCommandEncoder = mcmdList->m_pCommandBuffer->blitCommandEncoder();
+                    mcmdList->m_pBlitCommandEncoder->waitForFence(mcmdList->m_pFence);
+                }
+            }
+
+            void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::fence_t*        mfence   = GetComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
+                mcmdList->m_pCommandBuffer->encodeWait(mfence->m_pEvent, value);
+            }
+
+            void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::fence_t*        mfence   = GetComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
+                mcmdList->m_pCommandBuffer->encodeSignalEvent(mfence->m_pEvent, value);
+            }
+
+            void Present(ngfx::command_list_t* cmdList, ngfx::swapchain_t* swapchain)
+            {
+                nmetal::command_list_t* mcmdList   = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::swapchain_t*    mswapchain = GetComponent<ngfx::swapchain_t, nmetal::swapchain_t>(cmdList->m_device, swapchain);
+                // TODO, no reason to use GetDrawable, we could directly use the view
+                mcmdList->m_pCommandBuffer->presentDrawable(nmetal::GetDrawable(cmdList->m_device, swapchain));
+            }
 
             void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
             {
@@ -807,49 +331,583 @@ namespace ncore
                 mcmdList->m_pCommandBuffer->popDebugGroup();
             }
 
-            void CopyBufferToTexture(ngfx::command_list_t* cmdList, texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset);
-            void CopyTextureToBuffer(ngfx::command_list_t* cmdList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice);
-            void CopyBuffer(ngfx::command_list_t* cmdList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size);
-            void CopyTexture(ngfx::command_list_t* cmdList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array);
-            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, descriptor_t* uav, const float* clear_value);
-            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
-            void WriteBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, u32 data);
-            void UpdateTileMappings(ngfx::command_list_t* cmdList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings);
+            inline static u32 sMaxSize(u32 size, u32 minSize) { return (size < minSize) ? minSize : size; }
+            inline static u32 sMaxMipSize(u32 size, u32 mip_level, u32 minSize)
+            {
+                size = size >> mip_level;
+                return (size < minSize) ? minSize : size;
+            }
 
-            void TextureBarrier(ngfx::command_list_t* cmdList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
-            void BufferBarrier(ngfx::command_list_t* cmdList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);
-            void GlobalBarrier(ngfx::command_list_t* cmdList, enums::access_flags access_before, enums::access_flags access_after);
-            void FlushBarriers(ngfx::command_list_t* cmdList);
+            void CopyBufferToTexture(ngfx::command_list_t* cmdList, texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset)
+            {
+                BeginBlitEncoder(cmdList);
 
-            void BeginRenderPass(ngfx::command_list_t* cmdList, const renderpass_desc_t& render_pass);
-            void EndRenderPass(ngfx::command_list_t* cmdList);
-            void SetPipelineState(ngfx::command_list_t* cmdList, pipeline_state_t* state);
-            void SetStencilReference(ngfx::command_list_t* cmdList, u8 stencil);
-            void SetBlendFactor(ngfx::command_list_t* cmdList, const float* blend_factor);
-            void SetIndexBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, enums::format format);
-            void SetViewport(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height);
-            void SetScissorRect(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height);
-            void SetGraphicsConstants(ngfx::command_list_t* cmdList, u32 slot, const void* data, s64 data_size);
-            void SetComputeConstants(ngfx::command_list_t* cmdList, u32 slot, const void* data, s64 data_size);
+                const texture_desc_t& desc        = dst_texture->m_desc;
+                MTL::Size             textureSize = MTL::Size::Make(sMaxMipSize(desc.width, mip_level, 1), sMaxMipSize(desc.height, mip_level, 1), sMaxMipSize(desc.depth, mip_level, 1));
 
-            void Draw(ngfx::command_list_t* cmdList, u32 vertex_count, u32 instance_count = 1);
-            void DrawIndexed(ngfx::command_list_t* cmdList, u32 index_count, u32 instance_count = 1, u32 index_offset = 0);
-            void Dispatch(ngfx::command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
-            void DispatchMesh(ngfx::command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z);
+                u32 const bytesPerRow   = nmetal::GetRowPitch(cmdList->m_device, dst_texture, mip_level);
+                u32 const blockHeight   = enums::GetFormatBlockHeight(desc.format);
+                u32 const height        = sMaxMipSize(desc.height, mip_level, blockHeight);
+                u32 const rowNum        = height / blockHeight;
+                u32 const bytesPerImage = bytesPerRow * rowNum;
 
-            void DrawIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
-            void DrawIndexedIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
-            void DispatchIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
-            void DispatchMeshIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset);
+                MTL::Texture* dstMtlTexture = nmetal::GetHandle(cmdList->m_device, dst_texture);
+                MTL::Buffer*  srcMtlBuffer  = nmetal::GetHandle(cmdList->m_device, src_buffer);
 
-            void MultiDrawIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
-            void MultiDrawIndexedIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
-            void MultiDispatchIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
-            void MultiDispatchMeshIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                mcmdList->m_pBlitCommandEncoder->copyFromBuffer(srcMtlBuffer, offset, bytesPerRow, desc.type == enums::TextureType3D ? bytesPerImage : 0, textureSize, dstMtlTexture, array_slice, mip_level, MTL::Origin::Make(0, 0, 0));
+            }
 
-            void BuildRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas);
-            void UpdateRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas, ngfx::buffer_t* vertex_buffer, u32 vertex_buffer_offset);
-            void BuildRayTracingTLAS(ngfx::command_list_t* cmdList, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
+            void CopyTextureToBuffer(ngfx::command_list_t* cmdList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice)
+            {
+                BeginBlitEncoder(cmdList);
+
+                const texture_desc_t& desc        = src_texture->m_desc;
+                MTL::Size             textureSize = MTL::Size::Make(sMaxMipSize(desc.width, mip_level, 1), sMaxMipSize(desc.height, mip_level, 1), sMaxMipSize(desc.depth, mip_level, 1));
+
+                u32 const bytesPerRow   = nmetal::GetRowPitch(cmdList->m_device, src_texture, mip_level);
+                u32 const blockHeight   = enums::GetFormatBlockHeight(desc.format);
+                u32 const height        = sMaxMipSize(desc.height, mip_level, blockHeight);
+                u32 const rowNum        = height / blockHeight;
+                u32 const bytesPerImage = bytesPerRow * rowNum;
+
+                MTL::Buffer*  dstMtlBuffer  = nmetal::GetHandle(cmdList->m_device, dst_buffer);
+                MTL::Texture* srcMtlTexture = nmetal::GetHandle(cmdList->m_device, src_texture);
+
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                mcmdList->m_pBlitCommandEncoder->copyFromTexture(srcMtlTexture, array_slice, mip_level, MTL::Origin::Make(0, 0, 0), textureSize, dstMtlBuffer, offset, bytesPerRow, desc.type == enums::TextureType3D ? bytesPerImage : 0);
+            }
+
+            void CopyBuffer(ngfx::command_list_t* cmdList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
+            {
+                BeginBlitEncoder(cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+
+                MTL::Buffer* srcMetalBuffer = nmetal::GetHandle(cmdList->m_device, src);
+                MTL::Buffer* dstMetalBuffer = nmetal::GetHandle(cmdList->m_device, dst);
+                mcmdList->m_pBlitCommandEncoder->copyFromBuffer(srcMetalBuffer, src_offset, dstMetalBuffer, dst_offset, size);
+            }
+
+            void CopyTexture(ngfx::command_list_t* cmdList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
+            {
+                BeginBlitEncoder(cmdList);
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+
+                const texture_desc_t& srcDesc = src->m_desc;
+                MTL::Size             srcSize = MTL::Size::Make(sMaxMipSize(srcDesc.width, src_mip, 1), sMaxMipSize(srcDesc.height, src_mip, 1), sMaxMipSize(srcDesc.depth, src_mip, 1));
+                MTL::Origin           origin  = MTL::Origin::Make(0, 0, 0);
+
+                MTL::Texture* srcMetalTexture = nmetal::GetHandle(cmdList->m_device, src);
+                MTL::Texture* dstMetalTexture = nmetal::GetHandle(cmdList->m_device, dst);
+                mcmdList->m_pBlitCommandEncoder->copyFromTexture(srcMetalTexture, src_array, src_mip, origin, srcSize, dstMetalTexture, dst_array, dst_mip, origin);
+            }
+
+            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, ngfx::descriptor_t* uav, const float* clear_value)
+            {
+                if (uav->m_type == enums::DescriptorTypeUavBuffer)
+                {
+                    nmetal::uav_buffer_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(cmdList->m_device, uav);
+                    const uav_desc_t&     desc = muav->m_base.m_desc;
+                    // TODO, use callback_t ??
+                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
+                }
+                else if (uav->m_type == enums::DescriptorTypeUavTexture)
+                {
+                    nmetal::uav_texture_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(cmdList->m_device, uav);
+                    const uav_desc_t&      desc = muav->m_base.m_desc;
+                    // TODO, use callback_t ??
+                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
+                }
+            }
+
+            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, ngfx::descriptor_t* uav, const u32* clear_value)
+            {
+                if (uav->m_type == enums::DescriptorTypeUavBuffer)
+                {
+                    nmetal::uav_buffer_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(cmdList->m_device, uav);
+                    const uav_desc_t&     desc = muav->m_base.m_desc;
+                    // TODO, use callback_t ??
+                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
+                }
+                else if (uav->m_type == enums::DescriptorTypeUavTexture)
+                {
+                    nmetal::uav_texture_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(cmdList->m_device, uav);
+                    const uav_desc_t&      desc = muav->m_base.m_desc;
+                    // TODO, use callback_t ??
+                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
+                }
+            }
+
+            void WriteBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, u32 data)
+            {
+                BeginBlitEncoder(cmdList);
+
+                nmetal::BeginEvent(cmdList, "CommandList::WriteBuffer");
+
+                MTL::Buffer* mtlBuffer = nmetal::GetHandle(cmdList->m_device, buffer);
+
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                mcmdList->m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 0, sizeof(u8)), u8(data >> 0));
+                mcmdList->m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 1, sizeof(u8)), u8(data >> 8));
+                mcmdList->m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 2, sizeof(u8)), u8(data >> 16));
+                mcmdList->m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 3, sizeof(u8)), u8(data >> 24));
+
+                nmetal::EndEvent(cmdList);
+            }
+
+            void UpdateTileMappings(ngfx::command_list_t* cmdList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings)
+            {
+                // TODO
+            }
+
+            void TextureBarrier(ngfx::command_list_t* cmdList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after)
+            {
+                // ...
+            }
+
+            void BufferBarrier(ngfx::command_list_t* cmdList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after)
+            {
+                // ...
+            }
+
+            void GlobalBarrier(ngfx::command_list_t* cmdList, enums::access_flags access_before, enums::access_flags access_after)
+            {
+                // ...
+            }
+
+            void FlushBarriers(ngfx::command_list_t* cmdList)
+            {
+                // ...
+            }
+
+            void BeginRenderPass(ngfx::command_list_t* cmdList, const renderpass_desc_t& render_pass)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                EndBlitEncoder(mcmdList);
+                EndComputeEncoder(mcmdList);
+                EndASEncoder(mcmdList);
+
+                u32 width  = 0;
+                u32 height = 0;
+
+                MTL::RenderPassDescriptor*                     descriptor        = MTL::RenderPassDescriptor::alloc()->init();
+                MTL::RenderPassColorAttachmentDescriptorArray* colorAttachements = descriptor->colorAttachments();
+
+                for (u32 i = 0; i < 8; ++i)
+                {
+                    if (render_pass.color[i].texture == nullptr)
+                    {
+                        continue;
+                    }
+
+                    if (width == 0)
+                    {
+                        width = render_pass.color[i].texture->m_desc.width;
+                    }
+
+                    if (height == 0)
+                    {
+                        height = render_pass.color[i].texture->m_desc.height;
+                    }
+
+                    ASSERT(width == render_pass.color[i].texture->m_desc.width);
+                    ASSERT(height == render_pass.color[i].texture->m_desc.height);
+
+                    MTL::Texture* renderPassMtlTexture = nmetal::GetHandle(cmdList->m_device, render_pass.color[i].texture);
+                    colorAttachements->object(i)->setTexture(renderPassMtlTexture);
+                    colorAttachements->object(i)->setLevel(render_pass.color[i].mip_slice);
+                    colorAttachements->object(i)->setSlice(render_pass.color[i].array_slice);
+                    colorAttachements->object(i)->setLoadAction(ToLoadAction(render_pass.color[i].load_op));
+                    colorAttachements->object(i)->setStoreAction(ToStoreAction(render_pass.color[i].store_op));
+                    colorAttachements->object(i)->setClearColor(MTL::ClearColor::Make(render_pass.color[i].clear_color[0], render_pass.color[i].clear_color[1], render_pass.color[i].clear_color[2], render_pass.color[i].clear_color[3]));
+                }
+
+                if (render_pass.depth.texture != nullptr)
+                {
+                    if (width == 0)
+                    {
+                        width = render_pass.depth.texture->m_desc.width;
+                    }
+
+                    if (height == 0)
+                    {
+                        height = render_pass.depth.texture->m_desc.height;
+                    }
+
+                    ASSERT(width == render_pass.depth.texture->m_desc.width);
+                    ASSERT(height == render_pass.depth.texture->m_desc.height);
+
+                    MTL::Texture* renderPassMtlDepthTexture = nmetal::GetHandle(cmdList->m_device, render_pass.depth.texture);
+
+                    MTL::RenderPassDepthAttachmentDescriptor* depthAttachment = descriptor->depthAttachment();
+                    depthAttachment->setTexture(renderPassMtlDepthTexture);
+                    depthAttachment->setLevel(render_pass.depth.mip_slice);
+                    depthAttachment->setSlice(render_pass.depth.array_slice);
+                    depthAttachment->setLoadAction(ToLoadAction(render_pass.depth.load_op));
+                    depthAttachment->setStoreAction(ToStoreAction(render_pass.depth.store_op));
+                    depthAttachment->setClearDepth(render_pass.depth.clear_depth);
+
+                    if (enums::IsStencilFormat(render_pass.depth.texture->m_desc.format))
+                    {
+                        MTL::RenderPassStencilAttachmentDescriptor* stencilAttachment = descriptor->stencilAttachment();
+                        stencilAttachment->setTexture(renderPassMtlDepthTexture);
+                        stencilAttachment->setLevel(render_pass.depth.mip_slice);
+                        stencilAttachment->setSlice(render_pass.depth.array_slice);
+                        stencilAttachment->setLoadAction(ToLoadAction(render_pass.depth.stencil_load_op));
+                        stencilAttachment->setStoreAction(ToStoreAction(render_pass.depth.stencil_store_op));
+                        stencilAttachment->setClearStencil(render_pass.depth.clear_stencil);
+                    }
+                }
+
+                ASSERT(m_pRenderCommandEncoder == nullptr);
+                mcmdList->m_pRenderCommandEncoder = mcmdList->m_pCommandBuffer->renderCommandEncoder(descriptor);
+                mcmdList->m_pRenderCommandEncoder->waitForFence(mcmdList->m_pFence, MTL::RenderStageVertex | MTL::RenderStageObject);
+                descriptor->release();
+
+                nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                mcmdList->m_pRenderCommandEncoder->setVertexBuffer(nmetal::GetResourceDescriptorBuffer(mdevice), 0, kIRDescriptorHeapBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setVertexBuffer(nmetal::GetSamplerDescriptorBuffer(mdevice), 0, kIRSamplerHeapBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBuffer(nmetal::GetResourceDescriptorBuffer(mdevice), 0, kIRDescriptorHeapBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBuffer(nmetal::GetSamplerDescriptorBuffer(mdevice), 0, kIRSamplerHeapBindPoint);
+
+                mcmdList->m_pRenderCommandEncoder->setObjectBuffer(nmetal::GetResourceDescriptorBuffer(mdevice), 0, kIRDescriptorHeapBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setObjectBuffer(nmetal::GetSamplerDescriptorBuffer(mdevice), 0, kIRSamplerHeapBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setMeshBuffer(nmetal::GetResourceDescriptorBuffer(mdevice), 0, kIRDescriptorHeapBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setMeshBuffer(nmetal::GetSamplerDescriptorBuffer(mdevice), 0, kIRSamplerHeapBindPoint);
+
+                nmetal::SetViewport(cmdList, 0, 0, width, height);
+            }
+
+            void EndRenderPass(ngfx::command_list_t* cmdList)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (mcmdList->m_pRenderCommandEncoder)
+                {
+                    mcmdList->m_pRenderCommandEncoder->updateFence(mcmdList->m_pFence, MTL::RenderStageFragment);
+                    mcmdList->m_pRenderCommandEncoder->endEncoding();
+                    mcmdList->m_pRenderCommandEncoder = nullptr;
+
+                    ResetState(mcmdList);
+                }
+            }
+
+            void SetPipelineState(ngfx::command_list_t* cmdList, pipeline_state_t* state)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (mcmdList->m_pCurrentPSO != state)
+                {
+                    mcmdList->m_pCurrentPSO = state;
+
+                    if (state->m_type != enums::PipelineCompute)
+                    {
+                        ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                        if (state->m_type == enums::PipelineGraphics)
+                        {
+                            nmetal::graphics_pipeline_state_t* graphicsPipeline = GetComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(cmdList->m_device, state);
+                            mcmdList->m_pRenderCommandEncoder->setRenderPipelineState(graphicsPipeline->m_pPSO);
+                            const graphics_pipeline_desc_t& desc = graphicsPipeline->m_desc;
+
+                            mcmdList->m_pRenderCommandEncoder->setDepthStencilState(graphicsPipeline->m_pDepthStencilState);
+                            SetRasterizerState(mcmdList, desc.rasterizer_state);
+                            mcmdList->m_primitiveType = ToPrimitiveType(desc.primitive_type);
+                        }
+                        else
+                        {
+                            nmetal::meshshading_pipeline_state_t* meshShadingPipeline = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(cmdList->m_device, state);
+                            mcmdList->m_pRenderCommandEncoder->setRenderPipelineState(meshShadingPipeline->m_pPSO);
+                            const mesh_shading_pipeline_desc_t& desc = meshShadingPipeline->m_desc;
+
+                            mcmdList->m_pRenderCommandEncoder->setDepthStencilState(meshShadingPipeline->m_pDepthStencilState);
+                            SetRasterizerState(mcmdList, desc.rasterizer_state);
+                        }
+                    }
+                }
+            }
+
+            void SetStencilReference(ngfx::command_list_t* cmdList, u8 stencil)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                mcmdList->m_pRenderCommandEncoder->setStencilReferenceValue(stencil);
+            }
+
+            void SetBlendFactor(ngfx::command_list_t* cmdList, const float* blend_factor)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                mcmdList->m_pRenderCommandEncoder->setBlendColor(blend_factor[0], blend_factor[1], blend_factor[2], blend_factor[3]);
+            }
+
+            void SetIndexBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, enums::format format)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                mcmdList->m_pIndexBuffer      = nmetal::GetHandle(cmdList->m_device, buffer);
+                mcmdList->m_indexBufferOffset = offset;
+                mcmdList->m_indexType         = (format == enums::FORMAT_R16UI) ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32;
+            }
+
+            void SetViewport(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                MTL::Viewport viewport = {x, y, width, height, 0.0f, 1.0f};
+                mcmdList->m_pRenderCommandEncoder->setViewport(viewport);
+
+                MTL::ScissorRect scissorRect = {x, y, width, height};
+                mcmdList->m_pRenderCommandEncoder->setScissorRect(scissorRect);
+            }
+
+            void SetScissorRect(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                MTL::ScissorRect scissorRect = {x, y, width, height};
+                mcmdList->m_pRenderCommandEncoder->setScissorRect(scissorRect);
+            }
+
+            void SetGraphicsConstants(ngfx::command_list_t* cmdList, u32 slot, const void* data, s64 data_size)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (slot == 0)
+                {
+                    ASSERT(data_size <= GFX_MAX_ROOT_CONSTANTS * sizeof(u32));
+                    memcpy(mcmdList->m_graphicsArgumentBuffer.cbv0, data, data_size);
+                }
+                else
+                {
+                    ASSERT(slot < GFX_MAX_CBV_BINDINGS);
+                    u64 gpuAddress = nmetal::AllocateConstantBuffer(cmdList->m_device, data, data_size);
+                    if (slot == 1)
+                    {
+                        mcmdList->m_graphicsArgumentBuffer.cbv1 = gpuAddress;
+                    }
+                    else
+                    {
+                        mcmdList->m_graphicsArgumentBuffer.cbv2 = gpuAddress;
+                    }
+                }
+            }
+
+            void SetComputeConstants(ngfx::command_list_t* cmdList, u32 slot, const void* data, s64 data_size)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (slot == 0)
+                {
+                    ASSERT(data_size <= GFX_MAX_ROOT_CONSTANTS * sizeof(u32));
+                    memcpy(mcmdList->m_computeArgumentBuffer.cbv0, data, data_size);
+                }
+                else
+                {
+                    ASSERT(slot < GFX_MAX_CBV_BINDINGS);
+                    uint64_t gpuAddress = nmetal::AllocateConstantBuffer(cmdList->m_device, data, data_size);
+
+                    if (slot == 1)
+                    {
+                        mcmdList->m_computeArgumentBuffer.cbv1 = gpuAddress;
+                    }
+                    else
+                    {
+                        mcmdList->m_computeArgumentBuffer.cbv2 = gpuAddress;
+                    }
+                }
+            }
+
+            void Draw(ngfx::command_list_t* cmdList, u32 vertex_count, u32 instance_count)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                mcmdList->m_pRenderCommandEncoder->setVertexBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                IRRuntimeDrawPrimitives(mcmdList->m_pRenderCommandEncoder, mcmdList->m_primitiveType, 0, vertex_count, instance_count);
+            }
+
+            void DrawIndexed(ngfx::command_list_t* cmdList, u32 index_count, u32 instance_count, u32 index_offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                mcmdList->m_pRenderCommandEncoder->setVertexBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                u64 indexBufferOffset = mcmdList->m_indexBufferOffset;
+                if (mcmdList->m_indexType == MTL::IndexTypeUInt16)
+                {
+                    indexBufferOffset += sizeof(u16) * index_offset;
+                }
+                else
+                {
+                    indexBufferOffset += sizeof(u32) * index_offset;
+                }
+
+                IRRuntimeDrawIndexedPrimitives(mcmdList->m_pRenderCommandEncoder, mcmdList->m_primitiveType, index_count, mcmdList->m_indexType, mcmdList->m_pIndexBuffer, indexBufferOffset, instance_count, 0, 0);
+            }
+
+            void Dispatch(ngfx::command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (mcmdList->m_pCurrentPSO->m_type == enums::PipelineCompute)
+                {
+                    BeginComputeEncoder(cmdList);
+
+                    nmetal::compute_pipeline_state_t* pipelineState = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(cmdList->m_device, mcmdList->m_pCurrentPSO);
+                    mcmdList->m_pComputeCommandEncoder->setComputePipelineState(pipelineState->m_pPSO);
+                    mcmdList->m_pComputeCommandEncoder->setBytes(&mcmdList->m_computeArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                    MTL::Size const threadgroupsPerGrid   = MTL::Size::Make(group_count_x, group_count_y, group_count_z);
+                    MTL::Size const threadsPerThreadgroup = pipelineState->m_threadsPerThreadgroup;
+                    mcmdList->m_pComputeCommandEncoder->dispatchThreadgroups(threadgroupsPerGrid, threadsPerThreadgroup);
+
+                    EndComputeEncoder(mcmdList);
+                }
+            }
+
+            void DispatchMesh(ngfx::command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                if (mcmdList->m_pCurrentPSO->m_type == enums::PipelineMeshShading)
+                {
+                    mcmdList->m_pRenderCommandEncoder->setObjectBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                    mcmdList->m_pRenderCommandEncoder->setMeshBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                    mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                    meshshading_pipeline_state_t* pipelineState = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(cmdList->m_device, mcmdList->m_pCurrentPSO);
+
+                    MTL::Size const threadgroupsPerGrid         = MTL::Size::Make(group_count_x, group_count_y, group_count_z);
+                    MTL::Size const threadsPerObjectThreadgroup = pipelineState->m_threadsPerObjectThreadgroup;
+                    MTL::Size const threadsPerMeshThreadgroup   = pipelineState->m_threadsPerMeshThreadgroup;
+                    mcmdList->m_pRenderCommandEncoder->drawMeshThreadgroups(threadgroupsPerGrid, threadsPerObjectThreadgroup, threadsPerMeshThreadgroup);
+                }
+            }
+
+            void DrawIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                mcmdList->m_pRenderCommandEncoder->setVertexBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                MTL::Buffer* mtlBuffer = nmetal::GetHandle(cmdList->m_device, buffer);
+                IRRuntimeDrawPrimitives(mcmdList->m_pRenderCommandEncoder, mcmdList->m_primitiveType, mtlBuffer, offset);
+            }
+
+            void DrawIndexedIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                mcmdList->m_pRenderCommandEncoder->setVertexBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                MTL::Buffer* mtlBuffer = nmetal::GetHandle(cmdList->m_device, buffer);
+                IRRuntimeDrawIndexedPrimitives(mcmdList->m_pRenderCommandEncoder, mcmdList->m_primitiveType, mcmdList->m_indexType, mcmdList->m_pIndexBuffer, mcmdList->m_indexBufferOffset, mtlBuffer, offset);
+            }
+
+            void DispatchIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                if (mcmdList->m_pCurrentPSO->m_type == enums::PipelineCompute)
+                {
+                    BeginComputeEncoder(cmdList);
+
+                    nmetal::compute_pipeline_state_t* pipelineState = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(cmdList->m_device, mcmdList->m_pCurrentPSO);
+                    mcmdList->m_pComputeCommandEncoder->setComputePipelineState(pipelineState->m_pPSO);
+                    mcmdList->m_pComputeCommandEncoder->setBytes(&mcmdList->m_computeArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                    MTL::Size const threadsPerThreadgroup = pipelineState->m_threadsPerThreadgroup;
+                    MTL::Buffer*    mtlBuffer             = nmetal::GetHandle(cmdList->m_device, buffer);
+                    mcmdList->m_pComputeCommandEncoder->dispatchThreadgroups(mtlBuffer, offset, threadsPerThreadgroup);
+
+                    EndComputeEncoder(mcmdList);
+                }
+            }
+
+            void DispatchMeshIndirect(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+
+                mcmdList->m_pRenderCommandEncoder->setObjectBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setMeshBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+                mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
+
+                MTL::Size threadsPerObjectThreadgroup = MTL::Size::Make(1, 1, 1);
+                MTL::Size threadsPerMeshThreadgroup   = MTL::Size::Make(1, 1, 1);
+                if (mcmdList->m_pCurrentPSO->m_type == enums::PipelineMeshShading)
+                {
+                    meshshading_pipeline_state_t* pipelineState = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(cmdList->m_device, mcmdList->m_pCurrentPSO);
+                    threadsPerObjectThreadgroup                 = pipelineState->m_threadsPerObjectThreadgroup;
+                    threadsPerMeshThreadgroup                   = pipelineState->m_threadsPerMeshThreadgroup;
+                }
+
+                nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, buffer);
+                mcmdList->m_pRenderCommandEncoder->drawMeshThreadgroups(mbuffer->m_pBuffer, offset, threadsPerObjectThreadgroup, threadsPerMeshThreadgroup);
+            }
+
+            void MultiDrawIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                // todo
+            }
+
+            void MultiDrawIndexedIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                // todo
+            }
+
+            void MultiDispatchIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                // todo
+            }
+
+            void MultiDispatchMeshIndirect(ngfx::command_list_t* cmdList, u32 max_count, buffer_t* args_buffer, u32 args_buffer_offset, buffer_t* count_buffer, u32 count_buffer_offset)
+            {
+                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
+                // todo
+            }
+
+            void BuildRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas)
+            {
+                BeginASEncoder(cmdList);
+
+                nmetal::command_list_t* mcmdList  = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::mblas_t*        metalBLAS = GetComponent<ngfx::blas_t, nmetal::mblas_t>(cmdList->m_device, blas);
+                mcmdList->m_pASEncoder->buildAccelerationStructure(metalBLAS->m_pAccelerationStructure, metalBLAS->m_pDescriptor, metalBLAS->m_pScratchBuffer, 0);
+            }
+
+            void UpdateRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas, ngfx::buffer_t* vertex_buffer, u32 vertex_buffer_offset)
+            {
+                BeginASEncoder(cmdList);
+
+                nmetal::UpdateVertexBuffer(cmdList->m_device, blas, vertex_buffer, vertex_buffer_offset);
+
+                nmetal::command_list_t* mcmdList  = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::mblas_t*        metalBLAS = GetComponent<ngfx::blas_t, nmetal::mblas_t>(cmdList->m_device, blas);
+                mcmdList->m_pASEncoder->refitAccelerationStructure(metalBLAS->m_pAccelerationStructure, metalBLAS->m_pDescriptor, metalBLAS->m_pAccelerationStructure, metalBLAS->m_pScratchBuffer, 0);
+            }
+
+            void BuildRayTracingTLAS(ngfx::command_list_t* cmdList, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count)
+            {
+                BeginASEncoder(cmdList);
+
+                nmetal::UpdateInstance(cmdList->m_device, tlas, instances, instance_count);
+
+                nmetal::command_list_t* mcmdList  = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::mtlas_t*        metalTLAS = GetComponent<ngfx::tlas_t, nmetal::mtlas_t>(cmdList->m_device, tlas);
+                mcmdList->m_pASEncoder->buildAccelerationStructure(metalTLAS->m_pAccelerationStructure, metalTLAS->m_pDescriptor, metalTLAS->m_pScratchBuffer, 0);
+            }
 
         }  // namespace nmetal
     }  // namespace ngfx

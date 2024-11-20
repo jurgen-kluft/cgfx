@@ -18,7 +18,8 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::fence_t* CreateFence(ngfx::device_t* device, resource_t* resource, ngfx::fence_t* fence);
+            ngfx::fence_t* CreateFence(ngfx::device_t* device, ngfx::fence_t* fence);
+            bool           Create(ngfx::device_t* device, ngfx::fence_t* fence);
             void           Destroy(ngfx::device_t* device, ngfx::fence_t* fence);
             void           Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value);
             void           Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value);
@@ -26,7 +27,8 @@ namespace ncore
 #else
         namespace nmetal
         {
-            ngfx::fence_t* CreateFence(ngfx::device_t* device, resource_t* resource, ngfx::fence_t* fence) { return fence; }
+            ngfx::fence_t* CreateFence(ngfx::device_t* device, ngfx::fence_t* fence) { return fence; }
+            bool           Create(ngfx::device_t* device, ngfx::fence_t* fence) { return false; }
             void           Destroy(ngfx::device_t* device, ngfx::fence_t* fence) {}
             void           Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
             void           Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}

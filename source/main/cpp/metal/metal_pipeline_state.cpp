@@ -208,25 +208,25 @@ namespace ncore
                 }
             }
 
-            void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
-            {
-                if (ps->m_type == enums::PipelineGraphics)
-                {
-                    nmetal::graphics_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
-                    return mps->m_pPSO;
-                }
-                else if (ps->m_type == enums::PipelineMeshShading)
-                {
-                    nmetal::meshshading_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
-                    return mps->m_pPSO;
-                }
-                else if (ps->m_type == enums::PipelineCompute)
-                {
-                    nmetal::compute_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
-                    return mps->m_pPSO;
-                }
-                return nullptr;
-            }
+            // void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            // {
+            //     if (ps->m_type == enums::PipelineGraphics)
+            //     {
+            //         nmetal::graphics_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
+            //         return mps->m_pPSO;
+            //     }
+            //     else if (ps->m_type == enums::PipelineMeshShading)
+            //     {
+            //         nmetal::meshshading_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
+            //         return mps->m_pPSO;
+            //     }
+            //     else if (ps->m_type == enums::PipelineCompute)
+            //     {
+            //         nmetal::compute_pipeline_state_t* mps = GetComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
+            //         return mps->m_pPSO;
+            //     }
+            //     return nullptr;
+            // }
 
         }  // namespace nmetal
 

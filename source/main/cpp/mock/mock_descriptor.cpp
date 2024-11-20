@@ -14,6 +14,7 @@ namespace ncore
                 D_GFX_OCS_COMPONENT;
                 texture_t* m_texture;
                 srv_desc_t m_desc = {};
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct srv_buffer_t
@@ -21,24 +22,28 @@ namespace ncore
                 D_GFX_OCS_COMPONENT;
                 buffer_t*  m_buffer;
                 srv_desc_t m_desc = {};
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct uav_t
             {
                 D_GFX_OCS_COMPONENT;
                 ngfx::uav_desc_t m_desc = {};
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct cbv_t
             {
                 D_GFX_OCS_COMPONENT;
                 ngfx::cbv_desc_t m_desc = {};
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct sampler_t
             {
                 D_GFX_OCS_COMPONENT;
                 ngfx::sampler_desc_t m_desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             // -------------------------------------------------------------------------------------------------------------------------------

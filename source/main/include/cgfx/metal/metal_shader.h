@@ -14,11 +14,12 @@ namespace ncore
     {
         namespace nmetal
         {
+#pragma pack(push, 1)
             struct shader_reflection_t
             {
-                D_GFX_OCS_COMPONENT;
                 uint32_t threadsPerThreadgroup[3];
             };
+#pragma pack(pop)
 
             struct mshader_t
             {

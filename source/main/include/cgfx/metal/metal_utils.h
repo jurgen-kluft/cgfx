@@ -7,11 +7,11 @@
 
 #ifdef TARGET_MAC
 
-#include "cmacos/Foundation/Foundation.hpp"
-#include "cmacos/Metal/Metal.hpp"
-#include "cmacos/MetalKit/MetalKit.hpp"
+    #include "cmacos/Foundation/Foundation.hpp"
+    #include "cmacos/Metal/Metal.hpp"
+    #include "cmacos/MetalKit/MetalKit.hpp"
 
-#define IR_RUNTIME_METALCPP
+    #define IR_RUNTIME_METALCPP
 // #include "metal_irconverter_runtime/metal_irconverter_runtime.h"
 
 namespace ncore
@@ -346,6 +346,7 @@ namespace ncore
                 default: return MTL::CullModeNone;
             }
         }
+        inline MTL::CullMode ToCullMode(enums::cullmode_t mode) { return enums::cast<enums::cullmode>(mode); }
 
         inline MTL::SamplerMinMagFilter ToSamplerMinMagFilter(enums::filter filter)
         {

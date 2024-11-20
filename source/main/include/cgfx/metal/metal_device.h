@@ -43,18 +43,19 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            bool  Create(ngfx::device_t* device);
-            void  Destroy(ngfx::device_t* device);
-            void* GetHandle(ngfx::device_t* device);
-            void  BeginFrame(ngfx::device_t* device);
-            void  EndFrame(ngfx::device_t* device);
+            bool         Create(ngfx::device_t* device);
+            void         Destroy(ngfx::device_t* device);
+            MTL::Device* GetHandle(ngfx::device_t* device);
+            void         BeginFrame(ngfx::device_t* device);
+            void         EndFrame(ngfx::device_t* device);
 
+            u64          AllocateConstantBuffer(ngfx::device_t* device, const void* data, size_t data_size);
             u32          AllocateResourceDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
             u32          AllocateSamplerDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
             void         FreeResourceDescriptor(ngfx::device_t* device, u32 index);
             void         FreeSamplerDescriptor(ngfx::device_t* device, u32 index);
-            MTL::Buffer* GetResourceDescriptorBuffer(ngfx::device_t* device);
-            MTL::Buffer* GetSamplerDescriptorBuffer(ngfx::device_t* device);
+            MTL::Buffer* GetResourceDescriptorBuffer(nmetal::device_t* device);
+            MTL::Buffer* GetSamplerDescriptorBuffer(nmetal::device_t* device);
 
             void MakeResident(ngfx::device_t* device, const MTL::Allocation* allocation);
             void Evict(ngfx::device_t* device, const MTL::Allocation* allocation);

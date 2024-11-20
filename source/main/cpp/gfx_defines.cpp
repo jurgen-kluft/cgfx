@@ -8,6 +8,88 @@ namespace ncore
     {
         namespace enums
         {
+            // clang-format off
+            struct format_compressed_t
+            {
+                u16 RowPitchMul : 5;    // 5 bits for row pitch multiplier (*1, *2, *4, *8, *12, *16)
+                u16 RowPitchDiv : 1;    // 1 bit for row pitch divisor (0=(/1), 1=(/2))
+                u16 BlockWidth : 1;     // 1 bit for block width (4 or 1)
+                u16 BlockHeight : 1;    // 1 bit for block height (4 or 1)
+                u16 ComponentNum : 3;   // 3 bits for component num (0, 1, 2, 3, or 4)
+                u16 DepthFormat : 1;    // 1 bit for depth format
+                u16 StencilFormat : 1;  // 1 bit for stencil format
+                u16 SRGBFormat : 1;     // 1 bit for SRGB format
+            };
+
+            static const format_compressed_t s_format_table[FORMAT_MAX] =
+            {
+                [FORMAT_UNKNOWN] = format_compressed_t{0, 0, 1, 1, 0, 1, 1, 1 },
+                [FORMAT_RGBA32F] = format_compressed_t{16, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA32UI] = format_compressed_t{16, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA32SI] = format_compressed_t{16, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA16F] = format_compressed_t{8, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA16UI] = format_compressed_t{8, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA16SI] = format_compressed_t{8, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA16UNORM] = format_compressed_t{8, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA16SNORM] = format_compressed_t{8, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA8UI] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA8SI] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA8UNORM] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA8SNORM] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGBA8SRGB] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 0 },
+                [FORMAT_BGRA8UNORM] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_BGRA8SRGB] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 0 },
+                [FORMAT_RGB10A2UI] = format_compressed_t{0, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGB10A2UNORM] = format_compressed_t{4, 0, 1, 1, 4, 1, 1, 1 },
+                [FORMAT_RGB32F] = format_compressed_t{12, 0, 1, 1, 3, 1, 1, 1 },
+                [FORMAT_RGB32UI] = format_compressed_t{12, 0, 1, 1, 3, 1, 1, 1 },
+                [FORMAT_RGB32SI] = format_compressed_t{12, 0, 1, 1, 3, 1, 1, 1 },
+                [FORMAT_R11G11B10F] = format_compressed_t{4, 0, 1, 1, 3, 1, 1, 1 },
+                [FORMAT_RGB9E5] = format_compressed_t{4, 0, 1, 1, 3, 1, 1, 1 },
+                [FORMAT_RG32F] = format_compressed_t{8, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG32UI] = format_compressed_t{8, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG32SI] = format_compressed_t{8, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG16F] = format_compressed_t{4, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG16UI] = format_compressed_t{4, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG16SI] = format_compressed_t{4, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG16UNORM] = format_compressed_t{4, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG16SNORM] = format_compressed_t{4, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG8UI] = format_compressed_t{2, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG8SI] = format_compressed_t{2, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG8UNORM] = format_compressed_t{2, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_RG8SNORM] = format_compressed_t{2, 0, 1, 1, 2, 1, 1, 1 },
+                [FORMAT_R32F] = format_compressed_t{4, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R32UI] = format_compressed_t{4, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R32SI] = format_compressed_t{4, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R16F] = format_compressed_t{2, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R16UI] = format_compressed_t{2, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R16SI] = format_compressed_t{2, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R16UNORM] = format_compressed_t{2, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R16SNORM] = format_compressed_t{2, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R8UI] = format_compressed_t{1, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R8SI] = format_compressed_t{1, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R8UNORM] = format_compressed_t{1, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_R8SNORM] = format_compressed_t{1, 0, 1, 1, 1, 1, 1, 1 },
+                [FORMAT_D32F] = format_compressed_t{0, 0, 1, 1, 0, 0, 1, 1 },
+                [FORMAT_D32FS8] = format_compressed_t{0, 0, 1, 1, 0, 0, 0, 1 },
+                [FORMAT_D16] = format_compressed_t{0, 0, 1, 1, 0, 0, 1, 1 },
+                [FORMAT_BC1UNORM] = format_compressed_t{0, 1, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC1SRGB] = format_compressed_t{0, 1, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC2UNORM] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC2SRGB] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC3UNORM] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC3SRGB] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC4UNORM] = format_compressed_t{0, 1, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC4SNORM] = format_compressed_t{0, 1, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC5UNORM] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC5SNORM] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC6U16F] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC6S16F] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC7UNORM] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+                [FORMAT_BC7SRGB] = format_compressed_t{1, 0, 4, 4, 0, 1, 1, 1 },
+            };
+            // clang-format on
+
             u32 GetFormatRowPitch(enums::format format, u32 width)
             {
                 switch (format)
@@ -74,6 +156,10 @@ namespace ncore
                     default: ASSERT(false); return 0;
                 }
             }
+            u32 GetFormatRowPitch2(enums::format format, u32 width)
+            {
+                return (width * s_format_table[format].RowPitchMul) / (1 << s_format_table[format].RowPitchDiv);
+            }
 
             u32 GetFormatBlockWidth(enums::format format)
             {
@@ -81,12 +167,20 @@ namespace ncore
                     return 4;
                 return 1;
             }
+            u32 GetFormatBlockWidth2(enums::format format)
+            {
+                return s_format_table[format].BlockWidth == 1 ? 4 : 1;
+            }
 
             u32 GetFormatBlockHeight(enums::format format)
             {
                 if (format >= enums::FORMAT_BC1UNORM && format <= enums::FORMAT_BC7SRGB)
                     return 4;
                 return 1;
+            }
+            u32 GetFormatBlockHeight2(enums::format format)
+            {
+                return s_format_table[format].BlockHeight == 1 ? 4 : 1;
             }
 
             u32 GetFormatComponentNum(enums::format format)
@@ -139,16 +233,22 @@ namespace ncore
                     case enums::FORMAT_R8SI:
                     case enums::FORMAT_R8UNORM:
                     case enums::FORMAT_R8SNORM: return 1;
+                    case enums::FORMAT_UNKNOWN: return 0;
                     default: break;
                 }
                 ASSERT(false);
                 return 0;
             }
+            u32 GetFormatComponentNum2(enums::format format) { return s_format_table[format].ComponentNum; }
 
             bool IsDepthFormat(enums::format format) { return format == enums::FORMAT_D32FS8 || format == enums::FORMAT_D32F || format == enums::FORMAT_D16; }
             bool IsStencilFormat(enums::format format) { return format == enums::FORMAT_D32FS8; }
             bool IsSRGBFormat(enums::format format) { return format == enums::FORMAT_RGBA8SRGB || format == enums::FORMAT_BGRA8SRGB; }
-        }  // namespace enums
 
+            bool IsDepthFormat2(enums::format format) { return s_format_table[format].DepthFormat == 1; }
+            bool IsStencilFormat2(enums::format format) { return s_format_table[format].StencilFormat == 1; }
+            bool IsSRGBFormat2(enums::format format) { return s_format_table[format].SRGBFormat == 1; }
+
+        }  // namespace enums
     }  // namespace ngfx
 }  // namespace ncore

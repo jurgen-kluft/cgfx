@@ -139,7 +139,12 @@ namespace ncore
                 TagBuffer,
                 TagTexture,
                 TagHeap,
-                TagSrv,
+                TagDescriptorSrvTexture,
+                TagDescriptorSrvBuffer,
+                TagDescriptorUavTexture,
+                TagDescriptorUavBuffer,
+                TagDescriptorCbv,
+                TagDescriptorSampler,
                 TagPipeline,
                 TagShader,
                 TagFence,
@@ -226,6 +231,7 @@ namespace ncore
                 FORMAT_BC6S16F,
                 FORMAT_BC7UNORM,
                 FORMAT_BC7SRGB,
+                FORMAT_MAX,
             };
             inline format cast(format_t type) { return static_cast<format>(type); }
 
@@ -352,6 +358,17 @@ namespace ncore
                 UAV_StructuredBuffer,
                 UAV_TypedBuffer,
                 UAV_RawBuffer,
+            };
+
+            typedef u8 descriptor_type_t;
+            enum descriptor_type
+            {
+                DescriptorTypeSrvTexture,
+                DescriptorTypeSrvBuffer,
+                DescriptorTypeUavTexture,
+                DescriptorTypeUavBuffer,
+                DescriptorTypeCbv,
+                DescriptorTypeSampler,
             };
 
             typedef u8 filter_t;
@@ -530,6 +547,11 @@ namespace ncore
         {
             u32             size        = 1;
             enums::memory_t memory_type = enums::MemoryGpuOnly;
+        };
+
+        struct descriptor_desc_t
+        {
+            enums::descriptor_type_t type = enums::DescriptorTypeSrvTexture;
         };
 
         struct cbv_desc_t
@@ -815,7 +837,7 @@ namespace ncore
                     AsFlagPreferFastBuild = 1 << 3,
                     AsFlagLowMemory       = 1 << 4,
                 };
-                
+
                 typedef u8 instance_flag_t;
                 enum instance_flag
                 {
