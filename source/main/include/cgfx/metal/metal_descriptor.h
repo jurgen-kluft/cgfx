@@ -4,6 +4,7 @@
 #include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_descriptor.h"
 #include "cgfx/gfx_buffer.h"
+#include "cgfx/metal/metal_rt_tlas.h"
 
 namespace ncore
 {
@@ -34,6 +35,14 @@ namespace ncore
                 D_GFX_OCS_COMPONENT;
                 nmetal::mbuffer_t* m_buffer;
                 srv_base_t         m_base;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct srv_tlas_t
+            {
+                D_GFX_OCS_COMPONENT;
+                nmetal::mtlas_t* m_tlas;
+                srv_base_t       m_base;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
@@ -78,17 +87,16 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc);
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc);
-            ngfx::descriptor_t* CreateCbv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
-            ngfx::descriptor_t* CreateSampler(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, const sampler_desc_t& desc);
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc);
+            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc);
+            ngfx::descriptor_t* CreateCbv(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
+            ngfx::descriptor_t* CreateSampler(ngfx::device_t* pDevice, descriptor_t* descriptor, const sampler_desc_t& desc);
 
-            void  Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            bool  Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            u32   GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
+            void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
+            bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
 
         }  // namespace nmetal
 

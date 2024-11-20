@@ -357,6 +357,7 @@ namespace ncore
                 default: return MTL::SamplerMinMagFilterNearest;
             }
         }
+        inline MTL::SamplerMinMagFilter ToSamplerMinMagFilter(enums::filter_t filter) { return ToSamplerMinMagFilter(enums::cast<enums::filter>(filter)); }
 
         inline MTL::SamplerMipFilter ToSamplerMipFilter(enums::filter filter)
         {
@@ -367,6 +368,7 @@ namespace ncore
                 default: return MTL::SamplerMipFilterNotMipmapped;
             }
         }
+        inline MTL::SamplerMipFilter ToSamplerMipFilter(enums::filter_t filter) { return ToSamplerMipFilter(enums::cast<enums::filter>(filter)); }
 
         inline MTL::SamplerAddressMode ToSamplerAddressMode(enums::sampler_address_mode mode)
         {
@@ -379,6 +381,7 @@ namespace ncore
                 default: return MTL::SamplerAddressModeRepeat;
             }
         }
+        inline MTL::SamplerAddressMode ToSamplerAddressMode(enums::sampler_address_mode_t mode) { return ToSamplerAddressMode(enums::cast<enums::sampler_address_mode>(mode)); }
 
         inline MTL::AccelerationStructureUsage ToAccelerationStructureUsage(enums::rt::accstruct_flag flags)
         {

@@ -365,6 +365,7 @@ namespace ncore
             {
                 DescriptorTypeSrvTexture,
                 DescriptorTypeSrvBuffer,
+                DescriptorTypeSrvRayTracingTLAS,
                 DescriptorTypeUavTexture,
                 DescriptorTypeUavBuffer,
                 DescriptorTypeCbv,
