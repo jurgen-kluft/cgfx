@@ -5,21 +5,25 @@ namespace ncore
 {
     namespace ngfx
     {
-        MockFence::MockFence(MockDevice* pDevice, const char* name)
+        namespace nmock
         {
-            m_pDevice = pDevice;
-            m_name    = name;
-        }
+            fence_t* CreateFence(device_t* device, fence_t* fence)
+            {
+                return fence;
+            }
 
-        MockFence::~MockFence() {}
+            void     Destroy(device_t* device, fence_t* fence)
+            {
+            }
+            
+            void     Wait(device_t* device, fence_t* fence, u64 value)
+            {
+            }
 
-        bool MockFence::Create() { return true; }
-
-        void* MockFence::GetHandle() const { return nullptr; }
-
-        void MockFence::Wait(u64 value) {}
-
-        void MockFence::Signal(u64 value) {}
+            void     Signal(device_t* device, fence_t* fence, u64 value)
+            {
+            }
+        }  // namespace nmock
 
     }  // namespace ngfx
 }  // namespace ncore

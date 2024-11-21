@@ -9,12 +9,13 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc);
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc);
-            ngfx::descriptor_t* CreateCbv(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
-            ngfx::descriptor_t* CreateSampler(ngfx::device_t* pDevice, resource_t* resource, descriptor_t* descriptor, const sampler_desc_t& desc);
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc);
+            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc);
+            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc);
+            ngfx::descriptor_t* CreateCbv(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
+            ngfx::descriptor_t* CreateSampler(ngfx::device_t* pDevice, descriptor_t* descriptor, const sampler_desc_t& desc);
 
             void  Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
             bool  Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d);

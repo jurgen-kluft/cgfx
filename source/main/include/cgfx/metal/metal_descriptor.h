@@ -10,6 +10,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_MAC
         namespace nmetal
         {
             struct mbuffer_t;
@@ -97,82 +98,24 @@ namespace ncore
 
             void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
             bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-
+            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
         }  // namespace nmetal
+#else
+        namespace nmetal
+        {
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc) { return descriptor; }
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc) { return descriptor; }
+            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc) { return descriptor; }
+            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc) { return descriptor; }
+            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc) { return descriptor; }
+            ngfx::descriptor_t* CreateCbv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc) { return descriptor; }
+            ngfx::descriptor_t* CreateSampler(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) { return descriptor; }
 
-        // class MetalDevice;
-
-        // class MetalShaderResourceView : public descriptor_t
-        // {
-        // public:
-        //     MetalShaderResourceView(MetalDevice* pDevice, resource_t* pResource, const srv_desc_t& desc, const char* name);
-        //     ~MetalShaderResourceView();
-
-        //     bool Create();
-
-        //     virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
-        //     virtual u32   GetHeapIndex() const override { return m_heapIndex; }
-
-        // private:
-        //     resource_t*             m_pResource    = nullptr;
-        //     srv_desc_t m_desc         = {};
-        //     MTL::Texture*             m_pTextureView = nullptr;
-        //     u32                       m_heapIndex    = GFX_INVALID_RESOURCE;
-        // };
-
-        // class MetalUnorderedAccessView : public descriptor_t
-        // {
-        // public:
-        //     MetalUnorderedAccessView(MetalDevice* pDevice, resource_t* pResource, const uav_desc_t& desc, const char* name);
-        //     ~MetalUnorderedAccessView();
-
-        //     bool                              Create();
-        //     const uav_desc_t& GetDesc() const { return m_desc; }
-
-        //     virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
-        //     virtual u32   GetHeapIndex() const override { return m_heapIndex; }
-
-        // private:
-        //     resource_t*              m_pResource    = nullptr;
-        //     uav_desc_t m_desc         = {};
-        //     MTL::Texture*              m_pTextureView = nullptr;
-        //     u32                        m_heapIndex    = GFX_INVALID_RESOURCE;
-        // };
-
-        // class MetalConstantBufferView : public descriptor_t
-        // {
-        // public:
-        //     MetalConstantBufferView(MetalDevice* pDevice, buffer_t* buffer, const cbv_desc_t& desc, const char* name);
-        //     ~MetalConstantBufferView();
-
-        //     bool Create();
-
-        //     virtual void* GetHandle() const override { return m_pBuffer->GetHandle(); }
-        //     virtual u32   GetHeapIndex() const override { return m_heapIndex; }
-
-        // private:
-        //     buffer_t*               m_pBuffer   = nullptr;
-        //     cbv_desc_t m_desc      = {};
-        //     u32                       m_heapIndex = GFX_INVALID_RESOURCE;
-        // };
-
-        // class MetalSampler : public descriptor_t
-        // {
-        // public:
-        //     MetalSampler(MetalDevice* pDevice, const sampler_desc_t& desc, const char* name);
-        //     ~MetalSampler();
-
-        //     bool Create();
-
-        //     virtual void* GetHandle() const override { return m_pSampler; }
-        //     virtual u32   GetHeapIndex() const override { return m_heapIndex; }
-
-        // private:
-        //     sampler_desc_t     m_desc;
-        //     MTL::SamplerState* m_pSampler  = nullptr;
-        //     u32                m_heapIndex = GFX_INVALID_RESOURCE;
-        // };
-
+            void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d) {}
+            bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return true; }
+            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return GFX_INVALID_RESOURCE; }
+        }  // namespace nmetal
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 #endif

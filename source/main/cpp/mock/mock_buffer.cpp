@@ -15,14 +15,14 @@ namespace ncore
             ngfx::buffer_t* CreateBuffer(device_t* device, ngfx::buffer_t* buffer)
             {
                 // ...
-                nmock::buffer_t* mbuffer = AddAnotherComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
+                nmock::buffer_t* mbuffer = CreateComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
 
                 return buffer;
             }
 
             void Destroy(device_t* device, ngfx::buffer_t* buffer)
             {
-                nmock::buffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
+                nmock::buffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
                 if (mbuffer != nullptr && mbuffer->m_pCpuAddress)
                 {
                     // TODO
@@ -34,7 +34,7 @@ namespace ncore
             {
                 if (buffer->m_desc.memory_type != enums::MemoryGpuOnly)
                 {
-                    nmock::buffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
+                    nmock::buffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
                     mbuffer->m_pCpuAddress   = nullptr;
 
                     // TODO
@@ -48,7 +48,7 @@ namespace ncore
             void* GetHandle(device_t* device, ngfx::buffer_t* buffer) { return nullptr; }
             void* GetCpuAddress(device_t* device, ngfx::buffer_t* buffer)
             {
-                nmock::buffer_t* mbuffer = GetOtherComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
+                nmock::buffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);
                 return mbuffer->m_pCpuAddress;
             }
             u64 GetGpuAddress(device_t* device, ngfx::buffer_t* buffer) { return 0; }

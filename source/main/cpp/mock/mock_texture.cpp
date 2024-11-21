@@ -23,10 +23,9 @@ namespace ncore
 
             u32 GetRowPitch(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 mip_level)
             {
-                u32 min_width = ngfx::GetFormatBlockWidth(enums::cast<enums::format>(pTexture->m_desc.format));
-                u32 width     = math::g_max(pTexture->m_desc.width >> mip_level, min_width);
-
-                return GetFormatRowPitch(enums::cast<enums::format>(pTexture->m_desc.format), width) * GetFormatBlockHeight(enums::cast<enums::format>(pTexture->m_desc.format));
+                u32 const min_width = enums::GetFormatBlockWidth(pTexture->m_desc.format);
+                u32 const width     = math::g_max(pTexture->m_desc.width >> mip_level, min_width);
+                return enums::GetFormatRowPitch(pTexture->m_desc.format, width) * enums::GetFormatBlockHeight(pTexture->m_desc.format);
             }
 
             tiling_desc_t            GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return tiling_desc_t(); }

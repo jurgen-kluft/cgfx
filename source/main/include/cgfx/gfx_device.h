@@ -31,9 +31,9 @@ namespace ncore
         void      EndFrame(device_t* device);
 
         template <typename C>
-        void AttachName(device_t* device, C* pResource, const char* name)
+        void AttachName(device_t* device, C* pComponent, const char* name)
         {
-            name_t* n = device->m_allocatorCS->add_component<name_t, C>(pResource);
+            name_t* n = device->m_allocatorCS->add_component<name_t, C>(pComponent);
             SetName(n, name);
         }
 
@@ -52,9 +52,9 @@ namespace ncore
         }
 
         template <typename C1, typename C2>
-        C2* CreateComponent(device_t* device, C1* pResource)
+        C2* CreateComponent(device_t* device, C1* pComponent)
         {
-            return device->m_allocatorCS->create_component<C1, C2>(pResource);
+            return device->m_allocatorCS->create_component<C1, C2>(pComponent);
         }
 
         template <typename C1, typename C2>
@@ -64,33 +64,33 @@ namespace ncore
         }
 
         template <typename C1, typename C2>
-        bool HasComponent(device_t* device, C1* pResource)
+        bool HasComponent(device_t* device, C1* pComponent)
         {
-            return device->m_allocatorCS->has_component<C1, C2>(pResource);
+            return device->m_allocatorCS->has_component<C1, C2>(pComponent);
         }
 
         template <typename C1, typename C2>
-        C2* GetComponent(device_t* device, C1 const* pResource)
+        C2* GetComponent(device_t* device, C1 const* pComponent)
         {
-            return device->m_allocatorCS->get_component<C1, C2>(pResource);
+            return device->m_allocatorCS->get_component<C1, C2>(pComponent);
         }
 
         template <typename C1, typename C2>
-        C2 const* GetComponent(device_t const* device, C1 const* pResource)
+        C2 const* GetComponent(device_t const* device, C1 const* pComponent)
         {
-            return device->m_allocatorCS->get_component<C1, C2>(pResource);
+            return device->m_allocatorCS->get_component<C1, C2>(pComponent);
         }
 
         template <typename C>
-        void SetTag(device_t* device, C* pResource, u16 tag)
+        void SetTag(device_t* device, C* pComponent, u16 tag)
         {
-            device->m_allocatorCS->set_tag<C>(pResource, tag);
+            device->m_allocatorCS->set_tag<C>(pComponent, tag);
         }
 
         template <typename C>
-        bool HasTag(device_t* device, C* pResource, u16 tag)
+        bool HasTag(device_t* device, C* pComponent, u16 tag)
         {
-            return device->m_allocatorCS->has_tag<C>(pResource, tag);
+            return device->m_allocatorCS->has_tag<C>(pComponent, tag);
         }
 
         // Debug

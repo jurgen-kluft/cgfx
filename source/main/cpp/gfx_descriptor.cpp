@@ -20,9 +20,9 @@ namespace ncore
             descriptor->m_type       = enums::DescriptorTypeSrvTexture;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateSrv(device, resource, descriptor, texture, desc);
-                case enums::Backend_Metal: return nmetal::CreateSrv(device, resource, descriptor, texture, desc);
-                case enums::Backend_Mock: return nmock::CreateSrv(device, resource, descriptor, texture, desc);
+                case enums::Backend_D3D12: return nd3d12::CreateSrv(device, descriptor, texture, desc);
+                case enums::Backend_Metal: return nmetal::CreateSrv(device, descriptor, texture, desc);
+                case enums::Backend_Mock: return nmock::CreateSrv(device, descriptor, texture, desc);
             }
             return descriptor;
         }
@@ -34,9 +34,23 @@ namespace ncore
             descriptor->m_type       = enums::DescriptorTypeSrvBuffer;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateSrv(device, resource, descriptor, buffer, desc);
-                case enums::Backend_Metal: return nmetal::CreateSrv(device, resource, descriptor, buffer, desc);
-                case enums::Backend_Mock: return nmock::CreateSrv(device, resource, descriptor, buffer, desc);
+                case enums::Backend_D3D12: return nd3d12::CreateSrv(device, descriptor, buffer, desc);
+                case enums::Backend_Metal: return nmetal::CreateSrv(device, descriptor, buffer, desc);
+                case enums::Backend_Mock: return nmock::CreateSrv(device, descriptor, buffer, desc);
+            }
+            return descriptor;
+        }
+
+        descriptor_t* CreateShaderResourceView(device_t* device, tlas_t* tlas, const srv_desc_t& desc, const char* name)
+        {
+            resource_t*   resource   = CreateInstance<resource_t>(device, name);
+            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor->m_type       = enums::DescriptorTypeSrvRayTracingTLAS;
+            switch (device->m_desc.backend)
+            {
+                case enums::Backend_D3D12: return nd3d12::CreateSrv(device, descriptor, tlas, desc);
+                case enums::Backend_Metal: return nmetal::CreateSrv(device, descriptor, tlas, desc);
+                case enums::Backend_Mock: return nmock::CreateSrv(device, descriptor, tlas, desc);
             }
             return descriptor;
         }
@@ -48,9 +62,9 @@ namespace ncore
             descriptor->m_type       = enums::DescriptorTypeUavTexture;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateUav(device, resource, descriptor, texture, desc);
-                case enums::Backend_Metal: return nmetal::CreateUav(device, resource, descriptor, texture, desc);
-                case enums::Backend_Mock: return nmock::CreateUav(device, resource, descriptor, texture, desc);
+                case enums::Backend_D3D12: return nd3d12::CreateUav(device, descriptor, texture, desc);
+                case enums::Backend_Metal: return nmetal::CreateUav(device, descriptor, texture, desc);
+                case enums::Backend_Mock: return nmock::CreateUav(device, descriptor, texture, desc);
             }
             return descriptor;
         }
@@ -62,9 +76,9 @@ namespace ncore
             descriptor->m_type       = enums::DescriptorTypeUavBuffer;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateUav(device, resource, descriptor, buffer, desc);
-                case enums::Backend_Metal: return nmetal::CreateUav(device, resource, descriptor, buffer, desc);
-                case enums::Backend_Mock: return nmock::CreateUav(device, resource, descriptor, buffer, desc);
+                case enums::Backend_D3D12: return nd3d12::CreateUav(device, descriptor, buffer, desc);
+                case enums::Backend_Metal: return nmetal::CreateUav(device, descriptor, buffer, desc);
+                case enums::Backend_Mock: return nmock::CreateUav(device, descriptor, buffer, desc);
             }
             return descriptor;
         }
@@ -76,9 +90,9 @@ namespace ncore
             descriptor->m_type       = enums::DescriptorTypeCbv;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateCbv(device, resource, descriptor, buffer, desc);
-                case enums::Backend_Metal: return nmetal::CreateCbv(device, resource, descriptor, buffer, desc);
-                case enums::Backend_Mock: return nmock::CreateCbv(device, resource, descriptor, buffer, desc);
+                case enums::Backend_D3D12: return nd3d12::CreateCbv(device, descriptor, buffer, desc);
+                case enums::Backend_Metal: return nmetal::CreateCbv(device, descriptor, buffer, desc);
+                case enums::Backend_Mock: return nmock::CreateCbv(device, descriptor, buffer, desc);
             }
             return descriptor;
         }
@@ -90,9 +104,9 @@ namespace ncore
             descriptor->m_type       = enums::DescriptorTypeSampler;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateSampler(device, resource, descriptor, desc);
-                case enums::Backend_Metal: return nmetal::CreateSampler(device, resource, descriptor, desc);
-                case enums::Backend_Mock: return nmock::CreateSampler(device, resource, descriptor, desc);
+                case enums::Backend_D3D12: return nd3d12::CreateSampler(device, descriptor, desc);
+                case enums::Backend_Metal: return nmetal::CreateSampler(device, descriptor, desc);
+                case enums::Backend_Mock: return nmock::CreateSampler(device, descriptor, desc);
             }
             return descriptor;
         }

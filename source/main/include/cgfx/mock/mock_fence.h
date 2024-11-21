@@ -10,7 +10,7 @@ namespace ncore
         struct device_t;
         namespace nmock
         {
-            fence_t* CreateFence(device_t* device, resource_t* resource, fence_t* fence);
+            fence_t* CreateFence(device_t* device, fence_t* fence);
             void     Destroy(device_t* device, fence_t* fence);
             void     Wait(device_t* device, fence_t* fence, u64 value);
             void     Signal(device_t* device, fence_t* fence, u64 value);

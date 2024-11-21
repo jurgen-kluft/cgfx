@@ -25,23 +25,23 @@ namespace ncore
                 compute_pipeline_desc_t desc;
             };
 
-            ngfx::pipeline_state_t* CreateGraphicsPipelineState(device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
+            ngfx::pipeline_state_t* CreateGraphicsPipelineState(device_t* device, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
             {
-                graphics_ps_t* gpstate = AddComponent<resource_t, graphics_ps_t>(device, resource);
+                graphics_ps_t* gpstate = CreateComponent<pipeline_state_t, graphics_ps_t>(device, ps);
                 gpstate->desc          = desc;
                 return ps;
             }
 
-            ngfx::pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, resource_t* resource, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
+            ngfx::pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
             {
-                mesh_shading_ps_t* mspstate = AddComponent<resource_t, mesh_shading_ps_t>(device, resource);
+                mesh_shading_ps_t* mspstate = CreateComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
                 mspstate->desc              = desc;
                 return ps;
             }
 
-            ngfx::pipeline_state_t* CreateComputePipelineState(device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
+            ngfx::pipeline_state_t* CreateComputePipelineState(device_t* device, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
             {
-                compute_ps_t* cpstate = AddComponent<resource_t, compute_ps_t>(device, resource);
+                compute_ps_t* cpstate = CreateComponent<pipeline_state_t, compute_ps_t>(device, ps);
                 cpstate->desc         = desc;
                 return ps;
             }
@@ -52,17 +52,17 @@ namespace ncore
                 {
                     case enums::PipelineGraphics:
                         {
-                            graphics_ps_t* gpstate = GetOtherComponent<pipeline_state_t, graphics_ps_t>(device, ps);
+                            graphics_ps_t* gpstate = GetComponent<pipeline_state_t, graphics_ps_t>(device, ps);
                             return gpstate != nullptr;
                         }
                     case enums::PipelineMeshShading:
                         {
-                            mesh_shading_ps_t* mspstate = GetOtherComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
+                            mesh_shading_ps_t* mspstate = GetComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
                             return mspstate != nullptr;
                         }
                     case enums::PipelineCompute:
                         {
-                            compute_ps_t* cpstate = GetOtherComponent<pipeline_state_t, compute_ps_t>(device, ps);
+                            compute_ps_t* cpstate = GetComponent<pipeline_state_t, compute_ps_t>(device, ps);
                             return cpstate != nullptr;
                         }
                 }
@@ -75,28 +75,28 @@ namespace ncore
                 {
                     case enums::PipelineGraphics:
                         {
-                            graphics_ps_t* gpstate = GetOtherComponent<pipeline_state_t, graphics_ps_t>(device, ps);
+                            graphics_ps_t* gpstate = GetComponent<pipeline_state_t, graphics_ps_t>(device, ps);
                             if (gpstate != nullptr)
                             {
-                                RemoveOtherComponent<pipeline_state_t, graphics_ps_t>(device, ps);
+                                DestroyComponent<pipeline_state_t, graphics_ps_t>(device, ps);
                             }
                         }
                         break;
                     case enums::PipelineMeshShading:
                         {
-                            mesh_shading_ps_t* mspstate = GetOtherComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
+                            mesh_shading_ps_t* mspstate = GetComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
                             if (mspstate != nullptr)
                             {
-                                RemoveOtherComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
+                                DestroyComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
                             }
                         }
                         break;
                     case enums::PipelineCompute:
                         {
-                            compute_ps_t* cpstate = GetOtherComponent<pipeline_state_t, compute_ps_t>(device, ps);
+                            compute_ps_t* cpstate = GetComponent<pipeline_state_t, compute_ps_t>(device, ps);
                             if (cpstate != nullptr)
                             {
-                                RemoveOtherComponent<pipeline_state_t, compute_ps_t>(device, ps);
+                                DestroyComponent<pipeline_state_t, compute_ps_t>(device, ps);
                             }
                         }
                         break;
@@ -109,17 +109,17 @@ namespace ncore
                 {
                     case enums::PipelineGraphics:
                         {
-                            graphics_ps_t* gpstate = GetOtherComponent<pipeline_state_t, graphics_ps_t>(device, ps);
+                            graphics_ps_t* gpstate = GetComponent<pipeline_state_t, graphics_ps_t>(device, ps);
                             break;
                         }
                     case enums::PipelineMeshShading:
                         {
-                            mesh_shading_ps_t* mspstate = GetOtherComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
+                            mesh_shading_ps_t* mspstate = GetComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
                             break;
                         }
                     case enums::PipelineCompute:
                         {
-                            compute_ps_t* cpstate = GetOtherComponent<pipeline_state_t, compute_ps_t>(device, ps);
+                            compute_ps_t* cpstate = GetComponent<pipeline_state_t, compute_ps_t>(device, ps);
                             break;
                         }
                 }

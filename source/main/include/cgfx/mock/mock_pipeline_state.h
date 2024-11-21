@@ -9,9 +9,9 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::pipeline_state_t* CreateGraphicsPipelineState(device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc);
-            ngfx::pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, resource_t* resource, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc);
-            ngfx::pipeline_state_t* CreateComputePipelineState(device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc);
+            ngfx::pipeline_state_t* CreateGraphicsPipelineState(device_t* device, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc);
+            ngfx::pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc);
+            ngfx::pipeline_state_t* CreateComputePipelineState(device_t* device, pipeline_state_t* ps, const compute_pipeline_desc_t& desc);
             bool                    Create(device_t* device, ngfx::pipeline_state_t* ps);
             void                    Destroy(device_t* device, ngfx::pipeline_state_t* ps);
             void*                   GetHandle(device_t* device, ngfx::pipeline_state_t* ps);

@@ -19,7 +19,7 @@ namespace ncore
 
             ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
             {
-                nmock::swapchain_t* msc   = ngfx::AddComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, swapchain);
+                nmock::swapchain_t* msc   = ngfx::CreateComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, swapchain);
                 msc->m_currentBackBuffer  = -1;
                 msc->m_maxBackBufferCount = 8;
                 msc->m_numBackBufferCount = 0;
@@ -37,7 +37,7 @@ namespace ncore
 
             void Destroy(device_t* device, ngfx::swapchain_t* sc)
             {
-                nmock::swapchain_t* msc = ngfx::AddComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
+                nmock::swapchain_t* msc = ngfx::CreateComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);
                 for (s32 i = 0; i < msc->m_numBackBufferCount; ++i)
                 {
                     ngfx::Destroy(device, msc->m_backBuffers[i]);
