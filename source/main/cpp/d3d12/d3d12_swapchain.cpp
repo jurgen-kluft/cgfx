@@ -6,149 +6,149 @@ namespace ncore
 {
     namespace ngfx
     {
-        D3D12Swapchain::D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name)
-        {
-            m_pDevice = pDevice;
-            m_desc    = desc;
-            m_name    = name;
-        }
+        // D3D12Swapchain::D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name)
+        // {
+        //     m_pDevice = pDevice;
+        //     m_desc    = desc;
+        //     m_name    = name;
+        // }
 
-        D3D12Swapchain::~D3D12Swapchain()
-        {
-            for (size_t i = 0; i < m_backBuffers.size; ++i)
-            {
-                delete m_backBuffers.data[i];
-            }
-            m_backBuffers.size = 0;
+        // D3D12Swapchain::~D3D12Swapchain()
+        // {
+        //     for (size_t i = 0; i < m_backBuffers.size; ++i)
+        //     {
+        //         delete m_backBuffers.data[i];
+        //     }
+        //     m_backBuffers.size = 0;
 
-            D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-            pDevice->Delete(m_pSwapChain);
-        }
+        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
+        //     pDevice->Delete(m_pSwapChain);
+        // }
 
-        void D3D12Swapchain::AcquireNextBackBuffer() { m_nCurrentBackBuffer = m_pSwapChain->GetCurrentBackBufferIndex(); }
+        // void D3D12Swapchain::AcquireNextBackBuffer() { m_nCurrentBackBuffer = m_pSwapChain->GetCurrentBackBufferIndex(); }
 
-        bool D3D12Swapchain::Present()
-        {
-            //CPU_EVENT("Render", "D3D12Swapchain::Present");
+        // bool D3D12Swapchain::Present()
+        // {
+        //     //CPU_EVENT("Render", "D3D12Swapchain::Present");
 
-            UINT interval, flags;
-            if (m_bEnableVsync)
-            {
-                interval = 1;
-                flags    = 0;
-            }
-            else
-            {
-                interval = 0;
-                flags    = m_bSupportTearing && m_bWindowMode ? DXGI_PRESENT_ALLOW_TEARING : 0;
-            }
+        //     UINT interval, flags;
+        //     if (m_bEnableVsync)
+        //     {
+        //         interval = 1;
+        //         flags    = 0;
+        //     }
+        //     else
+        //     {
+        //         interval = 0;
+        //         flags    = m_bSupportTearing && m_bWindowMode ? DXGI_PRESENT_ALLOW_TEARING : 0;
+        //     }
 
-            HRESULT hr = m_pSwapChain->Present(interval, flags);
+        //     HRESULT hr = m_pSwapChain->Present(interval, flags);
 
-            return SUCCEEDED(hr);
-        }
+        //     return SUCCEEDED(hr);
+        // }
 
-        bool D3D12Swapchain::Resize(u32 width, u32 height)
-        {
-            if (m_desc.width == width && m_desc.height == height)
-            {
-                return false;
-            }
+        // bool D3D12Swapchain::Resize(u32 width, u32 height)
+        // {
+        //     if (m_desc.width == width && m_desc.height == height)
+        //     {
+        //         return false;
+        //     }
 
-            m_desc.width         = width;
-            m_desc.height        = height;
-            m_nCurrentBackBuffer = 0;
+        //     m_desc.width         = width;
+        //     m_desc.height        = height;
+        //     m_nCurrentBackBuffer = 0;
 
-            for (size_t i = 0; i < m_backBuffers.size; ++i)
-            {
-                delete m_backBuffers.data[i];
-            }
-            m_backBuffers.size = 0;
+        //     for (size_t i = 0; i < m_backBuffers.size; ++i)
+        //     {
+        //         delete m_backBuffers.data[i];
+        //     }
+        //     m_backBuffers.size = 0;
 
-            ((D3D12Device*)m_pDevice)->FlushDeferredDeletions();
+        //     ((D3D12Device*)m_pDevice)->FlushDeferredDeletions();
 
-            DXGI_SWAP_CHAIN_DESC desc = {};
-            m_pSwapChain->GetDesc(&desc);
-            HRESULT hr = m_pSwapChain->ResizeBuffers(m_desc.backbuffer_count, width, height, desc.BufferDesc.Format, desc.Flags);
-            if (!SUCCEEDED(hr))
-            {
-                // RE_ERROR("[D3D12Swapchain] failed to resize {}", m_name);
-                return false;
-            }
+        //     DXGI_SWAP_CHAIN_DESC desc = {};
+        //     m_pSwapChain->GetDesc(&desc);
+        //     HRESULT hr = m_pSwapChain->ResizeBuffers(m_desc.backbuffer_count, width, height, desc.BufferDesc.Format, desc.Flags);
+        //     if (!SUCCEEDED(hr))
+        //     {
+        //         // RE_ERROR("[D3D12Swapchain] failed to resize {}", m_name);
+        //         return false;
+        //     }
 
-            BOOL fullscreenState;
-            m_pSwapChain->GetFullscreenState(&fullscreenState, nullptr);
-            m_bWindowMode = !fullscreenState;
+        //     BOOL fullscreenState;
+        //     m_pSwapChain->GetFullscreenState(&fullscreenState, nullptr);
+        //     m_bWindowMode = !fullscreenState;
 
-            return CreateTextures();
-        }
+        //     return CreateTextures();
+        // }
 
-        texture_t* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers.data[m_nCurrentBackBuffer]; }
+        // texture_t* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers.data[m_nCurrentBackBuffer]; }
 
-        bool D3D12Swapchain::Create()
-        {
-            D3D12Device*   pDevice  = (D3D12Device*)m_pDevice;
-            IDXGIFactory5* pFactory = pDevice->GetDxgiFactory();
+        // bool D3D12Swapchain::Create()
+        // {
+        //     D3D12Device*   pDevice  = (D3D12Device*)m_pDevice;
+        //     IDXGIFactory5* pFactory = pDevice->GetDxgiFactory();
 
-            BOOL allowTearing = FALSE;
-            pFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
-            m_bSupportTearing = allowTearing;
+        //     BOOL allowTearing = FALSE;
+        //     pFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
+        //     m_bSupportTearing = allowTearing;
 
-            DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-            swapChainDesc.BufferCount           = m_desc.backbuffer_count;
-            swapChainDesc.Width                 = m_desc.width;
-            swapChainDesc.Height                = m_desc.height;
-            swapChainDesc.Format                = m_desc.backbuffer_format == Gfx::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(m_desc.backbuffer_format);
-            swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-            swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-            swapChainDesc.SampleDesc.Count      = 1;
-            swapChainDesc.Flags                 = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+        //     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+        //     swapChainDesc.BufferCount           = m_desc.backbuffer_count;
+        //     swapChainDesc.Width                 = m_desc.width;
+        //     swapChainDesc.Height                = m_desc.height;
+        //     swapChainDesc.Format                = m_desc.backbuffer_format == Gfx::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(m_desc.backbuffer_format);
+        //     swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+        //     swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+        //     swapChainDesc.SampleDesc.Count      = 1;
+        //     swapChainDesc.Flags                 = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
-            IDXGISwapChain1* pSwapChain = NULL;
-            HRESULT          hr         = pFactory->CreateSwapChainForHwnd(pDevice->GetGraphicsQueue(),  // Swap chain needs the queue so that it can force a flush on it.
-                                                                           (HWND)m_desc.window_handle, &swapChainDesc, nullptr, nullptr, &pSwapChain);
+        //     IDXGISwapChain1* pSwapChain = NULL;
+        //     HRESULT          hr         = pFactory->CreateSwapChainForHwnd(pDevice->GetGraphicsQueue(),  // Swap chain needs the queue so that it can force a flush on it.
+        //                                                                    (HWND)m_desc.window_handle, &swapChainDesc, nullptr, nullptr, &pSwapChain);
 
-            if (FAILED(hr))
-            {
-                // RE_ERROR("[D3D12Swapchain] failed to create {}", m_name);
-                return false;
-            }
+        //     if (FAILED(hr))
+        //     {
+        //         // RE_ERROR("[D3D12Swapchain] failed to create {}", m_name);
+        //         return false;
+        //     }
 
-            pSwapChain->QueryInterface(&m_pSwapChain);
-            SAFE_RELEASE(pSwapChain);
+        //     pSwapChain->QueryInterface(&m_pSwapChain);
+        //     SAFE_RELEASE(pSwapChain);
 
-            return CreateTextures();
-        }
+        //     return CreateTextures();
+        // }
 
-        bool D3D12Swapchain::CreateTextures()
-        {
-            D3D12Device* pDevice = (D3D12Device*)m_pDevice;
+        // bool D3D12Swapchain::CreateTextures()
+        // {
+        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
 
-            texture_desc_t textureDesc;
-            textureDesc.width  = m_desc.width;
-            textureDesc.height = m_desc.height;
-            textureDesc.format = m_desc.backbuffer_format;
-            textureDesc.usage  = GfxTextureUsage::RenderTarget;
+        //     texture_desc_t textureDesc;
+        //     textureDesc.width  = m_desc.width;
+        //     textureDesc.height = m_desc.height;
+        //     textureDesc.format = m_desc.backbuffer_format;
+        //     textureDesc.usage  = GfxTextureUsage::RenderTarget;
 
-            for (u32 i = 0; i < m_desc.backbuffer_count; ++i)
-            {
-                ID3D12Resource* pBackbuffer = NULL;
-                HRESULT         hr          = m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackbuffer));
-                if (FAILED(hr))
-                {
-                    return false;
-                }
+        //     for (u32 i = 0; i < m_desc.backbuffer_count; ++i)
+        //     {
+        //         ID3D12Resource* pBackbuffer = NULL;
+        //         HRESULT         hr          = m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackbuffer));
+        //         if (FAILED(hr))
+        //         {
+        //             return false;
+        //         }
 
-                //eastl::string name = fmt::format("{} texture {}", m_name, i).c_str();
-                //pBackbuffer->SetName(string_to_wstring(name).c_str());
-                const char* name = "backbuffer";
+        //         //eastl::string name = fmt::format("{} texture {}", m_name, i).c_str();
+        //         //pBackbuffer->SetName(string_to_wstring(name).c_str());
+        //         const char* name = "backbuffer";
 
-                D3D12Texture* texture = new D3D12Texture(pDevice, textureDesc, name);
-                texture->m_pTexture   = pBackbuffer;
-                m_backBuffers.data[m_backBuffers.size++] = (texture);
-            }
+        //         D3D12Texture* texture = new D3D12Texture(pDevice, textureDesc, name);
+        //         texture->m_pTexture   = pBackbuffer;
+        //         m_backBuffers.data[m_backBuffers.size++] = (texture);
+        //     }
 
-            return true;
-        }
+        //     return true;
+        // }
     }  // namespace ngfx
 }  // namespace ncore
