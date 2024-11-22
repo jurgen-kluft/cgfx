@@ -13,6 +13,41 @@ namespace ncore
 #ifdef TARGET_MAC
         namespace nmetal
         {
+            struct top_level_argument_buffer_t
+            {
+                u32      cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
+                uint64_t cbv1;                          // gpu address
+                uint64_t cbv2;
+            };
+
+            struct command_list_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalCommandList);
+
+                MTL::CommandBuffer*                       m_pCommandBuffer         = nullptr;
+                MTL::BlitCommandEncoder*                  m_pBlitCommandEncoder    = nullptr;
+                MTL::RenderCommandEncoder*                m_pRenderCommandEncoder  = nullptr;
+                MTL::ComputeCommandEncoder*               m_pComputeCommandEncoder = nullptr;
+                MTL::AccelerationStructureCommandEncoder* m_pASEncoder             = nullptr;
+                MTL::Fence*                               m_pFence                 = nullptr;
+                pipeline_state_t*                         m_pCurrentPSO            = nullptr;
+                MTL::Buffer*                              m_pIndexBuffer           = nullptr;
+                NS::UInteger                              m_indexBufferOffset      = 0;
+                MTL::IndexType                            m_indexType              = MTL::IndexTypeUInt16;
+                MTL::PrimitiveType                        m_primitiveType          = MTL::PrimitiveTypeTriangle;
+                MTL::CullMode                             m_cullMode               = MTL::CullModeNone;
+                MTL::Winding                              m_frontFaceWinding       = MTL::WindingClockwise;
+                MTL::TriangleFillMode                     m_fillMode               = MTL::TriangleFillModeFill;
+                MTL::DepthClipMode                        m_clipMode               = MTL::DepthClipModeClip;
+                float                                     m_depthBias              = 0.0f;
+                float                                     m_depthBiasClamp         = 0.0f;
+                float                                     m_depthSlopeScale        = 0.0f;
+                top_level_argument_buffer_t               m_graphicsArgumentBuffer;
+                top_level_argument_buffer_t               m_computeArgumentBuffer;
+
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::command_list_t* CreateCommandList(ngfx::command_list_t*);
 
             bool                Create(ngfx::command_list_t*);

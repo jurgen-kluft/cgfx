@@ -60,7 +60,7 @@ namespace ncore
         template <typename C1, typename C2>
         void DestroyComponent(device_t* device, C1* pComponent1)
         {
-            device->m_allocatorCS->rem_component<C1, C2>(pComponent1);
+            device->m_allocatorCS->destroy_component<C1, C2>(pComponent1);
         }
 
         template <typename C1, typename C2>
@@ -84,7 +84,7 @@ namespace ncore
         template <typename C>
         void SetTag(device_t* device, C* pComponent, u16 tag)
         {
-            device->m_allocatorCS->set_tag<C>(pComponent, tag);
+            device->m_allocatorCS->add_tag<C>(pComponent, tag);
         }
 
         template <typename C>

@@ -9,7 +9,7 @@ namespace ncore
     {
         namespace nmock
         {
-            void  CreateDevice(ngfx::device_t* device);
+            void  CreateDevice(ngfx::device_t* device, u32 max_instances);
             bool  Create(ngfx::device_t* device);
             void  Destroy(ngfx::device_t* device);
             void* GetHandle(ngfx::device_t* device);

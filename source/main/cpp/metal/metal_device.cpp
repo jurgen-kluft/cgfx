@@ -120,7 +120,32 @@ namespace ncore
             // ---------------------------------------------------------------------------------------
             // ---------------------------------------------------------------------------------------
 
-            void CreateDevice(ngfx::device_t* device) { nmetal::device_t* mdevice = CreateComponent<ngfx::device_t, nmetal::device_t>(device, device); }
+            void CreateDevice(ngfx::device_t* device, u32 max_instances)
+            {
+                // TODO: tune the component counts
+                device->m_allocatorCS->register_component<nmetal::device_t>(2);
+                device->m_allocatorCS->register_component<nmetal::mbuffer_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::command_list_t>(64);
+                device->m_allocatorCS->register_component<nmetal::srv_texture_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::srv_buffer_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::srv_tlas_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::uav_texture_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::uav_buffer_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::cbv_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::sampler_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::fence_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::mheap_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::graphics_pipeline_state_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::meshshading_pipeline_state_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::compute_pipeline_state_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::mblas_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::mtlas_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::mshader_t>(max_instances);
+                device->m_allocatorCS->register_component<nmetal::swapchain_t>(8);
+                device->m_allocatorCS->register_component<nmetal::mtexture_t>(max_instances);
+
+                nmetal::device_t* mdevice = CreateComponent<ngfx::device_t, nmetal::device_t>(device, device);
+            }
 
             bool Create(ngfx::device_t* device)
             {

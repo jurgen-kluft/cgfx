@@ -9,6 +9,15 @@ namespace ncore
     {
         namespace nmock
         {
+            struct shader_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockShader);
+                byte* m_data;
+                u32   m_len;
+                u32   m_hash;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::shader_t* shader);
             void            Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
             bool            Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);

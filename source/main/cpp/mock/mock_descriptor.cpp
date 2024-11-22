@@ -9,58 +9,6 @@ namespace ncore
     {
         namespace nmock
         {
-            struct srv_texture_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorSrvTexture);
-                texture_t* m_texture;
-                srv_desc_t m_desc = {};
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct srv_buffer_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorSrvBuffer);
-                buffer_t*  m_buffer;
-                srv_desc_t m_desc = {};
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct srv_tlas_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorSrvRayTracingTLAS);
-                tlas_t*    m_tlas;
-                srv_desc_t m_desc = {};
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct uav_texture_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorUavTexture);
-                ngfx::uav_desc_t m_desc = {};
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct uav_buffer_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorUavBuffer);
-                ngfx::uav_desc_t m_desc = {};
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct cbv_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorCbv);
-                ngfx::cbv_desc_t m_desc = {};
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct sampler_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockDescriptorSampler);
-                ngfx::sampler_desc_t m_desc;
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
             // -------------------------------------------------------------------------------------------------------------------------------
             // -------------------------------------------------------------------------------------------------------------------------------
 

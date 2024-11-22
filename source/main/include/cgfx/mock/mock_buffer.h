@@ -9,6 +9,13 @@ namespace ncore
     {
         namespace nmock
         {
+            struct buffer_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockBuffer);
+                void* m_pCpuAddress = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+            
             ngfx::buffer_t* CreateBuffer(device_t* pDevice, ngfx::buffer_t*);
             bool            Create(device_t* pDevice, ngfx::buffer_t*);
             void            Destroy(device_t*, ngfx::buffer_t*);

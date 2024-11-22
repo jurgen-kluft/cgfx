@@ -42,7 +42,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void CreateDevice(ngfx::device_t* device);
+            void CreateDevice(ngfx::device_t* device, u32 max_instances);
             bool Create(ngfx::device_t* device);
             void Destroy(ngfx::device_t* device);
             void BeginFrame(ngfx::device_t* device);

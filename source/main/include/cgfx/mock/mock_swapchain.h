@@ -9,6 +9,16 @@ namespace ncore
     {
         namespace nmock
         {
+            struct swapchain_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockSwapchain);
+                s32        m_currentBackBuffer  = -1;
+                s32        m_maxBackBufferCount = 8;
+                s32        m_numBackBufferCount = 0;
+                texture_t* m_backBuffers[8];
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
             bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
             void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);

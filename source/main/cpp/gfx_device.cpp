@@ -8,21 +8,32 @@ namespace ncore
 {
     namespace ngfx
     {
-        void RegisterComponents(ncs::allocator_t* cs)
+        void RegisterComponents(ncs::allocator_t* cs, u32 max_instances)
         {
-            // register components
-            cs->register_component<name_t>(2048);
-            cs->register_component<texture_t>(2048);
-            cs->register_component<buffer_t>(2048);
-            cs->register_component<device_t>(4);
-
-            // ... TODO: register other components
+            // TODO: tune the component counts
+            cs->register_component<name_t>(max_instances);
+            cs->register_component<resource_t>(max_instances);
+            cs->register_component<device_t>(1);
+            cs->register_component<texture_t>(max_instances);
+            cs->register_component<buffer_t>(max_instances);
+            cs->register_component<fence_t>(max_instances);
+            cs->register_component<swapchain_t>(8);
+            cs->register_component<command_list_t>(64);
+            cs->register_component<resource_t>(max_instances);
+            cs->register_component<shader_t>(max_instances);
+            cs->register_component<pipeline_state_t>(max_instances);
+            cs->register_component<descriptor_t>(max_instances);
+            cs->register_component<heap_t>(max_instances);
+            cs->register_component<blas_t>(max_instances);
+            cs->register_component<tlas_t>(max_instances);
         }
 
         device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc)
         {
+            const u32 max_instances = 4096;
+
             ncs::allocator_t* cs = g_allocate<ncs::allocator_t>(allocator);
-            RegisterComponents(cs);
+            RegisterComponents(cs, max_instances);
 
             ngfx::resource_t* device_resource = cs->new_instance<ngfx::resource_t>();
             ngfx::device_t*   pDevice         = cs->create_component<ngfx::resource_t, ngfx::device_t>(device_resource);
@@ -41,26 +52,22 @@ namespace ncore
             {
                 case enums::Backend_D3D12:
                     pDevice->m_vendor = enums::VendorNvidia;
-                    // pDevice           = nd3d12::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "D3D12 Device");
-                    nd3d12::CreateDevice(pDevice);
+                    nd3d12::CreateDevice(pDevice, max_instances);
                     break;
                 case enums::Backend_Metal:
                     pDevice->m_vendor = enums::VendorApple;
-                    // pDevice           = nmetal::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "Metal Device");
-                    nmetal::CreateDevice(pDevice);
+                    nmetal::CreateDevice(pDevice, max_instances);
                     break;
                 case enums::Backend_Mock:
                     pDevice->m_vendor = enums::VendorMock;
-                    // pDevice           = nmock::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "Mock Device");
-                    nmock::CreateDevice(pDevice);
+                    nmock::CreateDevice(pDevice, max_instances);
                     break;
 
                 default: break;
             }
-
 
             if (pDevice && !Create(pDevice))
             {
@@ -111,6 +118,17 @@ namespace ncore
                 case enums::Backend_Metal: nmetal::EndFrame(device); break;
                 case enums::Backend_Mock: nmock::EndFrame(device); break;
             }
+        }
+
+        bool DumpMemoryStats(device_t* device, const char* file)
+        {
+            switch (device->m_desc.backend)
+            {
+                case enums::Backend_D3D12: return nd3d12::DumpMemoryStats(device, file);
+                case enums::Backend_Metal: return nmetal::DumpMemoryStats(device, file);
+                case enums::Backend_Mock: return nmock::DumpMemoryStats(device, file);
+            }
+            return false;
         }
 
     }  // namespace ngfx
