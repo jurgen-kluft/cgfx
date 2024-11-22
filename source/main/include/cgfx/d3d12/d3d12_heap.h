@@ -14,33 +14,18 @@ namespace ncore
     {
         namespace nd3d12
         {
-            heap_t* CreateHeap(device_t* pDevice, resource_t* resource, heap_t* heap);
-            bool    Create(device_t* pDevice, heap_t* pHeap);
-            void    Destroy(device_t* pDevice, heap_t* pHeap);
-            void*   GetHandle(device_t* pDevice, const heap_t* pHeap);
+            struct heap_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Heap);
+                D3D12MA::Allocation* m_pAllocation = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            ngfx::heap_t* CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap);
+            bool          Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void*         GetHandle(ngfx::device_t* pDevice, const ngfx::heap_t* pHeap);
         }  // namespace nd3d12
-
-        // class D3D12Device;
-
-        // namespace D3D12MA
-        // {
-        //     class Allocation;
-        // }
-
-        // class D3D12Heap : public heap_t
-        // {
-        // public:
-        //     D3D12Heap(D3D12Device* pDevice, const heap_desc_t& desc, const char* name);
-        //     ~D3D12Heap();
-
-        //     virtual void* GetHandle() const override;
-        //     ID3D12Heap*   GetHeap() const;
-
-        //     bool Create();
-
-        // private:
-        //     D3D12MA::Allocation* m_pAllocation = nullptr;
-        // };
     }  // namespace ngfx
 }  // namespace ncore
 #endif

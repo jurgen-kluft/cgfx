@@ -5,16 +5,31 @@
     #pragma once
 #endif
 
-//#include "cgfx/d3d12/d3d12_header.h"
+#include "cbase/c_carray.h"
 #include "cgfx/gfx_swapchain.h"
+#include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_PC
         namespace nd3d12
         {
+            struct swapchain_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Swapchain);
+                IDXGISwapChain3*     m_pSwapChain         = nullptr;
+                bool                 m_bEnableVsync       = true;
+                bool                 m_bSupportTearing    = false;
+                bool                 m_bWindowMode        = true;
+                u32                  m_nCurrentBackBuffer = 0;
+                carray_t<texture_t*> m_backBuffers;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
+            void               DestroySwapchain(device_t* device, ngfx::swapchain_t* swapchain);
             bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
             void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);
             void               Present(device_t* device, ngfx::swapchain_t* swapchain);
@@ -23,8 +38,10 @@ namespace ncore
             ngfx::texture_t*   GetBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
             bool               Resize(device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
             void               SetVSyncEnabled(device_t* device, ngfx::swapchain_t* swapchain, bool value);
-        }  // namespace nmock
+        }  // namespace nd3d12
+#else
 
+#endif
         // class D3D12Device;
 
         // class D3D12Swapchain : public swapchain_t
@@ -52,8 +69,8 @@ namespace ncore
         //     struct vector_t
         //     {
         //         T* data = nullptr;
-		// 		u32 size = 0;
-		// 		u32 capacity = 0;
+        // 		u32 size = 0;
+        // 		u32 capacity = 0;
         //     };
 
         //     bool                        m_bEnableVsync       = true;

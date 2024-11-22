@@ -5,8 +5,9 @@
     #pragma once
 #endif
 
-// #include "cgfx/d3d12/d3d12_header.h"
+#include "cgfx/gfx_defines.h"
 #include "cgfx/gfx_rt_blas.h"
+#include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
@@ -14,50 +15,25 @@ namespace ncore
     {
         namespace nd3d12
         {
+            struct blas_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Blas);
+                carray_t<D3D12_RAYTRACING_GEOMETRY_DESC>           m_geometries;
+                D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC m_buildDesc;
+
+                ID3D12Resource*      m_pASBuffer          = nullptr;
+                D3D12MA::Allocation* m_pASAllocation      = nullptr;
+                ID3D12Resource*      m_pScratchBuffer     = nullptr;
+                D3D12MA::Allocation* m_pScratchAllocation = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void*         GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pBLAS);
         }  // namespace nd3d12
-
-        // class D3D12Device;
-
-        // namespace D3D12MA
-        // {
-        //     class Allocation;
-        // }
-
-        // class D3D12RayTracingBLAS : public blas_t
-        // {
-        // public:
-        //     D3D12RayTracingBLAS(D3D12Device* pDevice, const GfxRayTracing::BLASDesc& desc, const char* name);
-        //     ~D3D12RayTracingBLAS();
-
-        //     virtual void* GetHandle() const override { return m_pASBuffer; }
-
-        //     bool                                                      Create();
-        //     const D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC* GetBuildDesc() const { return &m_buildDesc; }
-        //     D3D12_GPU_VIRTUAL_ADDRESS                                 GetGpuAddress() const { return m_pASBuffer->GetGPUVirtualAddress(); }
-
-        //     void GetUpdateDesc(D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
-
-        // private:
-        //     template<typename T>
-        //     struct vector_t
-        //     {
-        // 		T* data = nullptr;
-        // 		u32 size = 0;
-        // 		u32 capacity = 0;
-        // 	};
-
-        //     vector_t<D3D12_RAYTRACING_GEOMETRY_DESC>      m_geometries;
-        //     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC m_buildDesc;
-
-        //     ID3D12Resource*      m_pASBuffer          = nullptr;
-        //     D3D12MA::Allocation* m_pASAllocation      = nullptr;
-        //     ID3D12Resource*      m_pScratchBuffer     = nullptr;
-        //     D3D12MA::Allocation* m_pScratchAllocation = nullptr;
-        // };
     }  // namespace ngfx
 }  // namespace ncore
+
 #endif

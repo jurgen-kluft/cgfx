@@ -8,12 +8,13 @@
 #ifdef TARGET_PC
     #include "cd3d12/d3d12.h"
     #include "cd3d12/d3dx12.h"
+    #include "cd3d12/ma/D3D12MemAlloc.h"
     #include "dxgi1_6.h"
 #endif
 
+#include "cbase/c_debug.h"
 #include "cgfx/gfx_defines.h"
 #include "cgfx/gfx_texture.h"
-#include "cbase/c_debug.h"
 
 namespace ncore
 {
@@ -603,4 +604,5 @@ namespace ncore
 #endif
     }  // namespace ngfx
 }  // namespace ncore
+
 #endif

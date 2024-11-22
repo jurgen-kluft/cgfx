@@ -1,3 +1,4 @@
+#include "cbase/c_debug.h"
 #include "cgfx/d3d12/d3d12_swapchain.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_texture.h"

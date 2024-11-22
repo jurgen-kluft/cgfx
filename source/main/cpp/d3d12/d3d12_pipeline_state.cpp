@@ -1,7 +1,6 @@
 #include "cgfx/d3d12/d3d12_pipeline_state.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_shader.h"
-//#include "utils/log.h"
 
 namespace ncore
 {

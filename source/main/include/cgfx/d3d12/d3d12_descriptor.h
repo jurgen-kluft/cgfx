@@ -5,9 +5,9 @@
     #pragma once
 #endif
 
-// #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_descriptor.h"
 #include "cgfx/gfx_buffer.h"
+#include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
@@ -15,6 +15,61 @@ namespace ncore
     {
         namespace nd3d12
         {
+            struct srv_texture_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvTexture);
+                ngfx::texture_t* m_pResource = nullptr;
+                srv_desc_t       m_desc      = {};
+                D3D12Descriptor  m_descriptor;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct srv_buffer_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvBuffer);
+                ngfx::buffer_t* m_pResource = nullptr;
+                srv_desc_t      m_desc      = {};
+                D3D12Descriptor m_descriptor;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct uav_texture_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavTexture);
+                texture_t*      m_pResource = nullptr;
+                uav_desc_t      m_desc      = {};
+                D3D12Descriptor m_descriptor;
+                D3D12Descriptor m_nonShaderVisibleDescriptor;  // for uav clear
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct uav_buffer_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavBuffer);
+                buffer_t*       m_pResource = nullptr;
+                uav_desc_t      m_desc      = {};
+                D3D12Descriptor m_descriptor;
+                D3D12Descriptor m_nonShaderVisibleDescriptor;  // for uav clear
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct cbv_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorCbv);
+                buffer_t*       m_pBuffer = nullptr;
+                cbv_desc_t      m_desc    = {};
+                D3D12Descriptor m_descriptor;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct sampler_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSampler);
+                sampler_desc_t  m_desc;
+                D3D12Descriptor m_descriptor;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
             ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
             ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
             ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc);

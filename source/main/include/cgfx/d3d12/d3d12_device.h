@@ -5,8 +5,8 @@
     #pragma once
 #endif
 
-// #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_device.h"
+#include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
@@ -15,7 +15,81 @@ namespace ncore
 #ifdef TARGET_PC
         namespace nd3d12
         {
-            void  CreateDevice(device_t* device, u32 max_instances) {}
+            struct device_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Device);
+                CD3DX12FeatureSupport m_featureSupport;
+
+                IDXGIFactory6* m_pDxgiFactory = nullptr;
+                IDXGIAdapter1* m_pDxgiAdapter = nullptr;
+
+                ID3D12Device10*      m_pDevice        = nullptr;
+                ID3D12CommandQueue*  m_pGraphicsQueue = nullptr;
+                ID3D12CommandQueue*  m_pComputeQueue  = nullptr;
+                ID3D12CommandQueue*  m_pCopyQueue     = nullptr;
+                ID3D12RootSignature* m_pRootSignature = nullptr;
+
+                ID3D12CommandSignature* m_pDrawSignature              = nullptr;
+                ID3D12CommandSignature* m_pDrawIndexedSignature       = nullptr;
+                ID3D12CommandSignature* m_pDispatchSignature          = nullptr;
+                ID3D12CommandSignature* m_pDispatchMeshSignature      = nullptr;
+                ID3D12CommandSignature* m_pMultiDrawSignature         = nullptr;
+                ID3D12CommandSignature* m_pMultiDrawIndexedSignature  = nullptr;
+                ID3D12CommandSignature* m_pMultiDispatchSignature     = nullptr;
+                ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
+
+                D3D12MA::Allocator*           m_pResourceAllocator = nullptr;
+                D3D12ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+                D3D12DescriptorAllocator*     m_pRTVAllocator;
+                D3D12DescriptorAllocator*     m_pDSVAllocator;
+                D3D12DescriptorAllocator*     m_pResDescriptorAllocator;
+                D3D12DescriptorAllocator*     m_pSamplerAllocator;
+                D3D12DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
+
+                template <typename T>
+                struct queue_t
+                {
+                    u32 m_queueSize;
+                    u32 m_queueMax;
+                    T*  m_queue;
+                };
+
+                struct ObjectDeletion
+                {
+                    IUnknown* object;
+                    u64       frame;
+                };
+                queue_t<ObjectDeletion> m_deletionQueue;
+
+                struct AllocationDeletion
+                {
+                    D3D12MA::Allocation* allocation;
+                    u64                  frame;
+                };
+                queue_t<AllocationDeletion> m_allocationDeletionQueue;
+
+                struct DescriptorDeletion
+                {
+                    D3D12Descriptor descriptor;
+                    u64             frame;
+                };
+                queue_t<DescriptorDeletion> m_rtvDeletionQueue;
+                queue_t<DescriptorDeletion> m_dsvDeletionQueue;
+                queue_t<DescriptorDeletion> m_resourceDeletionQueue;
+                queue_t<DescriptorDeletion> m_samplerDeletionQueue;
+                queue_t<DescriptorDeletion> m_nonShaderVisibleUAVDeletionQueue;
+
+    #if MICROPROFILE_GPU_TIMERS_D3D12
+                int m_nProfileGraphicsQueue = -1;
+                int m_nProfileComputeQueue  = -1;
+                int m_nProfileCopyQueue     = -1;
+    #endif
+                bool m_bSteamDeck = false;
+
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
             bool  Create(ngfx::device_t* device);
             void  Destroy(ngfx::device_t* device);
             void* GetHandle(ngfx::device_t* device);
@@ -162,75 +236,6 @@ namespace ncore
         //             void CreateIndirectCommandSignatures();
 
         //         private:
-        //             CD3DX12FeatureSupport m_featureSupport;
-
-        //             IDXGIFactory6* m_pDxgiFactory = nullptr;
-        //             IDXGIAdapter1* m_pDxgiAdapter = nullptr;
-
-        //             ID3D12Device10*      m_pDevice        = nullptr;
-        //             ID3D12CommandQueue*  m_pGraphicsQueue = nullptr;
-        //             ID3D12CommandQueue*  m_pComputeQueue  = nullptr;
-        //             ID3D12CommandQueue*  m_pCopyQueue     = nullptr;
-        //             ID3D12RootSignature* m_pRootSignature = nullptr;
-
-        //             ID3D12CommandSignature* m_pDrawSignature              = nullptr;
-        //             ID3D12CommandSignature* m_pDrawIndexedSignature       = nullptr;
-        //             ID3D12CommandSignature* m_pDispatchSignature          = nullptr;
-        //             ID3D12CommandSignature* m_pDispatchMeshSignature      = nullptr;
-        //             ID3D12CommandSignature* m_pMultiDrawSignature         = nullptr;
-        //             ID3D12CommandSignature* m_pMultiDrawIndexedSignature  = nullptr;
-        //             ID3D12CommandSignature* m_pMultiDispatchSignature     = nullptr;
-        //             ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
-
-        //             D3D12MA::Allocator*                             m_pResourceAllocator = nullptr;
-        //             D3D12ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
-        //             D3D12DescriptorAllocator*     m_pRTVAllocator;
-        //             D3D12DescriptorAllocator*     m_pDSVAllocator;
-        //             D3D12DescriptorAllocator*     m_pResDescriptorAllocator;
-        //             D3D12DescriptorAllocator*     m_pSamplerAllocator;
-        //             D3D12DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
-
-        //             template<typename T>
-        //             struct queue_t
-        //             {
-        //                 u32 m_queueSize;
-        //                 u32 m_queueMax;
-        //                 T*  m_queue;
-        //             };
-
-        //             struct ObjectDeletion
-        //             {
-        //                 IUnknown* object;
-        //                 u64       frame;
-        //             };
-        //             queue_t<ObjectDeletion> m_deletionQueue;
-
-        //             struct AllocationDeletion
-        //             {
-        //                 D3D12MA::Allocation* allocation;
-        //                 u64                  frame;
-        //             };
-        //             queue_t<AllocationDeletion> m_allocationDeletionQueue;
-
-        //             struct DescriptorDeletion
-        //             {
-        //                 D3D12Descriptor descriptor;
-        //                 u64             frame;
-        //             };
-        //             queue_t<DescriptorDeletion> m_rtvDeletionQueue;
-        //             queue_t<DescriptorDeletion> m_dsvDeletionQueue;
-        //             queue_t<DescriptorDeletion> m_resourceDeletionQueue;
-        //             queue_t<DescriptorDeletion> m_samplerDeletionQueue;
-        //             queue_t<DescriptorDeletion> m_nonShaderVisibleUAVDeletionQueue;
-
-        // #if MICROPROFILE_GPU_TIMERS_D3D12
-        //             int m_nProfileGraphicsQueue = -1;
-        //             int m_nProfileComputeQueue  = -1;
-        //             int m_nProfileCopyQueue     = -1;
-        // #endif
-
-        //             bool m_bSteamDeck = false;
-        //         };
 
     }  // namespace ngfx
 }  // namespace ncore

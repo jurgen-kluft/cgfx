@@ -5,6 +5,8 @@
     #pragma once
 #endif
 
+#include "cbase/c_carray.h"
+
 #include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_texture.h"
 
@@ -12,19 +14,33 @@ namespace ncore
 {
     namespace ngfx
     {
-    #ifdef TARGET_PC
+#ifdef TARGET_PC
         namespace nd3d12
         {
-            ngfx::texture_t*         CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
-            bool                     Create(device_t* device, ngfx::texture_t* texture);
-            void                     Destroy(device_t* device, ngfx::texture_t* texture);
-            void*                    GetHandle(device_t* device, ngfx::texture_t* texture);
-            u32                      GetRequiredStagingBufferSize(device_t* device, ngfx::texture_t* texture);
-            u32                      GetRowPitch(device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
-            tiling_desc_t            GetTilingDesc(device_t* device, ngfx::texture_t* texture);
+            struct texture_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Texture);
+                ID3D12Resource*      m_pTexture    = nullptr;
+                D3D12MA::Allocation* m_pAllocation = nullptr;
+
+                carray_t<D3D12Descriptor> m_RTV;
+                carray_t<D3D12Descriptor> m_DSV;
+                carray_t<D3D12Descriptor> m_readonlyDSV;
+
+                HANDLE m_sharedHandle = 0;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            ngfx::texture_t*          CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
+            bool                      Create(device_t* device, ngfx::texture_t* texture);
+            void                      Destroy(device_t* device, ngfx::texture_t* texture);
+            void*                     GetHandle(device_t* device, ngfx::texture_t* texture);
+            u32                       GetRequiredStagingBufferSize(device_t* device, ngfx::texture_t* texture);
+            u32                       GetRowPitch(device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
+            tiling_desc_t             GetTilingDesc(device_t* device, ngfx::texture_t* texture);
             subresource_tiling_desc_t GetSubResourceTilingDesc(device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
-            void*                    GetSharedHandle(device_t* device, ngfx::texture_t* texture);
-        }
+            void*                     GetSharedHandle(device_t* device, ngfx::texture_t* texture);
+        }  // namespace nd3d12
 #else
         namespace nd3d12
         {
@@ -72,10 +88,10 @@ namespace ncore
         //     template<typename T>
         //     struct vector_t
         //     {
-		// 		T* data = nullptr;
-		// 		u32 size = 0;
+        // 		T* data = nullptr;
+        // 		u32 size = 0;
         //         u32 capacity = 0;
-		// 	};
+        // 	};
 
         //     vector_t<D3D12Descriptor> m_RTV;
         //     vector_t<D3D12Descriptor> m_DSV;
