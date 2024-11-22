@@ -43,20 +43,24 @@ namespace ncore
                     pDevice->m_vendor = enums::VendorNvidia;
                     // pDevice           = nd3d12::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "D3D12 Device");
+                    nd3d12::CreateDevice(pDevice);
                     break;
                 case enums::Backend_Metal:
                     pDevice->m_vendor = enums::VendorApple;
                     // pDevice           = nmetal::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "Metal Device");
+                    nmetal::CreateDevice(pDevice);
                     break;
                 case enums::Backend_Mock:
                     pDevice->m_vendor = enums::VendorMock;
                     // pDevice           = nmock::AllocDevice(allocator, desc);
                     AttachName(pDevice, device_resource, "Mock Device");
+                    nmock::CreateDevice(pDevice);
                     break;
 
                 default: break;
             }
+
 
             if (pDevice && !Create(pDevice))
             {

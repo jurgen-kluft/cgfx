@@ -20,7 +20,6 @@ namespace ncore
 
                 nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
                 MTL::Device*      mtlDevice = mdevice->m_pDevice;
-                ;
 
                 MTL::HeapDescriptor* descriptor = MTL::HeapDescriptor::alloc()->init();
                 descriptor->setSize(pHeap->m_desc.size);

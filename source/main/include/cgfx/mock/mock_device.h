@@ -9,13 +9,14 @@ namespace ncore
     {
         namespace nmock
         {
-            bool  Create(device_t* device);
-            void  Destroy(device_t* device);
-            void* GetHandle(device_t* device);
-            void  BeginFrame(device_t* device);
-            void  EndFrame(device_t* device);
+            void  CreateDevice(ngfx::device_t* device);
+            bool  Create(ngfx::device_t* device);
+            void  Destroy(ngfx::device_t* device);
+            void* GetHandle(ngfx::device_t* device);
+            void  BeginFrame(ngfx::device_t* device);
+            void  EndFrame(ngfx::device_t* device);
 
-            bool DumpMemoryStats(device_t* device, const char* file);
+            bool DumpMemoryStats(ngfx::device_t* device, const char* file);
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

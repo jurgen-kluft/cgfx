@@ -196,6 +196,7 @@ namespace ncore
 
         namespace nmock
         {
+            void  CreateDevice(ngfx::device_t* device) {}
             bool  Create(device_t* device) { return true; }
             void  Destroy(device_t* device) {}
             void* GetHandle(device_t* device) { return nullptr; }
