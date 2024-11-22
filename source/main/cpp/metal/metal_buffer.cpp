@@ -21,7 +21,8 @@ namespace ncore
                 nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 if (mbuffer != nullptr && mbuffer->m_pCpuAddress)
                 {
-                    nmetal::Evict(device, mbuffer->m_pBuffer);
+                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                    nmetal::Evict(mdevice, mbuffer->m_pBuffer);
                     mbuffer->m_pBuffer->release();
                 }
             }
@@ -33,6 +34,7 @@ namespace ncore
                 // TODO We should introduce a component that holds heap and heap allocation information, this should not be part of the buffer
                 //      descriptor. This will allow us to remove the heap_offset and heap members from the buffer descriptor.
 
+                nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                 if (buffer->m_desc.heap != nullptr)
                 {
                     ASSERT(buffer->m_desc.alloc_type == enums::AllocationPlaced);
@@ -44,8 +46,7 @@ namespace ncore
                 }
                 else
                 {
-                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
-                    mbuffer->m_pBuffer        = mdevice->m_pDevice->newBuffer(buffer->m_desc.size, ToResourceOptions(buffer->m_desc.memory_type));
+                    mbuffer->m_pBuffer = mdevice->m_pDevice->newBuffer(buffer->m_desc.size, ToResourceOptions(buffer->m_desc.memory_type));
                 }
 
                 if (mbuffer->m_pBuffer == nullptr)
@@ -54,7 +55,7 @@ namespace ncore
                     return false;
                 }
 
-                MakeResident(device, mbuffer->m_pBuffer);
+                MakeResident(mdevice, mbuffer->m_pBuffer);
 
                 name_t const* name = GetComponent<ngfx::buffer_t, name_t>(device, buffer);
                 SetDebugLabel(mbuffer->m_pBuffer, name->m_name);

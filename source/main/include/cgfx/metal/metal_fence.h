@@ -19,6 +19,7 @@ namespace ncore
             };
 
             ngfx::fence_t* CreateFence(ngfx::device_t* device, ngfx::fence_t* fence);
+            void           DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence);
             bool           Create(ngfx::device_t* device, ngfx::fence_t* fence);
             void           Destroy(ngfx::device_t* device, ngfx::fence_t* fence);
             void           Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value);

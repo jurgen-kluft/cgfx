@@ -14,6 +14,18 @@ namespace ncore
                 return heap;
             }
 
+            void DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap)
+            {
+                nmetal::mheap_t* mheap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                if (mheap != nullptr)
+                {
+                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
+                    nmetal::Evict(mdevice, mheap->m_pHeap);
+                    mheap->m_pHeap->release();
+                    DestroyComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
+                }
+            }
+
             bool Create(ngfx::device_t* pDevice, heap_t* pHeap)
             {
                 ASSERT(m_desc.size % (64 * 1024) == 0);
@@ -36,7 +48,7 @@ namespace ncore
                     return false;
                 }
 
-                MakeResident(pDevice, mheap->m_pHeap);
+                MakeResident(mdevice, mheap->m_pHeap);
 
                 name_t const* name = GetComponent<ngfx::heap_t, name_t>(pDevice, pHeap);
                 SetDebugLabel(mheap->m_pHeap, name->m_name);
@@ -49,7 +61,8 @@ namespace ncore
                 nmetal::mheap_t* mheap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(pDevice, pHeap);
                 if (mheap != nullptr)
                 {
-                    nmetal::Evict(pDevice, mheap->m_pHeap);
+                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
+                    nmetal::Evict(mdevice, mheap->m_pHeap);
                     mheap->m_pHeap->release();
                 }
             }

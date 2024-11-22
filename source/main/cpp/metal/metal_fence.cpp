@@ -14,6 +14,16 @@ namespace ncore
                 return fence;
             }
 
+            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence)
+            {
+                nmetal::fence_t* mfence = GetComponent<ngfx::fence_t, nmetal::fence_t>(device, fence);
+                if (mfence->m_pEvent != nullptr)
+                {
+                    mfence->m_pEvent->release();
+                    DestroyComponent<ngfx::fence_t, nmetal::fence_t>(device, fence);
+                }
+            }
+
             bool Create(ngfx::device_t* device, ngfx::fence_t* fence)
             {
                 nmetal::fence_t* mfence    = GetComponent<ngfx::fence_t, nmetal::fence_t>(device, fence);

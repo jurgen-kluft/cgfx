@@ -852,43 +852,48 @@ namespace ncore
                 return false;
             }
 
-            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d)
+            u32 GetHeapIndex(ngfx::device_t* device, ngfx::descriptor_t* d)
             {
-                if (d->m_type == enums::DescriptorTypeSrvTexture)
+                u32 heapIndex = GFX_INVALID_RESOURCE;
+                switch (d->m_type)
                 {
-                    nmetal::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_texture_t>(device, d);
-                    return (srv != nullptr) ? srv->m_base.m_heapIndex) : GFX_INVALID_RESOURCE;
+                    case enums::DescriptorTypeSrvTexture:
+                        {
+                            nmetal::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_texture_t>(device, d);
+                            heapIndex                  = (srv != nullptr) ? srv->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
+                    case enums::DescriptorTypeSrvBuffer:
+                        {
+                            nmetal::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_buffer_t>(device, d);
+                            heapIndex                 = (srv != nullptr) ? srv->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
+                    case enums::DescriptorTypeUavTexture:
+                        {
+                            nmetal::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(device, d);
+                            heapIndex                  = (uav != nullptr) ? uav->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
+                    case enums::DescriptorTypeUavBuffer:
+                        {
+                            nmetal::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(device, d);
+                            heapIndex                 = (uav != nullptr) ? uav->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
+                    case enums::DescriptorTypeCbv:
+                        {
+                            nmetal::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nmetal::cbv_t>(device, d);
+                            heapIndex          = (cbv != nullptr) ? cbv->m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
+                    case enums::DescriptorTypeSampler:
+                        {
+                            nmetal::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nmetal::sampler_t>(device, d);
+                            heapIndex                  = (sampler != nullptr) ? sampler->m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
+                    case enums::DescriptorTypeSrvRayTracingTLAS:
+                        {
+                            nmetal::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_tlas_t>(device, d);
+                            heapIndex               = (srv != nullptr) ? srv->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                        }
                 }
-                else if (d->m_type == enums::DescriptorTypeSrvBuffer)
-                {
-                    nmetal::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_buffer_t>(device, d);
-                    return (srv != nullptr) ? srv->m_base.m_heapIndex) : GFX_INVALID_RESOURCE;
-                }
-                else if (d->m_type == enums::DescriptorTypeUavTexture)
-                {
-                    nmetal::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(device, d);
-                    return (uav != nullptr) ? uav->m_base.m_heapIndex) : GFX_INVALID_RESOURCE;
-                }
-                else if (d->m_type == enums::DescriptorTypeUavBuffer)
-                {
-                    nmetal::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(device, d);
-                    return (uav != nullptr) ? uav->m_base.m_heapIndex) : GFX_INVALID_RESOURCE;
-                }
-                else if (d->m_type == enums::DescriptorTypeCbv)
-                {
-                    nmetal::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nmetal::cbv_t>(device, d);
-                    return (cbv != nullptr) ? cbv->m_heapIndex) : GFX_INVALID_RESOURCE;
-                }
-                else if (d->m_type == enums::DescriptorTypeSampler)
-                {
-                    nmetal::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nmetal::sampler_t>(device, d);
-                    return (sampler != nullptr) ? sampler->m_heapIndex) : GFX_INVALID_RESOURCE;
-                }
-                else if (d->m_type == enums::DescriptorTypeSrvRayTracingTLAS)
-                {
-                    nmetal::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_tlas_t>(device, d);
-                    return (srv != nullptr) ? srv->m_base.m_heapIndex) : GFX_INVALID_RESOURCE;
-                }                
+                return heapIndex;
             }
         }  // namespace nmetal
 

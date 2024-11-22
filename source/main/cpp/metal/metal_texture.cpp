@@ -23,6 +23,7 @@ namespace ncore
                 //      be part of the texture desc
                 MTL::TextureDescriptor* descriptor = ToTextureDescriptor(texture->m_desc);
 
+                nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                 mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
                 if (texture->m_desc.heap)
                 {
@@ -34,7 +35,6 @@ namespace ncore
                 }
                 else
                 {
-                    nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     mtexture->m_pTexture      = mdevice->m_pDevice->newTexture(descriptor);
                 }
 
@@ -46,7 +46,7 @@ namespace ncore
                     return false;
                 }
 
-                nmetal::MakeResident(device, mtexture->m_pTexture);
+                nmetal::MakeResident(mdevice, mtexture->m_pTexture);
 
                 name_t const* name = GetComponent<ngfx::texture_t, name_t>(device, texture);
                 SetDebugLabel(mtexture->m_pTexture, name->m_name);
@@ -56,8 +56,9 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::texture_t* texture)
             {
+                nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                 mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
-                Evict(device, mtexture->m_pTexture);
+                Evict(mdevice, mtexture->m_pTexture);
                 if (!mtexture->m_bSwapchainTexture)
                 {
                     mtexture->m_pTexture->release();

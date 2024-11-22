@@ -40,6 +40,7 @@ namespace ncore
                 nmetal::swapchain_t* msc = GetComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
                 ngfx::Destroy(device, msc->m_pTexture);
                 msc->m_pView->release();
+                DestroyComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
             }
 
             MTK::View* GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
@@ -49,6 +50,7 @@ namespace ncore
             }
 
             // Metal SPECIFIC
+            
             void SetSwapchainTexture(ngfx::device_t* device, ngfx::texture_t* texture, MTL::Texture* mtlTexture)
             {
                 nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);

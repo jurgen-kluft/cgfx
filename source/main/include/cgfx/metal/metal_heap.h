@@ -22,6 +22,7 @@ namespace ncore
             };
 
             ngfx::heap_t* CreateHeap(ngfx::device_t* pDevice, resource_t* resource, ngfx::heap_t* heap);
+            void          DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
             bool          Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
             void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
             MTL::Heap*    GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
