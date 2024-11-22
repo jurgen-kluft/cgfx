@@ -9,7 +9,7 @@ namespace ncore
     {
         struct pipeline_state_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentPipelineState);
             enums::pipeline_t m_type;
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

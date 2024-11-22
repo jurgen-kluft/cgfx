@@ -9,7 +9,7 @@ namespace ncore
     {
         struct fence_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentFence);
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 

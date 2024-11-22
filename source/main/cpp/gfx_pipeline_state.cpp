@@ -15,9 +15,9 @@ namespace ncore
 
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::CreateGraphicsPipelineState(device, resource, ps, desc); break;
-                case enums::Backend_Metal: nmetal::CreateGraphicsPipelineState(device, resource, ps, desc); break;
-                case enums::Backend_Mock: nmock::CreateGraphicsPipelineState(device, resource, ps, desc); break;
+                case enums::Backend_D3D12: nd3d12::CreateGraphicsPipelineState(device, ps, desc); break;
+                case enums::Backend_Metal: nmetal::CreateGraphicsPipelineState(device, ps, desc); break;
+                case enums::Backend_Mock: nmock::CreateGraphicsPipelineState(device, ps, desc); break;
             }
             return ps;
         }
@@ -29,9 +29,9 @@ namespace ncore
 
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::CreateMeshShadingPipelineState(device, resource, ps, desc); break;
-                case enums::Backend_Metal: nmetal::CreateMeshShadingPipelineState(device, resource, ps, desc); break;
-                case enums::Backend_Mock: nmock::CreateMeshShadingPipelineState(device, resource, ps, desc); break;
+                case enums::Backend_D3D12: nd3d12::CreateMeshShadingPipelineState(device, ps, desc); break;
+                case enums::Backend_Metal: nmetal::CreateMeshShadingPipelineState(device, ps, desc); break;
+                case enums::Backend_Mock: nmock::CreateMeshShadingPipelineState(device, ps, desc); break;
             }
             return ps;
         }
@@ -43,9 +43,9 @@ namespace ncore
 
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::CreateComputePipelineState(device, resource, ps, desc); break;
-                case enums::Backend_Metal: nmetal::CreateComputePipelineState(device, resource, ps, desc); break;
-                case enums::Backend_Mock: nmock::CreateComputePipelineState(device, resource, ps, desc); break;
+                case enums::Backend_D3D12: nd3d12::CreateComputePipelineState(device, ps, desc); break;
+                case enums::Backend_Metal: nmetal::CreateComputePipelineState(device, ps, desc); break;
+                case enums::Backend_Mock: nmock::CreateComputePipelineState(device, ps, desc); break;
             }
             return ps;
         }

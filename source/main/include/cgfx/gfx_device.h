@@ -16,7 +16,7 @@ namespace ncore
     {
         struct device_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentDevice);
             u64               m_frameID;
             device_desc_t     m_desc;
             enums::vendor_t   m_vendor;

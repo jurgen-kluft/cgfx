@@ -9,7 +9,7 @@ namespace ncore
     {
         struct tlas_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentTlas);
             tlas_desc_t m_desc;
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

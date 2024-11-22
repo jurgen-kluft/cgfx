@@ -158,6 +158,12 @@ namespace ncore
                 setup(msallocator, mdevice, GFX_MAX_SAMPLER_DESCRIPTOR_COUNT, "Sampler Heap");
                 mdevice->m_pSamplerAllocator = msallocator;
 
+                mdevice->m_resDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, GFX_MAX_RESOURCE_DESCRIPTOR_COUNT);
+                mdevice->m_resDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, GFX_MAX_RESOURCE_DESCRIPTOR_COUNT);
+
+                mdevice->m_samplerDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, GFX_MAX_SAMPLER_DESCRIPTOR_COUNT);
+                mdevice->m_samplerDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, GFX_MAX_SAMPLER_DESCRIPTOR_COUNT);
+
                 return true;
             }
 
@@ -179,6 +185,12 @@ namespace ncore
                 teardown(mdevice->m_pSamplerAllocator);
                 device->m_allocator->deallocate(mdevice->m_pSamplerAllocator);
                 mdevice->m_pSamplerAllocator = nullptr;
+
+                device->m_allocator->deallocate(mdevice->m_resDescriptorDeletionQueueFirst);
+                device->m_allocator->deallocate(mdevice->m_resDescriptorDeletionQueueSecond);
+
+                device->m_allocator->deallocate(mdevice->m_samplerDescriptorDeletionQueueFirst);
+                device->m_allocator->deallocate(mdevice->m_samplerDescriptorDeletionQueueSecond);
 
                 mdevice->m_pResidencySet->release();
                 mdevice->m_pQueue->release();

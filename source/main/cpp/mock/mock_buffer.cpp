@@ -9,7 +9,9 @@ namespace ncore
         {
             struct buffer_t
             {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockBuffer);
                 void* m_pCpuAddress = nullptr;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             ngfx::buffer_t* CreateBuffer(device_t* device, ngfx::buffer_t* buffer)

@@ -42,15 +42,14 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void         CreateDevice(ngfx::device_t* device);
-            bool         Create(ngfx::device_t* device);
-            void         Destroy(ngfx::device_t* device);
-            MTL::Device* GetHandle(ngfx::device_t* device);
-            void         BeginFrame(ngfx::device_t* device);
-            void         EndFrame(ngfx::device_t* device);
-            bool         DumpMemoryStats(ngfx::device_t* device, const char* file);
+            void CreateDevice(ngfx::device_t* device);
+            bool Create(ngfx::device_t* device);
+            void Destroy(ngfx::device_t* device);
+            void BeginFrame(ngfx::device_t* device);
+            void EndFrame(ngfx::device_t* device);
 
             // TODO: investigate if these functions can just accept 'nmetal::device_t* mdevice' instead of 'ngfx::device_t* device'
+            MTL::Device* GetHandle(ngfx::device_t* device);
             u64          AllocateConstantBuffer(ngfx::device_t* device, const void* data, size_t data_size);
             u32          AllocateResourceDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
             u32          AllocateSamplerDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
@@ -61,6 +60,7 @@ namespace ncore
             u32          GetAllocationSize(nmetal::device_t* device, const texture_desc_t& desc);
             void         MakeResident(nmetal::device_t* device, const MTL::Allocation* allocation);
             void         Evict(nmetal::device_t* device, const MTL::Allocation* allocation);
+            bool         DumpMemoryStats(ngfx::device_t* device, const char* file);
         }  // namespace nmetal
 #else
         namespace nmetal

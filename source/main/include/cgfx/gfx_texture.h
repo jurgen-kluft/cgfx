@@ -70,7 +70,7 @@ namespace ncore
 
         struct texture_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentTexture);
             texture_desc_t m_desc = {};
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

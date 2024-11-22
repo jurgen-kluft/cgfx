@@ -9,20 +9,23 @@ namespace ncore
         {
             struct graphics_ps_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentBackEndGraphicsPipelineState);
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockGraphicsPipelineState);
                 graphics_pipeline_desc_t desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct mesh_shading_ps_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentBackEndMeshShadingPipelineState);
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockMeshShadingPipelineState);
                 mesh_shading_pipeline_desc_t desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct compute_ps_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentBackEndComputePipelineState);
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockComputePipelineState);
                 compute_pipeline_desc_t desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             ngfx::pipeline_state_t* CreateGraphicsPipelineState(device_t* device, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)

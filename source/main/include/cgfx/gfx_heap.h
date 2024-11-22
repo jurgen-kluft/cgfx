@@ -9,7 +9,7 @@ namespace ncore
     {
         struct heap_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentHeap);
             heap_desc_t m_desc = {};
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

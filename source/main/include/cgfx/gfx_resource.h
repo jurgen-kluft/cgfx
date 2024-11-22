@@ -10,13 +10,13 @@ namespace ncore
     {
         struct resource_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentResource);
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         struct name_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentName);
             char m_name[128];
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

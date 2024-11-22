@@ -9,7 +9,7 @@ namespace ncore
     {
         struct command_list_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentCommandList);
             device_t*                 m_device;
             enums::command_queue_type m_queueType;
             DCORE_CLASS_PLACEMENT_NEW_DELETE

@@ -26,7 +26,7 @@ namespace ncore
 
         struct buffer_t
         {
-            D_GFX_OCS_COMPONENT;
+            D_GFX_OCS_COMPONENT_SET(enums::ComponentBuffer);
             buffer_desc_t m_desc = {};
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

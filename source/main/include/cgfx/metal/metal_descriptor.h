@@ -25,7 +25,7 @@ namespace ncore
 
             struct srv_texture_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorSrvTexture);
                 nmetal::mtexture_t* m_texture;
                 srv_base_t          m_base;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -33,7 +33,7 @@ namespace ncore
 
             struct srv_buffer_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorSrvBuffer);
                 nmetal::mbuffer_t* m_buffer;
                 srv_base_t         m_base;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -41,7 +41,7 @@ namespace ncore
 
             struct srv_tlas_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorSrvRayTracingTLAS);
                 nmetal::mtlas_t* m_tlas;
                 srv_base_t       m_base;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -56,7 +56,7 @@ namespace ncore
 
             struct uav_texture_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorUavTexture);
                 nmetal::mtexture_t* m_texture;
                 uav_base_t          m_base;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -64,7 +64,7 @@ namespace ncore
 
             struct uav_buffer_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorUavBuffer);
                 nmetal::mbuffer_t* m_buffer;
                 uav_base_t         m_base;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -72,7 +72,7 @@ namespace ncore
 
             struct cbv_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorCbv);
                 nmetal::mbuffer_t* m_buffer;
                 u32                m_heapIndex = GFX_INVALID_RESOURCE;
                 ngfx::cbv_desc_t   m_desc      = {};
@@ -81,7 +81,7 @@ namespace ncore
 
             struct sampler_t
             {
-                D_GFX_OCS_COMPONENT;
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDescriptorSampler);
                 MTL::SamplerState*   m_pSampler  = nullptr;
                 u32                  m_heapIndex = GFX_INVALID_RESOURCE;
                 ngfx::sampler_desc_t m_desc;
