@@ -1,51 +1,66 @@
 #include "cgfx/d3d12/d3d12_heap.h"
 #include "cgfx/d3d12/d3d12_device.h"
+
+#ifdef TARGET_PC
+
 #include "cd3d12/ma/D3D12MemAlloc.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        // D3D12Heap::D3D12Heap(D3D12Device* pDevice, const heap_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_desc    = desc;
-        //     m_name    = name;
-        // }
+        namespace nd3d12
+        {
+            void CreateHeap(ngfx::device_t* device, ngfx::heap_t* heap) { nd3d12::heap_t* pHeap = CreateComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap); }
+            void DestroyHeap(ngfx::device_t* device, ngfx::heap_t* heap) { DestroyComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap); }
 
-        // D3D12Heap::~D3D12Heap()
-        // {
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-        //     pDevice->Delete(m_pAllocation);
-        // }
+            bool Create(ngfx::device_t* device, ngfx::heap_t* heap)
+            {
+                ASSERT(heap->m_desc.size % (64 * 1024) == 0);
 
-        // void* D3D12Heap::GetHandle() const { return m_pAllocation; }
+                nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                nd3d12::heap_t*   pHeap   = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap);
 
-        // ID3D12Heap* D3D12Heap::GetHeap() const { return m_pAllocation->GetHeap(); }
+                D3D12MA::ALLOCATION_DESC allocationDesc = {};
+                allocationDesc.HeapType                 = d3d12_heap_type(heap->m_desc.memory_type);
+                allocationDesc.Flags                    = D3D12MA::ALLOCATION_FLAG_COMMITTED;
 
-        // bool D3D12Heap::Create()
-        // {
-        //     ASSERT(m_desc.size % (64 * 1024) == 0);
+                D3D12_RESOURCE_ALLOCATION_INFO allocationInfo = {};
+                allocationInfo.SizeInBytes                    = heap->m_desc.size;
+                allocationInfo.Alignment                      = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
 
-        //     D3D12MA::ALLOCATION_DESC allocationDesc = {};
-        //     allocationDesc.HeapType                 = d3d12_heap_type(m_desc.memory_type);
-        //     allocationDesc.Flags                    = D3D12MA::ALLOCATION_FLAG_COMMITTED;
+                D3D12MA::Allocator* pAllocator = pDevice->m_pResourceAllocator;
+                HRESULT             hr         = pAllocator->AllocateMemory(&allocationDesc, &allocationInfo, &pHeap->m_pAllocation);
+                if (FAILED(hr))
+                {
+                    // RE_ERROR("[D3D12Heap] failed to create {}", m_name);
+                    return false;
+                }
 
-        //     D3D12_RESOURCE_ALLOCATION_INFO allocationInfo = {};
-        //     allocationInfo.SizeInBytes                    = m_desc.size;
-        //     allocationInfo.Alignment                      = D3D12_DEFAULT_RESOURCE_PLACEMENT_ALIGNMENT;
+                name_t const* name = GetComponent<ngfx::heap_t, ngfx::name_t>(device, heap);
+                pHeap->m_pAllocation->SetName(name->m_name);
 
-        //     D3D12MA::Allocator* pAllocator = ((D3D12Device*)m_pDevice)->GetResourceAllocator();
-        //     HRESULT             hr         = pAllocator->AllocateMemory(&allocationDesc, &allocationInfo, &m_pAllocation);
-        //     if (FAILED(hr))
-        //     {
-        //         // RE_ERROR("[D3D12Heap] failed to create {}", m_name);
-        //         return false;
-        //     }
+                return true;
+            }
 
-        //     m_pAllocation->SetName(string_to_wstring(m_name).c_str());
+            void Destroy(ngfx::device_t* device, ngfx::heap_t* heap)
+            {
+                nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                nd3d12::heap_t*   pHeap   = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap);
 
-        //     return true;
-        // }
+                pDevice->Delete(pHeap->m_pAllocation);
+                pHeap->m_pAllocation = nullptr;
+            }
+
+            D3D12MA::Allocation* GetHandle(ngfx::device_t* device, ngfx::heap_t* heap)
+            {
+                nd3d12::heap_t* pHeap = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap);
+                return pHeap->m_pAllocation;
+            }
+
+        }  // namespace nd3d12
+
     }  // namespace ngfx
 }  // namespace ncore
+
+#endif

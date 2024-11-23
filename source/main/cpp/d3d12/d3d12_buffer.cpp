@@ -1,88 +1,165 @@
+#include "cgfx/gfx_defines.h"
+#include "cgfx/gfx_device.h"
 #include "cgfx/d3d12/d3d12_buffer.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_heap.h"
-#include "cd3d12/ma/D3D12MemAlloc.h"
 
- namespace ncore
- {
-     namespace ngfx
-     {
-//         D3D12Buffer::D3D12Buffer(D3D12Device* pDevice, const buffer_desc_t& desc, const char* name)
-//         {
-//             m_pDevice = pDevice;
-//             m_desc    = desc;
-//             m_name    = name;
-//         }
+#ifdef TARGET_PC
 
-//         D3D12Buffer::~D3D12Buffer()
-//         {
-//             D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-//             pDevice->Delete(m_pBuffer);
-//             pDevice->Delete(m_pAllocation);
-//         }
+    #include "cd3d12/ma/D3D12MemAlloc.h"
 
-//         void* D3D12Buffer::GetCpuAddress() { return m_pCpuAddress; }
+namespace ncore
+{
+    namespace ngfx
+    {
+        namespace nd3d12
+        {
+            void CreateBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nd3d12::buffer_t* pD3D12Buffer = CreateComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
+                return buffer;
+            }
 
-//         u64 D3D12Buffer::GetGpuAddress() { return m_pBuffer->GetGPUVirtualAddress(); }
+            void DestroyBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer) { DestroyComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer); }
 
-//         bool D3D12Buffer::Create()
-//         {
-//             D3D12MA::Allocator* pAllocator = ((D3D12Device*)m_pDevice)->GetResourceAllocator();
+            bool Create(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nd3d12::buffer_t* pBuffer    = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
+                nd3d12::device_t* pDevice    = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                ID3D12Device*     pD3DDevice = pDevice->m_pDevice;
 
-//             D3D12_RESOURCE_FLAGS flags         = (m_desc.usage & GfxBufferUsageUnorderedAccess) ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
-//             D3D12_RESOURCE_DESC1 resourceDesc1 = CD3DX12_RESOURCE_DESC1::Buffer(m_desc.size, flags);
+                D3D12MA::Allocator*  pAllocator    = pD3DDevice->m_pResourceAllocator;
+                D3D12_RESOURCE_FLAGS flags         = (buffer->m_desc.usage & GfxBufferUsageUnorderedAccess) ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
+                D3D12_RESOURCE_DESC1 resourceDesc1 = CD3DX12_RESOURCE_DESC1::Buffer(buffer->m_desc.size, flags);
 
-//             D3D12_BARRIER_LAYOUT initial_layout = D3D12_BARRIER_LAYOUT_UNDEFINED;
+                D3D12_BARRIER_LAYOUT initial_layout = D3D12_BARRIER_LAYOUT_UNDEFINED;
 
-//             HRESULT hr;
+                HRESULT hr;
 
-//             if (m_desc.heap != nullptr)
-//             {
-//                 ASSERT(m_desc.alloc_type == GfxAllocationType::Placed);
-//                 ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
-//                 ASSERT(m_desc.size + m_desc.heap_offset <= m_desc.heap->GetDesc().size);
+                if (buffer->m_desc.heap != nullptr)
+                {
+                    ASSERT(buffer->m_desc.alloc_type == GfxAllocationType::Placed);
+                    ASSERT(buffer->m_desc.memory_type == buffer->m_desc.heap->m_desc.memory_type);
+                    ASSERT(buffer->m_desc.size + buffer->m_desc.heap_offset <= buffer->m_desc.heap->m_desc.size);
 
-//                 hr = pAllocator->CreateAliasingResource2((D3D12MA::Allocation*)m_desc.heap->GetHandle(), m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&m_pBuffer));
-//             }
-//             else
-//             {
-//                 D3D12MA::ALLOCATION_DESC allocationDesc = {};
-//                 allocationDesc.HeapType                 = d3d12_heap_type(m_desc.memory_type);
-//                 allocationDesc.Flags                    = m_desc.alloc_type == GfxAllocationType::Committed ? D3D12MA::ALLOCATION_FLAG_COMMITTED : D3D12MA::ALLOCATION_FLAG_NONE;
+                    hr = pAllocator->CreateAliasingResource2((D3D12MA::Allocation*)GetHandle(device, buffer->m_desc.heap), buffer->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&m_pBuffer));
+                }
+                else
+                {
+                    D3D12MA::ALLOCATION_DESC allocationDesc = {};
+                    allocationDesc.HeapType                 = d3d12_heap_type(buffer->m_desc.memory_type);
+                    allocationDesc.Flags                    = buffer->m_desc.alloc_type == GfxAllocationType::Committed ? D3D12MA::ALLOCATION_FLAG_COMMITTED : D3D12MA::ALLOCATION_FLAG_NONE;
 
-//                 hr = pAllocator->CreateResource3(&allocationDesc, &resourceDesc1, initial_layout, nullptr, 0, nullptr, &m_pAllocation, IID_PPV_ARGS(&m_pBuffer));
-//             }
+                    hr = pAllocator->CreateResource3(&allocationDesc, &resourceDesc1, initial_layout, nullptr, 0, nullptr, &m_pAllocation, IID_PPV_ARGS(&m_pBuffer));
+                }
 
-//             if (FAILED(hr))
-//             {
-//                 // RE_ERROR("[D3D12Buffer] failed to create {}", m_name);
-//                 return false;
-//             }
+                if (FAILED(hr))
+                {
+                    // RE_ERROR("[D3D12Buffer] failed to create {}", m_name);
+                    return false;
+                }
 
-//             eastl::wstring name_wstr = string_to_wstring(m_name);
-//             m_pBuffer->SetName(name_wstr.c_str());
-//             if (m_pAllocation)
-//             {
-//                 m_pAllocation->SetName(name_wstr.c_str());
-//             }
+                // eastl::wstring name_wstr = string_to_wstring(m_name);
+                // m_pBuffer->SetName(name_wstr.c_str());
 
-//             if (m_desc.memory_type != GfxMemoryType::GpuOnly)
-//             {
-//                 CD3DX12_RANGE readRange(0, 0);
-//                 m_pBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pCpuAddress));
-//             }
-//             return true;
-//         }
+                // if (m_pAllocation)
+                // {
+                //     m_pAllocation->SetName(name_wstr.c_str());
+                // }
 
-//         u32 D3D12Buffer::GetRequiredStagingBufferSize() const
-//         {
-//             ID3D12Device* pDevice = (ID3D12Device*)m_pDevice->GetHandle();
+                if (buffer->m_desc.memory_type != enums::MemoryGpuOnly)
+                {
+                    CD3DX12_RANGE readRange(0, 0);
+                    m_pBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pCpuAddress));
+                }
+                return true;
+            }
 
-//             D3D12_RESOURCE_DESC desc = m_pBuffer->GetDesc();
+            void Destroy(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nd3d12::device_t* pDevice      = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                nd3d12::buffer_t* pD3D12Buffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
+                pDevice->m_pDevice->Delete(pD3D12Buffer->m_pBuffer);
+                pDevice->m_pDevice->Delete(pD3D12Buffer->m_pAllocation);
+            }
 
-//             u64 size;
-//             pDevice->GetCopyableFootprints(&desc, 0, 1, 0, nullptr, nullptr, nullptr, &size);
-//             return (u32)size;
-//         }
+            void* GetHandle(ngfx::device_t* device, ngfx::buffer_t* buffer);
+
+            void* GetCpuAddress(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nd3d12::buffer_t* pD3D12Buffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
+                return pD3D12Buffer->m_pCpuAddress;
+            }
+
+            u64 GetGpuAddress(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nd3d12::buffer_t* pD3D12Buffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
+                return pD3D12Buffer->m_pBuffer->GetGPUVirtualAddress();
+            }
+
+            u32 GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::buffer_t* buffer)
+            {
+                nd3d12::buffer_t*   pD3D12Buffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
+                nd3d12::device_t*   pDevice      = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                ID3D12Device*       pD3DDevice   = pDevice->m_pDevice;
+                D3D12_RESOURCE_DESC desc         = pD3D12Buffer->m_pBuffer->GetDesc();
+
+                u64 size;
+                pD3DDevice->GetCopyableFootprints(&desc, 0, 1, 0, nullptr, nullptr, nullptr, &size);
+                return (u32)size;
+            }
+
+        }  // namespace nd3d12
+
+        //         bool D3D12Buffer::Create()
+        //         {
+        //             D3D12MA::Allocator* pAllocator = ((D3D12Device*)m_pDevice)->GetResourceAllocator();
+        //             D3D12_RESOURCE_FLAGS flags         = (m_desc.usage & GfxBufferUsageUnorderedAccess) ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
+        //             D3D12_RESOURCE_DESC1 resourceDesc1 = CD3DX12_RESOURCE_DESC1::Buffer(m_desc.size, flags);
+
+        //             D3D12_BARRIER_LAYOUT initial_layout = D3D12_BARRIER_LAYOUT_UNDEFINED;
+
+        //             HRESULT hr;
+
+        //             if (m_desc.heap != nullptr)
+        //             {
+        //                 ASSERT(m_desc.alloc_type == GfxAllocationType::Placed);
+        //                 ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
+        //                 ASSERT(m_desc.size + m_desc.heap_offset <= m_desc.heap->GetDesc().size);
+
+        //                 hr = pAllocator->CreateAliasingResource2((D3D12MA::Allocation*)m_desc.heap->GetHandle(), m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&m_pBuffer));
+        //             }
+        //             else
+        //             {
+        //                 D3D12MA::ALLOCATION_DESC allocationDesc = {};
+        //                 allocationDesc.HeapType                 = d3d12_heap_type(m_desc.memory_type);
+        //                 allocationDesc.Flags                    = m_desc.alloc_type == GfxAllocationType::Committed ? D3D12MA::ALLOCATION_FLAG_COMMITTED : D3D12MA::ALLOCATION_FLAG_NONE;
+
+        //                 hr = pAllocator->CreateResource3(&allocationDesc, &resourceDesc1, initial_layout, nullptr, 0, nullptr, &m_pAllocation, IID_PPV_ARGS(&m_pBuffer));
+        //             }
+
+        //             if (FAILED(hr))
+        //             {
+        //                 // RE_ERROR("[D3D12Buffer] failed to create {}", m_name);
+        //                 return false;
+        //             }
+
+        //             eastl::wstring name_wstr = string_to_wstring(m_name);
+        //             m_pBuffer->SetName(name_wstr.c_str());
+        //             if (m_pAllocation)
+        //             {
+        //                 m_pAllocation->SetName(name_wstr.c_str());
+        //             }
+
+        //             if (m_desc.memory_type != GfxMemoryType::GpuOnly)
+        //             {
+        //                 CD3DX12_RANGE readRange(0, 0);
+        //                 m_pBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pCpuAddress));
+        //             }
+        //             return true;
+        //         }
+
     }  // namespace ngfx
 }  // namespace ncore
+
+#endif

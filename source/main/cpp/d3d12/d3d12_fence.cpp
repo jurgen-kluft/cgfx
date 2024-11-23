@@ -5,48 +5,37 @@ namespace ncore
 {
     namespace ngfx
     {
-        // D3D12Fence::D3D12Fence(D3D12Device* pDevice, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_name    = name;
-        // }
+#ifdef TARGET_PC
+        namespace nd3d12
+        {
+            void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence) { nd3d12::fence_t* dfence = CreateComponent<ngfx::buffer_t, nd3d12::fence_t>(device, fence); }
+            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence) { DestroyComponent<ngfx::buffer_t, nd3d12::fence_t>(device, fence); }
 
-        // D3D12Fence::~D3D12Fence()
-        // {
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-        //     pDevice->Delete(m_pFence);
+            void Destroy(ngfx::device_t* device, ngfx::fence_t* fence)
+            {
+                nd3d12::fence_t*  pFence  = GetComponent<ngfx::fence_t, nd3d12::fence_t>(device, fence);
+                nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                pDevice->m_pDevice->Delete(pFence->m_pFence);
+                CloseHandle(pFence->m_hEvent);
+            }
 
-        //     CloseHandle(m_hEvent);
-        // }
+            void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value)
+            {
+                nd3d12::fence_t* pFence = GetComponent<ngfx::fence_t, nd3d12::fence_t>(device, fence);
+                if (pFence->m_pFence->GetCompletedValue() != value)
+                {
+                    pFence->m_pFence->SetEventOnCompletion(value, pFence->m_hEvent);
+                    WaitForSingleObjectEx(pFence->m_hEvent, INFINITE, FALSE);
+                }
+            }
 
-        // void D3D12Fence::Wait(u64 value)
-        // {
-        //     if (m_pFence->GetCompletedValue() != value)
-        //     {
-        //         m_pFence->SetEventOnCompletion(value, m_hEvent);
-        //         WaitForSingleObjectEx(m_hEvent, INFINITE, FALSE);
-        //     }
-        // }
+            void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value)
+            {
+                nd3d12::fence_t* pFence = GetComponent<ngfx::fence_t, nd3d12::fence_t>(device, fence);
+                pFence->m_pFence->Signal(value);
+            }
+        }  // namespace nd3d12
+#endif
 
-        // void D3D12Fence::Signal(u64 value) { m_pFence->Signal(value); }
-
-        // bool D3D12Fence::Create()
-        // {
-        //     ID3D12Device* pDevice = (ID3D12Device*)m_pDevice->GetHandle();
-
-        //     HRESULT hr = pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFence));
-        //     if (FAILED(hr))
-        //     {
-        //         // RE_ERROR("[D3D12Fence] failed to create {}", m_name);
-        //         return false;
-        //     }
-
-        //     // TODO : set name
-        //     //m_pFence->SetName(string_to_wstring(m_name).c_str());
-
-        //     m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-        //     return true;
-        // }
     }  // namespace ngfx
 }  // namespace ncore

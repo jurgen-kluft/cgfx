@@ -12,6 +12,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_PC
         namespace nd3d12
         {
             struct heap_t
@@ -21,11 +22,22 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::heap_t* CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap);
-            bool          Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            void*         GetHandle(ngfx::device_t* pDevice, const ngfx::heap_t* pHeap);
+            void                 CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap);
+            void                 DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap);
+            bool                 Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void                 Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            D3D12MA::Allocation* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
         }  // namespace nd3d12
+#else
+        namespace nd3d12
+        {
+            void  CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
+            void  DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
+            bool  Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
+            void  Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return nullptr; }
+        }  // namespace nd3d12
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 #endif

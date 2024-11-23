@@ -4,8 +4,9 @@ C++ library for next-gen graphics, back-ends.
 
 ## back-ends
 
-- [ ] DX12
-- [ ] Metal
+- [X] DX12
+- [X] Metal
+- [X] Mock
 
 
 

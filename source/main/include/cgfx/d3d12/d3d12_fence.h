@@ -12,6 +12,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_PC
         namespace nd3d12
         {
             struct fence_t
@@ -22,11 +23,22 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            fence_t* CreateFence(device_t* device, resource_t* resource, fence_t* fence);
-            void     Destroy(device_t* device, fence_t* fence);
-            void     Wait(device_t* device, fence_t* fence, u64 value);
-            void     Signal(device_t* device, fence_t* fence, u64 value);
+            void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence);
+            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence);
+            void Destroy(ngfx::device_t* device, ngfx::fence_t* fence);
+            void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value);
+            void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value);
         }  // namespace nd3d12
+#else
+        namespace nd3d12
+        {
+            void CreateFence(ngfx::device_t* device, resource_t* resource, ngfx::fence_t* fence) {}
+            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence) {}
+            void Destroy(ngfx::device_t* device, ngfx::fence_t* fence) {}
+            void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
+            void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
+        }  // namespace nd3d12
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 #endif
