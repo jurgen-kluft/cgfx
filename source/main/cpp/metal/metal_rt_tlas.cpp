@@ -11,11 +11,7 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas)
-            {
-                mtlas_t* mtlas = CreateComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
-                return tlas;
-            }
+            void CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) { mtlas_t* mtlas = CreateComponent<ngfx::tlas_t, mtlas_t>(device, tlas); }
 
             void Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas)
             {

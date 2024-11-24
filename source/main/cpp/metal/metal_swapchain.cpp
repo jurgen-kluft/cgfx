@@ -9,12 +9,7 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::swapchain_t* CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
-            {
-                nmetal::swapchain_t* msc = CreateComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain);
-
-                return swapchain;
-            }
+            void CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc) { nmetal::swapchain_t* msc = CreateComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain); }
 
             bool Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
             {
@@ -50,7 +45,7 @@ namespace ncore
             }
 
             // Metal SPECIFIC
-            
+
             void SetSwapchainTexture(ngfx::device_t* device, ngfx::texture_t* texture, MTL::Texture* mtlTexture)
             {
                 nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);

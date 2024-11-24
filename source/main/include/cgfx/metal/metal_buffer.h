@@ -19,24 +19,24 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::buffer_t* CreateBuffer(ngfx::device_t* device, ngfx::buffer_t*);
-            bool            Create(ngfx::device_t* device, ngfx::buffer_t*);
-            void            Destroy(ngfx::device_t*, ngfx::buffer_t*);
-            MTL::Buffer*    GetHandle(ngfx::device_t* device, ngfx::buffer_t*);
-            void*           GetCpuAddress(ngfx::device_t* device, ngfx::buffer_t*);
-            u64             GetGpuAddress(ngfx::device_t* device, ngfx::buffer_t*);
-            u32             GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::buffer_t*);
+            void         CreateBuffer(ngfx::device_t* device, ngfx::buffer_t*);
+            bool         Create(ngfx::device_t* device, ngfx::buffer_t*);
+            void         Destroy(ngfx::device_t*, ngfx::buffer_t*);
+            MTL::Buffer* GetHandle(ngfx::device_t* device, ngfx::buffer_t*);
+            void*        GetCpuAddress(ngfx::device_t* device, ngfx::buffer_t*);
+            u64          GetGpuAddress(ngfx::device_t* device, ngfx::buffer_t*);
+            u32          GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::buffer_t*);
         }  // namespace nmetal
 #else
         namespace nmetal
         {
-            ngfx::buffer_t* CreateBuffer(device_t* pDevice, ngfx::buffer_t* b) { return b; }
-            bool            Create(device_t* pDevice, ngfx::buffer_t*) { return false; }
-            void            Destroy(device_t*, ngfx::buffer_t*) {}
-            void*           GetHandle(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
-            void*           GetCpuAddress(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
-            u64             GetGpuAddress(device_t* pDevice, ngfx::buffer_t*) { return 0; }
-            u32             GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t*) { return 0; }
+            void  CreateBuffer(device_t* pDevice, ngfx::buffer_t* b) {}
+            bool  Create(device_t* pDevice, ngfx::buffer_t*) { return false; }
+            void  Destroy(device_t*, ngfx::buffer_t*) {}
+            void* GetHandle(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
+            void* GetCpuAddress(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
+            u64   GetGpuAddress(device_t* pDevice, ngfx::buffer_t*) { return 0; }
+            u32   GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t*) { return 0; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

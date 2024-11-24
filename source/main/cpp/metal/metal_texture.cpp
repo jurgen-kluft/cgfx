@@ -10,11 +10,9 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::texture_t* CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
+            void CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
             {
                 nmetal::mtexture_t* mtexture = CreateComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
-
-                return texture;
             }
 
             bool Create(ngfx::device_t* device, ngfx::texture_t* texture)
@@ -23,8 +21,8 @@ namespace ncore
                 //      be part of the texture desc
                 MTL::TextureDescriptor* descriptor = ToTextureDescriptor(texture->m_desc);
 
-                nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
-                mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
+                nmetal::device_t* mdevice  = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                mtexture_t*       mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
                 if (texture->m_desc.heap)
                 {
                     ASSERT(texture->m_desc.alloc_type == enums::AllocationPlaced);
@@ -35,7 +33,7 @@ namespace ncore
                 }
                 else
                 {
-                    mtexture->m_pTexture      = mdevice->m_pDevice->newTexture(descriptor);
+                    mtexture->m_pTexture = mdevice->m_pDevice->newTexture(descriptor);
                 }
 
                 descriptor->release();
@@ -56,8 +54,8 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::texture_t* texture)
             {
-                nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
-                mtexture_t* mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
+                nmetal::device_t* mdevice  = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                mtexture_t*       mtexture = GetComponent<ngfx::texture_t, mtexture_t>(device, texture);
                 Evict(mdevice, mtexture->m_pTexture);
                 if (!mtexture->m_bSwapchainTexture)
                 {

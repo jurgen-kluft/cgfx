@@ -7,11 +7,10 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::fence_t* CreateFence(ngfx::device_t* device, ngfx::fence_t* fence)
+            void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence)
             {
                 nmetal::fence_t* mfence = CreateComponent<ngfx::fence_t, nmetal::fence_t>(device, fence);
                 mfence->m_pEvent        = nullptr;
-                return fence;
             }
 
             void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence)

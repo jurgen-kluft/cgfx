@@ -9,12 +9,7 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::buffer_t* CreateBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer)
-            {
-                nmetal::mbuffer_t* mbuffer = CreateComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
-                // ..
-                return buffer;
-            }
+            void CreateBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer) { nmetal::mbuffer_t* mbuffer = CreateComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer); }
 
             void Destroy(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {

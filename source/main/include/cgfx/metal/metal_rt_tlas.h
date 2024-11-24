@@ -28,7 +28,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::tlas_t*               CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void                        CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void                        Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
             bool                        Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
             MTL::AccelerationStructure* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);

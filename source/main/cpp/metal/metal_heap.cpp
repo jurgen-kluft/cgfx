@@ -7,11 +7,10 @@ namespace ncore
     {
         namespace nmetal
         {
-            heap_t* CreateHeap(ngfx::device_t* pDevice, resource_t* resource, heap_t* heap)
+            void CreateHeap(ngfx::device_t* pDevice, resource_t* resource, heap_t* heap)
             {
                 mheap_t* mheap = CreateComponent<ngfx::heap_t, mheap_t>(pDevice, heap);
                 mheap->m_pHeap = nullptr;
-                return heap;
             }
 
             void DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap)

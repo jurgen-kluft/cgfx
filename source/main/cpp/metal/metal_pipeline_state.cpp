@@ -9,25 +9,22 @@ namespace ncore
     {
         namespace nmetal
         {
-            pipeline_state_t* CreateGraphicsPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
+            void CreateGraphicsPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
             {
                 nmetal::graphics_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::graphics_pipeline_state_t>(device, resource);
                 mps->m_desc                            = desc;
-                return ps;
             }
 
-            pipeline_state_t* CreateMeshShadingPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
+            void CreateMeshShadingPipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
             {
                 nmetal::meshshading_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::meshshading_pipeline_state_t>(device, resource);
                 mps->m_desc                               = desc;
-                return ps;
             }
 
-            pipeline_state_t* CreateComputePipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
+            void CreateComputePipelineState(ngfx::device_t* device, resource_t* resource, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
             {
                 nmetal::compute_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::compute_pipeline_state_t>(device, resource);
                 mps->m_desc                           = desc;
-                return ps;
             }
 
             bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps)

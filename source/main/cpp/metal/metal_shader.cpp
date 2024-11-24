@@ -15,13 +15,12 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader)
+            void CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader)
             {
                 nmetal::mshader_t* msc                     = CreateComponent<ngfx::shader_t, nmetal::mshader_t>(device, shader);
                 msc->m_reflection.threadsPerThreadgroup[0] = 1;
                 msc->m_reflection.threadsPerThreadgroup[1] = 1;
                 msc->m_reflection.threadsPerThreadgroup[2] = 1;
-                return shader;
             }
 
             void Destroy(ngfx::device_t* device, ngfx::shader_t* shader)

@@ -9,12 +9,11 @@ namespace ncore
     {
         namespace nmetal
         {
-            ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
+            void CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
             {
                 mblas_t* mblas            = CreateComponent<ngfx::blas_t, mblas_t>(pDevice, pBLAS);
                 mblas->m_geometries       = nullptr;
                 mblas->m_geometries_count = 0;
-                return pBLAS;
             }
 
             void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS)
@@ -77,8 +76,8 @@ namespace ncore
                     return false;
                 }
 
-                MakeResident(pDevice, mblas->m_pAccelerationStructure);
-                MakeResident(pDevice, mblas->m_pScratchBuffer);
+                MakeResident(mdevice, mblas->m_pAccelerationStructure);
+                MakeResident(mdevice, mblas->m_pScratchBuffer);
 
                 name_t const* name  = GetComponent<ngfx::blas_t, name_t>(pDevice, pBLAS);
                 NS::String*   label = NS::String::alloc()->init(name->m_name, NS::StringEncoding::UTF8StringEncoding);

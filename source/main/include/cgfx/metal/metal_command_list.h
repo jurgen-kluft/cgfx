@@ -48,7 +48,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t*);
+            void CreateCommandList(ngfx::command_list_t*);
 
             bool                Create(ngfx::command_list_t*);
             void                Destroy(ngfx::command_list_t*);
@@ -118,7 +118,7 @@ namespace ncore
 #else
         namespace nmetal
         {
-            ngfx::command_list_t* CreateCommandList(ngfx::device_t* device, ngfx::command_list_t* cmdList) { return cmdList; }
+            void CreateCommandList(ngfx::command_list_t* cmdList) {}
 
             bool  Create(ngfx::command_list_t*) { return false; }
             void  Destroy(ngfx::command_list_t*) {}

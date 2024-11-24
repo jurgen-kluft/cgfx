@@ -63,7 +63,7 @@ namespace ncore
                 }
             }
 
-            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cmdList)
+            void CreateCommandList(ngfx::command_list_t* cmdList)
             {
                 // ...
                 nmetal::command_list_t* mcmdList = CreateComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);

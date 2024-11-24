@@ -18,15 +18,15 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::swapchain_t* CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
-            bool               Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            void               Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            MTK::View*         GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            void               AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            ngfx::texture_t*   GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
-            bool               Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
-            void               SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value);
-            MTL::Drawable*     GetDrawable(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
+            bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            MTK::View*       GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
+            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value);
+            MTL::Drawable*   GetDrawable(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
         }  // namespace nmetal
 
     }  // namespace ngfx

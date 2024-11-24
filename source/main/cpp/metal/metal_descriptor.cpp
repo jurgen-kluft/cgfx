@@ -346,7 +346,7 @@ namespace ncore
 
         namespace nmetal
         {
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* device, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc)
+            void CreateSrv(ngfx::device_t* device, descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc)
             {
                 nmetal::srv_texture_t* srv = CreateComponent<descriptor_t, srv_texture_t>(device, descriptor);
                 srv->m_base.m_desc         = desc;
@@ -355,11 +355,9 @@ namespace ncore
 
                 nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
                 srv->m_texture               = mtexture;
-
-                return descriptor;
             }
 
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* device, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc)
+            void CreateSrv(ngfx::device_t* device, descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc)
             {
                 nmetal::srv_buffer_t* srv = CreateComponent<descriptor_t, srv_buffer_t>(device, descriptor);
                 srv->m_base.m_desc        = desc;
@@ -368,21 +366,18 @@ namespace ncore
 
                 nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 srv->m_buffer              = mbuffer;
-
-                return descriptor;
             }
 
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* device, descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc)
+            void CreateSrv(ngfx::device_t* device, descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc)
             {
                 nmetal::srv_tlas_t* srv   = CreateComponent<descriptor_t, srv_tlas_t>(device, descriptor);
                 srv->m_base.m_desc        = desc;
                 srv->m_base.m_heapIndex   = GFX_INVALID_RESOURCE;
                 srv->m_base.m_textureView = nullptr;
                 srv->m_tlas               = GetComponent<ngfx::tlas_t, nmetal::mtlas_t>(device, tlas);
-                return descriptor;
             }
 
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* device, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc)
+            void CreateUav(ngfx::device_t* device, descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc)
             {
                 nmetal::uav_texture_t* uav = CreateComponent<descriptor_t, uav_texture_t>(device, descriptor);
                 uav->m_base.m_desc         = desc;
@@ -391,11 +386,9 @@ namespace ncore
 
                 nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, buffer);
                 uav->m_texture               = mtexture;
-
-                return descriptor;
             }
 
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* device, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc)
+            void CreateUav(ngfx::device_t* device, descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc)
             {
                 nmetal::uav_buffer_t* uav = CreateComponent<descriptor_t, uav_buffer_t>(device, descriptor);
                 uav->m_base.m_desc        = desc;
@@ -404,28 +397,22 @@ namespace ncore
 
                 nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
                 uav->m_buffer              = mbuffer;
-
-                return descriptor;
             }
 
-            ngfx::descriptor_t* CreateCbv(ngfx::device_t* device, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc)
+            void CreateCbv(ngfx::device_t* device, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc)
             {
                 nmetal::cbv_t* cbv = CreateComponent<descriptor_t, cbv_t>(device, descriptor);
                 cbv->m_desc        = desc;
                 cbv->m_heapIndex   = GFX_INVALID_RESOURCE;
                 cbv->m_buffer      = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
-
-                return descriptor;
             }
 
-            ngfx::descriptor_t* CreateSampler(ngfx::device_t* device, descriptor_t* descriptor, const sampler_desc_t& desc)
+            void CreateSampler(ngfx::device_t* device, descriptor_t* descriptor, const sampler_desc_t& desc)
             {
                 nmetal::sampler_t* sampler = CreateComponent<descriptor_t, sampler_t>(device, descriptor);
                 sampler->m_desc            = desc;
                 sampler->m_heapIndex       = GFX_INVALID_RESOURCE;
                 sampler->m_pSampler        = nullptr;
-
-                return descriptor;
             }
 
             void Destroy(ngfx::device_t* device, ngfx::descriptor_t* d)

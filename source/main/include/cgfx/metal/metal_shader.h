@@ -29,7 +29,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::shader_t*     CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader);
+            void                CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader);
             void                Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
             bool                Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
             u64                 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader);

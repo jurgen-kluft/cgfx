@@ -17,7 +17,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE;
             };
 
-            ngfx::texture_t*          CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
+            void                      CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
             bool                      Create(ngfx::device_t* device, ngfx::texture_t* texture);
             void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture);
             MTL::Texture*             GetHandle(ngfx::device_t* device, ngfx::texture_t* texture);

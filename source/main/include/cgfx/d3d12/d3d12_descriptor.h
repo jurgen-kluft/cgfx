@@ -7,28 +7,39 @@
 
 #include "cgfx/gfx_descriptor.h"
 #include "cgfx/gfx_buffer.h"
+#include "cgfx/gfx_texture.h"
+#include "cgfx/gfx_rt_tlas.h"
 #include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-        namespace nd3d12
+        namespace nd3d12s
         {
             struct srv_texture_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvTexture);
-                ngfx::texture_t* m_pResource = nullptr;
-                srv_desc_t       m_desc      = {};
-                D3D12Descriptor  m_descriptor;
+                nd3d12::texture_t* m_texture = nullptr;
+                srv_desc_t         m_desc    = {};
+                D3D12Descriptor    m_descriptor;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct srv_buffer_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvBuffer);
-                ngfx::buffer_t* m_pResource = nullptr;
-                srv_desc_t      m_desc      = {};
+                nd3d12::buffer_t* m_buffer = nullptr;
+                srv_desc_t        m_desc   = {};
+                D3D12Descriptor   m_descriptor;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
+
+            struct srv_tlas_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvBuffer);
+                nd3d12::tlas_t* m_tlas = nullptr;
+                srv_desc_t      m_desc = {};
                 D3D12Descriptor m_descriptor;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
@@ -36,29 +47,29 @@ namespace ncore
             struct uav_texture_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavTexture);
-                texture_t*      m_pResource = nullptr;
-                uav_desc_t      m_desc      = {};
-                D3D12Descriptor m_descriptor;
-                D3D12Descriptor m_nonShaderVisibleDescriptor;  // for uav clear
+                nd3d12::texture_t* m_texture = nullptr;
+                uav_desc_t         m_desc    = {};
+                D3D12Descriptor    m_descriptor;
+                D3D12Descriptor    m_nonShaderVisibleDescriptor;  // for uav clear
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct uav_buffer_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavBuffer);
-                buffer_t*       m_pResource = nullptr;
-                uav_desc_t      m_desc      = {};
-                D3D12Descriptor m_descriptor;
-                D3D12Descriptor m_nonShaderVisibleDescriptor;  // for uav clear
+                nd3d12::buffer_t* m_buffer = nullptr;
+                uav_desc_t        m_desc   = {};
+                D3D12Descriptor   m_descriptor;
+                D3D12Descriptor   m_nonShaderVisibleDescriptor;  // for uav clear
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct cbv_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorCbv);
-                buffer_t*       m_pBuffer = nullptr;
-                cbv_desc_t      m_desc    = {};
-                D3D12Descriptor m_descriptor;
+                nd3d12::buffer_t* m_buffer = nullptr;
+                cbv_desc_t        m_desc   = {};
+                D3D12Descriptor   m_descriptor;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
@@ -70,93 +81,19 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc);
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc);
-            ngfx::descriptor_t* CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc);
-            ngfx::descriptor_t* CreateCbv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
-            ngfx::descriptor_t* CreateSampler(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc);
+            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* texture, const srv_desc_t& desc);
+            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const srv_desc_t& desc);
+            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::tlas_t* tlas, const srv_desc_t& desc);
+            void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* buffer, const uav_desc_t& desc);
+            void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const uav_desc_t& desc);
+            void CreateCbv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const cbv_desc_t& desc);
+            void CreateSampler(ngfx::device_t* device, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc);
+            void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
 
-            void  Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            bool  Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            u32   GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-
-        }  // namespace nd3d12
-
-        // class D3D12Device;
-
-        // class D3D12ShaderResourceView : public descriptor_t
-        // {
-        // public:
-        //     D3D12ShaderResourceView(D3D12Device* pDevice, resource_t* pResource, const srv_desc_t& desc, const char* name);
-        //     ~D3D12ShaderResourceView();
-
-        //     virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
-        //     virtual u32   GetHeapIndex() const override { return m_descriptor.index; }
-
-        //     bool Create();
-
-        // private:
-        //     resource_t*             m_pResource = nullptr;
-        //     srv_desc_t m_desc      = {};
-        //     D3D12Descriptor           m_descriptor;
-        // };
-
-        // class D3D12UnorderedAccessView : public descriptor_t
-        // {
-        // public:
-        //     D3D12UnorderedAccessView(D3D12Device* pDevice, resource_t* pResource, const uav_desc_t& desc, const char* name);
-        //     ~D3D12UnorderedAccessView();
-
-        //     virtual void* GetHandle() const override { return m_pResource->GetHandle(); }
-        //     virtual u32   GetHeapIndex() const override { return m_descriptor.index; }
-
-        //     bool            Create();
-        //     D3D12Descriptor GetShaderVisibleDescriptor() const { return m_descriptor; }
-        //     D3D12Descriptor GetNonShaderVisibleDescriptor() const { return m_nonShaderVisibleDescriptor; }
-
-        // private:
-        //     resource_t*              m_pResource = nullptr;
-        //     uav_desc_t m_desc      = {};
-        //     D3D12Descriptor            m_descriptor;
-
-        //     D3D12Descriptor m_nonShaderVisibleDescriptor;  // for uav clear
-        // };
-
-        // class D3D12ConstantBufferView : public descriptor_t
-        // {
-        // public:
-        //     D3D12ConstantBufferView(D3D12Device* pDevice, buffer_t* buffer, const cbv_desc_t& desc, const char* name);
-        //     ~D3D12ConstantBufferView();
-
-        //     virtual void* GetHandle() const override { return m_pBuffer->GetHandle(); }
-        //     virtual u32   GetHeapIndex() const override { return m_descriptor.index; }
-
-        //     bool Create();
-
-        // private:
-        //     buffer_t*               m_pBuffer = nullptr;
-        //     cbv_desc_t m_desc    = {};
-        //     D3D12Descriptor           m_descriptor;
-        // };
-
-        // class D3D12Sampler : public descriptor_t
-        // {
-        // public:
-        //     D3D12Sampler(D3D12Device* pDevice, const sampler_desc_t& desc, const char* name);
-        //     ~D3D12Sampler();
-
-        //     virtual void* GetHandle() const override { return nullptr; }
-        //     virtual u32   GetHeapIndex() const override { return m_descriptor.index; }
-
-        //     bool Create();
-
-        // private:
-        //     sampler_desc_t  m_desc;
-        //     D3D12Descriptor m_descriptor;
-        // };
+            void  Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+            bool  Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+s
+        }  // namespace nd3d12s
     }  // namespace ngfx
 }  // namespace ncore
 
