@@ -6,9 +6,8 @@
 #endif
 
 #include "cbase/c_carray.h"
-
-#include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_texture.h"
+#include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
@@ -31,7 +30,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::texture_t*          CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
+            void                      CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
             bool                      Create(device_t* device, ngfx::texture_t* texture);
             void                      Destroy(device_t* device, ngfx::texture_t* texture);
             void*                     GetHandle(device_t* device, ngfx::texture_t* texture);
@@ -44,7 +43,7 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            ngfx::texture_t*          CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) { return nullptr; }
+            void                      CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) { return nullptr; }
             bool                      Create(device_t* device, ngfx::texture_t* texture) { return false; }
             void                      Destroy(device_t* device, ngfx::texture_t* texture) {}
             void*                     GetHandle(device_t* device, ngfx::texture_t* texture) { return nullptr; }
