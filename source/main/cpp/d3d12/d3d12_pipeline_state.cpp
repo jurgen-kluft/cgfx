@@ -6,188 +6,239 @@ namespace ncore
 {
     namespace ngfx
     {
-        // template <class T>
-        // inline bool has_rt_binding(const T& desc)
-        // {
-        //     for (int i = 0; i < 8; ++i)
-        //     {
-        //         if (desc.rt_format[i] != Gfx::Unknown)
-        //         {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // }
+        template <class T>
+        inline bool has_rt_binding(const T& desc)
+        {
+            for (int i = 0; i < 8; ++i)
+            {
+                if (desc.rt_format[i] != Gfx::Unknown)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-        // D3D12GraphicsPipelineState::D3D12GraphicsPipelineState(D3D12Device* pDevice, const graphics_pipeline_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice           = pDevice;
-        //     m_name              = name;
-        //     m_desc              = desc;
-        //     m_type              = GfxPipelineType::Graphics;
-        //     m_primitiveTopology = d3d12_primitive_topology(desc.primitive_type);
-        // }
+        namespace nd3d12
+        {
+            struct graphics_pipeline_state_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12GraphicsPipelineState);
+                ID3D12PipelineState*     m_pPipelineState = nullptr;
+                graphics_pipeline_desc_t m_desc;
+                D3D_PRIMITIVE_TOPOLOGY   m_primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
 
-        // D3D12GraphicsPipelineState::~D3D12GraphicsPipelineState()
-        // {
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-        //     pDevice->Delete(m_pPipelineState);
-        // }
+            struct meshshading_pipeline_state_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12MeshShadingPipelineState);
+                ID3D12PipelineState*         m_pPipelineState = nullptr;
+                mesh_shading_pipeline_desc_t m_desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
 
-        // bool D3D12GraphicsPipelineState::Create()
-        // {
-        //     D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
-        //     desc.pRootSignature                     = ((D3D12Device*)m_pDevice)->GetRootSignature();
+            struct compute_pipeline_state_t
+            {
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12ComputePipelineState);
+                ID3D12PipelineState*    m_pPipelineState = nullptr;
+                compute_pipeline_desc_t m_desc;
+                DCORE_CLASS_PLACEMENT_NEW_DELETE
+            };
 
-        //     desc.VS = ((D3D12Shader*)m_desc.vs)->GetByteCode();
-        //     if (m_desc.ps)
-        //     {
-        //         desc.PS = ((D3D12Shader*)m_desc.ps)->GetByteCode();
-        //     }
+            void CreateGraphicsPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
+            {
+                nd3d12::graphics_pipeline_state_t* pPipelineState = CreateComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
+                pPipelineState->m_desc                            = desc;
+                pPipelineState->m_primitiveTopology               = d3d12_primitive_topology(desc.primitive_type);
+            }
 
-        //     desc.RasterizerState   = d3d12_rasterizer_desc(m_desc.rasterizer_state);
-        //     desc.DepthStencilState = d3d12_depth_stencil_desc(m_desc.depthstencil_state);
-        //     desc.BlendState        = d3d12_blend_desc(m_desc.blend_state);
+            void CreateMeshShadingPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
+            {
+                nd3d12::meshshading_pipeline_state_t* pPipelineState = CreateComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(device, ps);
+                pPipelineState->m_desc                               = desc;
+            }
 
-        //     desc.NumRenderTargets = has_rt_binding(m_desc) ? 8 : 0;
-        //     for (int i = 0; i < 8; ++i)
-        //     {
-        //         desc.RTVFormats[i] = dxgi_format(m_desc.rt_format[i]);
-        //     }
-        //     desc.DSVFormat             = dxgi_format(m_desc.depthstencil_format);
-        //     desc.PrimitiveTopologyType = d3d12_topology_type(m_desc.primitive_type);
-        //     desc.SampleMask            = 0xFFFFFFFF;
-        //     desc.SampleDesc.Count      = 1;
+            void CreateComputePipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
+            {
+                nd3d12::compute_pipeline_state_t* pPipelineState = CreateComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(device, ps);
+                pPipelineState->m_desc                           = desc;
+            }
 
-        //     ID3D12PipelineState* pipelineState = nullptr;
-        //     ID3D12Device*        pDevice       = (ID3D12Device*)m_pDevice->GetHandle();
-        //     if (FAILED(pDevice->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&pipelineState))))
-        //     {
-        //         // RE_ERROR("[D3D12GraphicsPipelineState] failed to create {}", m_name);
-        //         return false;
-        //     }
+            void DestroyPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            {
+                Destroy(device, ps);
 
-        //     // TODO: set name
-        //     //pipelineState->SetName(string_to_wstring(m_name).c_str());
+                if (ps->m_type == enums::PipelineGraphics)
+                {
+                    DestroyComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
+                }
+                else if (ps->m_type == enums::PipelineMeshShading)
+                {
+                    DestroyComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(device, ps);
+                }
+                else if (ps->m_type == enums::PipelineCompute)
+                {
+                    DestroyComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(device, ps);
+                }
+            }
 
-        //     if (m_pPipelineState)
-        //     {
-        //         ((D3D12Device*)m_pDevice)->Delete(m_pPipelineState);
-        //     }
+            bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            {
+                nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                if (ps->m_type == enums::PipelineGraphics)
+                {
+                    nd3d12::graphics_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
 
-        //     m_pPipelineState = pipelineState;
-        //     return true;
-        // }
+                    D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
+                    desc.pRootSignature                     = pDevice->m_pDevice->GetRootSignature();
 
-        // D3D12ComputePipelineState::D3D12ComputePipelineState(D3D12Device* pDevice, const compute_pipeline_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_name    = name;
-        //     m_desc    = desc;
-        //     m_type    = GfxPipelineType::Compute;
-        // }
+                    desc.VS = GetByteCode(device, pPipelineState->m_desc.vs);
+                    if (pPipelineState->m_desc.ps)
+                    {
+                        desc.PS = GetByteCode(device, pPipelineState->m_desc.ps);
+                    }
 
-        // D3D12ComputePipelineState::~D3D12ComputePipelineState()
-        // {
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-        //     pDevice->Delete(m_pPipelineState);
-        // }
+                    desc.RasterizerState   = d3d12_rasterizer_desc(pPipelineState->m_desc.rasterizer_state);
+                    desc.DepthStencilState = d3d12_depth_stencil_desc(pPipelineState->m_desc.depthstencil_state);
+                    desc.BlendState        = d3d12_blend_desc(pPipelineState->m_desc.blend_state);
 
-        // bool D3D12ComputePipelineState::Create()
-        // {
-        //     D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {};
-        //     desc.pRootSignature                    = ((D3D12Device*)m_pDevice)->GetRootSignature();
-        //     desc.CS                                = ((D3D12Shader*)m_desc.cs)->GetByteCode();
+                    desc.NumRenderTargets = has_rt_binding(pPipelineState->m_desc) ? 8 : 0;
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        desc.RTVFormats[i] = dxgi_format(pPipelineState->m_desc.rt_format[i]);
+                    }
+                    desc.DSVFormat             = dxgi_format(pPipelineState->m_desc.depthstencil_format);
+                    desc.PrimitiveTopologyType = d3d12_topology_type(pPipelineState->m_desc.primitive_type);
+                    desc.SampleMask            = 0xFFFFFFFF;
+                    desc.SampleDesc.Count      = 1;
 
-        //     ID3D12PipelineState* pipelineState = nullptr;
-        //     ID3D12Device*        pDevice       = (ID3D12Device*)m_pDevice->GetHandle();
-        //     if (FAILED(pDevice->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pipelineState))))
-        //     {
-        //         // RE_ERROR("[D3D12ComputePipelineState] failed to create {}", m_name);
-        //         return false;
-        //     }
+                    ID3D12PipelineState* pipelineState = nullptr;
+                    if (FAILED(pDevice->m_pDevice->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&pipelineState))))
+                    {
+                        // RE_ERROR("[D3D12GraphicsPipelineState] failed to create {}", m_name);
+                        return false;
+                    }
+                }
+                else if (ps->m_type == enums::PipelineMeshShading)
+                {
+                    nd3d12::meshshading_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(device, ps);
 
-        //     // TODO set name
-        //     //pipelineState->SetName(string_to_wstring(m_name).c_str());
+                    D3DX12_MESH_SHADER_PIPELINE_STATE_DESC psoDesc = {};
+                    psoDesc.pRootSignature                         = pDevice->m_pDevice->GetRootSignature();
 
-        //     if (m_pPipelineState)
-        //     {
-        //         ((D3D12Device*)m_pDevice)->Delete(m_pPipelineState);
-        //     }
+                    if (pPipelineState->m_desc.as)
+                    {
+                        psoDesc.AS = GetByteCode(device, pPipelineState->m_desc.as);
+                    }
 
-        //     m_pPipelineState = pipelineState;
-        //     return true;
-        // }
+                    psoDesc.MS = GetByteCode(device, pPipelineState->m_desc.ms);
 
-        // D3D12MeshShadingPipelineState::D3D12MeshShadingPipelineState(D3D12Device* pDevice, const mesh_shading_pipeline_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_name    = name;
-        //     m_desc    = desc;
-        //     m_type    = GfxPipelineType::MeshShading;
-        // }
+                    if (pPipelineState->m_desc.ps)
+                    {
+                        psoDesc.PS = GetByteCode(device, pPipelineState->m_desc.ps);
+                    }
 
-        // D3D12MeshShadingPipelineState::~D3D12MeshShadingPipelineState()
-        // {
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-        //     pDevice->Delete(m_pPipelineState);
-        // }
+                    psoDesc.RasterizerState   = d3d12_rasterizer_desc(pPipelineState->m_desc.rasterizer_state);
+                    psoDesc.DepthStencilState = d3d12_depth_stencil_desc(pPipelineState->m_desc.depthstencil_state);
+                    psoDesc.BlendState        = d3d12_blend_desc(pPipelineState->m_desc.blend_state);
 
-        // bool D3D12MeshShadingPipelineState::Create()
-        // {
-        //     D3DX12_MESH_SHADER_PIPELINE_STATE_DESC psoDesc = {};
-        //     psoDesc.pRootSignature                         = ((D3D12Device*)m_pDevice)->GetRootSignature();
+                    psoDesc.NumRenderTargets = has_rt_binding(pPipelineState->m_desc) ? 8 : 0;
+                    for (int i = 0; i < 8; ++i)
+                    {
+                        psoDesc.RTVFormats[i] = dxgi_format(pPipelineState->m_desc.rt_format[i]);
+                    }
+                    psoDesc.DSVFormat        = dxgi_format(pPipelineState->m_desc.depthstencil_format);
+                    psoDesc.SampleMask       = 0xFFFFFFFF;
+                    psoDesc.SampleDesc.Count = 1;
 
-        //     if (m_desc.as)
-        //     {
-        //         psoDesc.AS = ((D3D12Shader*)m_desc.as)->GetByteCode();
-        //     }
+                    auto psoStream = CD3DX12_PIPELINE_MESH_STATE_STREAM(psoDesc);
 
-        //     psoDesc.MS = ((D3D12Shader*)m_desc.ms)->GetByteCode();
+                    D3D12_PIPELINE_STATE_STREAM_DESC streamDesc;
+                    streamDesc.pPipelineStateSubobjectStream = &psoStream;
+                    streamDesc.SizeInBytes                   = sizeof(psoStream);
 
-        //     if (m_desc.ps)
-        //     {
-        //         psoDesc.PS = ((D3D12Shader*)m_desc.ps)->GetByteCode();
-        //     }
+                    ID3D12PipelineState* pipelineState = nullptr;
+                    HRESULT              hr            = pDevice->m_pDevice->CreatePipelineState(&streamDesc, IID_PPV_ARGS(&pipelineState));
+                    if (FAILED(hr))
+                    {
+                        // RE_ERROR("[D3D12MeshShadingPipelineState] failed to create {}", m_name);
+                        return false;
+                    }
 
-        //     psoDesc.RasterizerState   = d3d12_rasterizer_desc(m_desc.rasterizer_state);
-        //     psoDesc.DepthStencilState = d3d12_depth_stencil_desc(m_desc.depthstencil_state);
-        //     psoDesc.BlendState        = d3d12_blend_desc(m_desc.blend_state);
+                    // TODO set name
+                    // pipelineState->SetName(string_to_wstring(m_name).c_str());
 
-        //     psoDesc.NumRenderTargets = has_rt_binding(m_desc) ? 8 : 0;
-        //     for (int i = 0; i < 8; ++i)
-        //     {
-        //         psoDesc.RTVFormats[i] = dxgi_format(m_desc.rt_format[i]);
-        //     }
-        //     psoDesc.DSVFormat        = dxgi_format(m_desc.depthstencil_format);
-        //     psoDesc.SampleMask       = 0xFFFFFFFF;
-        //     psoDesc.SampleDesc.Count = 1;
+                    if (pPipelineState->m_pPipelineState)
+                    {
+                        pDevice->m_pDevice->Delete(pPipelineState->m_pPipelineState);
+                    }
 
-        //     auto psoStream = CD3DX12_PIPELINE_MESH_STATE_STREAM(psoDesc);
+                    pPipelineState->m_pPipelineState = pipelineState;
+                    return true;
+                }
+                else if (ps->m_type == enums::PipelineCompute)
+                {
+                    nd3d12::compute_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(device, ps);
 
-        //     D3D12_PIPELINE_STATE_STREAM_DESC streamDesc;
-        //     streamDesc.pPipelineStateSubobjectStream = &psoStream;
-        //     streamDesc.SizeInBytes                   = sizeof(psoStream);
+                    D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {};
+                    desc.pRootSignature                    = pDevice->m_pDevice->GetRootSignature();
+                    desc.CS                                = GetByteCode(device, m_desc.cs);
 
-        //     ID3D12PipelineState* pipelineState = nullptr;
-        //     ID3D12Device2*       pDevice       = (ID3D12Device2*)m_pDevice->GetHandle();
-        //     HRESULT              hr            = pDevice->CreatePipelineState(&streamDesc, IID_PPV_ARGS(&pipelineState));
-        //     if (FAILED(hr))
-        //     {
-        //         // RE_ERROR("[D3D12MeshShadingPipelineState] failed to create {}", m_name);
-        //         return false;
-        //     }
+                    ID3D12PipelineState* pipelineState = nullptr;
+                    if (FAILED(pDevice->m_pDevice->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pipelineState))))
+                    {
+                        // RE_ERROR("[D3D12ComputePipelineState] failed to create {}", m_name);
+                        return false;
+                    }
 
-        //     // TODO set name
-        //     //pipelineState->SetName(string_to_wstring(m_name).c_str());
+                    // TODO set name
+                    // pipelineState->SetName(string_to_wstring(m_name).c_str());
 
-        //     if (m_pPipelineState)
-        //     {
-        //         ((D3D12Device*)m_pDevice)->Delete(m_pPipelineState);
-        //     }
+                    if (pPipelineState->m_pPipelineState)
+                    {
+                        pDevice->m_pDevice->Delete(pPipelineState->m_pPipelineState);
+                    }
 
-        //     m_pPipelineState = pipelineState;
-        //     return true;
-        // }
+                    pPipelineState->m_pPipelineState = pipelineState;
+                    return true;
+                }
+            }
+
+            void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
+            {
+                nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                if (ps->m_type == enums::PipelineGraphics)
+                {
+                    nd3d12::graphics_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
+                    if (pPipelineState->m_pPipelineState)
+                    {
+                        pDevice->Delete(pPipelineState->m_pPipelineState);
+                        pPipelineState->m_pPipelineState = nullptr;
+                    }
+                }
+                else if (ps->m_type == enums::PipelineMeshShading)
+                {
+                    nd3d12::meshshading_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(device, ps);
+                    if (pPipelineState->m_pPipelineState)
+                    {
+                        pDevice->Delete(pPipelineState->m_pPipelineState);
+                        pPipelineState->m_pPipelineState = nullptr;
+                    }
+                }
+                else if (ps->m_type == enums::PipelineCompute)
+                {
+                    nd3d12::compute_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(device, ps);
+                    if (pPipelineState->m_pPipelineState)
+                    {
+                        pDevice->Delete(pPipelineState->m_pPipelineState);
+                        pPipelineState->m_pPipelineState = nullptr;
+                    }
+                }
+            }
+
+            void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
+        }  // namespace nd3d12
+
     }  // namespace ngfx
 }  // namespace ncore

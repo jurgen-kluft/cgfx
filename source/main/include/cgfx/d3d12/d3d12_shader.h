@@ -25,6 +25,8 @@ namespace ncore
             ngfx::shader_t*       CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader);
             void                  Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
             bool                  Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
+
+            // TODO change ngfx::device_t to nd3d12::device_t
             u64                   GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader);
             D3D12_SHADER_BYTECODE GetByteCode(ngfx::device_t const* device, const ngfx::shader_t* shader);
         }  // namespace nd3d12

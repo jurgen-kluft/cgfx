@@ -9,7 +9,7 @@
     #include "cd3d12/d3d12.h"
     #include "cd3d12/d3dx12.h"
     #include "cd3d12/ma/D3D12MemAlloc.h"
-    #include "dxgi1_6.h"
+    #include "cd3d12/dxgi1_6.h"
 #endif
 
 #include "cbase/c_debug.h"
@@ -429,6 +429,7 @@ namespace ncore
                 default: return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
             }
         }
+        inline D3D_PRIMITIVE_TOPOLOGY d3d12_primitive_topology(enums::primitive_t primitive_type) { return d3d12_primitive_topology(enums::cast<enums::primitive>(primitive_type)); }
 
         inline D3D12_FILTER_REDUCTION_TYPE d3d12_filter_reduction_type(enums::sampler_reduction_mode mode)
         {
