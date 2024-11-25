@@ -15,6 +15,9 @@ namespace ncore
 #ifdef TARGET_PC
         namespace nd3d12
         {
+            struct ConstantBufferAllocator;
+            struct DescriptorAllocator;
+
             struct device_t
             {
                 D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Device);
@@ -23,7 +26,7 @@ namespace ncore
                 IDXGIFactory6* m_pDxgiFactory = nullptr;
                 IDXGIAdapter1* m_pDxgiAdapter = nullptr;
 
-                ID3D12Device10*      m_pDevice        = nullptr;
+                ID3D12Device12*      m_pDevice        = nullptr;
                 ID3D12CommandQueue*  m_pGraphicsQueue = nullptr;
                 ID3D12CommandQueue*  m_pComputeQueue  = nullptr;
                 ID3D12CommandQueue*  m_pCopyQueue     = nullptr;
@@ -38,13 +41,13 @@ namespace ncore
                 ID3D12CommandSignature* m_pMultiDispatchSignature     = nullptr;
                 ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
 
-                D3D12MA::Allocator*           m_pResourceAllocator = nullptr;
-                D3D12ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
-                D3D12DescriptorAllocator*     m_pRTVAllocator;
-                D3D12DescriptorAllocator*     m_pDSVAllocator;
-                D3D12DescriptorAllocator*     m_pResDescriptorAllocator;
-                D3D12DescriptorAllocator*     m_pSamplerAllocator;
-                D3D12DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
+                D3D12MA::Allocator*      m_pResourceAllocator = nullptr;
+                ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+                DescriptorAllocator*     m_pRTVAllocator;
+                DescriptorAllocator*     m_pDSVAllocator;
+                DescriptorAllocator*     m_pResDescriptorAllocator;
+                DescriptorAllocator*     m_pSamplerAllocator;
+                DescriptorAllocator*     m_pNonShaderVisibleUavAllocator;
 
                 template <typename T>
                 struct queue_t
@@ -96,7 +99,56 @@ namespace ncore
             void  BeginFrame(ngfx::device_t* device);
             void  EndFrame(ngfx::device_t* device);
 
+            D3D12_GPU_VIRTUAL_ADDRESS AllocateConstantBuffer(nd3d12::device_t* dxdevice, const void* data, size_t data_size);
+            void                      FlushDeferredDeletions(nd3d12::device_t* dxdevice);
+            void                      Delete(nd3d12::device_t* dxdevice, IUnknown* object);
+            void                      Delete(nd3d12::device_t* dxdevice, D3D12MA::Allocation* allocation);
+            D3D12Descriptor           AllocateRTV(nd3d12::device_t* dxdevice);
+            D3D12Descriptor           AllocateDSV(nd3d12::device_t* dxdevice);
+            D3D12Descriptor           AllocateResourceDescriptor(nd3d12::device_t* dxdevice);
+            D3D12Descriptor           AllocateSampler(nd3d12::device_t* dxdevice);
+            D3D12Descriptor           AllocateNonShaderVisibleUAV(nd3d12::device_t* dxdevice);
+            void                      DeleteRTV(nd3d12::device_t* dxdevice, const D3D12Descriptor& descriptor);
+            void                      DeleteDSV(nd3d12::device_t* dxdevice, const D3D12Descriptor& descriptor);
+            void                      DeleteResourceDescriptor(nd3d12::device_t* dxdevice, const D3D12Descriptor& descriptor);
+            void                      DeleteSampler(nd3d12::device_t* dxdevice, const D3D12Descriptor& descriptor);
+            void                      DeleteNonShaderVisibleUAV(nd3d12::device_t* dxdevice, const D3D12Descriptor& descriptor);
+
             bool DumpMemoryStats(ngfx::device_t* device, const char* file);
+
+            struct DescriptorAllocator
+            {
+                D3D12Descriptor       Allocate();
+                void                  Free(const D3D12Descriptor& descriptor);
+                ID3D12DescriptorHeap* GetHeap() const { return m_pHeap; }
+                D3D12Descriptor       GetDescriptor(u32 index) const;
+
+                ID3D12DescriptorHeap* m_pHeap           = nullptr;
+                u32                   m_descriptorSize  = 0;
+                u32                   m_descriptorCount = 0;
+                u32                   m_allocatedCount  = 0;
+                bool                  m_bShaderVisible  = false;
+                u32                   m_freeDescriptorSize;
+                u32                   m_freeDescriptorMax;
+                D3D12Descriptor*      m_freeDescriptors;
+            };
+
+            void setup(DescriptorAllocator* alloc, nd3d12::device_t* device, D3D12_DESCRIPTOR_HEAP_TYPE type, bool shader_visible, u32 descriptor_count, const char* name);
+            void teardown(DescriptorAllocator* alloc);
+
+            struct ConstantBufferAllocator
+            {
+                void Allocate(u32 size, void** cpu_address, u64* gpu_address);
+                void Reset();
+
+                buffer_t* m_pBuffer       = nullptr;
+                u32       m_allocatedSize = 0;
+            };
+
+            void setup(ConstantBufferAllocator* alloc, nd3d12::device_t* device, u32 buffer_size, const char* name);
+            void teardown(ConstantBufferAllocator* alloc);
+
+
         }  // namespace nd3d12
 #else
         namespace nd3d12

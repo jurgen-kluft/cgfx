@@ -314,7 +314,7 @@ namespace ncore
             void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* texture, const srv_desc_t& desc)
             {
                 nd3d12::srv_texture_t* srv       = CreateComponent<ngfx::descriptor_t, nd3d12::srv_texture_t>(device, descriptor);
-                nd3d12::texture_t*     dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(texture);
+                nd3d12::texture_t*     dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
                 srv->m_texture                   = dxtexture;
                 srv->m_desc                      = desc;
             }
@@ -322,7 +322,7 @@ namespace ncore
             void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const srv_desc_t& desc)
             {
                 nd3d12::srv_buffer_t* srv      = CreateComponent<ngfx::descriptor_t, nd3d12::srv_buffer_t>(device, descriptor);
-                nd3d12::buffer_t*     dxbuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(buffer);
+                nd3d12::buffer_t*     dxbuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
                 srv->m_buffer                  = dxbuffer;
                 srv->m_desc                    = desc;
             }
@@ -330,7 +330,7 @@ namespace ncore
             void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::tlas_t* tlas, const srv_desc_t& desc)
             {
                 nd3d12::srv_tlas_t* srv    = CreateComponent<ngfx::descriptor_t, nd3d12::srv_tlas_t>(device, descriptor);
-                nd3d12::tlas_t*     dxtlas = GetComponent<ngfx::tlas_t, nd3d12::tlas_t>(tlas);
+                nd3d12::tlas_t*     dxtlas = GetComponent<ngfx::tlas_t, nd3d12::tlas_t>(device, tlas);
                 srv->m_tlas                = dxtlas;
                 srv->m_desc                = desc;
             }
@@ -338,7 +338,7 @@ namespace ncore
             void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* buffer, const uav_desc_t& desc)
             {
                 nd3d12::uav_texture_t* uav      = CreateComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(device, descriptor);
-                nd3d12::texture_t*     dxbuffer = GetComponent<ngfx::texture_t, nd3d12::texture_t>(buffer);
+                nd3d12::texture_t*     dxbuffer = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, buffer);
                 uav->m_texture                  = dxbuffer;
                 uav->m_desc                     = desc;
             }
@@ -346,7 +346,7 @@ namespace ncore
             void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const uav_desc_t& desc)
             {
                 nd3d12::uav_buffer_t* uav      = CreateComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(device, descriptor);
-                nd3d12::buffer_t*     dxbuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(buffer);
+                nd3d12::buffer_t*     dxbuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
                 uav->m_buffer                  = dxbuffer;
                 uav->m_desc                    = desc;
             }
@@ -354,7 +354,7 @@ namespace ncore
             void CreateCbv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const cbv_desc_t& desc)
             {
                 nd3d12::cbv_t*    cbv      = CreateComponent<ngfx::descriptor_t, nd3d12::cbv_t>(device, descriptor);
-                nd3d12::buffer_t* dxbuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(buffer);
+                nd3d12::buffer_t* dxbuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
                 cbv->m_buffer              = dxbuffer;
                 cbv->m_desc                = desc;
             }
@@ -365,9 +365,9 @@ namespace ncore
                 sampler->m_desc            = desc;
             }
 
-            void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+            void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor)
             {
-                Destroy(device, descriptor);
+                nd3d12::Destroy(device, descriptor);
 
                 switch (descriptor->m_type)
                 {
@@ -389,72 +389,72 @@ namespace ncore
                 {
                     case enums::DescriptorTypeSrvTexture:
                         {
-                            nd3d12::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_texture_t>(descriptor);
-                            if (srv->m_descriptor)
+                            nd3d12::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_texture_t>(device, descriptor);
+                            if (IsNullDescriptor(srv->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteResourceDescriptor(srv->m_descriptor);
+                                DeleteResourceDescriptor(dxdevice, srv->m_descriptor);
                             }
                             break;
                         }
                     case enums::DescriptorTypeSrvBuffer:
                         {
-                            nd3d12::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_buffer_t>(descriptor);
-                            if (srv->m_descriptor)
+                            nd3d12::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_buffer_t>(device, descriptor);
+                            if (IsNullDescriptor(srv->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteResourceDescriptor(srv->m_descriptor);
+                                DeleteResourceDescriptor(dxdevice, srv->m_descriptor);
                             }
                             break;
                         }
                     case enums::DescriptorTypeSrvRayTracingTLAS:
                         {
-                            nd3d12::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_tlas_t>(descriptor);
-                            if (srv->m_descriptor)
+                            nd3d12::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_tlas_t>(device, descriptor);
+                            if (IsNullDescriptor(srv->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteResourceDescriptor(srv->m_descriptor);
+                                DeleteResourceDescriptor(dxdevice, srv->m_descriptor);
                             }
                             break;
                         }
                     case enums::DescriptorTypeUavTexture:
                         {
-                            nd3d12::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(descriptor);
-                            if (uav->m_descriptor)
+                            nd3d12::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(device, descriptor);
+                            if (IsNullDescriptor(uav->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteResourceDescriptor(uav->m_descriptor);
+                                DeleteResourceDescriptor(dxdevice, uav->m_descriptor);
                             }
-                            if (uav->m_nonShaderVisibleDescriptor)
+                            if (IsNullDescriptor(uav->m_nonShaderVisibleDescriptor))
                             {
-                                dxdevice->m_pDevice->DeleteNonShaderVisibleUAV(uav->m_nonShaderVisibleDescriptor);
+                                DeleteNonShaderVisibleUAV(dxdevice, uav->m_nonShaderVisibleDescriptor);
                             }
                             break;
                         }
                     case enums::DescriptorTypeUavBuffer:
                         {
-                            nd3d12::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(descriptor);
-                            if (uav->m_descriptor)
+                            nd3d12::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(device, descriptor);
+                            if (IsNullDescriptor(uav->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteResourceDescriptor(uav->m_descriptor);
+                                DeleteResourceDescriptor(dxdevice, uav->m_descriptor);
                             }
-                            if (uav->m_nonShaderVisibleDescriptor)
+                            if (IsNullDescriptor(uav->m_nonShaderVisibleDescriptor))
                             {
-                                dxdevice->m_pDevice->DeleteNonShaderVisibleUAV(uav->m_nonShaderVisibleDescriptor);
+                                DeleteNonShaderVisibleUAV(dxdevice, uav->m_nonShaderVisibleDescriptor);
                             }
                             break;
                         }
                     case enums::DescriptorTypeCbv:
                         {
-                            nd3d12::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nd3d12::cbv_t>(descriptor);
-                            if (cbv->m_descriptor)
+                            nd3d12::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nd3d12::cbv_t>(device, descriptor);
+                            if (IsNullDescriptor(cbv->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteResourceDescriptor(cbv->m_descriptor);
+                                DeleteResourceDescriptor(dxdevice, cbv->m_descriptor);
                             }
                             break;
                         }
                     case enums::DescriptorTypeSampler:
                         {
-                            nd3d12::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nd3d12::sampler_t>(descriptor);
-                            if (sampler->m_descriptor)
+                            nd3d12::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nd3d12::sampler_t>(device, descriptor);
+                            if (IsNullDescriptor(sampler->m_descriptor))
                             {
-                                dxdevice->m_pDevice->DeleteSampler(sampler->m_descriptor);
+                                DeleteSampler(dxdevice, sampler->m_descriptor);
                             }
                             break;
                         }
@@ -462,57 +462,59 @@ namespace ncore
                 }
             }
 
-            bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+            bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor)
             {
                 nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
                 switch (descriptor->m_type)
                 {
                     case enums::DescriptorTypeSrvTexture:
                         {
-                            nd3d12::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_texture_t>(descriptor);
+                            nd3d12::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_texture_t>(device, descriptor);
                             // ... create d3d shader resource view
                             break;
                         }
                     case enums::DescriptorTypeSrvBuffer:
                         {
-                            nd3d12::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_buffer_t>(descriptor);
+                            nd3d12::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_buffer_t>(device, descriptor);
                             // ... create d3d shader resource view
                             break;
                         }
                     case enums::DescriptorTypeSrvRayTracingTLAS:
                         {
-                            nd3d12::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_tlas_t>(descriptor);
+                            nd3d12::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_tlas_t>(device, descriptor);
                             // ... create d3d shader resource view
                             break;
                         }
                     case enums::DescriptorTypeUavTexture:
                         {
-                            nd3d12::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(descriptor);
+                            nd3d12::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(device, descriptor);
                             // ... create d3d unordered access view
                             break;
                         }
                     case enums::DescriptorTypeUavBuffer:
                         {
-                            nd3d12::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(descriptor);
+                            nd3d12::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(device, descriptor);
                             // ... create d3d unordered access view
                             break;
                         }
                     case enums::DescriptorTypeCbv:
                         {
-                            nd3d12::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nd3d12::cbv_t>(descriptor);
+                            nd3d12::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nd3d12::cbv_t>(device, descriptor);
                             // ... create d3d constant buffer view
                             break;
                         }
                     case enums::DescriptorTypeSampler:
                         {
-                            nd3d12::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nd3d12::sampler_t>(descriptor);
+                            nd3d12::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nd3d12::sampler_t>(device, descriptor);
                             // ... create d3d sampler
                             break;
                         }
                     default: break;
                 }
-            }
-        }  // namespace nd3d12
 
+                return false;
+            }
+
+        }  // namespace nd3d12
     }  // namespace ngfx
 }  // namespace ncore

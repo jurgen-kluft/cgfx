@@ -15,7 +15,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        namespace nd3d12s
+        namespace nd3d12
         {
             struct srv_texture_t
             {
@@ -37,7 +37,7 @@ namespace ncore
 
             struct srv_tlas_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvBuffer);
+                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvRayTracingTLAS);
                 nd3d12::tlas_t* m_tlas = nullptr;
                 srv_desc_t      m_desc = {};
                 D3D12Descriptor m_descriptor;
@@ -90,10 +90,9 @@ namespace ncore
             void CreateSampler(ngfx::device_t* device, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc);
             void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
 
-            void  Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
-            bool  Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
-s
-        }  // namespace nd3d12s
+            void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+            bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+        }  // namespace nd3d12
     }  // namespace ngfx
 }  // namespace ncore
 
