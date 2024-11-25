@@ -51,6 +51,7 @@ namespace ncore
                 default: return D3D12_HEAP_TYPE_DEFAULT;
             }
         }
+        inline D3D12_HEAP_TYPE d3d12_heap_type(enums::memory_t memory_type) { return d3d12_heap_type(enums::cast<enums::memory>(memory_type)); }
 
         inline D3D12_BARRIER_SYNC d3d12_barrier_sync(enums::access_flags flags)
         {

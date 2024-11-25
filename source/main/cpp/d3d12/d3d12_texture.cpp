@@ -37,14 +37,10 @@ namespace ncore
         // bool D3D12Texture::Create()
         // {
         //     ID3D12Device* pDevice = (ID3D12Device*)m_pDevice->GetHandle();
-
         //     D3D12MA::Allocator* pAllocator = ((D3D12Device*)m_pDevice)->GetResourceAllocator();
-
         //     D3D12_RESOURCE_DESC  resourceDesc  = d3d12_resource_desc(m_desc);
         //     D3D12_RESOURCE_DESC1 resourceDesc1 = CD3DX12_RESOURCE_DESC1(resourceDesc);
-
         //     D3D12_BARRIER_LAYOUT initial_layout;
-
         //     if (m_desc.usage & GfxTextureUsageRenderTarget)
         //     {
         //         initial_layout = D3D12_BARRIER_LAYOUT_RENDER_TARGET;
@@ -61,14 +57,11 @@ namespace ncore
         //     {
         //         initial_layout = D3D12_BARRIER_LAYOUT_COMMON;
         //     }
-
         //     HRESULT hr;
-
         //     if (m_desc.heap != nullptr)
         //     {
         //         ASSERT(m_desc.alloc_type == GfxAllocationType::Placed);
         //         ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
-
         //         hr = pAllocator->CreateAliasingResource2((D3D12MA::Allocation*)m_desc.heap->GetHandle(), m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&m_pTexture));
         //     }
         //     else if (m_desc.alloc_type == GfxAllocationType::Sparse)
@@ -116,7 +109,6 @@ namespace ncore
         //             return false;
         //         }
         //     }
-
         //     return true;
         // }
 
@@ -311,5 +303,97 @@ namespace ncore
 
         //     return info;
         // }
+
+        void CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) { nd3d12::texture_t* dxtexture = CreateComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture); }
+
+        bool Create(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+
+            ID3D12Device*        pDevice       = dxdevice->m_pDevice;
+            D3D12MA::Allocator*  pAllocator    = dxdevice->m_pResourceAllocator;
+            D3D12_RESOURCE_DESC  resourceDesc  = d3d12_resource_desc(texture->m_desc);
+            D3D12_RESOURCE_DESC1 resourceDesc1 = CD3DX12_RESOURCE_DESC1(resourceDesc);
+            D3D12_BARRIER_LAYOUT initial_layout;
+            if (texture->m_desc.usage & enums::TextureUsageRenderTarget)
+            {
+                initial_layout = D3D12_BARRIER_LAYOUT_RENDER_TARGET;
+            }
+            else if (texture->m_desc.usage & enums::TextureUsageDepthStencil)
+            {
+                initial_layout = D3D12_BARRIER_LAYOUT_DEPTH_STENCIL_WRITE;
+            }
+            else if (texture->m_desc.usage & enums::TextureUsageUnorderedAccess)
+            {
+                initial_layout = D3D12_BARRIER_LAYOUT_UNORDERED_ACCESS;
+            }
+            else
+            {
+                initial_layout = D3D12_BARRIER_LAYOUT_COMMON;
+            }
+            HRESULT hr;
+            if (texture->m_desc.heap != nullptr)
+            {
+                ASSERT(texture->m_desc.alloc_type == enums::AllocationPlaced);
+                ASSERT(texture->m_desc.memory_type == texture->m_desc.heap->m_desc.memory_type);
+                hr = pAllocator->CreateAliasingResource2(nd3d12::GetHandle(device, texture->m_desc.heap), texture->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxtexture->m_pTexture));
+            }
+            else if (texture->m_desc.alloc_type == enums::AllocationSparse)
+            {
+                ID3D12Device12* dx12device = dxdevice->m_pDevice;
+                hr                         = dx12device->CreateReservedResource2(&resourceDesc, initial_layout, nullptr, nullptr, 0, nullptr, IID_PPV_ARGS(&dxtexture->m_pTexture));
+            }
+            else
+            {
+                D3D12MA::ALLOCATION_DESC allocationDesc = {};
+                allocationDesc.HeapType                 = d3d12_heap_type(texture->m_desc.memory_type);
+                allocationDesc.Flags                    = texture->m_desc.alloc_type == enums::AllocationCommitted ? D3D12MA::ALLOCATION_FLAG_COMMITTED : D3D12MA::ALLOCATION_FLAG_NONE;
+
+                if (texture->m_desc.usage & enums::TextureUsageShared)
+                {
+                    resourceDesc1.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+                    resourceDesc1.Flags |= D3D12_RESOURCE_FLAG_ALLOW_CROSS_ADAPTER;
+                    allocationDesc.ExtraHeapFlags |= D3D12_HEAP_FLAG_SHARED | D3D12_HEAP_FLAG_SHARED_CROSS_ADAPTER;
+                }
+
+                hr = pAllocator->CreateResource3(&allocationDesc, &resourceDesc1, initial_layout, nullptr, 0, nullptr, &dxtexture->m_pAllocation, IID_PPV_ARGS(&dxtexture->m_pTexture));
+            }
+
+            if (FAILED(hr))
+            {
+                // RE_ERROR("[D3D12Texture] failed to create {}", m_name);
+                return false;
+            }
+
+            // eastl::wstring name_wstr = string_to_wstring(m_name);
+            // m_pTexture->SetName(name_wstr.c_str());
+            // if (m_pAllocation)
+            // {
+            //     m_pAllocation->SetName(name_wstr.c_str());
+            // }
+
+            if (texture->m_desc.usage & enums::TextureUsageShared)
+            {
+                ID3D12Device* device = dxdevice->m_pDevice;
+                hr                   = device->CreateSharedHandle(dxtexture->m_pTexture, nullptr, GENERIC_ALL, nullptr, &dxtexture->m_sharedHandle);
+
+                if (FAILED(hr))
+                {
+                    // RE_ERROR("[D3D12Texture] failed to create shared handle for {}", m_name);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture);
+        void*                     GetHandle(ngfx::device_t* device, ngfx::texture_t* texture);
+        u32                       GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::texture_t* texture);
+        u32                       GetRowPitch(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
+        tiling_desc_t             GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture);
+        subresource_tiling_desc_t GetSubResourceTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
+        void*                     GetSharedHandle(ngfx::device_t* device, ngfx::texture_t* texture);
+
     }  // namespace ngfx
 }  // namespace ncore
