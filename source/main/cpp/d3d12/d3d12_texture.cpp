@@ -306,6 +306,16 @@ namespace ncore
 
         void CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) { nd3d12::texture_t* dxtexture = CreateComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture); }
 
+        void DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            if (dxtexture)
+            {
+                Destroy(device, texture);
+                DestroyComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            }
+        }
+
         bool Create(ngfx::device_t* device, ngfx::texture_t* texture)
         {
             nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
@@ -387,13 +397,237 @@ namespace ncore
             return true;
         }
 
-        void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture);
-        void*                     GetHandle(ngfx::device_t* device, ngfx::texture_t* texture);
-        u32                       GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::texture_t* texture);
-        u32                       GetRowPitch(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
-        tiling_desc_t             GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture);
-        subresource_tiling_desc_t GetSubResourceTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture, u32 subresource = 0);
-        void*                     GetSharedHandle(ngfx::device_t* device, ngfx::texture_t* texture);
+        void Destroy(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+
+            dxdevice->m_pDevice->Delete(dxtexture->m_pTexture);
+            dxdevice->m_pDevice->Delete(dxtexture->m_pAllocation);
+
+            for (size_t i = 0; i < dxtexture->m_RTV.size(); ++i)
+            {
+                nd3d12::DeleteRTV(dxdevice->m_pDevice, dxtexture->m_RTV[i]);
+            }
+            for (size_t i = 0; i < m_DSV.size(); ++i)
+            {
+                nd3d12::DeleteDSV(dxdevice->m_pDevice, m_DSV[i]);
+            }
+        }
+
+        ID3D12Resource* GetHandle(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            return dxtexture->m_pTexture;
+        }
+
+        u32 GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+            ID3D12Device*      pDevice   = dxdevice->m_pDevice;
+
+            D3D12_RESOURCE_DESC desc              = dxtexture->m_pTexture->GetDesc();
+            u32                 subresource_count = texture->m_desc.mip_levels * texture->m_desc.array_size;
+
+            u64 size;
+            pDevice->GetCopyableFootprints(&desc, 0, subresource_count, 0, nullptr, nullptr, nullptr, &size);
+            return (u32)size;
+        }
+
+        u32 GetRowPitch(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_level)
+        {
+            ASSERT(mip_level < texture->m_desc.mip_levels);
+
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+            ID3D12Device*      pDevice   = dxdevice->m_pDevice;
+
+            D3D12_RESOURCE_DESC desc = dxtexture->m_pTexture->GetDesc();
+
+            D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint;
+            pDevice->GetCopyableFootprints(&desc, mip_level, 1, 0, &footprint, nullptr, nullptr, nullptr);
+            return footprint.Footprint.RowPitch;
+        }
+
+        tiling_desc_t GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            ASSERT(texture->m_desc.alloc_type == GfxAllocationType::Sparse);
+
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+            ID3D12Device*      pDevice   = dxdevice->m_pDevice;
+
+            UINT                  tile_count;
+            D3D12_PACKED_MIP_INFO packedMipInfo;
+            D3D12_TILE_SHAPE      tileShape;
+            pDevice->GetResourceTiling(dxtexture->m_pTexture, &tile_count, &packedMipInfo, &tileShape, nullptr, 0, nullptr);
+
+            tiling_desc_t info;
+            info.tile_count       = tile_count;
+            info.standard_mips    = packedMipInfo.NumStandardMips;
+            info.tile_width       = tileShape.WidthInTexels;
+            info.tile_height      = tileShape.HeightInTexels;
+            info.tile_depth       = tileShape.DepthInTexels;
+            info.packed_mips      = packedMipInfo.NumPackedMips;
+            info.packed_mip_tiles = packedMipInfo.NumTilesForPackedMips;
+
+            return info;
+        }
+
+        subresource_tiling_desc_t GetSubResourceTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture, u32 subresource)
+        {
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+            ASSERT(texture->m_desc.alloc_type == enums::AllocationSparse);
+
+            ID3D12Device* pDevice = dxdevice->m_pDevice;
+
+            u32                      subresource_count = 1;
+            D3D12_SUBRESOURCE_TILING tiling;
+            pDevice->GetResourceTiling(dxtexture->m_pTexture, nullptr, nullptr, nullptr, &subresource_count, subresource, &tiling);
+
+            subresource_tiling_desc_t info;
+            info.width       = tiling.WidthInTiles;
+            info.height      = tiling.HeightInTiles;
+            info.depth       = tiling.DepthInTiles;
+            info.tile_offset = tiling.StartTileIndexInOverallResource;
+
+            return info;
+        }
+
+        void* GetSharedHandle(ngfx::device_t* device, ngfx::texture_t* texture)
+        {
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+            return dxtexture->m_sharedHandle;
+        }
+
+        // D3D12_CPU_DESCRIPTOR_HANDLE GetRTV(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_slice, u32 array_slice)
+        // {
+        //     ASSERT(m_desc.usage & GfxTextureUsageRenderTarget);
+
+        //     if (m_RTV.empty())
+        //     {
+        //         m_RTV.resize(m_desc.mip_levels * m_desc.array_size);
+        //     }
+
+        //     u32 index = m_desc.mip_levels * array_slice + mip_slice;
+        //     if (IsNullDescriptor(m_RTV[index]))
+        //     {
+        //         m_RTV[index] = ((D3D12Device*)m_pDevice)->AllocateRTV();
+
+        //         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+        //         rtvDesc.Format                        = dxgi_format(m_desc.format);
+
+        //         switch (m_desc.type)
+        //         {
+        //             case GfxTextureType::Texture2D:
+        //                 rtvDesc.ViewDimension      = D3D12_RTV_DIMENSION_TEXTURE2D;
+        //                 rtvDesc.Texture2D.MipSlice = mip_slice;
+        //                 break;
+        //             case GfxTextureType::Texture2DArray:
+        //             case GfxTextureType::TextureCube:
+        //                 rtvDesc.ViewDimension                  = D3D12_RTV_DIMENSION_TEXTURE2DARRAY;
+        //                 rtvDesc.Texture2DArray.MipSlice        = mip_slice;
+        //                 rtvDesc.Texture2DArray.FirstArraySlice = array_slice;
+        //                 rtvDesc.Texture2DArray.ArraySize       = 1;
+        //                 break;
+        //             default: ASSERT(false); break;
+        //         }
+
+        //         ID3D12Device* pDevice = (ID3D12Device*)m_pDevice->GetHandle();
+        //         pDevice->CreateRenderTargetView(m_pTexture, &rtvDesc, m_RTV[index].cpu_handle);
+        //     }
+
+        //     return m_RTV[index].cpu_handle;
+        // }
+
+        // D3D12_CPU_DESCRIPTOR_HANDLE GetDSV(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_slice, u32 array_slice)
+        // {
+        //     ASSERT(m_desc.usage & GfxTextureUsageDepthStencil);
+
+        //     if (m_DSV.empty())
+        //     {
+        //         m_DSV.resize(m_desc.mip_levels * m_desc.array_size);
+        //     }
+
+        //     u32 index = m_desc.mip_levels * array_slice + mip_slice;
+        //     if (IsNullDescriptor(m_DSV[index]))
+        //     {
+        //         m_DSV[index] = ((D3D12Device*)m_pDevice)->AllocateDSV();
+
+        //         D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+        //         dsvDesc.Format                        = dxgi_format(m_desc.format);
+
+        //         switch (m_desc.type)
+        //         {
+        //             case GfxTextureType::Texture2D:
+        //                 dsvDesc.ViewDimension      = D3D12_DSV_DIMENSION_TEXTURE2D;
+        //                 dsvDesc.Texture2D.MipSlice = mip_slice;
+        //                 break;
+        //             case GfxTextureType::Texture2DArray:
+        //             case GfxTextureType::TextureCube:
+        //                 dsvDesc.ViewDimension                  = D3D12_DSV_DIMENSION_TEXTURE2DARRAY;
+        //                 dsvDesc.Texture2DArray.MipSlice        = mip_slice;
+        //                 dsvDesc.Texture2DArray.FirstArraySlice = array_slice;
+        //                 dsvDesc.Texture2DArray.ArraySize       = 1;
+        //                 break;
+        //             default: ASSERT(false); break;
+        //         }
+
+        //         ID3D12Device* pDevice = (ID3D12Device*)m_pDevice->GetHandle();
+        //         pDevice->CreateDepthStencilView(m_pTexture, &dsvDesc, m_DSV[index].cpu_handle);
+        //     }
+
+        //     return m_DSV[index].cpu_handle;
+        // }
+
+        D3D12_CPU_DESCRIPTOR_HANDLE GetReadOnlyDSV(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_slice, u32 array_slice)
+        {
+            ASSERT(m_desc.usage & GfxTextureUsageDepthStencil);
+
+            nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+
+            if (dxtexture->m_readonlyDSV.empty())
+            {
+                dxtexture->m_readonlyDSV.resize(texture->m_desc.mip_levels * texture->m_desc.array_size);
+            }
+
+            u32 index = texture->m_desc.mip_levels * array_slice + mip_slice;
+            if (IsNullDescriptor(dxtexture->m_readonlyDSV[index]))
+            {
+                dxtexture->m_readonlyDSV[index] = ((D3D12Device*)m_pDevice)->AllocateDSV();
+
+                D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+                dsvDesc.Format                        = dxgi_format(texture->m_desc.format);
+                dsvDesc.Flags                         = D3D12_DSV_FLAG_READ_ONLY_DEPTH;
+                if (IsStencilFormat(texture->m_desc.format))
+                {
+                    dsvDesc.Flags |= D3D12_DSV_FLAG_READ_ONLY_STENCIL;
+                }
+
+                switch (texture->m_desc.type)
+                {
+                    case GfxTextureType::Texture2D:
+                        dsvDesc.ViewDimension      = D3D12_DSV_DIMENSION_TEXTURE2D;
+                        dsvDesc.Texture2D.MipSlice = mip_slice;
+                        break;
+                    case GfxTextureType::Texture2DArray:
+                    case GfxTextureType::TextureCube:
+                        dsvDesc.ViewDimension                  = D3D12_DSV_DIMENSION_TEXTURE2DARRAY;
+                        dsvDesc.Texture2DArray.MipSlice        = mip_slice;
+                        dsvDesc.Texture2DArray.FirstArraySlice = array_slice;
+                        dsvDesc.Texture2DArray.ArraySize       = 1;
+                        break;
+                    default: ASSERT(false); break;
+                }
+
+                ID3D12Device* pDevice = (ID3D12Device*)m_pDevice->GetHandle();
+                pDevice->CreateDepthStencilView(m_pTexture, &dsvDesc, dxtexture->m_readonlyDSV[index].cpu_handle);
+            }
+
+            return dxtexture->m_readonlyDSV[index].cpu_handle;
+        }
 
     }  // namespace ngfx
 }  // namespace ncore
