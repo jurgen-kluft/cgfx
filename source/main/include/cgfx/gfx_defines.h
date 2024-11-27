@@ -891,6 +891,8 @@ namespace ncore
             }  // namespace rt
         }  // namespace enums
 
+
+        // TODO We could create vertex_buffer_t and index_buffer_t as components
         struct rt_geometry_t
         {
             buffer_t*     vertex_buffer;

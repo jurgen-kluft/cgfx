@@ -33,19 +33,18 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::tlas_t*             CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void                      CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void                      DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void                      Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
             bool                      Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            void*                     GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
-            D3D12_GPU_VIRTUAL_ADDRESS GetGpuAddress(ngfx::device_t* device, const ngfx::tlas_t* tlas);
         }  // namespace nd3d12
 #else
         namespace nd3d12
         {
-            ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) { return tlas; }
-            void          Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
-            bool          Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
-            void*         GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas) { return nullptr; }
+            void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            void  DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

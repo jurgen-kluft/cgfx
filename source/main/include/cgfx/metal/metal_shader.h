@@ -12,14 +12,15 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_MAC
         namespace nmetal
         {
-#pragma pack(push, 1)
+    #pragma pack(push, 1)
             struct shader_reflection_t
             {
                 uint32_t threadsPerThreadgroup[3];
             };
-#pragma pack(pop)
+    #pragma pack(pop)
 
             struct mshader_t
             {
@@ -29,13 +30,21 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void                CreateShader(ngfx::device_t* device, ngfx::resource_t* resource, ngfx::shader_t* shader);
+            void                CreateShader(ngfx::device_t* device, ngfx::shader_t* shader);
             void                Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
             bool                Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
             u64                 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader);
             MTL::Function*      GetHandle(ngfx::device_t const* device, const ngfx::shader_t* shader);
             shader_reflection_t GetReflection(ngfx::device_t const* device, const ngfx::shader_t* shader);
         }  // namespace nmetal
+#else
+        namespace nmetal
+        {
+            void CreateShader(ngfx::device_t* device, ngfx::shader_t* shader);
+            void Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
+            bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
+        }  // namespace nmetal
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 

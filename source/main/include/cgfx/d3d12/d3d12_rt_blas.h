@@ -1,18 +1,19 @@
 #ifndef __CGFX_D3D12_RT_BLAS_H__
-#define __CGFX_D3D12_RT_BLAS_H__
-#include "ccore/c_target.h"
-#ifdef USE_PRAGMA_ONCE
-    #pragma once
-#endif
+    #define __CGFX_D3D12_RT_BLAS_H__
+    #include "ccore/c_target.h"
+    #ifdef USE_PRAGMA_ONCE
+        #pragma once
+    #endif
 
-#include "cgfx/gfx_defines.h"
-#include "cgfx/gfx_rt_blas.h"
-#include "cgfx/d3d12/d3d12_header.h"
+    #include "cgfx/gfx_defines.h"
+    #include "cgfx/gfx_rt_blas.h"
+    #include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
     namespace ngfx
     {
+    #ifdef TARGET_PC
         namespace nd3d12
         {
             struct blas_t
@@ -28,12 +29,21 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::blas_t* CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void          Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            bool          Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void*         GetHandle(ngfx::device_t* pDevice, const ngfx::blas_t* pBLAS);
+            void CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            bool Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void GetUpdateDesc(nd3d12::blas_t* dxblas, ngfx::blas_t* blas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+        }  // namespace nd3d12
+    #else
+        namespace nd3d12
+        {
+            void CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            void DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            bool Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
         }  // namespace nd3d12
     }  // namespace ngfx
 }  // namespace ncore
 
-#endif
+    #endif
