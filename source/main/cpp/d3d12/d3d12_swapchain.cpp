@@ -1,4 +1,6 @@
 #include "cbase/c_debug.h"
+#include "cgfx/gfx_defines.h"
+#include "cgfx/gfx_texture.h"
 #include "cgfx/d3d12/d3d12_swapchain.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cgfx/d3d12/d3d12_texture.h"
@@ -7,149 +9,169 @@ namespace ncore
 {
     namespace ngfx
     {
-        // D3D12Swapchain::D3D12Swapchain(D3D12Device* pDevice, const swapchain_desc_t& desc, const char* name)
-        // {
-        //     m_pDevice = pDevice;
-        //     m_desc    = desc;
-        //     m_name    = name;
-        // }
+#ifdef TARGET_PC
+        namespace nd3d12
+        {
+            bool CreateTextures(ngfx::device_t* device, nd3d12::swapchain_t* dxswapchain, const swapchain_desc_t& desc)
+            {
+                texture_desc_t textureDesc;
+                textureDesc.width  = desc.width;
+                textureDesc.height = desc.height;
+                textureDesc.format = desc.backbuffer_format;
+                textureDesc.usage  = enums::TextureUsageRenderTarget;
 
-        // D3D12Swapchain::~D3D12Swapchain()
-        // {
-        //     for (size_t i = 0; i < m_backBuffers.size; ++i)
-        //     {
-        //         delete m_backBuffers.data[i];
-        //     }
-        //     m_backBuffers.size = 0;
+                const char* name = "backbuffer";
+                for (u32 i = 0; i < dxswapchain->m_desc.backbuffer_count; ++i)
+                {
+                    ID3D12Resource* pBackbuffer = NULL;
+                    HRESULT         hr          = dxswapchain->m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackbuffer));
+                    if (FAILED(hr))
+                    {
+                        return false;
+                    }
+                    ngfx::texture_t*   texture         = ngfx::CreateTexture(device, textureDesc, name);
+                    nd3d12::texture_t* dxtexture       = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
+                    dxswapchain->m_backBuffers.data[i] = texture;
+                    dxtexture->m_pTexture              = pBackbuffer;
+                }
+                dxswapchain->m_backBuffers.size = dxswapchain->m_desc.backbuffer_count;
 
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
-        //     pDevice->Delete(m_pSwapChain);
-        // }
+                return true;
+            }
 
-        // void D3D12Swapchain::AcquireNextBackBuffer() { m_nCurrentBackBuffer = m_pSwapChain->GetCurrentBackBufferIndex(); }
+            void CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { nd3d12::swapchain_t* pSwapchain = CreateComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain); }
 
-        // bool D3D12Swapchain::Present()
-        // {
-        //     //CPU_EVENT("Render", "D3D12Swapchain::Present");
+            void DestroySwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                if (dxswapchain)
+                {
+                    nd3d12::Destroy(device, swapchain);
+                    DestroyComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                }
+            }
 
-        //     UINT interval, flags;
-        //     if (m_bEnableVsync)
-        //     {
-        //         interval = 1;
-        //         flags    = 0;
-        //     }
-        //     else
-        //     {
-        //         interval = 0;
-        //         flags    = m_bSupportTearing && m_bWindowMode ? DXGI_PRESENT_ALLOW_TEARING : 0;
-        //     }
+            bool Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                nd3d12::device_t*    dxdevice    = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
 
-        //     HRESULT hr = m_pSwapChain->Present(interval, flags);
+                IDXGIFactory5* pFactory = dxdevice->m_pDxgiFactory;
 
-        //     return SUCCEEDED(hr);
-        // }
+                BOOL allowTearing = FALSE;
+                pFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
+                dxswapchain->m_bSupportTearing = allowTearing;
 
-        // bool D3D12Swapchain::Resize(u32 width, u32 height)
-        // {
-        //     if (m_desc.width == width && m_desc.height == height)
-        //     {
-        //         return false;
-        //     }
+                DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+                swapChainDesc.BufferCount           = swapchain->m_desc.backbuffer_count;
+                swapChainDesc.Width                 = swapchain->m_desc.width;
+                swapChainDesc.Height                = swapchain->m_desc.height;
+                swapChainDesc.Format                = swapchain->m_desc.backbuffer_format == GfxFormat::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(swapchain->m_desc.backbuffer_format);
+                swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+                swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+                swapChainDesc.SampleDesc.Count      = 1;
+                swapChainDesc.Flags                 = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
-        //     m_desc.width         = width;
-        //     m_desc.height        = height;
-        //     m_nCurrentBackBuffer = 0;
+                // Swap chain needs the queue so that it can force a flush on it.
+                IDXGISwapChain1* pSwapChain = NULL;
+                HRESULT          hr         = pFactory->CreateSwapChainForHwnd(pDevice->GetGraphicsQueue(), (HWND)swapchain->m_desc.window_handle, &swapChainDesc, nullptr, nullptr, &pSwapChain);
+                if (FAILED(hr))
+                {
+                    // RE_ERROR("[D3D12Swapchain] failed to create {}", m_name);
+                    return false;
+                }
 
-        //     for (size_t i = 0; i < m_backBuffers.size; ++i)
-        //     {
-        //         delete m_backBuffers.data[i];
-        //     }
-        //     m_backBuffers.size = 0;
+                pSwapChain->QueryInterface(&dxswapchain->m_pSwapChain);
+                SAFE_RELEASE(pSwapChain);
 
-        //     ((D3D12Device*)m_pDevice)->FlushDeferredDeletions();
+                return CreateTextures();
+            }
 
-        //     DXGI_SWAP_CHAIN_DESC desc = {};
-        //     m_pSwapChain->GetDesc(&desc);
-        //     HRESULT hr = m_pSwapChain->ResizeBuffers(m_desc.backbuffer_count, width, height, desc.BufferDesc.Format, desc.Flags);
-        //     if (!SUCCEEDED(hr))
-        //     {
-        //         // RE_ERROR("[D3D12Swapchain] failed to resize {}", m_name);
-        //         return false;
-        //     }
+            void Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                for (s32 i = 0; i < dxswapchain->m_backBuffers.size; ++i)
+                {
+                    ngfx::DestroyTexture(device, dxswapchain->m_backBuffers.data[i]);
+                }
+                dxswapchain->m_backBuffers.size = 0;
 
-        //     BOOL fullscreenState;
-        //     m_pSwapChain->GetFullscreenState(&fullscreenState, nullptr);
-        //     m_bWindowMode = !fullscreenState;
+                nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                nd3d12::Delete(dxdevice, dxswapchain->m_pSwapChain);
+            }
 
-        //     return CreateTextures();
-        // }
+            void Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                // CPU_EVENT("Render", "D3D12Swapchain::Present");
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
 
-        // texture_t* D3D12Swapchain::GetBackBuffer() const { return m_backBuffers.data[m_nCurrentBackBuffer]; }
+                UINT interval = 1;
+                UINT flags    = 0;
+                if (!dxswapchain->m_bEnableVsync)
+                {
+                    interval = 0;
+                    flags    = dxswapchain->m_bSupportTearing && dxswapchain->m_bWindowMode ? DXGI_PRESENT_ALLOW_TEARING : 0;
+                }
 
-        // bool D3D12Swapchain::Create()
-        // {
-        //     D3D12Device*   pDevice  = (D3D12Device*)m_pDevice;
-        //     IDXGIFactory5* pFactory = pDevice->GetDxgiFactory();
+                HRESULT hr = dxswapchain->m_pSwapChain->Present(interval, flags);
+                return SUCCEEDED(hr);
+            }
 
-        //     BOOL allowTearing = FALSE;
-        //     pFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
-        //     m_bSupportTearing = allowTearing;
+            void AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nd3d12::swapchain_t* dxswapchain  = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                dxswapchain->m_nCurrentBackBuffer = dxswapchain->m_pSwapChain->GetCurrentBackBufferIndex();
+            }
 
-        //     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-        //     swapChainDesc.BufferCount           = m_desc.backbuffer_count;
-        //     swapChainDesc.Width                 = m_desc.width;
-        //     swapChainDesc.Height                = m_desc.height;
-        //     swapChainDesc.Format                = m_desc.backbuffer_format == Gfx::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(m_desc.backbuffer_format);
-        //     swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        //     swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-        //     swapChainDesc.SampleDesc.Count      = 1;
-        //     swapChainDesc.Flags                 = allowTearing ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            {
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                return dxswapchain->m_backBuffers.data[dxswapchain->m_nCurrentBackBuffer];
+            }
 
-        //     IDXGISwapChain1* pSwapChain = NULL;
-        //     HRESULT          hr         = pFactory->CreateSwapChainForHwnd(pDevice->GetGraphicsQueue(),  // Swap chain needs the queue so that it can force a flush on it.
-        //                                                                    (HWND)m_desc.window_handle, &swapChainDesc, nullptr, nullptr, &pSwapChain);
+            bool Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height)
+            {
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                if (dxswapchain->m_desc.width == width && dxswapchain->m_desc.height == height)
+                {
+                    return false;
+                }
 
-        //     if (FAILED(hr))
-        //     {
-        //         // RE_ERROR("[D3D12Swapchain] failed to create {}", m_name);
-        //         return false;
-        //     }
+                dxswapchain->m_desc.width         = width;
+                dxswapchain->m_desc.height        = height;
+                dxswapchain->m_nCurrentBackBuffer = 0;
 
-        //     pSwapChain->QueryInterface(&m_pSwapChain);
-        //     SAFE_RELEASE(pSwapChain);
+                for (size_t i = 0; i < dxswapchain->m_backBuffers.size; ++i)
+                {
+                    ngfx::DestroyTexture(device, dxswapchain->m_backBuffers.data[i]);
+                }
+                dxswapchain->m_backBuffers.size = 0;
 
-        //     return CreateTextures();
-        // }
+                nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
+                dxdevice->FlushDeferredDeletions();
 
-        // bool D3D12Swapchain::CreateTextures()
-        // {
-        //     D3D12Device* pDevice = (D3D12Device*)m_pDevice;
+                DXGI_SWAP_CHAIN_DESC desc = {};
+                dxswapchain->m_pSwapChain->GetDesc(&desc);
+                HRESULT hr = dxswapchain->m_pSwapChain->ResizeBuffers(swapchain->m_desc.backbuffer_count, width, height, desc.BufferDesc.Format, desc.Flags);
+                if (!SUCCEEDED(hr))
+                {
+                    return false;
+                }
 
-        //     texture_desc_t textureDesc;
-        //     textureDesc.width  = m_desc.width;
-        //     textureDesc.height = m_desc.height;
-        //     textureDesc.format = m_desc.backbuffer_format;
-        //     textureDesc.usage  = GfxTextureUsage::RenderTarget;
+                BOOL fullscreenState;
+                dxswapchain->m_pSwapChain->GetFullscreenState(&fullscreenState, nullptr);
+                dxswapchain->m_bWindowMode = !fullscreenState;
 
-        //     for (u32 i = 0; i < m_desc.backbuffer_count; ++i)
-        //     {
-        //         ID3D12Resource* pBackbuffer = NULL;
-        //         HRESULT         hr          = m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackbuffer));
-        //         if (FAILED(hr))
-        //         {
-        //             return false;
-        //         }
+                return CreateTextures(device, dxswapchain, swapchain->m_desc);
+            }
 
-        //         //eastl::string name = fmt::format("{} texture {}", m_name, i).c_str();
-        //         //pBackbuffer->SetName(string_to_wstring(name).c_str());
-        //         const char* name = "backbuffer";
+            void SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value)
+            {
+                nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
+                dxswapchain->m_bEnableVsync      = value;
+            }
 
-        //         D3D12Texture* texture = new D3D12Texture(pDevice, textureDesc, name);
-        //         texture->m_pTexture   = pBackbuffer;
-        //         m_backBuffers.data[m_backBuffers.size++] = (texture);
-        //     }
-
-        //     return true;
-        // }
+        }  // namespace nd3d12
+#endif
     }  // namespace ngfx
 }  // namespace ncore

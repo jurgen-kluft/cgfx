@@ -28,18 +28,30 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
-            void               DestroySwapchain(device_t* device, ngfx::swapchain_t* swapchain);
-            bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
-            void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);
-            void               Present(device_t* device, ngfx::swapchain_t* swapchain);
-            void*              GetHandle(device_t* device, ngfx::swapchain_t* swapchain);
-            void               AcquireNextBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
-            ngfx::texture_t*   GetBackBuffer(device_t* device, ngfx::swapchain_t* swapchain);
-            bool               Resize(device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
-            void               SetVSyncEnabled(device_t* device, ngfx::swapchain_t* swapchain, bool value);
+            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             DestroySwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
+            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height);
+            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value);
         }  // namespace nd3d12
 #else
+
+        namespace nd3d12
+        {
+            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            void             DestroySwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return false; }
+            void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            void             Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }
+            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height) { return false; }
+            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value) {}
+        }  // namespace nd3d12
 
 #endif
         // class D3D12Device;
