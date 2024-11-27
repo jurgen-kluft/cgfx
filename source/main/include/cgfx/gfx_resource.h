@@ -16,8 +16,14 @@ namespace ncore
 
         struct name_t
         {
+            enum
+            {
+                eMaxNameLength = 128
+            };
+
             D_GFX_OCS_COMPONENT_SET(enums::ComponentName);
-            char m_name[128];
+            char    m_name[eMaxNameLength];
+            wchar_t m_wname[eMaxNameLength];
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
