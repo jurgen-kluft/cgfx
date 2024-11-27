@@ -6,6 +6,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_PC
         template <class T>
         inline bool has_rt_binding(const T& desc)
         {
@@ -236,9 +237,7 @@ namespace ncore
                     }
                 }
             }
-
-            void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
         }  // namespace nd3d12
-
+#endif
     }  // namespace ngfx
 }  // namespace ncore

@@ -40,24 +40,22 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void  CreateGraphicsPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const graphics_pipeline_desc_t& desc);
-            void  CreateMeshShadingPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc);
-            void  CreateComputePipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const compute_pipeline_desc_t& desc);
-            void  DestroyPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
-            bool  Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
-            void  Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
-            void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
+            void CreateGraphicsPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const graphics_pipeline_desc_t& desc);
+            void CreateMeshShadingPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc);
+            void CreateComputePipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const compute_pipeline_desc_t& desc);
+            void DestroyPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
+            bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
+            void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps);
         }  // namespace nd3d12
 #else
         namespace nd3d12
         {
-            void  CreateGraphicsPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const graphics_pipeline_desc_t& desc) {}
-            void  CreateMeshShadingPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc) {}
-            void  CreateComputePipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const compute_pipeline_desc_t& desc) {}
-            void  DestroyPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps) {}
-            bool  Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps) { return false; }
-            void  Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps) {}
-            void* GetHandle(ngfx::device_t* device, ngfx::pipeline_state_t* ps) { return nullptr; }
+            void CreateGraphicsPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const graphics_pipeline_desc_t& desc) {}
+            void CreateMeshShadingPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc) {}
+            void CreateComputePipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const compute_pipeline_desc_t& desc) {}
+            void DestroyPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps) {}
+            bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps) { return false; }
+            void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps) {}
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

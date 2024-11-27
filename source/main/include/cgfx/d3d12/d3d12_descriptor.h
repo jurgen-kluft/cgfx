@@ -15,6 +15,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_PC
         namespace nd3d12
         {
             struct srv_texture_t
@@ -93,6 +94,22 @@ namespace ncore
             void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
             bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
         }  // namespace nd3d12
+#else
+        namespace nd3d12
+        {
+            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* texture, const srv_desc_t& desc) {}
+            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const srv_desc_t& desc) {}
+            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::tlas_t* tlas, const srv_desc_t& desc) {}
+            void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* buffer, const uav_desc_t& desc) {}
+            void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const uav_desc_t& desc) {}
+            void CreateCbv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const cbv_desc_t& desc) {}
+            void CreateSampler(ngfx::device_t* device, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) {}
+            void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
+
+            void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
+            bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor) { return false; }
+        }  // namespace ND3D12        
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 

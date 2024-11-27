@@ -309,6 +309,8 @@ namespace ncore
         //     return true;
         // }
 
+#ifdef TARGET_PC
+
         namespace nd3d12
         {
             void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* texture, const srv_desc_t& desc)
@@ -514,7 +516,7 @@ namespace ncore
 
                 return false;
             }
-
         }  // namespace nd3d12
+#endif
     }  // namespace ngfx
 }  // namespace ncore

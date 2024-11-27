@@ -117,7 +117,6 @@ namespace ncore
             void*                     GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
             D3D12_GPU_VIRTUAL_ADDRESS GetGpuAddress(ngfx::device_t* device, const ngfx::tlas_t* tlas);
         }  // namespace nd3d12
-
 #endif
     }  // namespace ngfx
 }  // namespace ncore

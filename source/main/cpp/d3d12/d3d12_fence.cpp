@@ -36,6 +36,5 @@ namespace ncore
             }
         }  // namespace nd3d12
 #endif
-
     }  // namespace ngfx
 }  // namespace ncore

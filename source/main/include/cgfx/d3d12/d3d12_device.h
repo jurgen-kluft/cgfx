@@ -133,8 +133,8 @@ namespace ncore
                 D3D12Descriptor*      m_freeDescriptors;
             };
 
-            void setup(DescriptorAllocator* alloc, nd3d12::device_t* device, D3D12_DESCRIPTOR_HEAP_TYPE type, bool shader_visible, u32 descriptor_count, const char* name);
-            void teardown(DescriptorAllocator* alloc);
+            void Setup(DescriptorAllocator* alloc, nd3d12::device_t* device, D3D12_DESCRIPTOR_HEAP_TYPE type, bool shader_visible, u32 descriptor_count, const char* name);
+            void Teardown(DescriptorAllocator* alloc);
 
             struct ConstantBufferAllocator
             {
@@ -145,8 +145,8 @@ namespace ncore
                 u32       m_allocatedSize = 0;
             };
 
-            void setup(ConstantBufferAllocator* alloc, nd3d12::device_t* device, u32 buffer_size, const char* name);
-            void teardown(ConstantBufferAllocator* alloc);
+            void Setup(ConstantBufferAllocator* alloc, nd3d12::device_t* device, u32 buffer_size, const char* name);
+            void Teardown(ConstantBufferAllocator* alloc);
 
 
         }  // namespace nd3d12

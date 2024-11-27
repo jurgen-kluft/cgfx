@@ -1,12 +1,12 @@
 #ifndef __CGFX_D3D12_COMMAND_LIST_H__
-#define __CGFX_D3D12_COMMAND_LIST_H__
-#include "ccore/c_target.h"
-#ifdef USE_PRAGMA_ONCE
-    #pragma once
-#endif
+    #define __CGFX_D3D12_COMMAND_LIST_H__
+    #include "ccore/c_target.h"
+    #ifdef USE_PRAGMA_ONCE
+        #pragma once
+    #endif
 
-#include "cgfx/gfx_command_list.h"
-#include "cgfx/d3d12/d3d12_header.h"
+    #include "cgfx/gfx_command_list.h"
+    #include "cgfx/d3d12/d3d12_header.h"
 
 namespace ncore
 {
@@ -14,6 +14,7 @@ namespace ncore
     {
         struct device_t;
 
+    #ifdef TARGET_PC
         namespace nd3d12
         {
             struct command_list_t
@@ -30,28 +31,28 @@ namespace ncore
                 carray_t<D3D12_BUFFER_BARRIER>  m_bufferBarriers;
                 carray_t<D3D12_GLOBAL_BARRIER>  m_globalBarriers;
 
-                template <typename F, typename S>
-                struct pair_t
+                struct fence_value_t
                 {
-                    F first;
-                    S second;
+                    fence_t* m_fence;
+                    u64      m_value;
                 };
 
-                carray_t<pair_t<fence_t*, u64>> m_pendingWaits;
-                carray_t<pair_t<fence_t*, u64>> m_pendingSignals;
-                carray_t<swapchain_t*>          m_pendingSwapchain;
+                carray_t<fence_value_t> m_pendingWaits;
+                carray_t<fence_value_t> m_pendingSignals;
+                carray_t<swapchain_t*>  m_pendingSwapchain;
 
-#if MICROPROFILE_GPU_TIMERS_D3D12
+        #if MICROPROFILE_GPU_TIMERS_D3D12
                 struct MicroProfileThreadLogGpu* m_pProfileLog   = nullptr;
                 int                              m_nProfileQueue = -1;
-#endif
+        #endif
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cl);
-            bool                  Create(ngfx::command_list_t*);
-            void                  Destroy(ngfx::command_list_t*);
-            void*                 GetHandle(ngfx::command_list_t*);
+            void  CreateCommandList(ngfx::command_list_t* cl);
+            void  DestroyCommandList(ngfx::command_list_t* cl);
+            bool  Create(ngfx::command_list_t*);
+            void  Destroy(ngfx::command_list_t*);
+            void* GetHandle(ngfx::command_list_t*);
 
             void ResetAllocator(ngfx::command_list_t* commandList);
             void Begin(ngfx::command_list_t* commandList);
@@ -115,4 +116,4 @@ namespace ncore
     }  // namespace ngfx
 }  // namespace ncore
 
-#endif
+    #endif

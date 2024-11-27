@@ -3,7 +3,7 @@
 
 #ifdef TARGET_PC
 
-#include "cd3d12/ma/D3D12MemAlloc.h"
+    #include "cd3d12/ma/D3D12MemAlloc.h"
 
 namespace ncore
 {
@@ -51,15 +51,7 @@ namespace ncore
                 pDevice->Delete(pHeap->m_pAllocation);
                 pHeap->m_pAllocation = nullptr;
             }
-
-            D3D12MA::Allocation* GetHandle(ngfx::device_t* device, ngfx::heap_t* heap)
-            {
-                nd3d12::heap_t* pHeap = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap);
-                return pHeap->m_pAllocation;
-            }
-
         }  // namespace nd3d12
-
     }  // namespace ngfx
 }  // namespace ncore
 
