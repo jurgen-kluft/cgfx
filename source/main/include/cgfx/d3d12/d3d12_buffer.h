@@ -28,7 +28,6 @@ namespace ncore
             void  DestroyBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer);
             bool  Create(ngfx::device_t* device, ngfx::buffer_t* buffer);
             void  Destroy(ngfx::device_t* device, ngfx::buffer_t* buffer);
-            void* GetHandle(ngfx::device_t* device, ngfx::buffer_t* buffer);
             void* GetCpuAddress(ngfx::device_t* device, ngfx::buffer_t* buffer);
             u64   GetGpuAddress(ngfx::device_t* device, ngfx::buffer_t* buffer);
             u32   GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::buffer_t* buffer);
@@ -37,9 +36,9 @@ namespace ncore
         namespace nd3d12
         {
             void  CreateBuffer(device_t* device, ngfx::buffer_t* buffer) {}
+            void  DestroyBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer) {}
             bool  Create(device_t* device, ngfx::buffer_t* buffer) { return false; }
             void  Destroy(device_t* device, ngfx::buffer_t* buffer) {}
-            void* GetHandle(device_t* device, ngfx::buffer_t* buffer) { return nullptr; }
             void* GetCpuAddress(device_t* device, ngfx::buffer_t* buffer) { return nullptr; }
             u64   GetGpuAddress(device_t* device, ngfx::buffer_t* buffer) { return 0; }
             u32   GetRequiredStagingBufferSize(device_t* device, ngfx::buffer_t* buffer) { return 0; }
