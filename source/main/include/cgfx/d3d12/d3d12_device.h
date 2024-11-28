@@ -20,7 +20,7 @@ namespace ncore
 
             struct device_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Device);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Device);
                 CD3DX12FeatureSupport m_featureSupport;
 
                 IDXGIFactory6* m_pDxgiFactory = nullptr;

@@ -1,5 +1,9 @@
 #ifndef __CGFX_GFX_COMMAND_LIST_H__
 #define __CGFX_GFX_COMMAND_LIST_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/gfx_resource.h"
 
@@ -9,7 +13,7 @@ namespace ncore
     {
         struct command_list_t
         {
-            D_GFX_OCS_COMPONENT_SET(enums::ComponentCommandList);
+            D_GFX_CS_COMPONENT_SET(enums::ComponentCommandList);
             device_t*                 m_device;
             enums::command_queue_type m_queueType;
             DCORE_CLASS_PLACEMENT_NEW_DELETE

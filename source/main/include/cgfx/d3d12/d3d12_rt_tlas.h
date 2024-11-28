@@ -19,7 +19,7 @@ namespace ncore
         {
             struct tlas_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Tlas);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Tlas);
                 ID3D12Resource*      m_pASBuffer          = nullptr;
                 D3D12MA::Allocation* m_pASAllocation      = nullptr;
                 ID3D12Resource*      m_pScratchBuffer     = nullptr;

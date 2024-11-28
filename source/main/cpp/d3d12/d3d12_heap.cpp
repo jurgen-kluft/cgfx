@@ -38,7 +38,7 @@ namespace ncore
                 }
 
                 name_t const* name = GetComponent<ngfx::heap_t, ngfx::name_t>(device, heap);
-                pHeap->m_pAllocation->SetName(name->m_name);
+                pHeap->m_pAllocation->SetName(name->m_wname);
 
                 return true;
             }
@@ -48,7 +48,7 @@ namespace ncore
                 nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
                 nd3d12::heap_t*   pHeap   = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, heap);
 
-                pDevice->Delete(pHeap->m_pAllocation);
+                nd3d12::Delete(pDevice, pHeap->m_pAllocation);
                 pHeap->m_pAllocation = nullptr;
             }
         }  // namespace nd3d12

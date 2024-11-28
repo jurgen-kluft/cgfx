@@ -1,5 +1,9 @@
 #ifndef __CGFX_GFX_SWAPCHAIN_H__
 #define __CGFX_GFX_SWAPCHAIN_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/gfx_resource.h"
 
@@ -11,7 +15,7 @@ namespace ncore
 
         struct swapchain_t
         {
-            D_GFX_OCS_COMPONENT_SET(enums::ComponentSwapchain);
+            D_GFX_CS_COMPONENT_SET(enums::ComponentSwapchain);
             swapchain_desc_t m_desc = {};
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

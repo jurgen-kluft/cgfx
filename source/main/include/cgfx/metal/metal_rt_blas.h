@@ -12,11 +12,12 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_MAC
         namespace nmetal
         {
             struct mblas_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalBlas);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalBlas);
                 MTL::AccelerationStructure*                            m_pAccelerationStructure = nullptr;
                 MTL::PrimitiveAccelerationStructureDescriptor*         m_pDescriptor            = nullptr;
                 MTL::Buffer*                                           m_pScratchBuffer         = nullptr;
@@ -31,6 +32,16 @@ namespace ncore
             MTL::AccelerationStructure* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
             void                        UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nmetal
+#else
+        namespace nmetal
+        {
+            void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
+        }  // namespace nmetal
+#endif
     }  // namespace ngfx
 }  // namespace ncore
+
 #endif

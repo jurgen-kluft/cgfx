@@ -24,14 +24,16 @@ namespace ncore
             bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len)
             {
                 nd3d12::shader_t* dxshader = GetComponent<ngfx::shader_t, nd3d12::shader_t>(device, shader);
-                dxshader->m_data           = {data_ptr, data_len, data_len};
+                dxshader->m_data.mArray           = data_ptr;
+                dxshader->m_data.mSize     = data_len;
+                dxshader->m_data.mCapacity= data_len;
                 shader->m_hash             = nhash::datahash(data_ptr, data_len);
             }
 
             u64                   GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return shader->m_hash; }
             D3D12_SHADER_BYTECODE GetByteCode(ngfx::device_t const* device, const ngfx::shader_t* shader)
             {
-                nd3d12::shader_t*     dxshader = GetComponent<ngfx::shader_t, nd3d12::shader_t>(device, shader);
+                nd3d12::shader_t const*     dxshader = GetComponent<ngfx::shader_t, nd3d12::shader_t>(device, shader);
                 D3D12_SHADER_BYTECODE byteCode = {};
                 byteCode.pShaderBytecode       = dxshader->m_data.data();
                 byteCode.BytecodeLength        = dxshader->m_data.size();

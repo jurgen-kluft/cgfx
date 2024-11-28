@@ -21,7 +21,7 @@ namespace ncore
                 textureDesc.usage  = enums::TextureUsageRenderTarget;
 
                 const char* name = "backbuffer";
-                for (u32 i = 0; i < dxswapchain->m_desc.backbuffer_count; ++i)
+                for (u32 i = 0; i < desc.backbuffer_count; ++i)
                 {
                     ID3D12Resource* pBackbuffer = NULL;
                     HRESULT         hr          = dxswapchain->m_pSwapChain->GetBuffer(i, IID_PPV_ARGS(&pBackbuffer));
@@ -31,10 +31,10 @@ namespace ncore
                     }
                     ngfx::texture_t*   texture         = ngfx::CreateTexture(device, textureDesc, name);
                     nd3d12::texture_t* dxtexture       = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
-                    dxswapchain->m_backBuffers.data[i] = texture;
+                    dxswapchain->m_backBuffers.mArray[i] = texture;
                     dxtexture->m_pTexture              = pBackbuffer;
                 }
-                dxswapchain->m_backBuffers.size = dxswapchain->m_desc.backbuffer_count;
+                dxswapchain->m_backBuffers.mSize = desc.backbuffer_count;
 
                 return true;
             }
@@ -66,7 +66,7 @@ namespace ncore
                 swapChainDesc.BufferCount           = swapchain->m_desc.backbuffer_count;
                 swapChainDesc.Width                 = swapchain->m_desc.width;
                 swapChainDesc.Height                = swapchain->m_desc.height;
-                swapChainDesc.Format                = swapchain->m_desc.backbuffer_format == GfxFormat::RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(swapchain->m_desc.backbuffer_format);
+                swapChainDesc.Format                = swapchain->m_desc.backbuffer_format == enums::FORMAT_RGBA8SRGB ? DXGI_FORMAT_R8G8B8A8_UNORM : dxgi_format(swapchain->m_desc.backbuffer_format);
                 swapChainDesc.BufferUsage           = DXGI_USAGE_RENDER_TARGET_OUTPUT;
                 swapChainDesc.SwapEffect            = DXGI_SWAP_EFFECT_FLIP_DISCARD;
                 swapChainDesc.SampleDesc.Count      = 1;
@@ -74,7 +74,7 @@ namespace ncore
 
                 // Swap chain needs the queue so that it can force a flush on it.
                 IDXGISwapChain1* pSwapChain = NULL;
-                HRESULT          hr         = pFactory->CreateSwapChainForHwnd(pDevice->GetGraphicsQueue(), (HWND)swapchain->m_desc.window_handle, &swapChainDesc, nullptr, nullptr, &pSwapChain);
+                HRESULT          hr         = pFactory->CreateSwapChainForHwnd(dxdevice->m_pGraphicsQueue, (HWND)swapchain->m_desc.window_handle, &swapChainDesc, nullptr, nullptr, &pSwapChain);
                 if (FAILED(hr))
                 {
                     // RE_ERROR("[D3D12Swapchain] failed to create {}", m_name);
@@ -84,23 +84,23 @@ namespace ncore
                 pSwapChain->QueryInterface(&dxswapchain->m_pSwapChain);
                 SAFE_RELEASE(pSwapChain);
 
-                return CreateTextures();
+                return CreateTextures(device, dxswapchain, swapchain->m_desc);
             }
 
             void Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
             {
                 nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
-                for (s32 i = 0; i < dxswapchain->m_backBuffers.size; ++i)
+                for (s32 i = 0; i < dxswapchain->m_backBuffers.size(); ++i)
                 {
-                    ngfx::DestroyTexture(device, dxswapchain->m_backBuffers.data[i]);
+                    ngfx::DestroyTexture(device, dxswapchain->m_backBuffers.mArray[i]);
                 }
-                dxswapchain->m_backBuffers.size = 0;
+                dxswapchain->m_backBuffers.clear();
 
                 nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
                 nd3d12::Delete(dxdevice, dxswapchain->m_pSwapChain);
             }
 
-            void Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
+            bool Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
             {
                 // CPU_EVENT("Render", "D3D12Swapchain::Present");
                 nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
@@ -126,29 +126,29 @@ namespace ncore
             ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
             {
                 nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
-                return dxswapchain->m_backBuffers.data[dxswapchain->m_nCurrentBackBuffer];
+                return dxswapchain->m_backBuffers.mArray[dxswapchain->m_nCurrentBackBuffer];
             }
 
             bool Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height)
             {
                 nd3d12::swapchain_t* dxswapchain = GetComponent<ngfx::swapchain_t, nd3d12::swapchain_t>(device, swapchain);
-                if (dxswapchain->m_desc.width == width && dxswapchain->m_desc.height == height)
+                if (swapchain->m_desc.width == width && swapchain->m_desc.height == height)
                 {
                     return false;
                 }
 
-                dxswapchain->m_desc.width         = width;
-                dxswapchain->m_desc.height        = height;
+                swapchain->m_desc.width         = width;
+                swapchain->m_desc.height        = height;
                 dxswapchain->m_nCurrentBackBuffer = 0;
 
-                for (size_t i = 0; i < dxswapchain->m_backBuffers.size; ++i)
+                for (size_t i = 0; i < dxswapchain->m_backBuffers.size(); ++i)
                 {
-                    ngfx::DestroyTexture(device, dxswapchain->m_backBuffers.data[i]);
+                    ngfx::DestroyTexture(device, dxswapchain->m_backBuffers.mArray[i]);
                 }
-                dxswapchain->m_backBuffers.size = 0;
+                dxswapchain->m_backBuffers.clear();
 
                 nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
-                dxdevice->FlushDeferredDeletions();
+                nd3d12::FlushDeferredDeletions(dxdevice);
 
                 DXGI_SWAP_CHAIN_DESC desc = {};
                 dxswapchain->m_pSwapChain->GetDesc(&desc);

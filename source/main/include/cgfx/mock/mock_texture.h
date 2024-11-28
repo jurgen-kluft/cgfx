@@ -9,8 +9,9 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::texture_t*         CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
-            bool                     Create(device_t* device, ngfx::texture_t* texture);
+            void                      CreateTexture(device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
+            void                      DestroyTexture(device_t* device, ngfx::texture_t* texture);
+            bool                      Create(device_t* device, ngfx::texture_t* texture);
             void                     Destroy(device_t* device, ngfx::texture_t* texture);
             void*                    GetHandle(device_t* device, ngfx::texture_t* texture);
             u32                      GetRequiredStagingBufferSize(device_t* device, ngfx::texture_t* texture);

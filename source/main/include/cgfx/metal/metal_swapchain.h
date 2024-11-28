@@ -8,6 +8,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_MAC
         namespace nmetal
         {
             struct swapchain_t
@@ -28,7 +29,21 @@ namespace ncore
             void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value);
             MTL::Drawable*   GetDrawable(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
         }  // namespace nmetal
-
+#else
+        namespace nmetal
+        {
+            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc) {}
+            bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return false; }
+            void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            void*            GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }
+            void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }
+            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height) { return false; }
+            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value) {}
+            void*            GetDrawable(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }
+        }  // namespace nmetal
+#endif
     }  // namespace ngfx
 }  // namespace ncore
+
 #endif

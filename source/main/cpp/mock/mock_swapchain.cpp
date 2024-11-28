@@ -9,7 +9,24 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::swapchain_t* CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
+            bool CreateTextures(device_t* device, ngfx::swapchain_t* sc, nmock::swapchain_t* msc)
+            {
+                texture_desc_t textureDesc;
+                textureDesc.width  = sc->m_desc.width;
+                textureDesc.height = sc->m_desc.height;
+                textureDesc.format = sc->m_desc.backbuffer_format;
+                textureDesc.usage  = enums::TextureUsageRenderTarget;
+
+                for (u32 i = 0; i < sc->m_desc.backbuffer_count; ++i)
+                {
+                    const char* name                                = "back-buffer";  // = fmt::format("{} texture {}", m_name, i).c_str();
+                    msc->m_backBuffers[msc->m_numBackBufferCount++] = CreateTexture(device, textureDesc, name);
+                }
+
+                return true;
+            }
+
+            void CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
             {
                 nmock::swapchain_t* msc   = ngfx::CreateComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, swapchain);
                 msc->m_currentBackBuffer  = -1;
@@ -35,23 +52,6 @@ namespace ncore
                     ngfx::Destroy(device, msc->m_backBuffers[i]);
                 }
                 msc->m_numBackBufferCount = 0;
-            }
-
-            bool CreateTextures(device_t* device, ngfx::swapchain_t* sc, nmock::swapchain_t* msc)
-            {
-                texture_desc_t textureDesc;
-                textureDesc.width  = sc->m_desc.width;
-                textureDesc.height = sc->m_desc.height;
-                textureDesc.format = sc->m_desc.backbuffer_format;
-                textureDesc.usage  = enums::TextureUsageRenderTarget;
-
-                for (u32 i = 0; i < sc->m_desc.backbuffer_count; ++i)
-                {
-                    const char* name                                = "back-buffer";  // = fmt::format("{} texture {}", m_name, i).c_str();
-                    msc->m_backBuffers[msc->m_numBackBufferCount++] = CreateTexture(device, textureDesc, name);
-                }
-
-                return true;
             }
 
             void Present(device_t* device, ngfx::swapchain_t* sc) {}

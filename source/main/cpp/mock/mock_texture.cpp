@@ -10,10 +10,9 @@ namespace ncore
     {
         namespace nmock
         {
-            ngfx::texture_t* CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc)
-            {
-                return texture;
-            }
+            void CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) {}
+
+            void DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture) {}
 
             bool Create(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return true; }
             void Destroy(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) {}
@@ -28,10 +27,10 @@ namespace ncore
                 return enums::GetFormatRowPitch(pTexture->m_desc.format, width) * enums::GetFormatBlockHeight(pTexture->m_desc.format);
             }
 
-            tiling_desc_t            GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return tiling_desc_t(); }
+            tiling_desc_t             GetTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return tiling_desc_t(); }
             subresource_tiling_desc_t GetSubResourceTilingDesc(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 subresource) { return subresource_tiling_desc_t(); }
-            void*                    GetSharedHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }
+            void*                     GetSharedHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }
 
         }  // namespace nmock
-    }  // namespace ngfx
+    }      // namespace ngfx
 }  // namespace ncore

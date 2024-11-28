@@ -12,11 +12,12 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_MAC
         namespace nmetal
         {
             struct mtlas_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalTlas);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalTlas);
                 MTL::AccelerationStructure*                   m_pAccelerationStructure      = nullptr;
                 MTL::InstanceAccelerationStructureDescriptor* m_pDescriptor                 = nullptr;
                 MTL::Buffer*                                  m_pScratchBuffer              = nullptr;
@@ -34,6 +35,7 @@ namespace ncore
             MTL::AccelerationStructure* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
             void                        UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
         }  // namespace nmetal
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 #endif

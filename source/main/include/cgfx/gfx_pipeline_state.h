@@ -1,5 +1,9 @@
 #ifndef __CGFX_GFX_PIPELINE_STATE_H__
 #define __CGFX_GFX_PIPELINE_STATE_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/gfx_resource.h"
 
@@ -9,7 +13,7 @@ namespace ncore
     {
         struct pipeline_state_t
         {
-            D_GFX_OCS_COMPONENT_SET(enums::ComponentPipelineState);
+            D_GFX_CS_COMPONENT_SET(enums::ComponentPipelineState);
             enums::pipeline_t m_type;
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };

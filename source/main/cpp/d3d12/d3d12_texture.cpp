@@ -21,7 +21,7 @@ namespace ncore
                 nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
                 if (dxtexture)
                 {
-                    Destroy(device, texture);
+                    nd3d12::Destroy(device, texture);
                     DestroyComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
                 }
             }
@@ -57,7 +57,8 @@ namespace ncore
                 {
                     ASSERT(texture->m_desc.alloc_type == enums::AllocationPlaced);
                     ASSERT(texture->m_desc.memory_type == texture->m_desc.heap->m_desc.memory_type);
-                    hr = pAllocator->CreateAliasingResource2(nd3d12::GetHandle(device, texture->m_desc.heap), texture->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxtexture->m_pTexture));
+                    nd3d12::heap_t* heap = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, texture->m_desc.heap);
+                    hr = pAllocator->CreateAliasingResource2(heap->m_pAllocation, texture->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxtexture->m_pTexture));
                 }
                 else if (texture->m_desc.alloc_type == enums::AllocationSparse)
                 {
@@ -79,7 +80,7 @@ namespace ncore
                     hr = pAllocator->CreateResource3(&allocationDesc, &resourceDesc1, initial_layout, nullptr, 0, nullptr, &dxtexture->m_pAllocation, IID_PPV_ARGS(&dxtexture->m_pTexture));
                 }
 
-                name_t const* name = GetComponent<ngfx::name_t, name_t>(device, texture);
+                name_t const* name = GetComponent<ngfx::texture_t, ngfx::name_t>(device, texture);
 
                 if (FAILED(hr))
                 {
@@ -110,16 +111,16 @@ namespace ncore
                 nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
                 nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
 
-                dxdevice->m_pDevice->Delete(dxtexture->m_pTexture);
-                dxdevice->m_pDevice->Delete(dxtexture->m_pAllocation);
+                nd3d12::Delete(dxdevice, dxtexture->m_pTexture);
+                nd3d12::Delete(dxdevice, dxtexture->m_pAllocation);
 
-                for (size_t i = 0; i < dxtexture->m_RTV.size(); ++i)
+                for (s32 i = 0; i < dxtexture->m_RTV.size(); ++i)
                 {
-                    nd3d12::DeleteRTV(dxdevice->m_pDevice, dxtexture->m_RTV[i]);
+                    nd3d12::DeleteRTV(dxdevice, dxtexture->m_RTV[i]);
                 }
-                for (size_t i = 0; i < m_DSV.size(); ++i)
+                for (s32 i = 0; i < dxtexture->m_DSV.size(); ++i)
                 {
-                    nd3d12::DeleteDSV(dxdevice->m_pDevice, m_DSV[i]);
+                    nd3d12::DeleteDSV(dxdevice, dxtexture->m_DSV[i]);
                 }
             }
 
@@ -160,7 +161,7 @@ namespace ncore
 
             tiling_desc_t GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture)
             {
-                ASSERT(texture->m_desc.alloc_type == GfxAllocationType::Sparse);
+                ASSERT(texture->m_desc.alloc_type == enums::AllocationSparse);
 
                 nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
                 nd3d12::device_t*  dxdevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);

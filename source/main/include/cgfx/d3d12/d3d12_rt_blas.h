@@ -1,24 +1,25 @@
 #ifndef __CGFX_D3D12_RT_BLAS_H__
-    #define __CGFX_D3D12_RT_BLAS_H__
-    #include "ccore/c_target.h"
-    #ifdef USE_PRAGMA_ONCE
-        #pragma once
-    #endif
+#define __CGFX_D3D12_RT_BLAS_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
-    #include "cgfx/gfx_defines.h"
-    #include "cgfx/gfx_rt_blas.h"
-    #include "cgfx/d3d12/d3d12_header.h"
+#include "cgfx/gfx_defines.h"
+#include "cgfx/gfx_rt_blas.h"
+#include "cgfx/d3d12/d3d12_header.h"
+#include "cbase/c_carray.h"
 
 namespace ncore
 {
     namespace ngfx
     {
-    #ifdef TARGET_PC
+#ifdef TARGET_PC
         namespace nd3d12
         {
             struct blas_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Blas);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Blas);
                 carray_t<D3D12_RAYTRACING_GEOMETRY_DESC>           m_geometries;
                 D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC m_buildDesc;
 
@@ -35,15 +36,17 @@ namespace ncore
             bool Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void GetUpdateDesc(nd3d12::blas_t* dxblas, ngfx::blas_t* blas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nd3d12
-    #else
+#else
         namespace nd3d12
         {
-            void CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
-            void DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
-            void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
-            bool Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
+            void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            void  DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
+            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
         }  // namespace nd3d12
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 
-    #endif
+#endif

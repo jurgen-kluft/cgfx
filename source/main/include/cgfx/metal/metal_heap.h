@@ -12,6 +12,7 @@ namespace ncore
 {
     namespace ngfx
     {
+#ifdef TARGET_MAC
         namespace nmetal
         {
             struct mheap_t
@@ -27,6 +28,16 @@ namespace ncore
             void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
             MTL::Heap*    GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
         }  // namespace nmetal
+#else
+        namespace nmetal
+        {
+            void       CreateHeap(ngfx::device_t* pDevice, resource_t* resource, ngfx::heap_t* heap) {}
+            void       DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
+            bool       Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
+            void       Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
+            void*      GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return nullptr; }
+        }  // namespace nmetal
+#endif
     }  // namespace ngfx
 }  // namespace ncore
 #endif

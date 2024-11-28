@@ -9,7 +9,7 @@ namespace ncore
     {
         struct shader_t
         {
-            D_GFX_OCS_COMPONENT_SET(enums::ComponentShader);
+            D_GFX_CS_COMPONENT_SET(enums::ComponentShader);
             u64           m_hash;
             shader_desc_t m_desc = {};
             DCORE_CLASS_PLACEMENT_NEW_DELETE

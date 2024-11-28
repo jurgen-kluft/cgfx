@@ -1,5 +1,9 @@
 #ifndef __CGFX_GFX_FENCE_H__
 #define __CGFX_GFX_FENCE_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/gfx_resource.h"
 
@@ -9,7 +13,7 @@ namespace ncore
     {
         struct fence_t
         {
-            D_GFX_OCS_COMPONENT_SET(enums::ComponentFence);
+            D_GFX_CS_COMPONENT_SET(enums::ComponentFence);
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 

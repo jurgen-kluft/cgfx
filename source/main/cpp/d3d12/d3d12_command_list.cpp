@@ -779,22 +779,22 @@ namespace ncore
                     case enums::CommandQueueGraphics:
                         type                       = D3D12_COMMAND_LIST_TYPE_DIRECT;
                         dxCmdList->m_pCommandQueue = dxDevice->m_pGraphicsQueue;
-                        dxCmdList->m_nProfileQueue = pDevice->m_nProfileGraphicsQueue;
+                        dxCmdList->m_nProfileQueue = dxDevice->m_nProfileGraphicsQueue;
                         break;
                     case enums::CommandQueueCompute:
                         type                       = D3D12_COMMAND_LIST_TYPE_COMPUTE;
-                        dxCmdList->m_pCommandQueue = pDevice->m_pComputeQueue;
-                        dxCmdList->m_nProfileQueue = pDevice->m_nProfileComputeQueue;
+                        dxCmdList->m_pCommandQueue = dxDevice->m_pComputeQueue;
+                        dxCmdList->m_nProfileQueue = dxDevice->m_nProfileComputeQueue;
                         break;
                     case enums::CommandQueueCopy:
                         type                       = D3D12_COMMAND_LIST_TYPE_COPY;
-                        dxCmdList->m_pCommandQueue = pDevice->m_pCopyQueue;
-                        dxCmdList->m_nProfileQueue = pDevice->m_nProfileCopyQueue;
+                        dxCmdList->m_pCommandQueue = dxDevice->m_pCopyQueue;
+                        dxCmdList->m_nProfileQueue = dxDevice->m_nProfileCopyQueue;
                         break;
                     default: break;
                 }
 
-                ID3D12Device* pD3D12Device = dxDevice->m_pDevice;
+                ID3D12Device12* pD3D12Device = dxDevice->m_pDevice;
                 HRESULT       hr           = pD3D12Device->CreateCommandAllocator(type, IID_PPV_ARGS(&dxCmdList->m_pCommandAllocator));
                 if (FAILED(hr))
                 {
@@ -825,7 +825,7 @@ namespace ncore
             void ResetAllocator(ngfx::command_list_t* cmdList)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
-                m_pCommandAllocator->Reset();
+                dxCmdList->m_pCommandAllocator->Reset();
             }
 
             void Begin(ngfx::command_list_t* cmdList)
@@ -844,13 +844,15 @@ namespace ncore
             void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
-                dxCmdList->m_pendingWaits.push_back(fence, value);
+                nd3d12::command_list_t::fence_value_t fenceValue = {fence, value};
+                dxCmdList->m_pendingWaits.push_back(fenceValue);
             }
 
             void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
-                dxCmdList->m_pendingSignals.push_back(fence, value);
+                nd3d12::command_list_t::fence_value_t fenceValue = {fence, value};
+                dxCmdList->m_pendingSignals.push_back(fencealue);
             }
 
             void Present(ngfx::command_list_t* cmdList, ngfx::swapchain_t* swapchain)
@@ -875,7 +877,7 @@ namespace ncore
                 if (dxCmdList->m_commandCount > 0)
                 {
                     ID3D12CommandList* ppCommandLists[] = {dxCmdList->m_pCommandList};
-                    dxCmdList->m_pCommandQueue->ExecuteCommandLists(1, dxCmdList->ppCommandLists);
+                    dxCmdList->m_pCommandQueue->ExecuteCommandLists(1, ppCommandLists);
                 }
 
                 for (s32 i = 0; i < dxCmdList->m_pendingSwapchain.size(); ++i)
@@ -887,7 +889,7 @@ namespace ncore
 
                 for (s32 i = 0; i < dxCmdList->m_pendingSignals.size(); ++i)
                 {
-                    ngfx::fence_t*   fence   = dxCmdList->m_pendingSignals[i];
+                    ngfx::fence_t*   fence   = dxCmdList->m_pendingSignals[i].m_fence;
                     nd3d12::fence_t* dxFence = GetComponent<ngfx::fence_t, nd3d12::fence_t>(cmdList->m_device, fence);
                     u64 const        value   = dxCmdList->m_pendingSignals[i].m_value;
                     dxCmdList->m_pCommandQueue->Signal(dxFence, value);
@@ -906,7 +908,7 @@ namespace ncore
                 if (cmdList->m_queueType == enums::CommandQueueGraphics || cmdList->m_queueType == enums::CommandQueueCompute)
                 {
                     ID3D12DescriptorHeap* heaps[2] = {dxDevice->m_pResourceDescriptorHeap, dxDevice->m_pSamplerDescriptorHeap};
-                    dxDevice->m_pCommandList->SetDescriptorHeaps(2, heaps);
+                    dxCmdList->m_pCommandList->SetDescriptorHeaps(2, heaps);
 
                     ID3D12RootSignature* pRootSignature = dxDevice->m_pRootSignature;
                     dxCmdList->m_pCommandList->SetComputeRootSignature(pRootSignature);

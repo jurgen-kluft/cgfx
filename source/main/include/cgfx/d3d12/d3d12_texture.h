@@ -18,7 +18,7 @@ namespace ncore
         {
             struct texture_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Texture);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Texture);
                 ID3D12Resource*      m_pTexture    = nullptr;
                 D3D12MA::Allocation* m_pAllocation = nullptr;
 

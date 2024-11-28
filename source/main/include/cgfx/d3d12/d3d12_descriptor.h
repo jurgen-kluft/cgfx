@@ -18,9 +18,13 @@ namespace ncore
 #ifdef TARGET_PC
         namespace nd3d12
         {
+            struct texture_t;
+            struct buffer_t;
+            struct tlas_t;
+
             struct srv_texture_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvTexture);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvTexture);
                 nd3d12::texture_t* m_texture = nullptr;
                 srv_desc_t         m_desc    = {};
                 D3D12Descriptor    m_descriptor;
@@ -29,7 +33,7 @@ namespace ncore
 
             struct srv_buffer_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvBuffer);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvBuffer);
                 nd3d12::buffer_t* m_buffer = nullptr;
                 srv_desc_t        m_desc   = {};
                 D3D12Descriptor   m_descriptor;
@@ -38,7 +42,7 @@ namespace ncore
 
             struct srv_tlas_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvRayTracingTLAS);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorSrvRayTracingTLAS);
                 nd3d12::tlas_t* m_tlas = nullptr;
                 srv_desc_t      m_desc = {};
                 D3D12Descriptor m_descriptor;
@@ -47,7 +51,7 @@ namespace ncore
 
             struct uav_texture_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavTexture);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavTexture);
                 nd3d12::texture_t* m_texture = nullptr;
                 uav_desc_t         m_desc    = {};
                 D3D12Descriptor    m_descriptor;
@@ -57,7 +61,7 @@ namespace ncore
 
             struct uav_buffer_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavBuffer);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorUavBuffer);
                 nd3d12::buffer_t* m_buffer = nullptr;
                 uav_desc_t        m_desc   = {};
                 D3D12Descriptor   m_descriptor;
@@ -67,7 +71,7 @@ namespace ncore
 
             struct cbv_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorCbv);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorCbv);
                 nd3d12::buffer_t* m_buffer = nullptr;
                 cbv_desc_t        m_desc   = {};
                 D3D12Descriptor   m_descriptor;
@@ -76,7 +80,7 @@ namespace ncore
 
             struct sampler_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12DescriptorSampler);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12DescriptorSampler);
                 sampler_desc_t  m_desc;
                 D3D12Descriptor m_descriptor;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -93,6 +97,7 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
             bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
         }  // namespace nd3d12
 #else
         namespace nd3d12
@@ -108,7 +113,8 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
             bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor) { return false; }
-        }  // namespace ND3D12        
+            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return 0; }
+        }  // namespace nd3d12
 #endif
     }  // namespace ngfx
 }  // namespace ncore

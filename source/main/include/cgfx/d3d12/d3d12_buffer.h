@@ -17,7 +17,7 @@ namespace ncore
         {
             struct buffer_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Buffer);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Buffer);
                 ID3D12Resource*      m_pBuffer     = nullptr;
                 D3D12MA::Allocation* m_pAllocation = nullptr;
                 void*                m_pCpuAddress = nullptr;

@@ -18,7 +18,7 @@ namespace ncore
         {
             struct shader_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Shader);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Shader);
                 carray_t<u8> m_data;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };

@@ -11,10 +11,10 @@ namespace ncore
         {
             struct shader_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockShader);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMockShader);
                 byte* m_data;
+                u64   m_hash;
                 u32   m_len;
-                u32   m_hash;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 

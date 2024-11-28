@@ -516,6 +516,9 @@ namespace ncore
 
                 return false;
             }
+
+            u32 GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return 0; }
+
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

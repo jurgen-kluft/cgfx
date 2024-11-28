@@ -49,12 +49,23 @@ namespace ncore
             texture->m_desc      = desc;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateTexture(device, texture, desc);
-                case enums::Backend_Metal: return nmetal::CreateTexture(device, texture, desc);
-                case enums::Backend_Mock: return nmock::CreateTexture(device, texture, desc);
+                case enums::Backend_D3D12: nd3d12::CreateTexture(device, texture, desc); break;
+                case enums::Backend_Metal: nmetal::CreateTexture(device, texture, desc); break;
+                case enums::Backend_Mock: nmock::CreateTexture(device, texture, desc); break;
             }
             return texture;
         }
+
+        void DestroyTexture(device_t* device, texture_t* texture)
+        {
+            switch (device->m_desc.backend)
+            {
+                case enums::Backend_D3D12: nd3d12::DestroyTexture(device, texture); break;
+                case enums::Backend_Metal: nmetal::DestroyTexture(device, texture); break;
+                case enums::Backend_Mock: nmock::DestroyTexture(device, texture); break;
+            }
+            DestroyInstance<texture_t>(device, texture);
+        }   
 
         bool Create(device_t* device, texture_t* resource)
         {

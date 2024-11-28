@@ -2,6 +2,7 @@
 #include "cgfx/d3d12/d3d12_rt_blas.h"
 #include "cgfx/d3d12/d3d12_device.h"
 #include "cd3d12/ma/D3D12MemAlloc.h"
+#include "ccore/c_math.h"
 
 namespace ncore
 {
@@ -17,7 +18,7 @@ namespace ncore
                 nd3d12::tlas_t* dxtlas = GetComponent<ngfx::tlas_t, nd3d12::tlas_t>(device, tlas);
                 if (dxtlas)
                 {
-                    Destroy(device, tlas);
+                    nd3d12::Destroy(device, tlas);
                     DestroyComponent<ngfx::tlas_t, nd3d12::tlas_t>(device, tlas);
                 }
             }
@@ -28,12 +29,12 @@ namespace ncore
                 if (dxtlas)
                 {
                     nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
-                    nd3d12::Delete(dxtlas, dxtlas->m_pASBuffer);
-                    nd3d12::Delete(dxtlas, dxtlas->m_pASAllocation);
-                    nd3d12::Delete(dxtlas, dxtlas->m_pScratchBuffer);
-                    nd3d12::Delete(dxtlas, dxtlas->m_pScratchAllocation);
-                    nd3d12::Delete(dxtlas, dxtlas->m_pInstanceBuffer);
-                    nd3d12::Delete(dxtlas, dxtlas->m_pInstanceAllocation);
+                    nd3d12::Delete(dxdevice, dxtlas->m_pASBuffer);
+                    nd3d12::Delete(dxdevice, dxtlas->m_pASAllocation);
+                    nd3d12::Delete(dxdevice, dxtlas->m_pScratchBuffer);
+                    nd3d12::Delete(dxdevice, dxtlas->m_pScratchAllocation);
+                    nd3d12::Delete(dxdevice, dxtlas->m_pInstanceBuffer);
+                    nd3d12::Delete(dxdevice, dxtlas->m_pInstanceAllocation);
                 }
             }
 
@@ -50,7 +51,7 @@ namespace ncore
                 prebuildDesc.Flags                                                = d3d12_rt_as_flags(tlas->m_desc.flags);
 
                 D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO info = {};
-                device->GetRaytracingAccelerationStructurePrebuildInfo(&prebuildDesc, &info);
+                dxdevice->m_pDevice->GetRaytracingAccelerationStructurePrebuildInfo(&prebuildDesc, &info);
 
                 // todo : better memory allocation and compaction like what RTXMU does
                 D3D12MA::Allocator*      pAllocator     = dxdevice->m_pResourceAllocator;
@@ -63,7 +64,7 @@ namespace ncore
                 pAllocator->CreateResource(&allocationDesc, &scratchBufferDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, &dxtlas->m_pScratchAllocation, IID_PPV_ARGS(&dxtlas->m_pScratchBuffer));
 
                 allocationDesc.HeapType                  = D3D12_HEAP_TYPE_UPLOAD;
-                dxtlas->m_nInstanceBufferSize            = RoundUpPow2(sizeof(D3D12_RAYTRACING_INSTANCE_DESC) * tlas->m_desc.instance_count, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT) * GFX_MAX_INFLIGHT_FRAMES;
+                dxtlas->m_nInstanceBufferSize            = math::g_roundUpPow2(sizeof(D3D12_RAYTRACING_INSTANCE_DESC) * tlas->m_desc.instance_count, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT) * GFX_MAX_INFLIGHT_FRAMES;
                 CD3DX12_RESOURCE_DESC instanceBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(dxtlas->m_nInstanceBufferSize);
                 pAllocator->CreateResource(&allocationDesc, &instanceBufferDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, &dxtlas->m_pInstanceAllocation, IID_PPV_ARGS(&dxtlas->m_pInstanceBuffer));
 
@@ -77,7 +78,7 @@ namespace ncore
                 return true;
             }
 
-            void GetBuildDesc(ngfx::tlas_t* tlas, nd3d12::tlas_t* dxtlas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const rt_instance_t* instances, u32 instance_count)
+            void GetBuildDesc(ngfx::device_t* device, ngfx::tlas_t* tlas, nd3d12::tlas_t* dxtlas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const rt_instance_t* instances, u32 instance_count)
             {
                 ASSERT(instance_count <= tlas->m_desc.instance_count);
 
@@ -105,13 +106,13 @@ namespace ncore
 
                     // TODO It seems that a single rt_instance can have a blas_t, so why not make those components of the rt_instance_t?
 
-                    nd3d12::blas_t* dxblas                 = GetComponent<ngfx::blas_t, nd3d12::blas_t>(dxtlas->m_pDevice, instances[i].blas);
+                    nd3d12::blas_t* dxblas                 = GetComponent<ngfx::blas_t, nd3d12::blas_t>(device, instances[i].blas);
                     instanceDescs[i].AccelerationStructure = dxblas->m_pASBuffer->GetGPUVirtualAddress();
                     // instanceDescs[i].AccelerationStructure               = ((D3D12RayTracingBLAS*)instances[i].blas)->GetGpuAddress();
                 }
 
                 dxtlas->m_nCurrentInstanceBufferOffset += sizeof(D3D12_RAYTRACING_INSTANCE_DESC) * instance_count;
-                dxtlas->m_nCurrentInstanceBufferOffset = RoundUpPow2(dxtlas->m_nCurrentInstanceBufferOffset, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT);
+                dxtlas->m_nCurrentInstanceBufferOffset = math::g_roundUpPow2(dxtlas->m_nCurrentInstanceBufferOffset, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT);
             }
 
             void*                     GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);

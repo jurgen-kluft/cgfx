@@ -417,6 +417,7 @@ namespace ncore
                 default: return D3D12_PRIMITIVE_TOPOLOGY_TYPE_UNDEFINED;
             }
         }
+        inline D3D12_PRIMITIVE_TOPOLOGY_TYPE d3d12_topology_type(enums::primitive_t primitive_type) { return d3d12_topology_type(enums::cast<enums::primitive>(primitive_type)); }
 
         inline D3D_PRIMITIVE_TOPOLOGY d3d12_primitive_topology(enums::primitive primitive_type)
         {
@@ -576,6 +577,7 @@ namespace ncore
 
             return d3d12_flags;
         }
+        inline D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAGS d3d12_rt_as_flags(enums::rt::accstruct_flag_t flags) { return d3d12_rt_as_flags(enums::cast<enums::rt::accstruct_flag>(flags)); }
 
         inline D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_rt_instance_flags(enums::rt::instance_flag flags)
         {
@@ -603,6 +605,9 @@ namespace ncore
 
             return d3d12_flags;
         }
+        inline D3D12_RAYTRACING_INSTANCE_FLAGS d3d12_rt_instance_flags(enums::rt::instance_flag_t flags) { return d3d12_rt_instance_flags(enums::cast<enums::rt::instance_flag>(flags)); }
+
+
 #endif
     }  // namespace ngfx
 }  // namespace ncore

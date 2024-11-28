@@ -7,6 +7,8 @@
 
 #include "cgfx/gfx_command_list.h"
 #include "cgfx/d3d12/d3d12_header.h"
+#include "cbase/c_allocator.h"
+#include "cbase/c_carray.h"
 
 namespace ncore
 {
@@ -19,7 +21,7 @@ namespace ncore
         {
             struct command_list_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12CommandList);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12CommandList);
                 ID3D12CommandQueue*         m_pCommandQueue     = nullptr;
                 ID3D12CommandAllocator*     m_pCommandAllocator = nullptr;
                 ID3D12GraphicsCommandList7* m_pCommandList      = nullptr;
@@ -41,10 +43,9 @@ namespace ncore
                 carray_t<fence_value_t>      m_pendingSignals;
                 carray_t<ngfx::swapchain_t*> m_pendingSwapchain;
 
-    #if MICROPROFILE_GPU_TIMERS_D3D12
                 struct MicroProfileThreadLogGpu* m_pProfileLog   = nullptr;
                 int                              m_nProfileQueue = -1;
-    #endif
+
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 

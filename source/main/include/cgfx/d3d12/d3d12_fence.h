@@ -17,7 +17,7 @@ namespace ncore
         {
             struct fence_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Fence);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Fence);
                 ID3D12Fence* m_pFence = nullptr;
                 HANDLE       m_hEvent = nullptr;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE

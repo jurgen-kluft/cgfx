@@ -11,21 +11,21 @@ namespace ncore
         {
             struct graphics_ps_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockGraphicsPipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMockGraphicsPipelineState);
                 graphics_pipeline_desc_t desc;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct mesh_shading_ps_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockMeshShadingPipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMockMeshShadingPipelineState);
                 mesh_shading_pipeline_desc_t desc;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
             struct compute_ps_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMockComputePipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMockComputePipelineState);
                 compute_pipeline_desc_t desc;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };

@@ -22,31 +22,6 @@ namespace ncore
 
         namespace nd3d12
         {
-            struct graphics_pipeline_state_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12GraphicsPipelineState);
-                ID3D12PipelineState*     m_pPipelineState = nullptr;
-                graphics_pipeline_desc_t m_desc;
-                D3D_PRIMITIVE_TOPOLOGY   m_primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct meshshading_pipeline_state_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12MeshShadingPipelineState);
-                ID3D12PipelineState*         m_pPipelineState = nullptr;
-                mesh_shading_pipeline_desc_t m_desc;
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
-            struct compute_pipeline_state_t
-            {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12ComputePipelineState);
-                ID3D12PipelineState*    m_pPipelineState = nullptr;
-                compute_pipeline_desc_t m_desc;
-                DCORE_CLASS_PLACEMENT_NEW_DELETE
-            };
-
             void CreateGraphicsPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
             {
                 nd3d12::graphics_pipeline_state_t* pPipelineState = CreateComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
@@ -68,7 +43,7 @@ namespace ncore
 
             void DestroyPipelineState(ngfx::device_t* device, ngfx::pipeline_state_t* ps)
             {
-                Destroy(device, ps);
+                nd3d12::Destroy(device, ps);
 
                 if (ps->m_type == enums::PipelineGraphics)
                 {
@@ -92,7 +67,7 @@ namespace ncore
                     nd3d12::graphics_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
 
                     D3D12_GRAPHICS_PIPELINE_STATE_DESC desc = {};
-                    desc.pRootSignature                     = pDevice->m_pDevice->GetRootSignature();
+                    desc.pRootSignature                     = pDevice->m_pRootSignature;
 
                     desc.VS = GetByteCode(device, pPipelineState->m_desc.vs);
                     if (pPipelineState->m_desc.ps)
@@ -126,7 +101,7 @@ namespace ncore
                     nd3d12::meshshading_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(device, ps);
 
                     D3DX12_MESH_SHADER_PIPELINE_STATE_DESC psoDesc = {};
-                    psoDesc.pRootSignature                         = pDevice->m_pDevice->GetRootSignature();
+                    psoDesc.pRootSignature                         = pDevice->m_pRootSignature;
 
                     if (pPipelineState->m_desc.as)
                     {
@@ -172,7 +147,7 @@ namespace ncore
 
                     if (pPipelineState->m_pPipelineState)
                     {
-                        pDevice->m_pDevice->Delete(pPipelineState->m_pPipelineState);
+                        nd3d12::Delete(pDevice, pPipelineState->m_pPipelineState);
                     }
 
                     pPipelineState->m_pPipelineState = pipelineState;
@@ -183,8 +158,8 @@ namespace ncore
                     nd3d12::compute_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(device, ps);
 
                     D3D12_COMPUTE_PIPELINE_STATE_DESC desc = {};
-                    desc.pRootSignature                    = pDevice->m_pDevice->GetRootSignature();
-                    desc.CS                                = GetByteCode(device, m_desc.cs);
+                    desc.pRootSignature                    = pDevice->m_pRootSignature;
+                    desc.CS                                = GetByteCode(device, pPipelineState->m_desc.cs);
 
                     ID3D12PipelineState* pipelineState = nullptr;
                     if (FAILED(pDevice->m_pDevice->CreateComputePipelineState(&desc, IID_PPV_ARGS(&pipelineState))))
@@ -198,7 +173,7 @@ namespace ncore
 
                     if (pPipelineState->m_pPipelineState)
                     {
-                        pDevice->m_pDevice->Delete(pPipelineState->m_pPipelineState);
+                        nd3d12::Delete(pDevice, pPipelineState->m_pPipelineState);
                     }
 
                     pPipelineState->m_pPipelineState = pipelineState;
@@ -214,7 +189,7 @@ namespace ncore
                     nd3d12::graphics_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(device, ps);
                     if (pPipelineState->m_pPipelineState)
                     {
-                        pDevice->Delete(pPipelineState->m_pPipelineState);
+                        nd3d12::Delete(pDevice, pPipelineState->m_pPipelineState);
                         pPipelineState->m_pPipelineState = nullptr;
                     }
                 }
@@ -223,7 +198,7 @@ namespace ncore
                     nd3d12::meshshading_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(device, ps);
                     if (pPipelineState->m_pPipelineState)
                     {
-                        pDevice->Delete(pPipelineState->m_pPipelineState);
+                        nd3d12::Delete(pDevice, pPipelineState->m_pPipelineState);
                         pPipelineState->m_pPipelineState = nullptr;
                     }
                 }
@@ -232,7 +207,7 @@ namespace ncore
                     nd3d12::compute_pipeline_state_t* pPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(device, ps);
                     if (pPipelineState->m_pPipelineState)
                     {
-                        pDevice->Delete(pPipelineState->m_pPipelineState);
+                        nd3d12::Delete(pDevice, pPipelineState->m_pPipelineState);
                         pPipelineState->m_pPipelineState = nullptr;
                     }
                 }

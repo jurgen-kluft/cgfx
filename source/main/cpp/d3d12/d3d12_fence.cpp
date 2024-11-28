@@ -8,14 +8,14 @@ namespace ncore
 #ifdef TARGET_PC
         namespace nd3d12
         {
-            void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence) { nd3d12::fence_t* dfence = CreateComponent<ngfx::buffer_t, nd3d12::fence_t>(device, fence); }
-            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence) { DestroyComponent<ngfx::buffer_t, nd3d12::fence_t>(device, fence); }
+            void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence) { nd3d12::fence_t* dfence = CreateComponent<ngfx::fence_t, nd3d12::fence_t>(device, fence); }
+            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence) { DestroyComponent<ngfx::fence_t, nd3d12::fence_t>(device, fence); }
 
             void Destroy(ngfx::device_t* device, ngfx::fence_t* fence)
             {
                 nd3d12::fence_t*  pFence  = GetComponent<ngfx::fence_t, nd3d12::fence_t>(device, fence);
                 nd3d12::device_t* pDevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
-                pDevice->m_pDevice->Delete(pFence->m_pFence);
+                nd3d12::Delete(pDevice, pFence->m_pFence);
                 CloseHandle(pFence->m_hEvent);
             }
 

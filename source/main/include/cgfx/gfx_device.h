@@ -16,12 +16,13 @@ namespace ncore
     {
         struct device_t
         {
-            D_GFX_OCS_COMPONENT_SET(enums::ComponentDevice);
+            D_GFX_CS_COMPONENT_SET(enums::ComponentDevice);
             u64               m_frameID;
             device_desc_t     m_desc;
             enums::vendor_t   m_vendor;
             alloc_t*          m_allocator;
             ncs::allocator_t* m_allocatorCS;
+            DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 
         device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc);
@@ -40,7 +41,7 @@ namespace ncore
         template <typename C>
         C* CreateInstance(device_t* device, const char* name)
         {
-            C* instance = device->m_allocatorCS->create_instance<C>();
+            C* instance = device->m_allocatorCS->new_instance<C>();
             AttachName<C>(device, instance, name);
             return instance;
         }

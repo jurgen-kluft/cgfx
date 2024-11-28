@@ -5,7 +5,7 @@
     #pragma once
 #endif
 
-// #include "cgfx/d3d12/d3d12_header.h"
+#include "cgfx/d3d12/d3d12_header.h"
 #include "cgfx/gfx_heap.h"
 
 namespace ncore
@@ -17,7 +17,7 @@ namespace ncore
         {
             struct heap_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12Heap);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12Heap);
                 D3D12MA::Allocation* m_pAllocation = nullptr;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };

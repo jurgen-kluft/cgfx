@@ -17,7 +17,7 @@ namespace ncore
         {
             struct graphics_pipeline_state_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12GraphicsPipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12GraphicsPipelineState);
                 ID3D12PipelineState*     m_pPipelineState = nullptr;
                 graphics_pipeline_desc_t m_desc;
                 D3D_PRIMITIVE_TOPOLOGY   m_primitiveTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
@@ -26,7 +26,7 @@ namespace ncore
 
             struct meshshading_pipeline_state_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12MeshShadingPipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12MeshShadingPipelineState);
                 ID3D12PipelineState*         m_pPipelineState = nullptr;
                 mesh_shading_pipeline_desc_t m_desc;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
@@ -34,7 +34,7 @@ namespace ncore
 
             struct compute_pipeline_state_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentD3D12ComputePipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentD3D12ComputePipelineState);
                 ID3D12PipelineState*    m_pPipelineState = nullptr;
                 compute_pipeline_desc_t m_desc;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE

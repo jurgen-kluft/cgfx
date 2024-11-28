@@ -11,13 +11,14 @@ namespace ncore
         {
             struct mtexture_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalTexture);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalTexture);
                 MTL::Texture* m_pTexture          = nullptr;
                 bool          m_bSwapchainTexture = false;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE;
             };
 
             void                      CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc);
+            void                      DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture);
             bool                      Create(ngfx::device_t* device, ngfx::texture_t* texture);
             void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture);
             MTL::Texture*             GetHandle(ngfx::device_t* device, ngfx::texture_t* texture);
