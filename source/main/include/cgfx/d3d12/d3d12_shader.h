@@ -35,10 +35,10 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            void CreateShader(ngfx::device_t* device, ngfx::shader_t* shader) {}
-            void DestroyShader(ngfx::device_t* device, ngfx::shader_t* shader) {}
-            void Destroy(ngfx::device_t* device, ngfx::shader_t* shader) {}
-            bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len) { return false; }
+            inline void CreateShader(ngfx::device_t* device, ngfx::shader_t* shader) {}
+            inline void DestroyShader(ngfx::device_t* device, ngfx::shader_t* shader) {}
+            inline void Destroy(ngfx::device_t* device, ngfx::shader_t* shader) {}
+            inline bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len) { return false; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

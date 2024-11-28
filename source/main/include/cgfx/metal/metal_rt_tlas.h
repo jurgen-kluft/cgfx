@@ -38,11 +38,11 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
-            void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
-            bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
-            void* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas) { return nullptr; }
-            void  UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count) {}
+            inline void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            inline void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            inline bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
+            inline void* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas) { return nullptr; }
+            inline void  UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count) {}
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

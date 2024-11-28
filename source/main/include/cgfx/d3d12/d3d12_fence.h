@@ -32,11 +32,11 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            void CreateFence(ngfx::device_t* device, resource_t* resource, ngfx::fence_t* fence) {}
-            void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence) {}
-            void Destroy(ngfx::device_t* device, ngfx::fence_t* fence) {}
-            void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
-            void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
+            inline void CreateFence(ngfx::device_t* device, resource_t* resource, ngfx::fence_t* fence) {}
+            inline void DestroyFence(ngfx::device_t* device, ngfx::fence_t* fence) {}
+            inline void Destroy(ngfx::device_t* device, ngfx::fence_t* fence) {}
+            inline void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
+            inline void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

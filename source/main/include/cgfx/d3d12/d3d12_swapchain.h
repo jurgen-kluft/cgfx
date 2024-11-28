@@ -42,15 +42,15 @@ namespace ncore
 
         namespace nd3d12
         {
-            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
-            void             DestroySwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
-            bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return false; }
-            void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
-            void             Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
-            void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
-            ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }
-            bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height) { return false; }
-            void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value) {}
+            inline void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            inline void             DestroySwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            inline bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return false; }
+            inline void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            inline void             Present(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            inline void             AcquireNextBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
+            inline ngfx::texture_t* GetBackBuffer(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }
+            inline bool             Resize(ngfx::device_t* device, ngfx::swapchain_t* swapchain, u32 width, u32 height) { return false; }
+            inline void             SetVSyncEnabled(ngfx::device_t* device, ngfx::swapchain_t* swapchain, bool value) {}
         }  // namespace nd3d12
 
 #endif

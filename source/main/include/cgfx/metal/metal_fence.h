@@ -32,11 +32,11 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence) {}
-            bool Create(ngfx::device_t* device, ngfx::fence_t* fence) { return false; }
-            void Destroy(ngfx::device_t* device, ngfx::fence_t* fence) {}
-            void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
-            void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
+            inline void CreateFence(ngfx::device_t* device, ngfx::fence_t* fence) {}
+            inline bool Create(ngfx::device_t* device, ngfx::fence_t* fence) { return false; }
+            inline void Destroy(ngfx::device_t* device, ngfx::fence_t* fence) {}
+            inline void Wait(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
+            inline void Signal(ngfx::device_t* device, ngfx::fence_t* fence, u64 value) {}
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

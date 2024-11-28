@@ -91,7 +91,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
+            void  CreateDevice(ngfx::device_t* device, u32 max_instances);
             bool  Create(ngfx::device_t* device);
             void  Destroy(ngfx::device_t* device);
             void* GetHandle(ngfx::device_t* device);
@@ -151,14 +151,14 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
-            bool  Create(ngfx::device_t* device) { return false; }
-            void  Destroy(ngfx::device_t* device) {}
-            void* GetHandle(ngfx::device_t* device) { return nullptr; }
-            void  BeginFrame(ngfx::device_t* device) {}
-            void  EndFrame(ngfx::device_t* device) {}
+            inline void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
+            inline bool  Create(ngfx::device_t* device) { return false; }
+            inline void  Destroy(ngfx::device_t* device) {}
+            inline void* GetHandle(ngfx::device_t* device) { return nullptr; }
+            inline void  BeginFrame(ngfx::device_t* device) {}
+            inline void  EndFrame(ngfx::device_t* device) {}
 
-            bool DumpMemoryStats(ngfx::device_t* device, const char* file) { return false; }
+            inline bool DumpMemoryStats(ngfx::device_t* device, const char* file) { return false; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

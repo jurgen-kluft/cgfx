@@ -35,10 +35,10 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
-            void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
-            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
+            inline void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            inline void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            inline bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
+            inline void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

@@ -54,11 +54,11 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void CreateGraphicsPipelineState(ngfx::device_t* device, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc) {}
-            void CreateMeshShadingPipelineState(ngfx::device_t* device, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc) {}
-            void CreateComputePipelineState(ngfx::device_t* device, pipeline_state_t* ps, const compute_pipeline_desc_t& desc) {}
-            bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps) { return false; }
-            void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps) {}
+            inline void CreateGraphicsPipelineState(ngfx::device_t* device, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc) {}
+            inline void CreateMeshShadingPipelineState(ngfx::device_t* device, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc) {}
+            inline void CreateComputePipelineState(ngfx::device_t* device, pipeline_state_t* ps, const compute_pipeline_desc_t& desc) {}
+            inline bool Create(ngfx::device_t* device, ngfx::pipeline_state_t* ps) { return false; }
+            inline void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps) {}
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

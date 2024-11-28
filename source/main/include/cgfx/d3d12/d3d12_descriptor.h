@@ -102,18 +102,18 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* texture, const srv_desc_t& desc) {}
-            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const srv_desc_t& desc) {}
-            void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::tlas_t* tlas, const srv_desc_t& desc) {}
-            void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* buffer, const uav_desc_t& desc) {}
-            void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const uav_desc_t& desc) {}
-            void CreateCbv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const cbv_desc_t& desc) {}
-            void CreateSampler(ngfx::device_t* device, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) {}
-            void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
+            inline void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* texture, const srv_desc_t& desc) {}
+            inline void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const srv_desc_t& desc) {}
+            inline void CreateSrv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::tlas_t* tlas, const srv_desc_t& desc) {}
+            inline void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::texture_t* buffer, const uav_desc_t& desc) {}
+            inline void CreateUav(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const uav_desc_t& desc) {}
+            inline void CreateCbv(ngfx::device_t* device, ngfx::descriptor_t* descriptor, ngfx::buffer_t* buffer, const cbv_desc_t& desc) {}
+            inline void CreateSampler(ngfx::device_t* device, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) {}
+            inline void DestroyDescriptor(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
 
-            void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
-            bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor) { return false; }
-            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return 0; }
+            inline void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor) {}
+            inline bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor) { return false; }
+            inline u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return 0; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

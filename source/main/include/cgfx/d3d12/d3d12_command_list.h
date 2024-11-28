@@ -113,6 +113,15 @@ namespace ncore
             void BuildRayTracingTLAS(ngfx::command_list_t* commandList, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
 
         }  // namespace nd3d12
+#else
+
+        namespace nd3d12
+        {
+            inline void CreateCommandList(ngfx::command_list_t* cmdList) {}
+            inline void DestroyCommandList(ngfx::command_list_t* cmdList) {}
+            inline bool Create(ngfx::command_list_t* cmdList) { return false; }
+            inline void Destroy(ngfx::command_list_t* cmdList) {}
+        }
 #endif
     }  // namespace ngfx
 }  // namespace ncore

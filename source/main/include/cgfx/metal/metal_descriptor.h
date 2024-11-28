@@ -107,17 +107,17 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc) {}
-            void CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc) {}
-            void CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc) {}
-            void CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc) {}
-            void CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc) {}
-            void CreateCbv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc) {}
-            void CreateSampler(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) {}
+            inline void CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* texture, const ngfx::srv_desc_t& desc) {}
+            inline void CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const ngfx::srv_desc_t& desc) {}
+            inline void CreateSrv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, tlas_t* tlas, const ngfx::srv_desc_t& desc) {}
+            inline void CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, texture_t* buffer, const uav_desc_t& desc) {}
+            inline void CreateUav(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const uav_desc_t& desc) {}
+            inline void CreateCbv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc) {}
+            inline void CreateSampler(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) {}
 
-            void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d) {}
-            bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return true; }
-            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return GFX_INVALID_RESOURCE; }
+            inline void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d) {}
+            inline bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return true; }
+            inline u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return GFX_INVALID_RESOURCE; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

@@ -69,19 +69,19 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
-            bool  Create(ngfx::device_t* device) { return false; }
-            void  Destroy(ngfx::device_t* device) {}
-            void* GetHandle(ngfx::device_t* device) { return nullptr; }
-            void  BeginFrame(ngfx::device_t* device) {}
-            void  EndFrame(ngfx::device_t* device) {}
+            inline void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
+            inline bool  Create(ngfx::device_t* device) { return false; }
+            inline void  Destroy(ngfx::device_t* device) {}
+            inline void* GetHandle(ngfx::device_t* device) { return nullptr; }
+            inline void  BeginFrame(ngfx::device_t* device) {}
+            inline void  EndFrame(ngfx::device_t* device) {}
 
-            u32  AllocateResourceDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor) { return 0; }
-            u32  AllocateSamplerDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor) { return 0; }
-            void FreeResourceDescriptor(ngfx::device_t* device, u32 index) {}
-            void FreeSamplerDescriptor(ngfx::device_t* device, u32 index) {}
+            inline u32  AllocateResourceDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor) { return 0; }
+            inline u32  AllocateSamplerDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor) { return 0; }
+            inline void FreeResourceDescriptor(ngfx::device_t* device, u32 index) {}
+            inline void FreeSamplerDescriptor(ngfx::device_t* device, u32 index) {}
 
-            bool DumpMemoryStats(ngfx::device_t* device, const char* file) { return false; }
+            inline bool DumpMemoryStats(ngfx::device_t* device, const char* file) { return false; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

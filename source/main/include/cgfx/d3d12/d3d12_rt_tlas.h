@@ -42,11 +42,11 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
-            void  DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
-            void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
-            bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
-            void* GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas) { return nullptr; }
+            inline void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            inline void  DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            inline void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
+            inline bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
+            inline void* GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas) { return nullptr; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

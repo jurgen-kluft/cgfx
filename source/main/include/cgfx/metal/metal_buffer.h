@@ -34,13 +34,13 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void  CreateBuffer(device_t* pDevice, ngfx::buffer_t* b) {}
-            bool  Create(device_t* pDevice, ngfx::buffer_t*) { return false; }
-            void  Destroy(device_t*, ngfx::buffer_t*) {}
-            void* GetHandle(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
-            void* GetCpuAddress(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
-            u64   GetGpuAddress(device_t* pDevice, ngfx::buffer_t*) { return 0; }
-            u32   GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t*) { return 0; }
+            inline void  CreateBuffer(device_t* pDevice, ngfx::buffer_t* b) {}
+            inline bool  Create(device_t* pDevice, ngfx::buffer_t*) { return false; }
+            inline void  Destroy(device_t*, ngfx::buffer_t*) {}
+            inline void* GetHandle(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
+            inline void* GetCpuAddress(device_t* pDevice, ngfx::buffer_t*) { return nullptr; }
+            inline u64   GetGpuAddress(device_t* pDevice, ngfx::buffer_t*) { return 0; }
+            inline u32   GetRequiredStagingBufferSize(device_t* pDevice, ngfx::buffer_t*) { return 0; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

@@ -31,11 +31,11 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            void  CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
-            void  DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
-            bool  Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
-            void  Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return nullptr; }
+            inline void  CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
+            inline void  DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
+            inline bool  Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
+            inline void  Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
+            inline void* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return nullptr; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx
