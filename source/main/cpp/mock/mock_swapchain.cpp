@@ -26,7 +26,7 @@ namespace ncore
                 return true;
             }
 
-            void CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc)
+            void CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain)
             {
                 nmock::swapchain_t* msc   = ngfx::CreateComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, swapchain);
                 msc->m_currentBackBuffer  = -1;

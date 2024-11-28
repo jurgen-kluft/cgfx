@@ -28,6 +28,7 @@ namespace ncore
                 dxshader->m_data.mSize     = data_len;
                 dxshader->m_data.mCapacity= data_len;
                 shader->m_hash             = nhash::datahash(data_ptr, data_len);
+                return true;
             }
 
             u64                   GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return shader->m_hash; }

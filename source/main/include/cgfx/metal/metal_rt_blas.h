@@ -37,7 +37,7 @@ namespace ncore
         {
             void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
             void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
-            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
+            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
             void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
         }  // namespace nmetal
 #endif

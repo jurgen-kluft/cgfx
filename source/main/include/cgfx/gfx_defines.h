@@ -5,6 +5,8 @@
     #pragma once
 #endif
 
+#include "cbase/c_carray.h"
+
 namespace ncore
 {
     namespace ngfx
@@ -919,8 +921,7 @@ namespace ncore
 
         struct blas_desc_t
         {
-            rt_geometry_t*              geometries;
-            u32                         geometries_count;
+            carray_t<rt_geometry_t*>    geometries;
             enums::rt::accstruct_flag_t flags;
         };
 

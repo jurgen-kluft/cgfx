@@ -19,7 +19,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void                CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
+            void                CreateSwapchain(device_t* device, ngfx::swapchain_t* swapchain);
             bool               Create(device_t* device, ngfx::swapchain_t* swapchain);
             void               Destroy(device_t* device, ngfx::swapchain_t* swapchain);
             void               Present(device_t* device, ngfx::swapchain_t* swapchain);

@@ -20,9 +20,9 @@ namespace ncore
             buffer->m_desc       = desc;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateBuffer(device, buffer);
-                case enums::Backend_Metal: return nmetal::CreateBuffer(device, buffer);
-                case enums::Backend_Mock: return nmock::CreateBuffer(device, buffer);
+                case enums::Backend_D3D12: nd3d12::CreateBuffer(device, buffer); break;
+                case enums::Backend_Metal: nmetal::CreateBuffer(device, buffer); break;
+                case enums::Backend_Mock: nmock::CreateBuffer(device, buffer); break;
             }
             return buffer;
         }
@@ -31,9 +31,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::Create(device, buffer);
-                case enums::Backend_Metal: return nmetal::Create(device, buffer);
-                case enums::Backend_Mock: return nmock::Create(device, buffer);
+                case enums::Backend_D3D12: nd3d12::Create(device, buffer); break;
+                case enums::Backend_Metal: nmetal::Create(device, buffer); break;
+                case enums::Backend_Mock: nmock::Create(device, buffer); break;
             }
             return false;
         }
@@ -52,9 +52,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::GetCpuAddress(device, buffer);
-                case enums::Backend_Metal: return nmetal::GetCpuAddress(device, buffer);
-                case enums::Backend_Mock: return nmock::GetCpuAddress(device, buffer);
+                case enums::Backend_D3D12: nd3d12::GetCpuAddress(device, buffer); break;
+                case enums::Backend_Metal: nmetal::GetCpuAddress(device, buffer); break;
+                case enums::Backend_Mock: nmock::GetCpuAddress(device, buffer); break;
             }
             return nullptr;
         }
@@ -63,9 +63,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::GetGpuAddress(device, buffer);
-                case enums::Backend_Metal: return nmetal::GetGpuAddress(device, buffer);
-                case enums::Backend_Mock: return nmock::GetGpuAddress(device, buffer);
+                case enums::Backend_D3D12: nd3d12::GetGpuAddress(device, buffer); break;
+                case enums::Backend_Metal: nmetal::GetGpuAddress(device, buffer); break;
+                case enums::Backend_Mock: nmock::GetGpuAddress(device, buffer); break;
             }
             return 0;
         }
@@ -74,9 +74,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::GetRequiredStagingBufferSize(device, buffer);
-                case enums::Backend_Metal: return nmetal::GetRequiredStagingBufferSize(device, buffer);
-                case enums::Backend_Mock: return nmock::GetRequiredStagingBufferSize(device, buffer);
+                case enums::Backend_D3D12: nd3d12::GetRequiredStagingBufferSize(device, buffer); break;
+                case enums::Backend_Metal: nmetal::GetRequiredStagingBufferSize(device, buffer); break;
+                case enums::Backend_Mock: nmock::GetRequiredStagingBufferSize(device, buffer); break;
             }
             return 0;
         }

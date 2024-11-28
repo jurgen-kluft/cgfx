@@ -1,5 +1,9 @@
 #ifndef __CGFX_METAL_SWAPCHAIN_H__
 #define __CGFX_METAL_SWAPCHAIN_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_swapchain.h"
@@ -19,7 +23,7 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc);
+            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
             bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
             void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
             MTK::View*       GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain);
@@ -32,7 +36,7 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc) {}
+            void             CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
             bool             Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return false; }
             void             Destroy(ngfx::device_t* device, ngfx::swapchain_t* swapchain) {}
             void*            GetHandle(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { return nullptr; }

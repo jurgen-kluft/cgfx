@@ -23,7 +23,6 @@ namespace ncore
         pipeline_state_t* CreateComputePipelineState(device_t* device, const compute_pipeline_desc_t& desc, const char* name);
         bool              Create(device_t* device, pipeline_state_t*);
         void              Destroy(device_t* device, pipeline_state_t* resource);
-        void*             GetHandle(device_t* device, pipeline_state_t* ps);
 
     }  // namespace ngfx
 }  // namespace ncore

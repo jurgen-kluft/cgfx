@@ -1,5 +1,9 @@
 #ifndef __CGFX_METAL_DESCRIPTOR_H__
 #define __CGFX_METAL_DESCRIPTOR_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_descriptor.h"

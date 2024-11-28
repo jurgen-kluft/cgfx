@@ -84,7 +84,7 @@ namespace ncore
 
                 if (FAILED(hr))
                 {
-                    D_LogError("ngfx::nd3d12::texture", "failed to create %s", name->m_name);
+                    D_LogError("ngfx::nd3d12::texture", "failed to create %s", va_t(name->c_str()));
                     return false;
                 }
 
@@ -99,7 +99,7 @@ namespace ncore
                     hr = dxdevice->m_pDevice->CreateSharedHandle(dxtexture->m_pTexture, nullptr, GENERIC_ALL, nullptr, &dxtexture->m_sharedHandle);
                     if (FAILED(hr))
                     {
-                        D_LogError("ngfx::nd3d12::texture", "failed to create shared handle for %s", name->m_name);
+                        D_LogError("ngfx::nd3d12::texture", "failed to create shared handle for %s", va_t(name->c_str()));
                         return false;
                     }
                 }

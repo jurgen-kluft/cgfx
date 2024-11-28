@@ -34,7 +34,7 @@ namespace ncore
         template <typename C>
         void AttachName(device_t* device, C* pComponent, const char* name)
         {
-            name_t* n = device->m_allocatorCS->add_component<name_t, C>(pComponent);
+            name_t* n = device->m_allocatorCS->create_component<C, name_t>(pComponent);
             SetName(n, name);
         }
 

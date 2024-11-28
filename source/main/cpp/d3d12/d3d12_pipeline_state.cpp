@@ -12,7 +12,7 @@ namespace ncore
         {
             for (int i = 0; i < 8; ++i)
             {
-                if (desc.rt_format[i] != Gfx::Unknown)
+                if (desc.rt_format[i] != enums::FORMAT_UNKNOWN)
                 {
                     return true;
                 }
@@ -179,6 +179,8 @@ namespace ncore
                     pPipelineState->m_pPipelineState = pipelineState;
                     return true;
                 }
+
+                return false;
             }
 
             void Destroy(ngfx::device_t* device, ngfx::pipeline_state_t* ps)

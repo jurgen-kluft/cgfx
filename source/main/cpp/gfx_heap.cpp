@@ -19,9 +19,9 @@ namespace ncore
             heap_t*     heap     = CreateComponent<resource_t, heap_t>(device, resource);
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::CreateHeap(device, resource, heap); break;
-                case enums::Backend_Metal: nmetal::CreateHeap(device, resource, heap); break;
-                case enums::Backend_Mock: nmock::CreateHeap(device, resource, heap); break;
+                case enums::Backend_D3D12: nd3d12::CreateHeap(device, heap); break;
+                case enums::Backend_Metal: nmetal::CreateHeap(device, heap); break;
+                case enums::Backend_Mock: nmock::CreateHeap(device, heap); break;
             }
             return heap;
         }

@@ -96,7 +96,7 @@ namespace ncore
         void SetComputeConstants(command_list_t* cmdList, u32 slot, const void* data, s64 data_size) { D_CL_ROUTER2(SetComputeConstants, cmdList, slot, data, data_size); }
 
         void Draw(command_list_t* cmdList, u32 vertex_count, u32 instance_count) { D_CL_ROUTER2(Draw, cmdList, vertex_count, instance_count); }
-        void DrawIndexed(command_list_t* cmdList, u32 index_count, u32 instance_count = 1, u32 index_offset) { D_CL_ROUTER2(DrawIndexed, cmdList, index_count, instance_count, index_offset); }
+        void DrawIndexed(command_list_t* cmdList, u32 index_count, u32 instance_count, u32 index_offset) { D_CL_ROUTER2(DrawIndexed, cmdList, index_count, instance_count, index_offset); }
         void Dispatch(command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z) { D_CL_ROUTER2(Dispatch, cmdList, group_count_x, group_count_y, group_count_z); }
         void DispatchMesh(command_list_t* cmdList, u32 group_count_x, u32 group_count_y, u32 group_count_z) { D_CL_ROUTER2(DispatchMesh, cmdList, group_count_x, group_count_y, group_count_z); }
 

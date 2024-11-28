@@ -1,5 +1,9 @@
 #ifndef __CGFX_METAL_DEVICE_H__
 #define __CGFX_METAL_DEVICE_H__
+#include "ccore/c_target.h"
+#ifdef USE_PRAGMA_ONCE
+    #pragma once
+#endif
 
 #include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_device.h"
@@ -65,6 +69,7 @@ namespace ncore
 #else
         namespace nmetal
         {
+            void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
             bool  Create(ngfx::device_t* device) { return false; }
             void  Destroy(ngfx::device_t* device) {}
             void* GetHandle(ngfx::device_t* device) { return nullptr; }

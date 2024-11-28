@@ -43,7 +43,7 @@ namespace ncore
                 nd3d12::device_t* dxdevice = GetComponent<ngfx::device_t, nd3d12::device_t>(device, device);
                 nd3d12::tlas_t*   dxtlas   = GetComponent<ngfx::tlas_t, nd3d12::tlas_t>(device, tlas);
 
-                ID3D12Device5*                                       device       = dxdevice->m_pDevice;
+                ID3D12Device12*                                       dx12Device       = dxdevice->m_pDevice;
                 D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_INPUTS prebuildDesc = {};
                 prebuildDesc.Type                                                 = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
                 prebuildDesc.DescsLayout                                          = D3D12_ELEMENTS_LAYOUT_ARRAY;
@@ -51,7 +51,7 @@ namespace ncore
                 prebuildDesc.Flags                                                = d3d12_rt_as_flags(tlas->m_desc.flags);
 
                 D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO info = {};
-                dxdevice->m_pDevice->GetRaytracingAccelerationStructurePrebuildInfo(&prebuildDesc, &info);
+                dx12Device->GetRaytracingAccelerationStructurePrebuildInfo(&prebuildDesc, &info);
 
                 // todo : better memory allocation and compaction like what RTXMU does
                 D3D12MA::Allocator*      pAllocator     = dxdevice->m_pResourceAllocator;

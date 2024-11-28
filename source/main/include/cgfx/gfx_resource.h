@@ -28,6 +28,10 @@ namespace ncore
             D_GFX_CS_COMPONENT_SET(enums::ComponentName);
             char    m_name[eMaxNameLength];
             wchar_t m_wname[eMaxNameLength];
+
+            char const*    c_str() const { return &m_name[0]; }
+            wchar_t const* w_str() const { return &m_wname[0]; }
+
             DCORE_CLASS_PLACEMENT_NEW_DELETE
         };
 

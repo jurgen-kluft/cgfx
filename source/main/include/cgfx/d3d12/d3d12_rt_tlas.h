@@ -37,6 +37,7 @@ namespace ncore
             void                      DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void                      Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
             bool                      Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void*                     GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas);
         }  // namespace nd3d12
 #else
         namespace nd3d12
@@ -45,6 +46,7 @@ namespace ncore
             void  DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
             void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
             bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
+            void* GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas) { return nullptr; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

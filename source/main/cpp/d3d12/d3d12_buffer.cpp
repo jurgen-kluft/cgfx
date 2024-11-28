@@ -45,7 +45,9 @@ namespace ncore
                     ASSERT(buffer->m_desc.alloc_type == enums::AllocationPlaced);
                     ASSERT(buffer->m_desc.memory_type == buffer->m_desc.heap->m_desc.memory_type);
                     ASSERT(buffer->m_desc.size + buffer->m_desc.heap_offset <= buffer->m_desc.heap->m_desc.size);
-                    hr = pAllocator->CreateAliasingResource2((D3D12MA::Allocation*)GetHandle(device, buffer->m_desc.heap), buffer->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxbuffer->m_pBuffer));
+
+                    nd3d12::heap_t* dxHeap = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, buffer->m_desc.heap);
+                    hr = pAllocator->CreateAliasingResource2(dxHeap->m_pAllocation, buffer->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxbuffer->m_pBuffer));
                 }
                 else
                 {

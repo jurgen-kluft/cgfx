@@ -40,9 +40,10 @@ namespace ncore
 #else
         namespace nmetal
         {
-            void CreateShader(ngfx::device_t* device, ngfx::shader_t* shader);
-            void Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
-            bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
+            void CreateShader(ngfx::device_t* device, ngfx::shader_t* shader) {}
+            void Destroy(ngfx::device_t* device, ngfx::shader_t* shader) {}
+            bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len) { return false; }
+            u64  GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return 0; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

@@ -15,6 +15,16 @@ namespace ncore
                 nmetal::mtexture_t* mtexture = CreateComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
             }
 
+            void                      DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture)
+            {
+                nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
+                if (mtexture->m_pTexture)
+                {
+                    nmetal::Destroy(device, texture);
+                    mtexture->m_pTexture->release();
+                }
+            }
+
             bool Create(ngfx::device_t* device, ngfx::texture_t* texture)
             {
                 // TODO separate the heap and heap offset into a separate component, this shouldn't

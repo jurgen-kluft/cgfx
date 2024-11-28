@@ -9,7 +9,7 @@ namespace ncore
     {
         namespace nmetal
         {
-            void CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain, const swapchain_desc_t& desc) { nmetal::swapchain_t* msc = CreateComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain); }
+            void CreateSwapchain(ngfx::device_t* device, ngfx::swapchain_t* swapchain) { nmetal::swapchain_t* msc = CreateComponent<ngfx::swapchain_t, nmetal::swapchain_t>(device, swapchain); }
 
             bool Create(ngfx::device_t* device, ngfx::swapchain_t* swapchain)
             {

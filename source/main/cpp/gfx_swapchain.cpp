@@ -22,9 +22,9 @@ namespace ncore
             sc->m_desc            = desc;
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::CreateSwapchain(device, sc, desc);
-                case enums::Backend_Metal: return nmetal::CreateSwapchain(device, sc, desc);
-                case enums::Backend_Mock: return nmock::CreateSwapchain(device, sc, desc);
+                case enums::Backend_D3D12: nd3d12::CreateSwapchain(device, sc); break;
+                case enums::Backend_Metal: nmetal::CreateSwapchain(device, sc); break;
+                case enums::Backend_Mock: nmock::CreateSwapchain(device, sc); break;
             }
             return sc;
         }
@@ -33,9 +33,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: return nd3d12::Create(device, resource);
-                case enums::Backend_Metal: return nmetal::Create(device, resource);
-                case enums::Backend_Mock: return nmock::Create(device, resource);
+                case enums::Backend_D3D12: nd3d12::Create(device, resource); break;
+                case enums::Backend_Metal: nmetal::Create(device, resource); break;
+                case enums::Backend_Mock: nmock::Create(device, resource); break;
             }
             return false;
         }

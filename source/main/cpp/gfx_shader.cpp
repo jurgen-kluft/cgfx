@@ -20,9 +20,9 @@ namespace ncore
 
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::CreateShader(device, resource, shader); break;
-                case enums::Backend_Metal: nmetal::CreateShader(device, resource, shader); break;
-                case enums::Backend_Mock: nmock::CreateShader(device, resource, shader); break;
+                case enums::Backend_D3D12: nd3d12::CreateShader(device,  shader); break;
+                case enums::Backend_Metal: nmetal::CreateShader(device,  shader); break;
+                case enums::Backend_Mock: nmock::CreateShader(device,  shader); break;
             }
             return shader;
         }

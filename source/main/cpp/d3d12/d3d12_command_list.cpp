@@ -852,7 +852,7 @@ namespace ncore
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::command_list_t::fence_value_t fenceValue = {fence, value};
-                dxCmdList->m_pendingSignals.push_back(fencealue);
+                dxCmdList->m_pendingSignals.push_back(fenceValue);
             }
 
             void Present(ngfx::command_list_t* cmdList, ngfx::swapchain_t* swapchain)
@@ -892,7 +892,7 @@ namespace ncore
                     ngfx::fence_t*   fence   = dxCmdList->m_pendingSignals[i].m_fence;
                     nd3d12::fence_t* dxFence = GetComponent<ngfx::fence_t, nd3d12::fence_t>(cmdList->m_device, fence);
                     u64 const        value   = dxCmdList->m_pendingSignals[i].m_value;
-                    dxCmdList->m_pCommandQueue->Signal(dxFence, value);
+                    dxCmdList->m_pCommandQueue->Signal(dxFence->m_pFence, value);
                 }
                 dxCmdList->m_pendingSignals.clear();
             }
@@ -907,7 +907,7 @@ namespace ncore
 
                 if (cmdList->m_queueType == enums::CommandQueueGraphics || cmdList->m_queueType == enums::CommandQueueCompute)
                 {
-                    ID3D12DescriptorHeap* heaps[2] = {dxDevice->m_pResourceDescriptorHeap, dxDevice->m_pSamplerDescriptorHeap};
+                    ID3D12DescriptorHeap* heaps[2] = {dxDevice->m_pResDescriptorAllocator->GetHeap(), dxDevice->m_pSamplerAllocator->GetHeap()};
                     dxCmdList->m_pCommandList->SetDescriptorHeaps(2, heaps);
 
                     ID3D12RootSignature* pRootSignature = dxDevice->m_pRootSignature;
@@ -920,7 +920,7 @@ namespace ncore
                 }
             }
 
-            void BeginProfiling(ngfx::command_list_t* cmdList);
+            void BeginProfiling(ngfx::command_list_t* cmdList)
             {
     #if MICROPROFILE_GPU_TIMERS_D3D12
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
@@ -932,7 +932,7 @@ namespace ncore
     #endif
             }
 
-            void EndProfiling(ngfx::command_list_t* cmdList);
+            void EndProfiling(ngfx::command_list_t* cmdList)
             {
     #if MICROPROFILE_GPU_TIMERS_D3D12
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
@@ -944,29 +944,29 @@ namespace ncore
     #endif
             }
 
-            void BeginEvent(ngfx::command_list_t* cmdList, const char* event_name);
+            void BeginEvent(ngfx::command_list_t* cmdList, const char* event_name)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 pix::BeginEvent(dxCmdList->m_pCommandList, event_name);
                 ags::BeginEvent(dxCmdList->m_pCommandList, event_name);
             }
 
-            void EndEvent(ngfx::command_list_t* cmdList);
+            void EndEvent(ngfx::command_list_t* cmdList)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 pix::EndEvent(dxCmdList->m_pCommandList);
                 ags::EndEvent(dxCmdList->m_pCommandList);
             }
 
-            void CopyBufferToTexture(ngfx::command_list_t* cmdList, ngfx::texture_t* dst_texture, u32 mip_level, u32 array_slice, buffer_t* src_buffer, u32 offset)
+            void CopyBufferToTexture(ngfx::command_list_t* cmdList, ngfx::texture_t* dst_texture, u32 mip_level, u32 array_slice, ngfx::buffer_t* src_buffer, u32 offset)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::texture_t*      dxTexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(cmdList->m_device, dst_texture);
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, src_buffer);
 
-                FlushBarriers();
+                nd3d12::FlushBarriers(cmdList);
 
-                const texture_desc_t& desc = dst_texture->GetDesc();
+                const texture_desc_t& desc = dst_texture->m_desc;
 
                 u32 min_width  = enums::GetFormatBlockWidth(desc.format);
                 u32 min_height = enums::GetFormatBlockHeight(desc.format);

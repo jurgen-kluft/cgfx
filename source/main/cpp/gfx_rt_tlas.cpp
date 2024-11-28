@@ -40,7 +40,7 @@ namespace ncore
             }
         }
 
-        void* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas)
+        void* GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas)
         {
             switch (device->m_desc.backend)
             {
