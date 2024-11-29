@@ -30,12 +30,12 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            bool Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void  DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
+            bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
-            void  GetUpdateDesc(nd3d12::blas_t* dxblas, ngfx::blas_t* blas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+            void  GetUpdateDesc(ngfx::device_t* device, nd3d12::blas_t* dxblas, ngfx::blas_t* blas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nd3d12
 #else
         namespace nd3d12

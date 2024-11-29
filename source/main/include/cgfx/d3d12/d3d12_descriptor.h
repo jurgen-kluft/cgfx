@@ -97,7 +97,10 @@ namespace ncore
 
             void Destroy(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
             bool Create(ngfx::device_t* device, ngfx::descriptor_t* descriptor);
+
             u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
+            bool GetShaderVisibleDescriptor(ngfx::device_t* pDevice, ngfx::descriptor_t* d, D3D12Descriptor& outDescriptor);
+            bool GetNonShaderVisibleDescriptor(ngfx::device_t* pDevice, ngfx::descriptor_t* d, D3D12Descriptor& outDescriptor);
         }  // namespace nd3d12
 #else
         namespace nd3d12

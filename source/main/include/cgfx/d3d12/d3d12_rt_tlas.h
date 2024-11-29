@@ -33,11 +33,12 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void                      CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            void                      DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            void                      Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            bool                      Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            void*                     GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void  DestroyRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void* GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas);
+            void  GetBuildDesc(ngfx::device_t* device, ngfx::tlas_t* tlas, nd3d12::tlas_t* dxtlas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, const rt_instance_t* instances, u32 instance_count);
         }  // namespace nd3d12
 #else
         namespace nd3d12

@@ -53,8 +53,10 @@ namespace ncore
         void Destroy(command_list_t* cmdList) { D_CL_ROUTER1(Destroy, cmdList); }
 
         // move to cpp file, implementation can be somewhere else ?
-        void ClearUAV(command_list_t* cmdList, resource_t* resource, descriptor_t* descriptor, const uav_desc_t& uavDesc, const float* value);
-        void ClearUAV(command_list_t* cmdList, resource_t* resource, descriptor_t* descriptor, const uav_desc_t& uavDesc, const u32* value);
+        // void ClearUAV(command_list_t* cmdList, texture_t* texture, descriptor_t* descriptor, const float* value);
+        // void ClearUAV(command_list_t* cmdList, buffer_t* buffer, descriptor_t* descriptor, const float* value);
+        // void ClearUAV(command_list_t* cmdList, texture_t* texture, descriptor_t* descriptor, const u32* value);
+        // void ClearUAV(command_list_t* cmdList, buffer_t* buffer, descriptor_t* descriptor, const u32* value);
 
         void ResetAllocator(command_list_t* cmdList) { D_CL_ROUTER1(ResetAllocator, cmdList); }
         void Begin(command_list_t* cmdList) { D_CL_ROUTER1(Begin, cmdList); }

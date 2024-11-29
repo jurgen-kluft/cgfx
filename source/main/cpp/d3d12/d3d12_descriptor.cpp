@@ -519,6 +519,82 @@ namespace ncore
 
             u32 GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return 0; }
 
+            bool GetShaderVisibleDescriptor(ngfx::device_t* pDevice, ngfx::descriptor_t* d, D3D12Descriptor& outDescriptor)
+            {
+                outDescriptor = {};
+                switch (d->m_type)
+                {
+                    case enums::DescriptorTypeSrvTexture:
+                        {
+                            nd3d12::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_texture_t>(pDevice, d);
+                            outDescriptor              = srv->m_descriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeSrvBuffer:
+                        {
+                            nd3d12::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_buffer_t>(pDevice, d);
+                            outDescriptor             = srv->m_descriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeSrvRayTracingTLAS:
+                        {
+                            nd3d12::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nd3d12::srv_tlas_t>(pDevice, d);
+                            outDescriptor           = srv->m_descriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeUavTexture:
+                        {
+                            nd3d12::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(pDevice, d);
+                            outDescriptor              = uav->m_descriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeUavBuffer:
+                        {
+                            nd3d12::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(pDevice, d);
+                            outDescriptor             = uav->m_descriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeCbv:
+                        {
+                            nd3d12::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nd3d12::cbv_t>(pDevice, d);
+                            outDescriptor      = cbv->m_descriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeSampler:
+                        {
+                            nd3d12::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nd3d12::sampler_t>(pDevice, d);
+                            outDescriptor              = sampler->m_descriptor;
+                            return true;
+                        }
+                    default: break;
+                }
+
+                return false;
+            }
+
+            bool GetNonShaderVisibleDescriptor(ngfx::device_t* pDevice, ngfx::descriptor_t* d, D3D12Descriptor& outDescriptor)
+            {
+                outDescriptor = {};
+                switch (d->m_type)
+                {
+                    case enums::DescriptorTypeUavTexture:
+                        {
+                            nd3d12::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_texture_t>(pDevice, d);
+                            outDescriptor              = uav->m_nonShaderVisibleDescriptor;
+                            return true;
+                        }
+                    case enums::DescriptorTypeUavBuffer:
+                        {
+                            nd3d12::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nd3d12::uav_buffer_t>(pDevice, d);
+                            outDescriptor             = uav->m_nonShaderVisibleDescriptor;
+                            return true;
+                        }
+                    default: break;
+                }
+
+                return false;
+            }
+
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

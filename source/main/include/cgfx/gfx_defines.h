@@ -35,13 +35,16 @@ namespace ncore
         struct tlas_t;
         struct tlas_desc_t;
 
-        static const u32 GFX_MAX_INFLIGHT_FRAMES           = 3;
-        static const u32 GFX_MAX_ROOT_CONSTANTS            = 8;
-        static const u32 GFX_MAX_CBV_BINDINGS              = 3;  // root constants in slot 0
-        static const u32 GFX_MAX_RESOURCE_DESCRIPTOR_COUNT = 65536;
-        static const u32 GFX_MAX_SAMPLER_DESCRIPTOR_COUNT  = 128;
+        namespace constants
+        {
+            static const u32 CMAX_INFLIGHT_FRAMES           = 3;
+            static const u32 CMAX_ROOT_CONSTANTS            = 8;
+            static const u32 CMAX_CBV_BINDINGS              = 3;  // root constants in slot 0
+            static const u32 CMAX_RESOURCE_DESCRIPTOR_COUNT = 65536;
+            static const u32 CMAX_SAMPLER_DESCRIPTOR_COUNT  = 128;
 
-        static const f32 GFX_FLT_MAX = 3.402823466e+38F;
+            static const f32 CFLOAT_MAX = 3.402823466e+38F;
+        }  // namespace constants
 
         namespace enums
         {
@@ -803,7 +806,7 @@ namespace ncore
             float                           max_anisotropy    = 1.0f;
             float                           mip_bias          = 0.0f;
             float                           min_lod           = 0.0f;
-            float                           max_lod           = GFX_FLT_MAX;
+            float                           max_lod           = constants::CFLOAT_MAX;
             float                           border_color[4]   = {};
         };
 

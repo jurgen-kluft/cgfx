@@ -160,14 +160,14 @@ namespace ncore
                 }
 
                 MTL::ResidencySetDescriptor* descriptor = MTL::ResidencySetDescriptor::alloc()->init();
-                descriptor->setInitialCapacity(GFX_MAX_RESOURCE_DESCRIPTOR_COUNT);
+                descriptor->setInitialCapacity(constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
                 mdevice->m_pResidencySet = mdevice->m_pDevice->newResidencySet(descriptor, nullptr);
                 descriptor->release();
 
                 mdevice->m_pQueue = mdevice->m_pDevice->newCommandQueue();
                 mdevice->m_pQueue->addResidencySet(mdevice->m_pResidencySet);
 
-                for (u32 i = 0; i < GFX_MAX_INFLIGHT_FRAMES; ++i)
+                for (u32 i = 0; i < constants::CMAX_INFLIGHT_FRAMES; ++i)
                 {
                     const char*              name        = "in-flight frame";  // fmt::format("CB Allocator {}", i).c_str();
                     ConstantBufferAllocator* cballocator = g_allocate<ConstantBufferAllocator>(device->m_allocator);
@@ -176,18 +176,18 @@ namespace ncore
                 }
 
                 DescriptorAllocator* mdallocator = g_allocate<DescriptorAllocator>(device->m_allocator);
-                setup(mdallocator, mdevice, GFX_MAX_RESOURCE_DESCRIPTOR_COUNT, "Descriptor Heap");
+                setup(mdallocator, mdevice, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT, "Descriptor Heap");
                 mdevice->m_pResDescriptorAllocator = mdallocator;
 
                 DescriptorAllocator* msallocator = g_allocate<DescriptorAllocator>(device->m_allocator);
-                setup(msallocator, mdevice, GFX_MAX_SAMPLER_DESCRIPTOR_COUNT, "Sampler Heap");
+                setup(msallocator, mdevice, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT, "Sampler Heap");
                 mdevice->m_pSamplerAllocator = msallocator;
 
-                mdevice->m_resDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, GFX_MAX_RESOURCE_DESCRIPTOR_COUNT);
-                mdevice->m_resDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, GFX_MAX_RESOURCE_DESCRIPTOR_COUNT);
+                mdevice->m_resDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
+                mdevice->m_resDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
 
-                mdevice->m_samplerDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, GFX_MAX_SAMPLER_DESCRIPTOR_COUNT);
-                mdevice->m_samplerDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, GFX_MAX_SAMPLER_DESCRIPTOR_COUNT);
+                mdevice->m_samplerDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT);
+                mdevice->m_samplerDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT);
 
                 return true;
             }
@@ -196,7 +196,7 @@ namespace ncore
             {
                 nmetal::device_t* mdevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
 
-                for (u32 i = 0; i < GFX_MAX_INFLIGHT_FRAMES; ++i)
+                for (u32 i = 0; i < constants::CMAX_INFLIGHT_FRAMES; ++i)
                 {
                     teardown(mdevice->m_pConstantBufferAllocators[i]);
                     device->m_allocator->deallocate(mdevice->m_pConstantBufferAllocators[i]);
@@ -237,13 +237,13 @@ namespace ncore
                     mdevice->m_bResidencyDirty = false;
                 }
 
-                u32 index = device->m_frameID % GFX_MAX_INFLIGHT_FRAMES;
+                u32 index = device->m_frameID % constants::CMAX_INFLIGHT_FRAMES;
                 reset(mdevice->m_pConstantBufferAllocators[index]);
 
                 while (mdevice->m_resDescriptorDeletionQueueCount > 0)
                 {
                     u64 const frameID = mdevice->m_resDescriptorDeletionQueueSecond[mdevice->m_resDescriptorDeletionQueueCount - 1];
-                    if (frameID + GFX_MAX_INFLIGHT_FRAMES > device->m_frameID)
+                    if (frameID + constants::CMAX_INFLIGHT_FRAMES > device->m_frameID)
                         break;
 
                     u32 const index = mdevice->m_resDescriptorDeletionQueueFirst[mdevice->m_resDescriptorDeletionQueueCount - 1];
@@ -255,7 +255,7 @@ namespace ncore
                 while (mdevice->m_samplerDescriptorDeletionQueueCount > 0)
                 {
                     u64 const frameID = mdevice->m_samplerDescriptorDeletionQueueSecond[mdevice->m_samplerDescriptorDeletionQueueCount - 1];
-                    if (frameID + GFX_MAX_INFLIGHT_FRAMES > device->m_frameID)
+                    if (frameID + constants::CMAX_INFLIGHT_FRAMES > device->m_frameID)
                         break;
 
                     u32 const index = mdevice->m_samplerDescriptorDeletionQueueFirst[mdevice->m_samplerDescriptorDeletionQueueCount - 1];
@@ -281,7 +281,7 @@ namespace ncore
 
                 void* cpu_address;
                 u64   gpu_address;
-                u32   index = device->m_frameID % GFX_MAX_INFLIGHT_FRAMES;
+                u32   index = device->m_frameID % constants::CMAX_INFLIGHT_FRAMES;
                 allocateConstantBuffer(mdevice->m_pConstantBufferAllocators[index], (u32)data_size, &cpu_address, &gpu_address);
                 memcpy(cpu_address, data, data_size);
                 return gpu_address;
