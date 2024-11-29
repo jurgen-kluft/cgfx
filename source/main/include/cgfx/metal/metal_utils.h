@@ -350,7 +350,7 @@ namespace ncore
                 default: return MTL::CullModeNone;
             }
         }
-        inline MTL::CullMode ToCullMode(enums::cullmode_t mode) { return enums::cast<enums::cullmode>(mode); }
+        inline MTL::CullMode ToCullMode(enums::cullmode_t mode) { return ToCullMode(enums::cast<enums::cullmode>(mode)); }
 
         inline MTL::SamplerMinMagFilter ToSamplerMinMagFilter(enums::filter filter)
         {

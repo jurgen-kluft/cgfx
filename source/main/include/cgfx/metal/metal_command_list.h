@@ -26,7 +26,7 @@ namespace ncore
 
             struct command_list_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalCommandList);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalCommandList);
 
                 MTL::CommandBuffer*                       m_pCommandBuffer         = nullptr;
                 MTL::BlitCommandEncoder*                  m_pBlitCommandEncoder    = nullptr;

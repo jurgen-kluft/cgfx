@@ -33,8 +33,8 @@ namespace ncore
                 if (buffer->m_desc.heap != nullptr)
                 {
                     ASSERT(buffer->m_desc.alloc_type == enums::AllocationPlaced);
-                    ASSERT(buffer->m_desc.memory_type == buffer->m_desc.heap->GetDesc().memory_type);
-                    ASSERT(buffer->m_desc.size + buffer->m_desc.heap_offset <= buffer->m_desc.heap->GetDesc().size);
+                    ASSERT(buffer->m_desc.memory_type == buffer->m_desc.heap->m_desc.memory_type);
+                    ASSERT(buffer->m_desc.size + buffer->m_desc.heap_offset <= buffer->m_desc.heap->m_desc.size);
 
                     MTL::Heap* heap    = ngfx::nmetal::GetHandle(device, buffer->m_desc.heap);
                     mbuffer->m_pBuffer = heap->newBuffer(buffer->m_desc.size, ToResourceOptions(buffer->m_desc.memory_type), buffer->m_desc.heap_offset);

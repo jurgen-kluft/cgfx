@@ -17,7 +17,7 @@ namespace ncore
         {
             struct mheap_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalHeap);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalHeap);
                 MTL::Heap* m_pHeap = nullptr;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };

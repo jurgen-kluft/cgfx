@@ -7,6 +7,7 @@
 
 #include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_rt_blas.h"
+#include "cbase/c_carray.h"
 
 namespace ncore
 {
@@ -18,11 +19,10 @@ namespace ncore
             struct mblas_t
             {
                 D_GFX_CS_COMPONENT_SET(enums::ComponentMetalBlas);
-                MTL::AccelerationStructure*                            m_pAccelerationStructure = nullptr;
-                MTL::PrimitiveAccelerationStructureDescriptor*         m_pDescriptor            = nullptr;
-                MTL::Buffer*                                           m_pScratchBuffer         = nullptr;
-                MTL::AccelerationStructureTriangleGeometryDescriptor** m_geometries;
-                u32                                                    m_geometries_count;
+                MTL::AccelerationStructure*                                     m_pAccelerationStructure = nullptr;
+                MTL::PrimitiveAccelerationStructureDescriptor*                  m_pDescriptor            = nullptr;
+                MTL::Buffer*                                                    m_pScratchBuffer         = nullptr;
+                carray_t<MTL::AccelerationStructureTriangleGeometryDescriptor*> m_geometries;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 

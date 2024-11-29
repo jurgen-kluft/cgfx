@@ -24,7 +24,7 @@ namespace ncore
 
             struct mshader_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalShader);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalShader);
                 MTL::Function*      m_pFunction = nullptr;
                 shader_reflection_t m_reflection;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE

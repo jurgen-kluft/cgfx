@@ -17,7 +17,7 @@ namespace ncore
         {
             struct swapchain_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalSwapchain);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalSwapchain);
                 MTK::View*       m_pView    = nullptr;
                 ngfx::texture_t* m_pTexture = nullptr;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE

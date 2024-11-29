@@ -244,28 +244,6 @@ namespace ncore
                 mcmdList->m_pCommandBuffer->presentDrawable(nmetal::GetDrawable(cmdList->m_device, swapchain));
             }
 
-            void Wait(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
-            {
-                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::fence_t*        mfence   = GetComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
-                mcmdList->m_pCommandBuffer->encodeWait(mfence->m_pEvent, value);
-            }
-
-            void Signal(ngfx::command_list_t* cmdList, ngfx::fence_t* fence, u64 value)
-            {
-                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::fence_t*        mfence   = GetComponent<ngfx::fence_t, nmetal::fence_t>(cmdList->m_device, fence);
-                mcmdList->m_pCommandBuffer->encodeSignalEvent(mfence->m_pEvent, value);
-            }
-
-            void Present(ngfx::command_list_t* cmdList, ngfx::swapchain_t* swapchain)
-            {
-                nmetal::command_list_t* mcmdList   = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                nmetal::swapchain_t*    mswapchain = GetComponent<ngfx::swapchain_t, nmetal::swapchain_t>(cmdList->m_device, swapchain);
-                // mcmdList->m_pCommandBuffer->presentDrawable(((MetalSwapchain*)swapchain)->GetDrawable());
-                mcmdList->m_pCommandBuffer->presentDrawable(mswapchain->m_pView->currentDrawable());
-            }
-
             void Submit(ngfx::command_list_t* cmdList)
             {
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
@@ -524,7 +502,7 @@ namespace ncore
                     }
                 }
 
-                ASSERT(m_pRenderCommandEncoder == nullptr);
+                ASSERT(mcmdList->m_pRenderCommandEncoder == nullptr);
                 mcmdList->m_pRenderCommandEncoder = mcmdList->m_pCommandBuffer->renderCommandEncoder(descriptor);
                 mcmdList->m_pRenderCommandEncoder->waitForFence(mcmdList->m_pFence, MTL::RenderStageVertex | MTL::RenderStageObject);
                 descriptor->release();
@@ -617,7 +595,7 @@ namespace ncore
             {
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
-                MTL::Viewport viewport = {x, y, width, height, 0.0f, 1.0f};
+                MTL::Viewport viewport = {(f64)x, (f64)y, (f64)width, (f64)height, 0.0f, 1.0f};
                 mcmdList->m_pRenderCommandEncoder->setViewport(viewport);
 
                 MTL::ScissorRect scissorRect = {x, y, width, height};

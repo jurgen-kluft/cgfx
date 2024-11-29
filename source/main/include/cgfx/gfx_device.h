@@ -6,6 +6,7 @@
 #endif
 
 #include "cgfx/gfx_defines.h"
+#include "cgfx/gfx_resource.h"
 #include "callocator/c_allocator_cs.h"
 
 namespace ncore

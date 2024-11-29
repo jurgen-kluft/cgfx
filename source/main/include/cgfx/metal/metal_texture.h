@@ -5,6 +5,7 @@
     #pragma once
 #endif
 
+#include "cgfx/metal/metal_utils.h"
 #include "cgfx/gfx_texture.h"
 
 namespace ncore

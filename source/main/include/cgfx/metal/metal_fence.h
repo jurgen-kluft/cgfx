@@ -17,7 +17,7 @@ namespace ncore
         {
             struct fence_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalFence);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalFence);
                 MTL::SharedEvent* m_pEvent = nullptr;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };

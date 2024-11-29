@@ -17,7 +17,7 @@ namespace ncore
         {
             struct graphics_pipeline_state_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalGraphicsPipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalGraphicsPipelineState);
                 graphics_pipeline_desc_t  m_desc;
                 MTL::RenderPipelineState* m_pPSO               = nullptr;
                 MTL::DepthStencilState*   m_pDepthStencilState = nullptr;
@@ -26,7 +26,7 @@ namespace ncore
 
             struct meshshading_pipeline_state_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalMeshShadingPipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalMeshShadingPipelineState);
                 mesh_shading_pipeline_desc_t m_desc;
                 MTL::RenderPipelineState*    m_pPSO                        = nullptr;
                 MTL::DepthStencilState*      m_pDepthStencilState          = nullptr;
@@ -37,7 +37,7 @@ namespace ncore
 
             struct compute_pipeline_state_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalComputePipelineState);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalComputePipelineState);
                 compute_pipeline_desc_t    m_desc;
                 MTL::ComputePipelineState* m_pPSO = nullptr;
                 MTL::Size                  m_threadsPerThreadgroup;

@@ -39,6 +39,7 @@ namespace ncore
             inline void DestroyShader(ngfx::device_t* device, ngfx::shader_t* shader) {}
             inline void Destroy(ngfx::device_t* device, ngfx::shader_t* shader) {}
             inline bool Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len) { return false; }
+            u64         GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return 0; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

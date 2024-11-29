@@ -49,7 +49,8 @@ namespace ncore
 #else
         namespace nd3d12
         {
-            inline void                      CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) { return nullptr; }
+            inline void                      CreateTexture(ngfx::device_t* device, ngfx::texture_t* texture, const texture_desc_t& desc) { }
+            inline void                      DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture) {}
             inline bool                      Create(ngfx::device_t* device, ngfx::texture_t* texture) { return false; }
             inline void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture) {}
             inline void*                     GetHandle(ngfx::device_t* device, ngfx::texture_t* texture) { return nullptr; }

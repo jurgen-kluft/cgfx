@@ -27,7 +27,7 @@ namespace ncore
 
             bool Create(ngfx::device_t* pDevice, heap_t* pHeap)
             {
-                ASSERT(m_desc.size % (64 * 1024) == 0);
+                ASSERT(pHeap->m_desc.size % (64 * 1024) == 0);
 
                 nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(pDevice, pDevice);
                 MTL::Device*      mtlDevice = mdevice->m_pDevice;

@@ -50,9 +50,9 @@ namespace ncore
                     return false;
                 }
 
-                MakeResident(device, mtlas->m_pAccelerationStructure);
-                MakeResident(device, mtlas->m_pScratchBuffer);
-                MakeResident(device, mtlas->m_pInstanceBuffer);
+                nmetal::MakeResident(mdevice, mtlas->m_pAccelerationStructure);
+                nmetal::MakeResident(mdevice, mtlas->m_pScratchBuffer);
+                nmetal::MakeResident(mdevice, mtlas->m_pInstanceBuffer);
 
                 name_t const* name  = GetComponent<ngfx::tlas_t, name_t>(device, tlas);
                 NS::String*   label = NS::String::alloc()->init(name->m_name, NS::StringEncoding::UTF8StringEncoding);
@@ -61,7 +61,7 @@ namespace ncore
 
                 NS::UInteger headerSize   = sizeof(IRRaytracingAccelerationStructureGPUHeader) + sizeof(u32) * tlas->m_desc.instance_count;
                 mtlas->m_pGPUHeaderBuffer = mtlDevice->newBuffer(headerSize, MTL::ResourceStorageModeShared);
-                MakeResident(device, mtlas->m_pGPUHeaderBuffer);
+                nmetal::MakeResident(mdevice, mtlas->m_pGPUHeaderBuffer);
 
                 // TODO allocate
                 u32* instanceContributions = nullptr;
@@ -81,7 +81,7 @@ namespace ncore
 
             void UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count)
             {
-                ASSERT(instance_count <= m_desc.instance_count);
+                ASSERT(instance_count <= tlas->m_desc.instance_count);
 
                 mtlas_t* mtlas = GetComponent<ngfx::tlas_t, mtlas_t>(device, tlas);
                 if (mtlas->m_currentInstanceBufferOffset + sizeof(MTL::AccelerationStructureUserIDInstanceDescriptor) * instance_count > mtlas->m_instanceBufferSize)

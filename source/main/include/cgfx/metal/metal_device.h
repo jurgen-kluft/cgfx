@@ -23,7 +23,7 @@ namespace ncore
 
             struct device_t
             {
-                D_GFX_OCS_COMPONENT_SET(enums::ComponentMetalDevice);
+                D_GFX_CS_COMPONENT_SET(enums::ComponentMetalDevice);
                 MTL::Device*       m_pDevice         = nullptr;
                 MTL::CommandQueue* m_pQueue          = nullptr;
                 MTL::ResidencySet* m_pResidencySet   = nullptr;
