@@ -8,39 +8,45 @@ namespace ncore
 {
     namespace ngfx
     {
-        void RegisterComponents(ncs::allocator_t* cs, u32 max_instances)
+        void RegisterComponents(ncs::allocator_t* cs_alloc, u32 max_instances)
         {
-            // TODO: tune the component counts
-            cs->register_component<name_t>(max_instances);
-            cs->register_component<resource_t>(max_instances);
-            cs->register_component<device_t>(1);
-            cs->register_component<texture_t>(max_instances);
-            cs->register_component<buffer_t>(max_instances);
-            cs->register_component<fence_t>(max_instances);
-            cs->register_component<swapchain_t>(8);
-            cs->register_component<command_list_t>(64);
-            cs->register_component<resource_t>(max_instances);
-            cs->register_component<shader_t>(max_instances);
-            cs->register_component<pipeline_state_t>(max_instances);
-            cs->register_component<descriptor_t>(max_instances);
-            cs->register_component<heap_t>(max_instances);
-            cs->register_component<blas_t>(max_instances);
-            cs->register_component<tlas_t>(max_instances);
+            // TODO: tune the component count:
+            // - max textures
+            // - max buffers
+            // - max descriptors
+            // ...
+            cs_alloc->register_component<name_t>(max_instances);
+            cs_alloc->register_component<resource_t>(max_instances);
+            cs_alloc->register_component<device_t>(1);
+            cs_alloc->register_component<texture_t>(max_instances);
+            cs_alloc->register_component<buffer_t>(max_instances);
+            cs_alloc->register_component<fence_t>(max_instances);
+            cs_alloc->register_component<swapchain_t>(8);
+            cs_alloc->register_component<command_list_t>(64);
+            cs_alloc->register_component<resource_t>(max_instances);
+            cs_alloc->register_component<shader_t>(max_instances);
+            cs_alloc->register_component<pipeline_state_t>(max_instances);
+            cs_alloc->register_component<descriptor_t>(max_instances);
+            cs_alloc->register_component<heap_t>(max_instances); // ?
+            cs_alloc->register_component<blas_t>(max_instances);
+            cs_alloc->register_component<tlas_t>(max_instances);
         }
 
-        device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc)
+        device_t* CreateDevice(alloc_t* main_alloc, stack_alloc_t* stack_alloc, frame_alloc_t* frame_alloc, const device_desc_t& desc)
         {
             const u32 max_instances = 4096;
 
-            ncs::allocator_t* cs = g_allocate<ncs::allocator_t>(allocator);
-            RegisterComponents(cs, max_instances);
+            ncs::allocator_t* cs_alloc = g_allocate<ncs::allocator_t>(allocator);
+            RegisterComponents(cs_alloc, max_instances);
 
-            ngfx::resource_t* device_resource = cs->new_instance<ngfx::resource_t>();
-            ngfx::device_t*   pDevice         = cs->create_component<ngfx::resource_t, ngfx::device_t>(device_resource);
+            ngfx::resource_t* device_resource = cs_alloc->new_instance<ngfx::resource_t>();
+            ngfx::device_t*   pDevice         = cs_alloc->create_component<ngfx::resource_t, ngfx::device_t>(device_resource);
             pDevice->m_frameID                = 0;
             pDevice->m_desc                   = desc;
-            pDevice->m_allocator              = allocator;
-            pDevice->m_allocatorCS            = cs;
+            pDevice->m_stack_alloc            = stack_alloc;
+            pDevice->m_frame_alloc            = frame_alloc;
+            pDevice->m_main_alloc             = allocator;
+            pDevice->m_cs_alloc               = cs_alloc;
 
             // NOTE: The switch statement here are currently here for convenience, once we have
             //       refactored all the backend specific code into their respective files, and

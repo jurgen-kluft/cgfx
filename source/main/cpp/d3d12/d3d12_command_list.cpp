@@ -831,13 +831,21 @@ namespace ncore
             void Begin(ngfx::command_list_t* cmdList)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
-                dxCmdList->m_pCommandAllocator->Reset();
                 dxCmdList->m_pCommandList->Reset(dxCmdList->m_pCommandAllocator, nullptr);
+
+                nd3d12::name_t const* name = GetComponent<ngfx::command_list_t, nd3d12::name_t>(cmdList->m_device, cmdList);
+                if (name != nullptr)
+                {
+                    dxCmdList->m_pCommandAllocator->SetName(name->m_wname);
+                }
+
+                ResetState(cmdList);
             }
 
             void End(ngfx::command_list_t* cmdList)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
+                FlushBarriers(dxCmdList);
                 dxCmdList->m_pCommandList->Close();
             }
 
@@ -964,7 +972,7 @@ namespace ncore
                 nd3d12::texture_t*      dxTexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(cmdList->m_device, dst_texture);
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, src_buffer);
 
-                nd3d12::FlushBarriers(cmdList);
+                nd3d12::FlushBarriers(dxCmdList);
 
                 const texture_desc_t& desc = dst_texture->m_desc;
 
@@ -999,7 +1007,7 @@ namespace ncore
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, dst_buffer);
                 nd3d12::texture_t*      dxTexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(cmdList->m_device, src_texture);
 
-                nd3d12::FlushBarriers(cmdList);
+                nd3d12::FlushBarriers(dxCmdList);
 
                 const texture_desc_t& desc = src_texture->m_desc;
 
@@ -1034,7 +1042,7 @@ namespace ncore
                 nd3d12::buffer_t*       dxDst     = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, dst);
                 nd3d12::buffer_t*       dxSrc     = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, src);
 
-                nd3d12::FlushBarriers(cmdList);
+                nd3d12::FlushBarriers(dxCmdList);
 
                 dxCmdList->m_pCommandList->CopyBufferRegion(dxDst->m_pBuffer, dst_offset, dxSrc->m_pBuffer, src_offset, size);
                 dxCmdList->m_commandCount += 1;
@@ -1046,7 +1054,7 @@ namespace ncore
                 nd3d12::texture_t*      dxDst     = GetComponent<ngfx::texture_t, nd3d12::texture_t>(cmdList->m_device, dst);
                 nd3d12::texture_t*      dxSrc     = GetComponent<ngfx::texture_t, nd3d12::texture_t>(cmdList->m_device, src);
 
-                nd3d12::FlushBarriers(cmdList);
+                nd3d12::FlushBarriers(dxCmdList);
 
                 D3D12_TEXTURE_COPY_LOCATION src_texture;
                 src_texture.pResource        = dxSrc->m_pTexture;
@@ -1058,8 +1066,8 @@ namespace ncore
                 dst_texture.Type             = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
                 dst_texture.SubresourceIndex = CalcSubresource(dst->m_desc, dst_mip, dst_array);
 
-                m_pCommandList->CopyTextureRegion(&dst_texture, 0, 0, 0, &src_texture, nullptr);
-                ++m_commandCount;
+                dxCmdList->m_pCommandList->CopyTextureRegion(&dst_texture, 0, 0, 0, &src_texture, nullptr);
+                dxCmdList->m_commandCount += 1;
             }
 
             void WriteBuffer(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, u32 offset, u32 data)
@@ -1067,14 +1075,14 @@ namespace ncore
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, buffer);
 
-                FlushBarriers(cmdList);
+                FlushBarriers(dxCmdList);
 
                 D3D12_WRITEBUFFERIMMEDIATE_PARAMETER parameter;
                 parameter.Dest  = dxBuffer->m_pBuffer->GetGPUVirtualAddress() + offset;
                 parameter.Value = data;
 
                 dxCmdList->m_pCommandList->WriteBufferImmediate(1, &parameter, nullptr);
-                ++dxCmdList->m_commandCount;
+                dxCmdList->m_commandCount += 1;
             }
 
             void UpdateTileMappings(ngfx::command_list_t* cmdList, ngfx::texture_t* texture, ngfx::heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings)
@@ -1186,13 +1194,11 @@ namespace ncore
                 dxCmdList->m_globalBarriers.push_back(barrier);
             }
 
-            void FlushBarriers(ngfx::command_list_t* cmdList)
+            void FlushBarriers(nd3d12::command_list_t* dxCmdList)
             {
                 // TODO device -> stack allocator, obtain carray's from stack allocator
                 carray_t<D3D12_BARRIER_GROUP> barrierGroup;
                 barrierGroup.reserve(3);
-
-                nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
 
                 if (!dxCmdList->m_textureBarriers.empty())
                 {
@@ -1211,7 +1217,7 @@ namespace ncore
 
                 if (!barrierGroup.empty())
                 {
-                    ++dxCmdList->m_commandCount;
+                    dxCmdList->m_commandCount += 1;
                     dxCmdList->m_pCommandList->Barrier((UINT32)barrierGroup.size(), barrierGroup.data());
                 }
 
@@ -1222,13 +1228,13 @@ namespace ncore
 
             void BeginRenderPass(ngfx::command_list_t* cmdList, const renderpass_desc_t& render_pass)
             {
-                FlushBarriers(cmdList);
+                nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
+
+                FlushBarriers(dxCmdList);
 
                 D3D12_RENDER_PASS_RENDER_TARGET_DESC rtDesc[8] = {};
                 D3D12_RENDER_PASS_DEPTH_STENCIL_DESC dsDesc    = {};
                 u32                                  flags     = D3D12_RENDER_PASS_FLAG_NONE;
-
-                nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
 
                 u32 width  = 0;
                 u32 height = 0;
@@ -1304,7 +1310,7 @@ namespace ncore
                 }
 
                 dxCmdList->m_pCommandList->BeginRenderPass(rt_count, rtDesc, depthTexture != nullptr ? &dsDesc : nullptr, (D3D12_RENDER_PASS_FLAGS)flags);
-                ++dxCmdList->m_commandCount;
+                dxCmdList->m_commandCount += 1;
 
                 nd3d12::SetViewport(cmdList, 0, 0, width, height);
             }
@@ -1313,7 +1319,7 @@ namespace ncore
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 dxCmdList->m_pCommandList->EndRenderPass();
-                ++dxCmdList->m_commandCount;
+                dxCmdList->m_commandCount += 1;
             }
 
             void SetPipelineState(ngfx::command_list_t* cmdList, ngfx::pipeline_state_t* state)
@@ -1479,11 +1485,11 @@ namespace ncore
 
             void DispatchIndirect(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, u32 offset)
             {
-                FlushBarriers(cmdList);
-
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, buffer);
                 nd3d12::device_t*       dxDevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(cmdList->m_device, cmdList->m_device);
+
+                FlushBarriers(dxCmdList);
 
                 dxCmdList->m_pCommandList->ExecuteIndirect(dxDevice->m_pDispatchSignature, 1, dxBuffer->m_pBuffer, offset, nullptr, 0);
                 dxCmdList->m_commandCount += 1;
@@ -1545,10 +1551,10 @@ namespace ncore
 
             void BuildRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas)
             {
-                FlushBarriers(cmdList);
-
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::blas_t*         dxBlas    = GetComponent<ngfx::blas_t, nd3d12::blas_t>(cmdList->m_device, blas);
+
+                FlushBarriers(dxCmdList);
 
                 dxCmdList->m_pCommandList->BuildRaytracingAccelerationStructure(dxBlas->m_buildDesc, 0, nullptr);
                 dxCmdList->m_commandCount += 1;
@@ -1556,10 +1562,10 @@ namespace ncore
 
             void UpdateRayTracingBLAS(ngfx::command_list_t* cmdList, ngfx::blas_t* blas, ngfx::buffer_t* vertex_buffer, u32 vertex_buffer_offset)
             {
-                FlushBarriers(cmdList);
-
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::blas_t*         dxBlas    = GetComponent<ngfx::blas_t, nd3d12::blas_t>(cmdList->m_device, blas);
+
+                FlushBarriers(dxCmdList);
 
                 D3D12_RAYTRACING_GEOMETRY_DESC                     geometry;
                 D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC desc;
@@ -1571,10 +1577,10 @@ namespace ncore
 
             void BuildRayTracingTLAS(ngfx::command_list_t* cmdList, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count)
             {
-                FlushBarriers(cmdList);
-
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::tlas_t*         dxTlas    = GetComponent<ngfx::tlas_t, nd3d12::tlas_t>(cmdList->m_device, tlas);
+
+                FlushBarriers(dxCmdList);
 
                 D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC desc = {};
                 nd3d12::GetBuildDesc(cmdList->m_device, tlas, dxTlas, desc, instances, instance_count);
