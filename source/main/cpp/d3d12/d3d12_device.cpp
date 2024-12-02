@@ -80,7 +80,7 @@ namespace ncore
 
 //         D3D12Device::~D3D12Device()
 //         {
-//             for (u32 i = 0; i < GFX_MAX_INFLIGHT_FRAMES; ++i)
+//             for (u32 i = 0; i < constants::CMAX_INFLIGHT_FRAMES; ++i)
 //             {
 //                 m_pConstantBufferAllocators[i].reset();
 //             }
@@ -339,7 +339,7 @@ namespace ncore
 //         {
 //             DoDeferredDeletion();
 
-//             u32 index = m_frameID % GFX_MAX_INFLIGHT_FRAMES;
+//             u32 index = m_frameID % constants::CMAX_INFLIGHT_FRAMES;
 //             m_pConstantBufferAllocators[index]->Reset();
 //         }
 
@@ -465,7 +465,7 @@ namespace ncore
 //                 return false;
 //             }
 
-//             for (u32 i = 0; i < GFX_MAX_INFLIGHT_FRAMES; ++i)
+//             for (u32 i = 0; i < constants::CMAX_INFLIGHT_FRAMES; ++i)
 //             {
 //                 eastl::string name             = fmt::format("CB Allocator {}", i).c_str();
 //                 m_pConstantBufferAllocators[i] = eastl::make_unique<D3D12ConstantBufferAllocator>(this, 8 * 1024 * 1024, name);
@@ -500,7 +500,7 @@ namespace ncore
 //             void* cpu_address;
 //             u64   gpu_address;
 
-//             u32 index = m_frameID % GFX_MAX_INFLIGHT_FRAMES;
+//             u32 index = m_frameID % constants::CMAX_INFLIGHT_FRAMES;
 //             m_pConstantBufferAllocators[index]->Allocate((u32)data_size, &cpu_address, &gpu_address);
 
 //             memcpy(cpu_address, data, data_size);
@@ -581,7 +581,7 @@ namespace ncore
 //             while (!m_deletionQueue.empty())
 //             {
 //                 auto item = m_deletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }
@@ -593,7 +593,7 @@ namespace ncore
 //             while (!m_allocationDeletionQueue.empty())
 //             {
 //                 auto item = m_allocationDeletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }
@@ -605,7 +605,7 @@ namespace ncore
 //             while (!m_rtvDeletionQueue.empty())
 //             {
 //                 auto item = m_rtvDeletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }
@@ -617,7 +617,7 @@ namespace ncore
 //             while (!m_dsvDeletionQueue.empty())
 //             {
 //                 auto item = m_dsvDeletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }
@@ -629,7 +629,7 @@ namespace ncore
 //             while (!m_resourceDeletionQueue.empty())
 //             {
 //                 auto item = m_resourceDeletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }
@@ -641,7 +641,7 @@ namespace ncore
 //             while (!m_samplerDeletionQueue.empty())
 //             {
 //                 auto item = m_samplerDeletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }
@@ -653,7 +653,7 @@ namespace ncore
 //             while (!m_nonShaderVisibleUAVDeletionQueue.empty())
 //             {
 //                 auto item = m_nonShaderVisibleUAVDeletionQueue.front();
-//                 if (!force_delete && item.frame + GFX_MAX_INFLIGHT_FRAMES > m_frameID)
+//                 if (!force_delete && item.frame + constants::CMAX_INFLIGHT_FRAMES > m_frameID)
 //                 {
 //                     break;
 //                 }

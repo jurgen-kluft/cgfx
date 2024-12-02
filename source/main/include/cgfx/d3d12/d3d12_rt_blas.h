@@ -35,7 +35,7 @@ namespace ncore
             void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
-            void  GetUpdateDesc(ngfx::device_t* device, nd3d12::blas_t* dxblas, ngfx::blas_t* blas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
+            void  GetUpdateDesc(ngfx::device_t* device, ngfx::blas_t* blas, nd3d12::blas_t* dxblas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nd3d12
 #else
         namespace nd3d12

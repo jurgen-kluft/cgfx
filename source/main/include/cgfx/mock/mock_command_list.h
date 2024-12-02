@@ -34,10 +34,13 @@ namespace ncore
             void CopyTextureToBuffer(ngfx::command_list_t* commandList, buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice);
             void CopyBuffer(ngfx::command_list_t* commandList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size);
             void CopyTexture(ngfx::command_list_t* commandList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array);
-            void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const float* clear_value);
-            void ClearUAV(ngfx::command_list_t* commandList, resource_t* resource, descriptor_t* uav, const u32* clear_value);
             void WriteBuffer(ngfx::command_list_t* commandList, buffer_t* buffer, u32 offset, u32 data);
             void UpdateTileMappings(ngfx::command_list_t* commandList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings);
+
+            void ClearUAV(command_list_t* cmdList, texture_t* texture, descriptor_t* uav, const float* value);
+            void ClearUAV(command_list_t* cmdList, buffer_t* buffer, descriptor_t* uav, const float* value);
+            void ClearUAV(command_list_t* cmdList, texture_t* texture, descriptor_t* uav, const u32* value);
+            void ClearUAV(command_list_t* cmdList, buffer_t* buffer, descriptor_t* uav, const u32* value);
 
             void TextureBarrier(ngfx::command_list_t* commandList, texture_t* texture, u32 sub_resource, enums::access_flags access_before, enums::access_flags access_after);
             void BufferBarrier(ngfx::command_list_t* commandList, buffer_t* buffer, enums::access_flags access_before, enums::access_flags access_after);

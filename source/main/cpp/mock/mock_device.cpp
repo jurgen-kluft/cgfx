@@ -199,19 +199,19 @@ namespace ncore
             void CreateDevice(ngfx::device_t* device, u32 max_instances)
             {
                 // TODO: tune the component counts
-                device->m_allocatorCS->register_component<nmock::buffer_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::srv_texture_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::srv_buffer_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::srv_tlas_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::uav_texture_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::uav_buffer_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::cbv_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::sampler_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::graphics_ps_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::mesh_shading_ps_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::compute_ps_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::shader_t>(max_instances);
-                device->m_allocatorCS->register_component<nmock::swapchain_t>(64);
+                device->m_cs_alloc->register_component<nmock::buffer_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::srv_texture_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::srv_buffer_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::srv_tlas_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::uav_texture_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::uav_buffer_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::cbv_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::sampler_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::graphics_ps_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::mesh_shading_ps_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::compute_ps_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::shader_t>(max_instances);
+                device->m_cs_alloc->register_component<nmock::swapchain_t>(64);
             }
 
             bool  Create(device_t* device) { return true; }

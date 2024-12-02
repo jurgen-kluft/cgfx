@@ -64,7 +64,7 @@ namespace ncore
                 pAllocator->CreateResource(&allocationDesc, &scratchBufferDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, &dxtlas->m_pScratchAllocation, IID_PPV_ARGS(&dxtlas->m_pScratchBuffer));
 
                 allocationDesc.HeapType                  = D3D12_HEAP_TYPE_UPLOAD;
-                dxtlas->m_nInstanceBufferSize            = math::g_roundUpPow2(sizeof(D3D12_RAYTRACING_INSTANCE_DESC) * tlas->m_desc.instance_count, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT) * GFX_MAX_INFLIGHT_FRAMES;
+                dxtlas->m_nInstanceBufferSize            = math::g_roundUpPow2(sizeof(D3D12_RAYTRACING_INSTANCE_DESC) * tlas->m_desc.instance_count, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT) * constants::CMAX_INFLIGHT_FRAMES;
                 CD3DX12_RESOURCE_DESC instanceBufferDesc = CD3DX12_RESOURCE_DESC::Buffer(dxtlas->m_nInstanceBufferSize);
                 pAllocator->CreateResource(&allocationDesc, &instanceBufferDesc, D3D12_RESOURCE_STATE_COMMON, nullptr, &dxtlas->m_pInstanceAllocation, IID_PPV_ARGS(&dxtlas->m_pInstanceBuffer));
 

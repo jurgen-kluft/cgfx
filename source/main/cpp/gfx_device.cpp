@@ -8,7 +8,7 @@ namespace ncore
 {
     namespace ngfx
     {
-        void RegisterComponents(ncs::allocator_t* cs_alloc, u32 max_instances)
+        void RegisterComponents(cs_alloc_t* cs_alloc, u32 max_instances)
         {
             // TODO: tune the component count:
             // - max textures
@@ -36,7 +36,7 @@ namespace ncore
         {
             const u32 max_instances = 4096;
 
-            ncs::allocator_t* cs_alloc = g_allocate<ncs::allocator_t>(allocator);
+            cs_alloc_t* cs_alloc = g_allocate<cs_alloc_t>(main_alloc);
             RegisterComponents(cs_alloc, max_instances);
 
             ngfx::resource_t* device_resource = cs_alloc->new_instance<ngfx::resource_t>();
@@ -45,7 +45,7 @@ namespace ncore
             pDevice->m_desc                   = desc;
             pDevice->m_stack_alloc            = stack_alloc;
             pDevice->m_frame_alloc            = frame_alloc;
-            pDevice->m_main_alloc             = allocator;
+            pDevice->m_main_alloc             = main_alloc;
             pDevice->m_cs_alloc               = cs_alloc;
 
             // NOTE: The switch statement here are currently here for convenience, once we have
@@ -77,7 +77,7 @@ namespace ncore
 
             if (pDevice && !Create(pDevice))
             {
-                g_deallocate(allocator, pDevice);
+                g_deallocate(main_alloc, pDevice);
                 pDevice = nullptr;
             }
 

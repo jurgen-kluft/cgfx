@@ -1,11 +1,11 @@
 #include "cgfx/d3d12/d3d12_command_list.h"
 #include "cgfx/d3d12/d3d12_device.h"
+#include "cgfx/d3d12/d3d12_descriptor.h"
 #include "cgfx/d3d12/d3d12_fence.h"
 #include "cgfx/d3d12/d3d12_texture.h"
 #include "cgfx/d3d12/d3d12_buffer.h"
 #include "cgfx/d3d12/d3d12_pipeline_state.h"
 #include "cgfx/d3d12/d3d12_heap.h"
-#include "cgfx/d3d12/d3d12_descriptor.h"
 #include "cgfx/d3d12/d3d12_rt_blas.h"
 #include "cgfx/d3d12/d3d12_rt_tlas.h"
 #include "cgfx/d3d12/d3d12_swapchain.h"
@@ -756,6 +756,8 @@ namespace ncore
 
         namespace nd3d12
         {
+            void FlushBarriers(nd3d12::command_list_t* dxCmdList);
+
             void CreateCommandList(ngfx::command_list_t* cmdList) { nd3d12::command_list_t* dxCmdList = CreateComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList); }
 
             void DestroyCommandList(ngfx::command_list_t* cmdList)
@@ -821,6 +823,29 @@ namespace ncore
                 nd3d12::Delete(dxDevice, dxCmdList->m_pCommandAllocator);
                 nd3d12::Delete(dxDevice, dxCmdList->m_pCommandList);
             }
+            
+            void ResetState(ngfx::command_list_t* cmdList)
+            {
+                nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
+                nd3d12::device_t*       dxDevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(cmdList->m_device, cmdList->m_device);
+
+                dxCmdList->m_commandCount = 0;
+                dxCmdList->m_pCurrentPSO  = nullptr;
+
+                if (cmdList->m_queueType == enums::CommandQueueGraphics || cmdList->m_queueType == enums::CommandQueueCompute)
+                {
+                    ID3D12DescriptorHeap* heaps[2] = {dxDevice->m_pResDescriptorAllocator->GetHeap(), dxDevice->m_pSamplerAllocator->GetHeap()};
+                    dxCmdList->m_pCommandList->SetDescriptorHeaps(2, heaps);
+
+                    ID3D12RootSignature* pRootSignature = dxDevice->m_pRootSignature;
+                    dxCmdList->m_pCommandList->SetComputeRootSignature(pRootSignature);
+
+                    if (cmdList->m_queueType == enums::CommandQueueGraphics)
+                    {
+                        dxCmdList->m_pCommandList->SetGraphicsRootSignature(pRootSignature);
+                    }
+                }
+            }
 
             void ResetAllocator(ngfx::command_list_t* cmdList)
             {
@@ -833,19 +858,19 @@ namespace ncore
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 dxCmdList->m_pCommandList->Reset(dxCmdList->m_pCommandAllocator, nullptr);
 
-                nd3d12::name_t const* name = GetComponent<ngfx::command_list_t, nd3d12::name_t>(cmdList->m_device, cmdList);
+                ngfx::name_t const* name = GetComponent<ngfx::command_list_t, ngfx::name_t>(cmdList->m_device, cmdList);
                 if (name != nullptr)
                 {
                     dxCmdList->m_pCommandAllocator->SetName(name->m_wname);
                 }
 
-                ResetState(cmdList);
+                nd3d12::ResetState(cmdList);
             }
 
             void End(ngfx::command_list_t* cmdList)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
-                FlushBarriers(dxCmdList);
+                nd3d12::FlushBarriers(dxCmdList);
                 dxCmdList->m_pCommandList->Close();
             }
 
@@ -903,29 +928,6 @@ namespace ncore
                     dxCmdList->m_pCommandQueue->Signal(dxFence->m_pFence, value);
                 }
                 dxCmdList->m_pendingSignals.clear();
-            }
-
-            void ResetState(ngfx::command_list_t* cmdList)
-            {
-                nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
-                nd3d12::device_t*       dxDevice  = GetComponent<ngfx::device_t, nd3d12::device_t>(cmdList->m_device, cmdList->m_device);
-
-                dxCmdList->m_commandCount = 0;
-                dxCmdList->m_pCurrentPSO  = nullptr;
-
-                if (cmdList->m_queueType == enums::CommandQueueGraphics || cmdList->m_queueType == enums::CommandQueueCompute)
-                {
-                    ID3D12DescriptorHeap* heaps[2] = {dxDevice->m_pResDescriptorAllocator->GetHeap(), dxDevice->m_pSamplerAllocator->GetHeap()};
-                    dxCmdList->m_pCommandList->SetDescriptorHeaps(2, heaps);
-
-                    ID3D12RootSignature* pRootSignature = dxDevice->m_pRootSignature;
-                    dxCmdList->m_pCommandList->SetComputeRootSignature(pRootSignature);
-
-                    if (cmdList->m_queueType == enums::CommandQueueGraphics)
-                    {
-                        dxCmdList->m_pCommandList->SetGraphicsRootSignature(pRootSignature);
-                    }
-                }
             }
 
             void BeginProfiling(ngfx::command_list_t* cmdList)
@@ -1001,7 +1003,7 @@ namespace ncore
                 dxCmdList->m_commandCount += 1;
             }
 
-            void CopyTextureToBuffer(ngfx::command_list_t* cmdList, ngfx::buffer_t* dst_buffer, u32 offset, texture_t* src_texture, u32 mip_level, u32 array_slice)
+            void CopyTextureToBuffer(ngfx::command_list_t* cmdList, ngfx::buffer_t* dst_buffer, u32 offset, ngfx::texture_t* src_texture, u32 mip_level, u32 array_slice)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, dst_buffer);
@@ -1036,7 +1038,7 @@ namespace ncore
                 dxCmdList->m_commandCount += 1;
             }
 
-            void CopyBuffer(ngfx::command_list_t* cmdList, ngfx::buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
+            void CopyBuffer(ngfx::command_list_t* cmdList, ngfx::buffer_t* dst, u32 dst_offset, ngfx::buffer_t* src, u32 src_offset, u32 size)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::buffer_t*       dxDst     = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, dst);
@@ -1048,7 +1050,7 @@ namespace ncore
                 dxCmdList->m_commandCount += 1;
             }
 
-            void CopyTexture(ngfx::command_list_t* cmdList, ngfx::texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
+            void CopyTexture(ngfx::command_list_t* cmdList, ngfx::texture_t* dst, u32 dst_mip, u32 dst_array, ngfx::texture_t* src, u32 src_mip, u32 src_array)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::texture_t*      dxDst     = GetComponent<ngfx::texture_t, nd3d12::texture_t>(cmdList->m_device, dst);
@@ -1226,6 +1228,12 @@ namespace ncore
                 dxCmdList->m_globalBarriers.clear();
             }
 
+            void FlushBarriers(ngfx::command_list_t* cmdList)
+            {
+                nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
+                nd3d12::FlushBarriers(dxCmdList);
+            }
+
             void BeginRenderPass(ngfx::command_list_t* cmdList, const renderpass_desc_t& render_pass)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
@@ -1328,12 +1336,36 @@ namespace ncore
 
                 if (dxCmdList->m_pCurrentPSO != state)
                 {
-                    dxCmdList->m_pCurrentPSO = state;
-                    dxCmdList->m_pCommandList->SetPipelineState(state->m_pPipelineState);
-
-                    if (state->m_type == enums::PipelineStateGraphics)
+                    ID3D12PipelineState* pipelineState = nullptr;
+                    nd3d12::graphics_pipeline_state_t* dxGraphicsPipelineState       = nullptr;
+                    switch (state->m_type)
                     {
-                        dxCmdList->m_pCommandList->IASetPrimitiveTopology(d3d12_primitive_topology(state->m_desc.graphics.primitive_topology));
+                        case enums::PipelineGraphics:
+                            {
+                                dxGraphicsPipelineState = GetComponent<ngfx::pipeline_state_t, nd3d12::graphics_pipeline_state_t>(cmdList->m_device, state);
+                                pipelineState           = dxGraphicsPipelineState->m_pPipelineState;
+                            }
+                            break;
+                        case enums::PipelineCompute:
+                            {
+                                nd3d12::compute_pipeline_state_t* dxState = GetComponent<ngfx::pipeline_state_t, nd3d12::compute_pipeline_state_t>(cmdList->m_device, state);
+                                pipelineState                             = dxState->m_pPipelineState;
+                            }
+                            break;
+                        case enums::PipelineMeshShading:
+                            {
+                                nd3d12::meshshading_pipeline_state_t* dxState = GetComponent<ngfx::pipeline_state_t, nd3d12::meshshading_pipeline_state_t>(cmdList->m_device, state);
+                                pipelineState                                  = dxState->m_pPipelineState;
+                            }
+                            break;
+                    }
+
+                    dxCmdList->m_pCurrentPSO = state;
+                    dxCmdList->m_pCommandList->SetPipelineState(pipelineState);
+
+                    if (state->m_type == enums::PipelineGraphics)
+                    {
+                        dxCmdList->m_pCommandList->IASetPrimitiveTopology(d3d12_primitive_topology(dxGraphicsPipelineState->m_desc.primitive_type));
                     }
                 }
             }
@@ -1350,7 +1382,7 @@ namespace ncore
                 dxCmdList->m_pCommandList->OMSetBlendFactor(blend_factor);
             }
 
-            void SetIndexBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, enums::format format)
+            void SetIndexBuffer(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, u32 offset, enums::format format)
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::buffer_t*       dxBuffer  = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, buffer);
@@ -1376,7 +1408,7 @@ namespace ncore
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 dxCmdList->m_pCommandList->RSSetViewports(1, &viewport);
 
-                SetScissorRect(cmdList, x, y, width, height);
+                nd3d12::SetScissorRect(cmdList, x, y, width, height);
             }
 
             void SetScissorRect(ngfx::command_list_t* cmdList, u32 x, u32 y, u32 width, u32 height)
@@ -1406,7 +1438,7 @@ namespace ncore
                 {
                     ASSERT(slot < constants::CMAX_CBV_BINDINGS);
 
-                    D3D12_GPU_VIRTUAL_ADDRESS address = nd3d12::AllocateConstantBuffer(device, data, data_size);
+                    D3D12_GPU_VIRTUAL_ADDRESS address = nd3d12::AllocateConstantBuffer(dxDevice, data, data_size);
                     ASSERT(address != 0);
 
                     dxCmdList->m_pCommandList->SetGraphicsRootConstantBufferView(slot, address);
@@ -1428,7 +1460,7 @@ namespace ncore
                 {
                     ASSERT(slot < constants::CMAX_CBV_BINDINGS);
 
-                    D3D12_GPU_VIRTUAL_ADDRESS address = nd3d12::AllocateConstantBuffer(device, data, data_size);
+                    D3D12_GPU_VIRTUAL_ADDRESS address = nd3d12::AllocateConstantBuffer(dxDevice, data, data_size);
                     ASSERT(address != 0);
 
                     dxCmdList->m_pCommandList->SetComputeRootConstantBufferView(slot, address);
@@ -1556,7 +1588,7 @@ namespace ncore
 
                 FlushBarriers(dxCmdList);
 
-                dxCmdList->m_pCommandList->BuildRaytracingAccelerationStructure(dxBlas->m_buildDesc, 0, nullptr);
+                dxCmdList->m_pCommandList->BuildRaytracingAccelerationStructure(&dxBlas->m_buildDesc, 0, nullptr);
                 dxCmdList->m_commandCount += 1;
             }
 
@@ -1564,12 +1596,13 @@ namespace ncore
             {
                 nd3d12::command_list_t* dxCmdList = GetComponent<ngfx::command_list_t, nd3d12::command_list_t>(cmdList->m_device, cmdList);
                 nd3d12::blas_t*         dxBlas    = GetComponent<ngfx::blas_t, nd3d12::blas_t>(cmdList->m_device, blas);
+                nd3d12::buffer_t*       dxVertexBuffer = GetComponent<ngfx::buffer_t, nd3d12::buffer_t>(cmdList->m_device, vertex_buffer);
 
                 FlushBarriers(dxCmdList);
 
                 D3D12_RAYTRACING_GEOMETRY_DESC                     geometry;
                 D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC desc;
-                nd3d12::GetUpdateDesc(cmdList->m_device, blas, dxBlas, desc, geometry, vertex_buffer, vertex_buffer_offset);
+                nd3d12::GetUpdateDesc(cmdList->m_device, blas, dxBlas, desc, geometry, dxVertexBuffer, vertex_buffer_offset);
 
                 dxCmdList->m_pCommandList->BuildRaytracingAccelerationStructure(&desc, 0, nullptr);
                 dxCmdList->m_commandCount += 1;

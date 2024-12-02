@@ -42,7 +42,7 @@ namespace ncore
                 ID3D12CommandSignature* m_pMultiDispatchMeshSignature = nullptr;
 
                 D3D12MA::Allocator*      m_pResourceAllocator = nullptr;
-                ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+                ConstantBufferAllocator* m_pConstantBufferAllocators[constants::CMAX_INFLIGHT_FRAMES];
                 DescriptorAllocator*     m_pRTVAllocator;
                 DescriptorAllocator*     m_pDSVAllocator;
                 DescriptorAllocator*     m_pResDescriptorAllocator;

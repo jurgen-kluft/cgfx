@@ -29,7 +29,7 @@ namespace ncore
                 nmetal::device_t* mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                 MTL::Device*      mtlDevice = mdevice->m_pDevice;
 
-                mtlas->m_instanceBufferSize       = sizeof(MTL::AccelerationStructureUserIDInstanceDescriptor) * tlas->m_desc.instance_count * GFX_MAX_INFLIGHT_FRAMES;
+                mtlas->m_instanceBufferSize       = sizeof(MTL::AccelerationStructureUserIDInstanceDescriptor) * tlas->m_desc.instance_count * constants::CMAX_INFLIGHT_FRAMES;
                 mtlas->m_pInstanceBuffer          = mtlDevice->newBuffer(mtlas->m_instanceBufferSize, MTL::ResourceStorageModeShared);
                 mtlas->m_instanceBufferCpuAddress = mtlas->m_pInstanceBuffer->contents();
 

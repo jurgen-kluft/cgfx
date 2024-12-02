@@ -29,7 +29,7 @@ namespace ncore
                 MTL::ResidencySet* m_pResidencySet   = nullptr;
                 bool               m_bResidencyDirty = false;
 
-                ConstantBufferAllocator* m_pConstantBufferAllocators[GFX_MAX_INFLIGHT_FRAMES];
+                ConstantBufferAllocator* m_pConstantBufferAllocators[constants::CMAX_INFLIGHT_FRAMES];
                 DescriptorAllocator*     m_pResDescriptorAllocator;
                 DescriptorAllocator*     m_pSamplerAllocator;
 
