@@ -88,12 +88,6 @@ namespace ncore
                 }
             }
 
-            MTL::CommandBuffer* GetHandle(ngfx::command_list_t* cmdList)
-            {
-                nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
-                return mcmdList->m_pCommandBuffer;
-            }
-
             void ResetAllocator(ngfx::command_list_t* cmdList) {}
 
             void Begin(ngfx::command_list_t* cmdList)
@@ -294,10 +288,13 @@ namespace ncore
                 u32 const rowNum        = height / blockHeight;
                 u32 const bytesPerImage = bytesPerRow * rowNum;
 
-                MTL::Texture* dstMtlTexture = nmetal::GetHandle(cmdList->m_device, dst_texture);
-                MTL::Buffer*  srcMtlBuffer  = nmetal::GetHandle(cmdList->m_device, src_buffer);
-
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+                nmetal::mtexture_t*     mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(cmdList->m_device, dst_texture);
+                nmetal::mbuffer_t*      mbuffer  = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, src_buffer);
+
+                MTL::Texture* dstMtlTexture = mtexture->m_pTexture;
+                MTL::Buffer*  srcMtlBuffer  = mbuffer->m_pBuffer;
+
                 mcmdList->m_pBlitCommandEncoder->copyFromBuffer(srcMtlBuffer, offset, bytesPerRow, desc.type == enums::TextureType3D ? bytesPerImage : 0, textureSize, dstMtlTexture, array_slice, mip_level, MTL::Origin::Make(0, 0, 0));
             }
 
@@ -314,34 +311,54 @@ namespace ncore
                 u32 const rowNum        = height / blockHeight;
                 u32 const bytesPerImage = bytesPerRow * rowNum;
 
-                MTL::Buffer*  dstMtlBuffer  = nmetal::GetHandle(cmdList->m_device, dst_buffer);
-                MTL::Texture* srcMtlTexture = nmetal::GetHandle(cmdList->m_device, src_texture);
-
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
+
+                // MTL::Buffer*  dstMtlBuffer  = nmetal::GetHandle(cmdList->m_device, dst_buffer);
+                // MTL::Texture* srcMtlTexture = nmetal::GetHandle(cmdList->m_device, src_texture);
+
+                nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(cmdList->m_device, src_texture);
+                nmetal::mbuffer_t*  mbuffer  = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, dst_buffer);
+
+                MTL::Texture* srcMtlTexture = mtexture->m_pTexture;
+                MTL::Buffer*  dstMtlBuffer  = mbuffer->m_pBuffer;
+
                 mcmdList->m_pBlitCommandEncoder->copyFromTexture(srcMtlTexture, array_slice, mip_level, MTL::Origin::Make(0, 0, 0), textureSize, dstMtlBuffer, offset, bytesPerRow, desc.type == enums::TextureType3D ? bytesPerImage : 0);
             }
 
             void CopyBuffer(ngfx::command_list_t* cmdList, buffer_t* dst, u32 dst_offset, buffer_t* src, u32 src_offset, u32 size)
             {
                 BeginBlitEncoder(cmdList);
+
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
 
-                MTL::Buffer* srcMetalBuffer = nmetal::GetHandle(cmdList->m_device, src);
-                MTL::Buffer* dstMetalBuffer = nmetal::GetHandle(cmdList->m_device, dst);
+                // MTL::Buffer* srcMetalBuffer = nmetal::GetHandle(cmdList->m_device, src);
+                // MTL::Buffer* dstMetalBuffer = nmetal::GetHandle(cmdList->m_device, dst);
+
+                nmetal::mbuffer_t* srcmbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, src);
+                nmetal::mbuffer_t* dstmbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, dst);
+
+                MTL::Buffer* srcMetalBuffer = srcmbuffer->m_pBuffer;
+                MTL::Buffer* dstMetalBuffer = dstmbuffer->m_pBuffer;
+
                 mcmdList->m_pBlitCommandEncoder->copyFromBuffer(srcMetalBuffer, src_offset, dstMetalBuffer, dst_offset, size);
             }
 
             void CopyTexture(ngfx::command_list_t* cmdList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array)
             {
                 BeginBlitEncoder(cmdList);
+
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
 
                 const texture_desc_t& srcDesc = src->m_desc;
                 MTL::Size             srcSize = MTL::Size::Make(sMaxMipSize(srcDesc.width, src_mip, 1), sMaxMipSize(srcDesc.height, src_mip, 1), sMaxMipSize(srcDesc.depth, src_mip, 1));
                 MTL::Origin           origin  = MTL::Origin::Make(0, 0, 0);
 
-                MTL::Texture* srcMetalTexture = nmetal::GetHandle(cmdList->m_device, src);
-                MTL::Texture* dstMetalTexture = nmetal::GetHandle(cmdList->m_device, dst);
+                nmetal::mtexture_t* srcmtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(cmdList->m_device, src);
+                nmetal::mtexture_t* dstmtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(cmdList->m_device, dst);
+
+                MTL::Texture* srcMetalTexture = srcmtexture->m_pTexture;
+                MTL::Texture* dstMetalTexture = dstmtexture->m_pTexture;
+
                 mcmdList->m_pBlitCommandEncoder->copyFromTexture(srcMetalTexture, src_array, src_mip, origin, srcSize, dstMetalTexture, dst_array, dst_mip, origin);
             }
 
@@ -387,7 +404,9 @@ namespace ncore
 
                 nmetal::BeginEvent(cmdList, "CommandList::WriteBuffer");
 
-                MTL::Buffer* mtlBuffer = nmetal::GetHandle(cmdList->m_device, buffer);
+                nmetal::device_t*  mdevice   = GetComponent<ngfx::device_t, nmetal::device_t>(cmdList->m_device, cmdList->m_device);
+                nmetal::mbuffer_t* mbuffer   = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, buffer);
+                MTL::Buffer*       mtlBuffer = mbuffer->m_pBuffer;
 
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 mcmdList->m_pBlitCommandEncoder->fillBuffer(mtlBuffer, NS::Range::Make(offset + 0, sizeof(u8)), u8(data >> 0));
@@ -456,7 +475,10 @@ namespace ncore
                     ASSERT(width == render_pass.color[i].texture->m_desc.width);
                     ASSERT(height == render_pass.color[i].texture->m_desc.height);
 
-                    MTL::Texture* renderPassMtlTexture = nmetal::GetHandle(cmdList->m_device, render_pass.color[i].texture);
+                    // MTL::Texture* renderPassMtlTexture = nmetal::GetHandle(cmdList->m_device, render_pass.color[i].texture);
+                    nmetal::mtexture_t* mtexture             = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(cmdList->m_device, render_pass.color[i].texture);
+                    MTL::Texture*       renderPassMtlTexture = mtexture->m_pTexture;
+
                     colorAttachements->object(i)->setTexture(renderPassMtlTexture);
                     colorAttachements->object(i)->setLevel(render_pass.color[i].mip_slice);
                     colorAttachements->object(i)->setSlice(render_pass.color[i].array_slice);
@@ -480,7 +502,9 @@ namespace ncore
                     ASSERT(width == render_pass.depth.texture->m_desc.width);
                     ASSERT(height == render_pass.depth.texture->m_desc.height);
 
-                    MTL::Texture* renderPassMtlDepthTexture = nmetal::GetHandle(cmdList->m_device, render_pass.depth.texture);
+                    // MTL::Texture* renderPassMtlDepthTexture = nmetal::GetHandle(cmdList->m_device, render_pass.depth.texture);
+                    nmetal::mtexture_t* mtexture                  = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(cmdList->m_device, render_pass.depth.texture);
+                    MTL::Texture*       renderPassMtlDepthTexture = mtexture->m_pTexture;
 
                     MTL::RenderPassDepthAttachmentDescriptor* depthAttachment = descriptor->depthAttachment();
                     depthAttachment->setTexture(renderPassMtlDepthTexture);
@@ -586,7 +610,8 @@ namespace ncore
             {
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 ASSERT(mcmdList->m_pRenderCommandEncoder != nullptr);
-                mcmdList->m_pIndexBuffer      = nmetal::GetHandle(cmdList->m_device, buffer);
+                nmetal::mbuffer_t* mbuffer    = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, buffer);
+                mcmdList->m_pIndexBuffer      = mbuffer->m_pBuffer;
                 mcmdList->m_indexBufferOffset = offset;
                 mcmdList->m_indexType         = (format == enums::FORMAT_R16UI) ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32;
             }
@@ -615,12 +640,12 @@ namespace ncore
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 if (slot == 0)
                 {
-                    ASSERT(data_size <= GFX_MAX_ROOT_CONSTANTS * sizeof(u32));
+                    ASSERT(data_size <= constants::CMAX_ROOT_CONSTANTS * sizeof(u32));
                     memcpy(mcmdList->m_graphicsArgumentBuffer.cbv0, data, data_size);
                 }
                 else
                 {
-                    ASSERT(slot < GFX_MAX_CBV_BINDINGS);
+                    ASSERT(slot < constants::CMAX_CBV_BINDINGS);
                     u64 gpuAddress = nmetal::AllocateConstantBuffer(cmdList->m_device, data, data_size);
                     if (slot == 1)
                     {
@@ -638,12 +663,12 @@ namespace ncore
                 nmetal::command_list_t* mcmdList = GetComponent<ngfx::command_list_t, nmetal::command_list_t>(cmdList->m_device, cmdList);
                 if (slot == 0)
                 {
-                    ASSERT(data_size <= GFX_MAX_ROOT_CONSTANTS * sizeof(u32));
+                    ASSERT(data_size <= constants::CMAX_ROOT_CONSTANTS * sizeof(u32));
                     memcpy(mcmdList->m_computeArgumentBuffer.cbv0, data, data_size);
                 }
                 else
                 {
-                    ASSERT(slot < GFX_MAX_CBV_BINDINGS);
+                    ASSERT(slot < constants::CMAX_CBV_BINDINGS);
                     uint64_t gpuAddress = nmetal::AllocateConstantBuffer(cmdList->m_device, data, data_size);
 
                     if (slot == 1)
@@ -736,7 +761,8 @@ namespace ncore
                 mcmdList->m_pRenderCommandEncoder->setVertexBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
                 mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
 
-                MTL::Buffer* mtlBuffer = nmetal::GetHandle(cmdList->m_device, buffer);
+                nmetal::mbuffer_t* mbuffer   = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, buffer);
+                MTL::Buffer*       mtlBuffer = mbuffer->m_pBuffer;
                 IRRuntimeDrawPrimitives(mcmdList->m_pRenderCommandEncoder, mcmdList->m_primitiveType, mtlBuffer, offset);
             }
 
@@ -748,7 +774,8 @@ namespace ncore
                 mcmdList->m_pRenderCommandEncoder->setVertexBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
                 mcmdList->m_pRenderCommandEncoder->setFragmentBytes(&mcmdList->m_graphicsArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
 
-                MTL::Buffer* mtlBuffer = nmetal::GetHandle(cmdList->m_device, buffer);
+                nmetal::mbuffer_t* mbuffer   = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, buffer);
+                MTL::Buffer*       mtlBuffer = mbuffer->m_pBuffer;
                 IRRuntimeDrawIndexedPrimitives(mcmdList->m_pRenderCommandEncoder, mcmdList->m_primitiveType, mcmdList->m_indexType, mcmdList->m_pIndexBuffer, mcmdList->m_indexBufferOffset, mtlBuffer, offset);
             }
 
@@ -763,8 +790,9 @@ namespace ncore
                     mcmdList->m_pComputeCommandEncoder->setComputePipelineState(pipelineState->m_pPSO);
                     mcmdList->m_pComputeCommandEncoder->setBytes(&mcmdList->m_computeArgumentBuffer, sizeof(top_level_argument_buffer_t), kIRArgumentBufferBindPoint);
 
-                    MTL::Size const threadsPerThreadgroup = pipelineState->m_threadsPerThreadgroup;
-                    MTL::Buffer*    mtlBuffer             = nmetal::GetHandle(cmdList->m_device, buffer);
+                    MTL::Size const    threadsPerThreadgroup = pipelineState->m_threadsPerThreadgroup;
+                    nmetal::mbuffer_t* mbuffer               = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(cmdList->m_device, buffer);
+                    MTL::Buffer*       mtlBuffer             = mbuffer->m_pBuffer;
                     mcmdList->m_pComputeCommandEncoder->dispatchThreadgroups(mtlBuffer, offset, threadsPerThreadgroup);
 
                     EndComputeEncoder(mcmdList);

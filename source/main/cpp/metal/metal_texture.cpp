@@ -38,8 +38,8 @@ namespace ncore
                     ASSERT(texture->m_desc.alloc_type == enums::AllocationPlaced);
                     ASSERT(texture->m_desc.memory_type == texture->m_desc.heap->m_desc.memory_type);
 
-                    MTL::Heap* heap      = ngfx::nmetal::GetHandle(device, texture->m_desc.heap);
-                    mtexture->m_pTexture = heap->newTexture(descriptor, texture->m_desc.heap_offset);
+                    nmetal::mheap_t* heap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(device, texture->m_desc.heap);
+                    mtexture->m_pTexture = heap->m_pHeap->newTexture(descriptor, texture->m_desc.heap_offset);
                 }
                 else
                 {

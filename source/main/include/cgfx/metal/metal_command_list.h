@@ -19,8 +19,8 @@ namespace ncore
         {
             struct top_level_argument_buffer_t
             {
-                u32      cbv0[GFX_MAX_ROOT_CONSTANTS];  // root constants
-                uint64_t cbv1;                          // gpu address
+                u32      cbv0[constants::CMAX_ROOT_CONSTANTS];  // root constants
+                uint64_t cbv1;                                  // gpu address
                 uint64_t cbv2;
             };
 
@@ -54,8 +54,8 @@ namespace ncore
 
             void CreateCommandList(ngfx::command_list_t* cmdList);
 
-            bool                Create(ngfx::command_list_t* cmdList);
-            void                Destroy(ngfx::command_list_t* cmdList);
+            bool Create(ngfx::command_list_t* cmdList);
+            void Destroy(ngfx::command_list_t* cmdList);
 
             void ResetAllocator(ngfx::command_list_t* cmdList);
             void Begin(ngfx::command_list_t* cmdList);
@@ -77,10 +77,10 @@ namespace ncore
             void CopyTexture(ngfx::command_list_t* cmdList, texture_t* dst, u32 dst_mip, u32 dst_array, texture_t* src, u32 src_mip, u32 src_array);
 
             // TODO: Should we pass a ccore callback_t so that this level can invoke a function on a higher level?
-            void ClearUAV(command_list_t* cmdList, texture_t* texture, descriptor_t* uav, const float* value);
-            void ClearUAV(command_list_t* cmdList, buffer_t* buffer, descriptor_t* uav, const float* value);
-            void ClearUAV(command_list_t* cmdList, texture_t* texture, descriptor_t* uav, const u32* value);
-            void ClearUAV(command_list_t* cmdList, buffer_t* buffer, descriptor_t* uav, const u32* value);
+            void ClearUAV(ngfx::command_list_t* cmdList, ngfx::texture_t* texture, ngfx::descriptor_t* uav, const float* value);
+            void ClearUAV(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, ngfx::descriptor_t* uav, const float* value);
+            void ClearUAV(ngfx::command_list_t* cmdList, ngfx::texture_t* texture, ngfx::descriptor_t* uav, const u32* value);
+            void ClearUAV(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, ngfx::descriptor_t* uav, const u32* value);
 
             void WriteBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, u32 data);
             void UpdateTileMappings(ngfx::command_list_t* cmdList, texture_t* texture, heap_t* heap, u32 mapping_count, const tile_mapping_t* mappings);
@@ -125,8 +125,8 @@ namespace ncore
         {
             inline void CreateCommandList(ngfx::command_list_t* cmdList) {}
 
-            inline bool  Create(ngfx::command_list_t*) { return false; }
-            inline void  Destroy(ngfx::command_list_t*) {}
+            inline bool Create(ngfx::command_list_t*) { return false; }
+            inline void Destroy(ngfx::command_list_t*) {}
 
             inline void ResetAllocator(ngfx::command_list_t* cmdList) {}
             inline void Begin(ngfx::command_list_t* cmdList) {}

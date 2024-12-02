@@ -9,10 +9,7 @@ namespace ncore
     {
         namespace nmetal
         {
-            void CreateRayTracingBLAS(ngfx::device_t* device, ngfx::blas_t* blas)
-            {
-                mblas_t* mblas            = CreateComponent<ngfx::blas_t, mblas_t>(device, blas);
-            }
+            void CreateRayTracingBLAS(ngfx::device_t* device, ngfx::blas_t* blas) { mblas_t* mblas = CreateComponent<ngfx::blas_t, mblas_t>(device, blas); }
 
             void Destroy(ngfx::device_t* device, ngfx::blas_t* blas)
             {
@@ -39,13 +36,16 @@ namespace ncore
                 {
                     const rt_geometry_t* geometry = blas->m_desc.geometries.mArray[i];
 
+                    nmetal::mbuffer_t* mvertexBuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, geometry->vertex_buffer);
+                    nmetal::mbuffer_t* mindexBuffer  = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, geometry->index_buffer);
+
                     MTL::AccelerationStructureTriangleGeometryDescriptor* geometryDescriptor = MTL::AccelerationStructureTriangleGeometryDescriptor::alloc()->init();
                     geometryDescriptor->setOpaque(geometry->opaque);
-                    geometryDescriptor->setVertexBuffer((MTL::Buffer*)GetHandle(device, geometry->vertex_buffer));
+                    geometryDescriptor->setVertexBuffer(mvertexBuffer->m_pBuffer);
                     geometryDescriptor->setVertexBufferOffset((NS::UInteger)geometry->vertex_buffer_offset);
                     geometryDescriptor->setVertexStride((NS::UInteger)geometry->vertex_stride);
                     geometryDescriptor->setVertexFormat(ToAttributeFormat(geometry->vertex_format));
-                    geometryDescriptor->setIndexBuffer((MTL::Buffer*)GetHandle(device, geometry->index_buffer));
+                    geometryDescriptor->setIndexBuffer(mindexBuffer->m_pBuffer);
                     geometryDescriptor->setIndexBufferOffset((NS::UInteger)geometry->index_buffer_offset);
                     geometryDescriptor->setIndexType(geometry->index_format == enums::FORMAT_R16UI ? MTL::IndexTypeUInt16 : MTL::IndexTypeUInt32);
                     geometryDescriptor->setTriangleCount((NS::UInteger)geometry->index_count / 3);
@@ -95,9 +95,10 @@ namespace ncore
             {
                 ASSERT(blas->m_desc.flags & enums::rt::AsFlagAllowUpdate);
 
-                mblas_t* mblas = GetComponent<ngfx::blas_t, mblas_t>(device, blas);
+                nmetal::mbuffer_t* mvertexBuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, vertex_buffer);
+                mblas_t*           mblas         = GetComponent<ngfx::blas_t, mblas_t>(device, blas);
                 ASSERT(mblas->m_geometries.size() == 1);  // todo : suppport more than 1
-                mblas->m_geometries.mArray[0]->setVertexBuffer((MTL::Buffer*)GetHandle(device, vertex_buffer));
+                mblas->m_geometries.mArray[0]->setVertexBuffer(mvertexBuffer->m_pBuffer);
                 mblas->m_geometries.mArray[0]->setVertexBufferOffset((NS::UInteger)vertex_buffer_offset);
 
                 NS::Array* geometryDescriptors = NS::Array::alloc()->init((NS::Object**)mblas->m_geometries.mArray, (NS::UInteger)mblas->m_geometries.size());

@@ -123,26 +123,26 @@ namespace ncore
             void CreateDevice(ngfx::device_t* device, u32 max_instances)
             {
                 // TODO: tune the component counts
-                device->m_allocatorCS->register_component<nmetal::device_t>(2);
-                device->m_allocatorCS->register_component<nmetal::mbuffer_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::command_list_t>(64);
-                device->m_allocatorCS->register_component<nmetal::srv_texture_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::srv_buffer_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::srv_tlas_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::uav_texture_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::uav_buffer_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::cbv_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::sampler_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::fence_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::mheap_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::graphics_pipeline_state_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::meshshading_pipeline_state_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::compute_pipeline_state_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::mblas_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::mtlas_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::mshader_t>(max_instances);
-                device->m_allocatorCS->register_component<nmetal::swapchain_t>(8);
-                device->m_allocatorCS->register_component<nmetal::mtexture_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::device_t>(2);
+                device->m_cs_alloc->register_component<nmetal::mbuffer_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::command_list_t>(64);
+                device->m_cs_alloc->register_component<nmetal::srv_texture_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::srv_buffer_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::srv_tlas_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::uav_texture_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::uav_buffer_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::cbv_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::sampler_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::fence_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::mheap_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::graphics_pipeline_state_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::meshshading_pipeline_state_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::compute_pipeline_state_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::mblas_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::mtlas_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::mshader_t>(max_instances);
+                device->m_cs_alloc->register_component<nmetal::swapchain_t>(8);
+                device->m_cs_alloc->register_component<nmetal::mtexture_t>(max_instances);
 
                 nmetal::device_t* mdevice = CreateComponent<ngfx::device_t, nmetal::device_t>(device, device);
             }
@@ -170,24 +170,24 @@ namespace ncore
                 for (u32 i = 0; i < constants::CMAX_INFLIGHT_FRAMES; ++i)
                 {
                     const char*              name        = "in-flight frame";  // fmt::format("CB Allocator {}", i).c_str();
-                    ConstantBufferAllocator* cballocator = g_allocate<ConstantBufferAllocator>(device->m_allocator);
+                    ConstantBufferAllocator* cballocator = g_allocate<ConstantBufferAllocator>(device->m_main_alloc);
                     setup(cballocator, mdevice, 8 * 1024 * 1024, name);
                     mdevice->m_pConstantBufferAllocators[i] = cballocator;
                 }
 
-                DescriptorAllocator* mdallocator = g_allocate<DescriptorAllocator>(device->m_allocator);
+                DescriptorAllocator* mdallocator = g_allocate<DescriptorAllocator>(device->m_main_alloc);
                 setup(mdallocator, mdevice, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT, "Descriptor Heap");
                 mdevice->m_pResDescriptorAllocator = mdallocator;
 
-                DescriptorAllocator* msallocator = g_allocate<DescriptorAllocator>(device->m_allocator);
+                DescriptorAllocator* msallocator = g_allocate<DescriptorAllocator>(device->m_main_alloc);
                 setup(msallocator, mdevice, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT, "Sampler Heap");
                 mdevice->m_pSamplerAllocator = msallocator;
 
-                mdevice->m_resDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
-                mdevice->m_resDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
+                mdevice->m_resDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_main_alloc, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
+                mdevice->m_resDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_main_alloc, constants::CMAX_RESOURCE_DESCRIPTOR_COUNT);
 
-                mdevice->m_samplerDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_allocator, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT);
-                mdevice->m_samplerDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_allocator, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT);
+                mdevice->m_samplerDescriptorDeletionQueueFirst  = g_allocate_array<u32>(device->m_main_alloc, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT);
+                mdevice->m_samplerDescriptorDeletionQueueSecond = g_allocate_array<u64>(device->m_main_alloc, constants::CMAX_SAMPLER_DESCRIPTOR_COUNT);
 
                 return true;
             }
@@ -199,23 +199,23 @@ namespace ncore
                 for (u32 i = 0; i < constants::CMAX_INFLIGHT_FRAMES; ++i)
                 {
                     teardown(mdevice->m_pConstantBufferAllocators[i]);
-                    device->m_allocator->deallocate(mdevice->m_pConstantBufferAllocators[i]);
+                    device->m_main_alloc->deallocate(mdevice->m_pConstantBufferAllocators[i]);
                     mdevice->m_pConstantBufferAllocators[i] = nullptr;
                 }
 
                 teardown(mdevice->m_pResDescriptorAllocator);
-                device->m_allocator->deallocate(mdevice->m_pResDescriptorAllocator);
+                device->m_main_alloc->deallocate(mdevice->m_pResDescriptorAllocator);
                 mdevice->m_pResDescriptorAllocator = nullptr;
 
                 teardown(mdevice->m_pSamplerAllocator);
-                device->m_allocator->deallocate(mdevice->m_pSamplerAllocator);
+                device->m_main_alloc->deallocate(mdevice->m_pSamplerAllocator);
                 mdevice->m_pSamplerAllocator = nullptr;
 
-                device->m_allocator->deallocate(mdevice->m_resDescriptorDeletionQueueFirst);
-                device->m_allocator->deallocate(mdevice->m_resDescriptorDeletionQueueSecond);
+                device->m_main_alloc->deallocate(mdevice->m_resDescriptorDeletionQueueFirst);
+                device->m_main_alloc->deallocate(mdevice->m_resDescriptorDeletionQueueSecond);
 
-                device->m_allocator->deallocate(mdevice->m_samplerDescriptorDeletionQueueFirst);
-                device->m_allocator->deallocate(mdevice->m_samplerDescriptorDeletionQueueSecond);
+                device->m_main_alloc->deallocate(mdevice->m_samplerDescriptorDeletionQueueFirst);
+                device->m_main_alloc->deallocate(mdevice->m_samplerDescriptorDeletionQueueSecond);
 
                 mdevice->m_pResidencySet->release();
                 mdevice->m_pQueue->release();

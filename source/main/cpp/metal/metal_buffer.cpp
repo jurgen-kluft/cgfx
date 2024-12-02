@@ -36,8 +36,8 @@ namespace ncore
                     ASSERT(buffer->m_desc.memory_type == buffer->m_desc.heap->m_desc.memory_type);
                     ASSERT(buffer->m_desc.size + buffer->m_desc.heap_offset <= buffer->m_desc.heap->m_desc.size);
 
-                    MTL::Heap* heap    = ngfx::nmetal::GetHandle(device, buffer->m_desc.heap);
-                    mbuffer->m_pBuffer = heap->newBuffer(buffer->m_desc.size, ToResourceOptions(buffer->m_desc.memory_type), buffer->m_desc.heap_offset);
+                    nmetal::mheap_t* heap = GetComponent<ngfx::heap_t, nmetal::mheap_t>(device, buffer->m_desc.heap);
+                    mbuffer->m_pBuffer    = heap->m_pHeap->newBuffer(buffer->m_desc.size, ToResourceOptions(buffer->m_desc.memory_type), buffer->m_desc.heap_offset);
                 }
                 else
                 {

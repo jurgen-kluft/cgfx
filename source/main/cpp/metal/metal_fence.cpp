@@ -25,9 +25,9 @@ namespace ncore
 
             bool Create(ngfx::device_t* device, ngfx::fence_t* fence)
             {
-                nmetal::fence_t* mfence    = GetComponent<ngfx::fence_t, nmetal::fence_t>(device, fence);
-                MTL::Device*     mtlDevice = nmetal::GetHandle(device);
-                mfence->m_pEvent           = mtlDevice->newSharedEvent();
+                nmetal::fence_t*  mfence    = GetComponent<ngfx::fence_t, nmetal::fence_t>(device, fence);
+                nmetal::device_t* mtlDevice = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
+                mfence->m_pEvent            = mtlDevice->m_pDevice->newSharedEvent();
                 if (mfence->m_pEvent == nullptr)
                 {
                     // RE_ERROR("[MetalFence] failed to create {}", m_name);
