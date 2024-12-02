@@ -214,11 +214,10 @@ namespace ncore
                 device->m_cs_alloc->register_component<nmock::swapchain_t>(64);
             }
 
-            bool  Create(device_t* device) { return true; }
-            void  Destroy(device_t* device) {}
-            void* GetHandle(device_t* device) { return nullptr; }
-            void  BeginFrame(device_t* device) {}
-            void  EndFrame(device_t* device) { ++device->m_frameID; }
+            bool Create(device_t* device) { return true; }
+            void Destroy(device_t* device) {}
+            void BeginFrame(device_t* device) {}
+            void EndFrame(device_t* device) { ++device->m_frameID; }
 
             bool DumpMemoryStats(device_t* device, const char* file) { return false; }
 

@@ -34,7 +34,6 @@ namespace ncore
             void                Destroy(ngfx::device_t* device, ngfx::shader_t* shader);
             bool                Create(ngfx::device_t* device, ngfx::shader_t* shader, byte* data_ptr, u32 data_len);
             u64                 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader);
-            MTL::Function*      GetHandle(ngfx::device_t const* device, const ngfx::shader_t* shader);
             shader_reflection_t GetReflection(ngfx::device_t const* device, const ngfx::shader_t* shader);
         }  // namespace nmetal
 #else

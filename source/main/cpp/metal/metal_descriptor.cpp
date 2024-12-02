@@ -43,7 +43,7 @@ namespace ncore
         //     if (m_pResource->IsTexture())
         //     {
         //         const texture_desc_t& textureDesc = ((texture_t*)m_pResource)->GetDesc();
-        //         levelRange                        = NS::Range(m_desc.texture.mip_slice, m_desc.texture.mip_levels == GFX_ALL_SUB_RESOURCE ? textureDesc.mip_levels - m_desc.texture.mip_slice : m_desc.texture.mip_levels);
+        //         levelRange                        = NS::Range(m_desc.texture.mip_slice, m_desc.texture.mip_levels == constants::CALL_SUB_RESOURCE ? textureDesc.mip_levels - m_desc.texture.mip_slice : m_desc.texture.mip_levels);
 
         //         texture = (MTL::Texture*)m_pResource->GetHandle();
         //     }
@@ -350,7 +350,7 @@ namespace ncore
             {
                 nmetal::srv_texture_t* srv = CreateComponent<descriptor_t, srv_texture_t>(device, descriptor);
                 srv->m_base.m_desc         = desc;
-                srv->m_base.m_heapIndex    = GFX_INVALID_RESOURCE;
+                srv->m_base.m_heapIndex    = constants::CINVALID_RESOURCE;
                 srv->m_base.m_textureView  = nullptr;
 
                 nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, texture);
@@ -361,7 +361,7 @@ namespace ncore
             {
                 nmetal::srv_buffer_t* srv = CreateComponent<descriptor_t, srv_buffer_t>(device, descriptor);
                 srv->m_base.m_desc        = desc;
-                srv->m_base.m_heapIndex   = GFX_INVALID_RESOURCE;
+                srv->m_base.m_heapIndex   = constants::CINVALID_RESOURCE;
                 srv->m_base.m_textureView = nullptr;
 
                 nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
@@ -372,7 +372,7 @@ namespace ncore
             {
                 nmetal::srv_tlas_t* srv   = CreateComponent<descriptor_t, srv_tlas_t>(device, descriptor);
                 srv->m_base.m_desc        = desc;
-                srv->m_base.m_heapIndex   = GFX_INVALID_RESOURCE;
+                srv->m_base.m_heapIndex   = constants::CINVALID_RESOURCE;
                 srv->m_base.m_textureView = nullptr;
                 srv->m_tlas               = GetComponent<ngfx::tlas_t, nmetal::mtlas_t>(device, tlas);
             }
@@ -381,7 +381,7 @@ namespace ncore
             {
                 nmetal::uav_texture_t* uav = CreateComponent<descriptor_t, uav_texture_t>(device, descriptor);
                 uav->m_base.m_desc         = desc;
-                uav->m_base.m_heapIndex    = GFX_INVALID_RESOURCE;
+                uav->m_base.m_heapIndex    = constants::CINVALID_RESOURCE;
                 uav->m_base.m_textureView  = nullptr;
 
                 nmetal::mtexture_t* mtexture = GetComponent<ngfx::texture_t, nmetal::mtexture_t>(device, buffer);
@@ -392,7 +392,7 @@ namespace ncore
             {
                 nmetal::uav_buffer_t* uav = CreateComponent<descriptor_t, uav_buffer_t>(device, descriptor);
                 uav->m_base.m_desc        = desc;
-                uav->m_base.m_heapIndex   = GFX_INVALID_RESOURCE;
+                uav->m_base.m_heapIndex   = constants::CINVALID_RESOURCE;
                 uav->m_base.m_textureView = nullptr;
 
                 nmetal::mbuffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
@@ -403,7 +403,7 @@ namespace ncore
             {
                 nmetal::cbv_t* cbv = CreateComponent<descriptor_t, cbv_t>(device, descriptor);
                 cbv->m_desc        = desc;
-                cbv->m_heapIndex   = GFX_INVALID_RESOURCE;
+                cbv->m_heapIndex   = constants::CINVALID_RESOURCE;
                 cbv->m_buffer      = GetComponent<ngfx::buffer_t, nmetal::mbuffer_t>(device, buffer);
             }
 
@@ -411,7 +411,7 @@ namespace ncore
             {
                 nmetal::sampler_t* sampler = CreateComponent<descriptor_t, sampler_t>(device, descriptor);
                 sampler->m_desc            = desc;
-                sampler->m_heapIndex       = GFX_INVALID_RESOURCE;
+                sampler->m_heapIndex       = constants::CINVALID_RESOURCE;
                 sampler->m_pSampler        = nullptr;
             }
 
@@ -525,7 +525,7 @@ namespace ncore
                         MTL::PixelFormat format = ToPixelFormat(desc.format);
                         NS::Range        levelRange(0, 1);
 
-                        levelRange = NS::Range(desc.texture.mip_slice, desc.texture.mip_levels == GFX_ALL_SUB_RESOURCE ? textureDesc.mip_levels - desc.texture.mip_slice : desc.texture.mip_levels);
+                        levelRange = NS::Range(desc.texture.mip_slice, desc.texture.mip_levels == constants::CALL_SUB_RESOURCE ? textureDesc.mip_levels - desc.texture.mip_slice : desc.texture.mip_levels);
 
                         switch (desc.type)
                         {
@@ -841,43 +841,43 @@ namespace ncore
 
             u32 GetHeapIndex(ngfx::device_t* device, ngfx::descriptor_t* d)
             {
-                u32 heapIndex = GFX_INVALID_RESOURCE;
+                u32 heapIndex = constants::CINVALID_RESOURCE;
                 switch (d->m_type)
                 {
                     case enums::DescriptorTypeSrvTexture:
                         {
                             nmetal::srv_texture_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_texture_t>(device, d);
-                            heapIndex                  = (srv != nullptr) ? srv->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex                  = (srv != nullptr) ? srv->m_base.m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                     case enums::DescriptorTypeSrvBuffer:
                         {
                             nmetal::srv_buffer_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_buffer_t>(device, d);
-                            heapIndex                 = (srv != nullptr) ? srv->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex                 = (srv != nullptr) ? srv->m_base.m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                     case enums::DescriptorTypeUavTexture:
                         {
                             nmetal::uav_texture_t* uav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(device, d);
-                            heapIndex                  = (uav != nullptr) ? uav->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex                  = (uav != nullptr) ? uav->m_base.m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                     case enums::DescriptorTypeUavBuffer:
                         {
                             nmetal::uav_buffer_t* uav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(device, d);
-                            heapIndex                 = (uav != nullptr) ? uav->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex                 = (uav != nullptr) ? uav->m_base.m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                     case enums::DescriptorTypeCbv:
                         {
                             nmetal::cbv_t* cbv = GetComponent<ngfx::descriptor_t, nmetal::cbv_t>(device, d);
-                            heapIndex          = (cbv != nullptr) ? cbv->m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex          = (cbv != nullptr) ? cbv->m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                     case enums::DescriptorTypeSampler:
                         {
                             nmetal::sampler_t* sampler = GetComponent<ngfx::descriptor_t, nmetal::sampler_t>(device, d);
-                            heapIndex                  = (sampler != nullptr) ? sampler->m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex                  = (sampler != nullptr) ? sampler->m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                     case enums::DescriptorTypeSrvRayTracingTLAS:
                         {
                             nmetal::srv_tlas_t* srv = GetComponent<ngfx::descriptor_t, nmetal::srv_tlas_t>(device, d);
-                            heapIndex               = (srv != nullptr) ? srv->m_base.m_heapIndex : GFX_INVALID_RESOURCE;
+                            heapIndex               = (srv != nullptr) ? srv->m_base.m_heapIndex : constants::CINVALID_RESOURCE;
                         }
                 }
                 return heapIndex;

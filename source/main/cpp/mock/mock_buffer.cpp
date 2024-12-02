@@ -40,7 +40,6 @@ namespace ncore
                 return true;
             }
 
-            void* GetHandle(device_t* device, ngfx::buffer_t* buffer) { return nullptr; }
             void* GetCpuAddress(device_t* device, ngfx::buffer_t* buffer)
             {
                 nmock::buffer_t* mbuffer = GetComponent<ngfx::buffer_t, nmock::buffer_t>(device, buffer);

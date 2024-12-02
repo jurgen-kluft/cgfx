@@ -10,8 +10,6 @@ namespace ncore
             heap_t* CreateHeap(device_t* pDevice, heap_t* heap) { return heap; }
             bool    Create(device_t* pDevice, heap_t* pHeap) { return true; }
             void    Destroy(device_t* pDevice, heap_t* pHeap) {}
-            void*   GetHandle(device_t* pDevice, const heap_t* pHeap) { return nullptr; }
         }  // namespace nmock
-
     }  // namespace ngfx
 }  // namespace ncore

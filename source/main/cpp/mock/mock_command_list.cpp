@@ -18,7 +18,6 @@ namespace ncore
             }
 
             bool  Create(ngfx::command_list_t* cmdList) { return true; }
-            void* GetHandle(ngfx::command_list_t* cmdList) { return nullptr; }
             void  ResetAllocator(ngfx::command_list_t* cmdList) {}
             void  Begin(ngfx::command_list_t* cmdList) {}
             void  End(ngfx::command_list_t* cmdList) {}

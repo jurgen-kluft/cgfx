@@ -40,16 +40,5 @@ namespace ncore
             }
         }
 
-        void* GetHandle(ngfx::device_t* device, ngfx::tlas_t* tlas)
-        {
-            switch (device->m_desc.backend)
-            {
-                case enums::Backend_D3D12: return nd3d12::GetHandle(device, tlas);
-                case enums::Backend_Metal: return nmetal::GetHandle(device, tlas);
-                case enums::Backend_Mock: return nmock::GetHandle(device, tlas);
-            }
-            return nullptr;
-        }
-
     }  // namespace ngfx
 }  // namespace ncore

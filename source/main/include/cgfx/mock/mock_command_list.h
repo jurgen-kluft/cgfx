@@ -14,7 +14,6 @@ namespace ncore
             ngfx::command_list_t* CreateCommandList(ngfx::command_list_t* cmdList);
             bool                  Create(ngfx::command_list_t*);
             void                  Destroy(ngfx::command_list_t*);
-            void*                 GetHandle(ngfx::command_list_t*);
 
             void ResetAllocator(ngfx::command_list_t* commandList);
             void Begin(ngfx::command_list_t* commandList);

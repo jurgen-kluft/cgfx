@@ -26,7 +26,6 @@ namespace ncore
             void                 DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap);
             bool                 Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
             void                 Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            void*                GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
         }  // namespace nd3d12
 #else
         namespace nd3d12
@@ -35,7 +34,6 @@ namespace ncore
             inline void  DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
             inline bool  Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
             inline void  Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
-            inline void* GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return nullptr; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

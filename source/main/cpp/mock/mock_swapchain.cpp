@@ -56,8 +56,6 @@ namespace ncore
 
             void Present(device_t* device, ngfx::swapchain_t* sc) {}
 
-            void* GetHandle(device_t* device, ngfx::swapchain_t* sc) { return nullptr; }
-
             void AcquireNextBackBuffer(device_t* device, ngfx::swapchain_t* sc)
             {
                 nmock::swapchain_t* msc  = ngfx::GetComponent<ngfx::swapchain_t, nmock::swapchain_t>(device, sc);

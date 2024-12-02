@@ -19,13 +19,4 @@
 #include "cgfx/gfx_rt_blas.h"
 #include "cgfx/gfx_rt_tlas.h"
 
-namespace ncore
-{
-    namespace ngfx
-    {
-        device_t* CreateDevice(alloc_t* allocator, const device_desc_t& desc);
-
-    }  // namespace ngfx
-}  // namespace ncore
-
 #endif

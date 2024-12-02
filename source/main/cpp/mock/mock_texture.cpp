@@ -17,7 +17,6 @@ namespace ncore
             bool Create(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return true; }
             void Destroy(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) {}
 
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return nullptr; }
             u32   GetRequiredStagingBufferSize(ngfx::device_t* pDevice, ngfx::texture_t* pTexture) { return ngfx::GetAllocationSize(pDevice, pTexture->m_desc); }
 
             u32 GetRowPitch(ngfx::device_t* pDevice, ngfx::texture_t* pTexture, u32 mip_level)

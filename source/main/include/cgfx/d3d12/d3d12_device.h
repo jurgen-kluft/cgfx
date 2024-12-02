@@ -94,7 +94,6 @@ namespace ncore
             void  CreateDevice(ngfx::device_t* device, u32 max_instances);
             bool  Create(ngfx::device_t* device);
             void  Destroy(ngfx::device_t* device);
-            void* GetHandle(ngfx::device_t* device);
             void  BeginFrame(ngfx::device_t* device);
             void  EndFrame(ngfx::device_t* device);
 
@@ -154,7 +153,6 @@ namespace ncore
             inline void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
             inline bool  Create(ngfx::device_t* device) { return false; }
             inline void  Destroy(ngfx::device_t* device) {}
-            inline void* GetHandle(ngfx::device_t* device) { return nullptr; }
             inline void  BeginFrame(ngfx::device_t* device) {}
             inline void  EndFrame(ngfx::device_t* device) {}
 

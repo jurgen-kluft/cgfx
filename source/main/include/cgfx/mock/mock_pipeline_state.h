@@ -35,10 +35,7 @@ namespace ncore
             ngfx::pipeline_state_t* CreateComputePipelineState(device_t* device, pipeline_state_t* ps, const compute_pipeline_desc_t& desc);
             bool                    Create(device_t* device, ngfx::pipeline_state_t* ps);
             void                    Destroy(device_t* device, ngfx::pipeline_state_t* ps);
-            void*                   GetHandle(device_t* device, ngfx::pipeline_state_t* ps);
-
         }  // namespace nmock
-
     }  // namespace ngfx
 }  // namespace ncore
 #endif

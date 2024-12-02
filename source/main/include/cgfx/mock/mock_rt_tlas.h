@@ -12,7 +12,6 @@ namespace ncore
             ngfx::tlas_t* CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void          Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
             bool          Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            void*         GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

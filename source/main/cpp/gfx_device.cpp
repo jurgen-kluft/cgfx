@@ -95,17 +95,6 @@ namespace ncore
             return false;
         }
 
-        void* GetHandle(device_t* device)
-        {
-            switch (device->m_desc.backend)
-            {
-                case enums::Backend_D3D12: return nd3d12::GetHandle(device);
-                case enums::Backend_Metal: return nmetal::GetHandle(device);
-                case enums::Backend_Mock: return nmock::GetHandle(device);
-            }
-            return nullptr;
-        }
-
         void BeginFrame(device_t* device)
         {
             switch (device->m_desc.backend)

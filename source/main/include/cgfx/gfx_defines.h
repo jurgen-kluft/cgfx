@@ -44,6 +44,10 @@ namespace ncore
             static const u32 CMAX_SAMPLER_DESCRIPTOR_COUNT  = 128;
 
             static const f32 CFLOAT_MAX = 3.402823466e+38F;
+
+            static const u32 CALL_SUB_RESOURCE = 0xFFFFFFFF;
+            static const u32 CINVALID_RESOURCE = 0xFFFFFFFF;
+
         }  // namespace constants
 
         namespace enums
@@ -572,9 +576,6 @@ namespace ncore
             };
 
         }  // namespace enums
-
-        static const u32 GFX_ALL_SUB_RESOURCE = 0xFFFFFFFF;
-        static const u32 GFX_INVALID_RESOURCE = 0xFFFFFFFF;
 
         struct device_desc_t
         {

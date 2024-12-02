@@ -33,7 +33,6 @@ namespace ncore
 
         device_t* CreateDevice(alloc_t* main_alloc, stack_alloc_t* stack_alloc, frame_alloc_t* frame_alloc, const device_desc_t& desc);
         bool      Create(device_t* device);
-        void*     GetHandle(device_t* device);
         void      BeginFrame(device_t* device);
         void      EndFrame(device_t* device);
 

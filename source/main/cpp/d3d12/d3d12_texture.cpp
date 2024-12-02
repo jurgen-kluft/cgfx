@@ -124,12 +124,6 @@ namespace ncore
                 }
             }
 
-            ID3D12Resource* GetHandle(ngfx::device_t* device, ngfx::texture_t* texture)
-            {
-                nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);
-                return dxtexture->m_pTexture;
-            }
-
             u32 GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::texture_t* texture)
             {
                 nd3d12::texture_t* dxtexture = GetComponent<ngfx::texture_t, nd3d12::texture_t>(device, texture);

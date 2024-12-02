@@ -23,7 +23,7 @@ namespace ncore
             struct srv_base_t
             {
                 MTL::Texture* m_textureView;
-                u32           m_heapIndex = GFX_INVALID_RESOURCE;
+                u32           m_heapIndex = constants::CINVALID_RESOURCE;
                 srv_desc_t    m_desc      = {};
             };
 
@@ -54,7 +54,7 @@ namespace ncore
             struct uav_base_t
             {
                 MTL::Texture*    m_textureView;
-                u32              m_heapIndex = GFX_INVALID_RESOURCE;
+                u32              m_heapIndex = constants::CINVALID_RESOURCE;
                 ngfx::uav_desc_t m_desc      = {};
             };
 
@@ -78,7 +78,7 @@ namespace ncore
             {
                 D_GFX_CS_COMPONENT_SET(enums::ComponentMetalDescriptorCbv);
                 nmetal::mbuffer_t* m_buffer;
-                u32                m_heapIndex = GFX_INVALID_RESOURCE;
+                u32                m_heapIndex = constants::CINVALID_RESOURCE;
                 ngfx::cbv_desc_t   m_desc      = {};
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
@@ -87,7 +87,7 @@ namespace ncore
             {
                 D_GFX_CS_COMPONENT_SET(enums::ComponentMetalDescriptorSampler);
                 MTL::SamplerState*   m_pSampler  = nullptr;
-                u32                  m_heapIndex = GFX_INVALID_RESOURCE;
+                u32                  m_heapIndex = constants::CINVALID_RESOURCE;
                 ngfx::sampler_desc_t m_desc;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
@@ -100,9 +100,9 @@ namespace ncore
             void CreateCbv(ngfx::device_t* pDevice, descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc);
             void CreateSampler(ngfx::device_t* pDevice, descriptor_t* descriptor, const sampler_desc_t& desc);
 
-            void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
-            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d);
+            void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor);
+            bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor);
+            u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor);
         }  // namespace nmetal
 #else
         namespace nmetal
@@ -115,9 +115,9 @@ namespace ncore
             inline void CreateCbv(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, buffer_t* buffer, const cbv_desc_t& desc) {}
             inline void CreateSampler(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor, const sampler_desc_t& desc) {}
 
-            inline void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d) {}
-            inline bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return true; }
-            inline u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return GFX_INVALID_RESOURCE; }
+            inline void Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor) {}
+            inline bool Create(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor) { return true; }
+            inline u32  GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* descriptor) { return constants::CINVALID_RESOURCE; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

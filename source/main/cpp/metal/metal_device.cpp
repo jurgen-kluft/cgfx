@@ -301,7 +301,7 @@ namespace ncore
 
             void FreeResourceDescriptor(ngfx::device_t* device, u32 index)
             {
-                if (index != GFX_INVALID_RESOURCE)
+                if (index != constants::CINVALID_RESOURCE)
                 {
                     nmetal::device_t* mdevice                                                               = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     mdevice->m_resDescriptorDeletionQueueFirst[mdevice->m_resDescriptorDeletionQueueCount]  = index;
@@ -312,7 +312,7 @@ namespace ncore
 
             void FreeSamplerDescriptor(ngfx::device_t* device, u32 index)
             {
-                if (index != GFX_INVALID_RESOURCE)
+                if (index != constants::CINVALID_RESOURCE)
                 {
                     nmetal::device_t* mdevice                                                                       = GetComponent<ngfx::device_t, nmetal::device_t>(device, device);
                     mdevice->m_samplerDescriptorDeletionQueueFirst[mdevice->m_samplerDescriptorDeletionQueueCount]  = index;

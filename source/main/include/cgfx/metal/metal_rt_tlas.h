@@ -32,7 +32,6 @@ namespace ncore
             void                        CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas);
             void                        Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas);
             bool                        Create(ngfx::device_t* device, ngfx::tlas_t* tlas);
-            MTL::AccelerationStructure* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
             void                        UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count);
         }  // namespace nmetal
 #else
@@ -41,7 +40,6 @@ namespace ncore
             inline void  CreateRayTracingTLAS(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
             inline void  Destroy(ngfx::device_t* device, ngfx::tlas_t* tlas) {}
             inline bool  Create(ngfx::device_t* device, ngfx::tlas_t* tlas) { return false; }
-            inline void* GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas) { return nullptr; }
             inline void  UpdateInstance(ngfx::device_t* device, ngfx::tlas_t* tlas, const rt_instance_t* instances, u32 instance_count) {}
         }  // namespace nmetal
 #endif

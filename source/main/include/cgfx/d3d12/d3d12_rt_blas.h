@@ -34,7 +34,6 @@ namespace ncore
             void  DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
             void  GetUpdateDesc(ngfx::device_t* device, ngfx::blas_t* blas, nd3d12::blas_t* dxblas, D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC& desc, D3D12_RAYTRACING_GEOMETRY_DESC& geometry, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nd3d12
 #else
@@ -44,7 +43,6 @@ namespace ncore
             inline void  DestroyRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
             inline void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
             inline bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
-            inline void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
         }  // namespace nd3d12
 #endif
     }  // namespace ngfx

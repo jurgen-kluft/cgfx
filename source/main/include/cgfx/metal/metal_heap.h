@@ -23,19 +23,17 @@ namespace ncore
             };
 
             void CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap);
-            void          DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            bool          Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            void          Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
-            MTL::Heap*    GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            bool Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
+            void Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap);
         }  // namespace nmetal
 #else
         namespace nmetal
         {
-            inline void       CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
-            inline void       DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
-            inline bool       Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
-            inline void       Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
-            inline void*      GetHandle(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return nullptr; }
+            inline void  CreateHeap(ngfx::device_t* pDevice, ngfx::heap_t* heap) {}
+            inline void  DestroyHeap(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
+            inline bool  Create(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) { return false; }
+            inline void  Destroy(ngfx::device_t* pDevice, ngfx::heap_t* pHeap) {}
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

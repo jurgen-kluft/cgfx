@@ -35,7 +35,7 @@ namespace ncore
         {
             D3D12_CPU_DESCRIPTOR_HANDLE cpu_handle = {};
             D3D12_GPU_DESCRIPTOR_HANDLE gpu_handle = {};
-            u32                         index      = GFX_INVALID_RESOURCE;
+            u32                         index      = constants::CINVALID_RESOURCE;
         };
 
         inline bool IsNullDescriptor(const D3D12Descriptor& descriptor) { return descriptor.cpu_handle.ptr == 0 && descriptor.gpu_handle.ptr == 0; }

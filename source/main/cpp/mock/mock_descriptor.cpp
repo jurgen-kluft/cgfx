@@ -59,7 +59,6 @@ namespace ncore
 
             void  Destroy(ngfx::device_t* pDevice, ngfx::descriptor_t* d) {}
             bool  Create(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return true; }
-            void* GetHandle(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return nullptr; }
             u32   GetHeapIndex(ngfx::device_t* pDevice, ngfx::descriptor_t* d) { return 0; }
 
         }  // namespace nmock

@@ -52,11 +52,10 @@ namespace ncore
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
 
-            void CreateCommandList(ngfx::command_list_t*);
+            void CreateCommandList(ngfx::command_list_t* cmdList);
 
-            bool                Create(ngfx::command_list_t*);
-            void                Destroy(ngfx::command_list_t*);
-            MTL::CommandBuffer* GetHandle(ngfx::command_list_t*);
+            bool                Create(ngfx::command_list_t* cmdList);
+            void                Destroy(ngfx::command_list_t* cmdList);
 
             void ResetAllocator(ngfx::command_list_t* cmdList);
             void Begin(ngfx::command_list_t* cmdList);
@@ -128,7 +127,6 @@ namespace ncore
 
             inline bool  Create(ngfx::command_list_t*) { return false; }
             inline void  Destroy(ngfx::command_list_t*) {}
-            inline void* GetHandle(ngfx::command_list_t*) { return nullptr; }
 
             inline void ResetAllocator(ngfx::command_list_t* cmdList) {}
             inline void Begin(ngfx::command_list_t* cmdList) {}

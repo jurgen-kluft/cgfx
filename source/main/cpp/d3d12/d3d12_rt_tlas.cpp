@@ -115,7 +115,6 @@ namespace ncore
                 dxtlas->m_nCurrentInstanceBufferOffset = math::g_roundUpPow2(dxtlas->m_nCurrentInstanceBufferOffset, D3D12_RAYTRACING_INSTANCE_DESCS_BYTE_ALIGNMENT);
             }
 
-            void*                     GetHandle(ngfx::device_t* device, const ngfx::tlas_t* tlas);
             D3D12_GPU_VIRTUAL_ADDRESS GetGpuAddress(ngfx::device_t* device, const ngfx::tlas_t* tlas);
         }  // namespace nd3d12
 #endif

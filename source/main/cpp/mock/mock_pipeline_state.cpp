@@ -84,30 +84,6 @@ namespace ncore
                         break;
                 }
             }
-
-            void* GetHandle(device_t* device, ngfx::pipeline_state_t* ps)
-            {
-                switch (ps->m_type)
-                {
-                    case enums::PipelineGraphics:
-                        {
-                            graphics_ps_t* gpstate = GetComponent<pipeline_state_t, graphics_ps_t>(device, ps);
-                            break;
-                        }
-                    case enums::PipelineMeshShading:
-                        {
-                            mesh_shading_ps_t* mspstate = GetComponent<pipeline_state_t, mesh_shading_ps_t>(device, ps);
-                            break;
-                        }
-                    case enums::PipelineCompute:
-                        {
-                            compute_ps_t* cpstate = GetComponent<pipeline_state_t, compute_ps_t>(device, ps);
-                            break;
-                        }
-                }
-                return nullptr;
-            }
-
         }  // namespace nmock
     }  // namespace ngfx
 }  // namespace ncore

@@ -53,7 +53,6 @@ namespace ncore
             void EndFrame(ngfx::device_t* device);
 
             // TODO: investigate if these functions can just accept 'nmetal::device_t* mdevice' instead of 'ngfx::device_t* device'
-            MTL::Device* GetHandle(ngfx::device_t* device);
             u64          AllocateConstantBuffer(ngfx::device_t* device, const void* data, size_t data_size);
             u32          AllocateResourceDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
             u32          AllocateSamplerDescriptor(ngfx::device_t* device, IRDescriptorTableEntry** descriptor);
@@ -72,7 +71,6 @@ namespace ncore
             inline void  CreateDevice(ngfx::device_t* device, u32 max_instances) {}
             inline bool  Create(ngfx::device_t* device) { return false; }
             inline void  Destroy(ngfx::device_t* device) {}
-            inline void* GetHandle(ngfx::device_t* device) { return nullptr; }
             inline void  BeginFrame(ngfx::device_t* device) {}
             inline void  EndFrame(ngfx::device_t* device) {}
 

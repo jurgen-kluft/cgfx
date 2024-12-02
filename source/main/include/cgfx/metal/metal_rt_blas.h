@@ -29,7 +29,6 @@ namespace ncore
             void                        CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             void                        Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
             bool                        Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS);
-            MTL::AccelerationStructure* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS);
             void                        UpdateVertexBuffer(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS, buffer_t* vertex_buffer, u32 vertex_buffer_offset);
         }  // namespace nmetal
 #else
@@ -38,7 +37,6 @@ namespace ncore
             inline void  CreateRayTracingBLAS(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
             inline void  Destroy(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) {}
             inline bool  Create(ngfx::device_t* pDevice, ngfx::blas_t* pBLAS) { return false; }
-            inline void* GetHandle(ngfx::device_t* pDevice, ngfx::blas_t const* pBLAS) { return nullptr; }
         }  // namespace nmetal
 #endif
     }  // namespace ngfx

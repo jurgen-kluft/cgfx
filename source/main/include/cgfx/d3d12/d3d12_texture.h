@@ -34,7 +34,6 @@ namespace ncore
             void                      DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture);
             bool                      Create(ngfx::device_t* device, ngfx::texture_t* texture);
             void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture);
-            ID3D12Resource*           GetHandle(ngfx::device_t* device, ngfx::texture_t* texture);
             u32                       GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::texture_t* texture);
             u32                       GetRowPitch(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_level = 0);
             tiling_desc_t             GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture);
@@ -53,7 +52,6 @@ namespace ncore
             inline void                      DestroyTexture(ngfx::device_t* device, ngfx::texture_t* texture) {}
             inline bool                      Create(ngfx::device_t* device, ngfx::texture_t* texture) { return false; }
             inline void                      Destroy(ngfx::device_t* device, ngfx::texture_t* texture) {}
-            inline void*                     GetHandle(ngfx::device_t* device, ngfx::texture_t* texture) { return nullptr; }
             inline u32                       GetRequiredStagingBufferSize(ngfx::device_t* device, ngfx::texture_t* texture) { return 0; }
             inline u32                       GetRowPitch(ngfx::device_t* device, ngfx::texture_t* texture, u32 mip_level = 0) { return 0; }
             inline tiling_desc_t             GetTilingDesc(ngfx::device_t* device, ngfx::texture_t* texture) { return {}; }

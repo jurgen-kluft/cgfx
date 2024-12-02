@@ -46,16 +46,5 @@ namespace ncore
                 case enums::Backend_Mock: nmock::Destroy(device, heap); break;
             }
         }
-
-        void* GetHandle(device_t* device, heap_t* heap)
-        {
-            switch (device->m_desc.backend)
-            {
-                case enums::Backend_D3D12: return nd3d12::GetHandle(device, heap);
-                case enums::Backend_Metal: return nmetal::GetHandle(device, heap);
-                case enums::Backend_Mock: return nmock::GetHandle(device, heap);
-            }
-            return nullptr;
-        }
     }  // namespace ngfx
 }  // namespace ncore
