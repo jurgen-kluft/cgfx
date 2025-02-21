@@ -1,7 +1,7 @@
 #ifndef __CGFX_GFX_SHADER_H__
 #define __CGFX_GFX_SHADER_H__
 
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 namespace ncore
 {

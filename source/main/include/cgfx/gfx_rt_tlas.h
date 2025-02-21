@@ -5,7 +5,7 @@
     #pragma once
 #endif
 
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 namespace ncore
 {

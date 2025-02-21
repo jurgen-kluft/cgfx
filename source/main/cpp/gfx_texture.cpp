@@ -44,9 +44,8 @@ namespace ncore
 
         texture_t* CreateTexture(device_t* device, const texture_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            texture_t*  texture  = CreateComponent<resource_t, texture_t>(device, resource);
-            texture->m_desc      = desc;
+            texture_t* texture = CreateInstance<texture_t>(device, name);
+            texture->m_desc    = desc;
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateTexture(device, texture, desc); break;
@@ -65,7 +64,7 @@ namespace ncore
                 case enums::Backend_Mock: nmock::DestroyTexture(device, texture); break;
             }
             DestroyInstance<texture_t>(device, texture);
-        }   
+        }
 
         bool Create(device_t* device, texture_t* resource)
         {

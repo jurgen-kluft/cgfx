@@ -16,7 +16,6 @@ namespace ncore
 
         struct device_t;
         struct command_list_t;
-        struct resource_t;
         struct descriptor_t;
         struct fence_t;
         struct heap_t;

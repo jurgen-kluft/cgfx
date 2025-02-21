@@ -1,5 +1,5 @@
 #include "cgfx/gfx.h"
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 #include "ccore/c_math.h"
 

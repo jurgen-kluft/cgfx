@@ -15,9 +15,9 @@ namespace ncore
     {
         descriptor_t* CreateShaderResourceView(device_t* device, texture_t* texture, const srv_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor_t* descriptor = CreateComponent<texture_t, descriptor_t>(device, texture);
             descriptor->m_type       = enums::DescriptorTypeSrvTexture;
+            AttachName(device, descriptor, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateSrv(device, descriptor, texture, desc); break;
@@ -29,9 +29,9 @@ namespace ncore
 
         descriptor_t* CreateShaderResourceView(device_t* device, buffer_t* buffer, const srv_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor_t* descriptor = CreateComponent<buffer_t, descriptor_t>(device, buffer);
             descriptor->m_type       = enums::DescriptorTypeSrvBuffer;
+            AttachName(device, descriptor, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateSrv(device, descriptor, buffer, desc); break;
@@ -43,9 +43,9 @@ namespace ncore
 
         descriptor_t* CreateShaderResourceView(device_t* device, tlas_t* tlas, const srv_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor_t* descriptor = CreateComponent<tlas_t, descriptor_t>(device, tlas);
             descriptor->m_type       = enums::DescriptorTypeSrvRayTracingTLAS;
+            AttachName(device, descriptor, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateSrv(device, descriptor, tlas, desc); break;
@@ -57,8 +57,8 @@ namespace ncore
 
         descriptor_t* CreateUnorderedAccessView(device_t* device, texture_t* texture, const uav_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            AttachName(device, texture, name);
+            descriptor_t* descriptor = CreateComponent<texture_t, descriptor_t>(device, texture);
             descriptor->m_type       = enums::DescriptorTypeUavTexture;
             switch (device->m_desc.backend)
             {
@@ -71,9 +71,9 @@ namespace ncore
 
         descriptor_t* CreateUnorderedAccessView(device_t* device, buffer_t* buffer, const uav_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor_t* descriptor = CreateComponent<buffer_t, descriptor_t>(device, buffer);
             descriptor->m_type       = enums::DescriptorTypeUavBuffer;
+            AttachName(device, descriptor, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateUav(device, descriptor, buffer, desc); break;
@@ -85,9 +85,9 @@ namespace ncore
 
         descriptor_t* CreateConstantBufferView(device_t* device, buffer_t* buffer, const cbv_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor_t* descriptor = CreateComponent<buffer_t, descriptor_t>(device, buffer);
             descriptor->m_type       = enums::DescriptorTypeCbv;
+            AttachName(device, descriptor, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateCbv(device, descriptor, buffer, desc); break;
@@ -99,9 +99,9 @@ namespace ncore
 
         descriptor_t* CreateSampler(device_t* device, const sampler_desc_t& desc, const char* name)
         {
-            resource_t*   resource   = CreateInstance<resource_t>(device, name);
-            descriptor_t* descriptor = CreateComponent<resource_t, descriptor_t>(device, resource);
+            descriptor_t* descriptor = CreateInstance<descriptor_t>(device, name);
             descriptor->m_type       = enums::DescriptorTypeSampler;
+            AttachName(device, descriptor, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateSampler(device, descriptor, desc); break;

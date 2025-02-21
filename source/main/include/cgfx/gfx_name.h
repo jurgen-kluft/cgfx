@@ -1,5 +1,5 @@
-#ifndef __CGFX_GFX_RESOURCE_H__
-#define __CGFX_GFX_RESOURCE_H__
+#ifndef __CGFX_GFX_NAMEe_H__
+#define __CGFX_GFX_NAME_H__
 #include "ccore/c_target.h"
 #ifdef USE_PRAGMA_ONCE
     #pragma once
@@ -12,12 +12,6 @@ namespace ncore
 {
     namespace ngfx
     {
-        struct resource_t
-        {
-            D_GFX_CS_COMPONENT_SET(enums::ComponentResource);
-            DCORE_CLASS_PLACEMENT_NEW_DELETE
-        };
-
         struct name_t
         {
             enum

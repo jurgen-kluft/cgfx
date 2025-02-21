@@ -10,9 +10,7 @@ namespace ncore
     {
         pipeline_state_t* CreateGraphicsPipelineState(device_t* device, const graphics_pipeline_desc_t& desc, const char* name)
         {
-            resource_t*       resource = CreateInstance<resource_t>(device, name);
-            pipeline_state_t* ps       = CreateComponent<resource_t, pipeline_state_t>(device, resource);
-
+            pipeline_state_t* ps = CreateInstance<pipeline_state_t>(device, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateGraphicsPipelineState(device, ps, desc); break;
@@ -24,9 +22,7 @@ namespace ncore
 
         pipeline_state_t* CreateMeshShadingPipelineState(device_t* device, const mesh_shading_pipeline_desc_t& desc, const char* name)
         {
-            resource_t*       resource = CreateInstance<resource_t>(device, name);
-            pipeline_state_t* ps       = CreateComponent<resource_t, pipeline_state_t>(device, resource);
-
+            pipeline_state_t* ps = CreateInstance<pipeline_state_t>(device, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateMeshShadingPipelineState(device, ps, desc); break;
@@ -38,9 +34,7 @@ namespace ncore
 
         pipeline_state_t* CreateComputePipelineState(device_t* device, const compute_pipeline_desc_t& desc, const char* name)
         {
-            resource_t*       resource = CreateInstance<resource_t>(device, name);
-            pipeline_state_t* ps       = CreateComponent<resource_t, pipeline_state_t>(device, resource);
-
+            pipeline_state_t* ps = CreateInstance<pipeline_state_t>(device, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateComputePipelineState(device, ps, desc); break;
@@ -70,7 +64,6 @@ namespace ncore
                 case enums::Backend_Mock: nmock::Destroy(device, ps); break;
             }
         }
-
 
     }  // namespace ngfx
 }  // namespace ncore

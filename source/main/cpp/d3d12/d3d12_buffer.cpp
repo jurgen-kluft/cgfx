@@ -14,10 +14,7 @@ namespace ncore
     {
         namespace nd3d12
         {
-            void CreateBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer)
-            {
-                nd3d12::buffer_t* dxbuffer = CreateComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer);
-            }
+            void CreateBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer) { nd3d12::buffer_t* dxbuffer = CreateComponent<ngfx::buffer_t, nd3d12::buffer_t>(device, buffer); }
 
             void DestroyBuffer(ngfx::device_t* device, ngfx::buffer_t* buffer)
             {
@@ -47,7 +44,7 @@ namespace ncore
                     ASSERT(buffer->m_desc.size + buffer->m_desc.heap_offset <= buffer->m_desc.heap->m_desc.size);
 
                     nd3d12::heap_t* dxHeap = GetComponent<ngfx::heap_t, nd3d12::heap_t>(device, buffer->m_desc.heap);
-                    hr = pAllocator->CreateAliasingResource2(dxHeap->m_pAllocation, buffer->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxbuffer->m_pBuffer));
+                    hr                     = pAllocator->CreateAliasingResource2(dxHeap->m_pAllocation, buffer->m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&dxbuffer->m_pBuffer));
                 }
                 else
                 {
@@ -109,57 +106,7 @@ namespace ncore
                 dxdevice->m_pDevice->GetCopyableFootprints(&desc, 0, 1, 0, nullptr, nullptr, nullptr, &size);
                 return (u32)size;
             }
-
         }  // namespace nd3d12
-
-        //         bool D3D12Buffer::Create()
-        //         {
-        //             D3D12MA::Allocator* pAllocator = ((D3D12Device*)m_pDevice)->GetResourceAllocator();
-        //             D3D12_RESOURCE_FLAGS flags         = (m_desc.usage & GfxBufferUsageUnorderedAccess) ? D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS : D3D12_RESOURCE_FLAG_NONE;
-        //             D3D12_RESOURCE_DESC1 resourceDesc1 = CD3DX12_RESOURCE_DESC1::Buffer(m_desc.size, flags);
-
-        //             D3D12_BARRIER_LAYOUT initial_layout = D3D12_BARRIER_LAYOUT_UNDEFINED;
-
-        //             HRESULT hr;
-
-        //             if (m_desc.heap != nullptr)
-        //             {
-        //                 ASSERT(m_desc.alloc_type == GfxAllocationType::Placed);
-        //                 ASSERT(m_desc.memory_type == m_desc.heap->GetDesc().memory_type);
-        //                 ASSERT(m_desc.size + m_desc.heap_offset <= m_desc.heap->GetDesc().size);
-
-        //                 hr = pAllocator->CreateAliasingResource2((D3D12MA::Allocation*)m_desc.heap->GetHandle(), m_desc.heap_offset, &resourceDesc1, initial_layout, nullptr, 0, nullptr, IID_PPV_ARGS(&m_pBuffer));
-        //             }
-        //             else
-        //             {
-        //                 D3D12MA::ALLOCATION_DESC allocationDesc = {};
-        //                 allocationDesc.HeapType                 = d3d12_heap_type(m_desc.memory_type);
-        //                 allocationDesc.Flags                    = m_desc.alloc_type == GfxAllocationType::Committed ? D3D12MA::ALLOCATION_FLAG_COMMITTED : D3D12MA::ALLOCATION_FLAG_NONE;
-
-        //                 hr = pAllocator->CreateResource3(&allocationDesc, &resourceDesc1, initial_layout, nullptr, 0, nullptr, &m_pAllocation, IID_PPV_ARGS(&m_pBuffer));
-        //             }
-
-        //             if (FAILED(hr))
-        //             {
-        //                 // RE_ERROR("[D3D12Buffer] failed to create {}", m_name);
-        //                 return false;
-        //             }
-
-        //             eastl::wstring name_wstr = string_to_wstring(m_name);
-        //             m_pBuffer->SetName(name_wstr.c_str());
-        //             if (m_pAllocation)
-        //             {
-        //                 m_pAllocation->SetName(name_wstr.c_str());
-        //             }
-
-        //             if (m_desc.memory_type != GfxMemoryType::GpuOnly)
-        //             {
-        //                 CD3DX12_RANGE readRange(0, 0);
-        //                 m_pBuffer->Map(0, &readRange, reinterpret_cast<void**>(&m_pCpuAddress));
-        //             }
-        //             return true;
-        //         }
-
     }  // namespace ngfx
 }  // namespace ncore
 

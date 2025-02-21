@@ -1,5 +1,5 @@
 #include "cgfx/gfx.h"
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 #include "cgfx/d3d12/d3d12_shader.h"
 #include "cgfx/metal/metal_shader.h"
@@ -14,8 +14,7 @@ namespace ncore
     {
         shader_t* CreateShader(device_t* device, const shader_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            shader_t*   shader   = CreateComponent<resource_t, shader_t>(device, resource);
+            shader_t*   shader   = CreateInstance<shader_t>(device, name);
             shader->m_desc       = desc;
 
             switch (device->m_desc.backend)

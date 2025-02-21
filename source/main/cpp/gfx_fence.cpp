@@ -15,8 +15,7 @@ namespace ncore
     {
         fence_t* CreateFence(device_t* device, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            fence_t*    fence    = CreateComponent<resource_t, fence_t>(device, resource);
+            fence_t* fence = CreateInstance<fence_t>(device, name);
             return fence;
         }
 
@@ -34,9 +33,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::Wait(device,fence, value); break;
-                case enums::Backend_Metal: nmetal::Wait(device,fence, value); break;
-                case enums::Backend_Mock: nmock::Wait(device,fence, value); break;
+                case enums::Backend_D3D12: nd3d12::Wait(device, fence, value); break;
+                case enums::Backend_Metal: nmetal::Wait(device, fence, value); break;
+                case enums::Backend_Mock: nmock::Wait(device, fence, value); break;
             }
         }
 
@@ -44,9 +43,9 @@ namespace ncore
         {
             switch (device->m_desc.backend)
             {
-                case enums::Backend_D3D12: nd3d12::Signal(device,fence, value); break;
-                case enums::Backend_Metal: nmetal::Signal(device,fence, value); break;
-                case enums::Backend_Mock: nmock::Signal(device,fence, value); break;
+                case enums::Backend_D3D12: nd3d12::Signal(device, fence, value); break;
+                case enums::Backend_Metal: nmetal::Signal(device, fence, value); break;
+                case enums::Backend_Mock: nmock::Signal(device, fence, value); break;
             }
         }
 

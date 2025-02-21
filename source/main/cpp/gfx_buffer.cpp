@@ -15,8 +15,7 @@ namespace ncore
     {
         buffer_t* CreateBuffer(device_t* device, const buffer_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            buffer_t*   buffer   = CreateComponent<resource_t, buffer_t>(device, resource);
+            buffer_t*   buffer   = CreateInstance<buffer_t>(device, name);
             buffer->m_desc       = desc;
             switch (device->m_desc.backend)
             {

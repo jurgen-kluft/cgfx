@@ -6,7 +6,7 @@
 #endif
 
 #include "cgfx/gfx_defines.h"
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 #include "callocator/c_allocator_cs.h"
 #include "callocator/c_allocator_stack.h"

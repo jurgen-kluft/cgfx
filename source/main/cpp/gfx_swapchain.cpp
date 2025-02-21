@@ -17,9 +17,8 @@ namespace ncore
     {
         swapchain_t* CreateSwapchain(device_t* device, const swapchain_desc_t& desc, const char* name)
         {
-            resource_t*  resource = CreateInstance<resource_t>(device, name);
-            swapchain_t* sc       = CreateComponent<resource_t, swapchain_t>(device, resource);
-            sc->m_desc            = desc;
+            swapchain_t* sc = CreateInstance<swapchain_t>(device, name);
+            sc->m_desc      = desc;
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateSwapchain(device, sc); break;

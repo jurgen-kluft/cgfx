@@ -15,8 +15,7 @@ namespace ncore
     {
         heap_t* CreateHeap(device_t* device, const heap_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            heap_t*     heap     = CreateComponent<resource_t, heap_t>(device, resource);
+            heap_t*     heap     = CreateInstance<heap_t>(device, name);
             switch (device->m_desc.backend)
             {
                 case enums::Backend_D3D12: nd3d12::CreateHeap(device, heap); break;

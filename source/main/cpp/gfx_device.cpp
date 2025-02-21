@@ -16,14 +16,12 @@ namespace ncore
             // - max descriptors
             // ...
             cs_alloc->register_component<name_t>(max_instances);
-            cs_alloc->register_component<resource_t>(max_instances);
             cs_alloc->register_component<device_t>(1);
             cs_alloc->register_component<texture_t>(max_instances);
             cs_alloc->register_component<buffer_t>(max_instances);
             cs_alloc->register_component<fence_t>(max_instances);
             cs_alloc->register_component<swapchain_t>(8);
             cs_alloc->register_component<command_list_t>(64);
-            cs_alloc->register_component<resource_t>(max_instances);
             cs_alloc->register_component<shader_t>(max_instances);
             cs_alloc->register_component<pipeline_state_t>(max_instances);
             cs_alloc->register_component<descriptor_t>(max_instances);
@@ -39,8 +37,7 @@ namespace ncore
             cs_alloc_t* cs_alloc = g_allocate<cs_alloc_t>(main_alloc);
             RegisterComponents(cs_alloc, max_instances);
 
-            ngfx::resource_t* device_resource = cs_alloc->new_instance<ngfx::resource_t>();
-            ngfx::device_t*   pDevice         = cs_alloc->create_component<ngfx::resource_t, ngfx::device_t>(device_resource);
+            ngfx::device_t*   pDevice         = cs_alloc->new_instance<ngfx::device_t>();
             pDevice->m_frameID                = 0;
             pDevice->m_desc                   = desc;
             pDevice->m_stack_alloc            = stack_alloc;
@@ -58,17 +55,17 @@ namespace ncore
             {
                 case enums::Backend_D3D12:
                     pDevice->m_vendor = enums::VendorNvidia;
-                    AttachName(pDevice, device_resource, "D3D12 Device");
+                    AttachName(pDevice, pDevice, "D3D12 Device");
                     nd3d12::CreateDevice(pDevice, max_instances);
                     break;
                 case enums::Backend_Metal:
                     pDevice->m_vendor = enums::VendorApple;
-                    AttachName(pDevice, device_resource, "Metal Device");
+                    AttachName(pDevice, pDevice, "Metal Device");
                     nmetal::CreateDevice(pDevice, max_instances);
                     break;
                 case enums::Backend_Mock:
                     pDevice->m_vendor = enums::VendorMock;
-                    AttachName(pDevice, device_resource, "Mock Device");
+                    AttachName(pDevice, pDevice, "Mock Device");
                     nmock::CreateDevice(pDevice, max_instances);
                     break;
 

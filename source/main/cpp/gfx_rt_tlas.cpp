@@ -1,5 +1,5 @@
 #include "cgfx/gfx.h"
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 #include "cgfx/d3d12/d3d12_rt_tlas.h"
 #include "cgfx/metal/metal_rt_tlas.h"
@@ -13,8 +13,7 @@ namespace ncore
     {
         tlas_t* CreateRayTracingTLAS(device_t* device, const tlas_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            tlas_t*     tlas     = CreateComponent<resource_t, tlas_t>(device, resource);
+            tlas_t*     tlas     = CreateInstance<tlas_t>(device, name);
             tlas->m_desc         = desc;
             return tlas;
         }

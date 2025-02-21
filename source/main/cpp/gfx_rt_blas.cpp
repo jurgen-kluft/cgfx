@@ -1,5 +1,5 @@
 #include "cgfx/gfx.h"
-#include "cgfx/gfx_resource.h"
+#include "cgfx/gfx_name.h"
 
 #include "cgfx/d3d12/d3d12_rt_blas.h"
 #include "cgfx/metal/metal_rt_blas.h"
@@ -13,8 +13,7 @@ namespace ncore
     {
         blas_t* CreateRayTracingBLAS(device_t* device, const blas_desc_t& desc, const char* name)
         {
-            resource_t* resource = CreateInstance<resource_t>(device, name);
-            blas_t*     blas     = CreateComponent<resource_t, blas_t>(device, resource);
+            blas_t*     blas     = CreateInstance<blas_t>(device, name);
             blas->m_desc         = desc;
             return blas;
         }
