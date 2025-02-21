@@ -7,24 +7,23 @@ namespace ncore
 {
     namespace ngfx
     {
-#ifdef TARGET_METAL        
         namespace nmetal
         {
             void CreateGraphicsPipelineState(ngfx::device_t* device, pipeline_state_t* ps, const graphics_pipeline_desc_t& desc)
             {
-                nmetal::graphics_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::graphics_pipeline_state_t>(device, resource);
+                nmetal::graphics_pipeline_state_t* mps = CreateComponent<ngfx::pipeline_state_t, nmetal::graphics_pipeline_state_t>(device, ps);
                 mps->m_desc                            = desc;
             }
 
             void CreateMeshShadingPipelineState(ngfx::device_t* device, pipeline_state_t* ps, const mesh_shading_pipeline_desc_t& desc)
             {
-                nmetal::meshshading_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::meshshading_pipeline_state_t>(device, resource);
+                nmetal::meshshading_pipeline_state_t* mps = CreateComponent<ngfx::pipeline_state_t, nmetal::meshshading_pipeline_state_t>(device, ps);
                 mps->m_desc                               = desc;
             }
 
             void CreateComputePipelineState(ngfx::device_t* device, pipeline_state_t* ps, const compute_pipeline_desc_t& desc)
             {
-                nmetal::compute_pipeline_state_t* mps = CreateComponent<ngfx::resource_t, nmetal::compute_pipeline_state_t>(device, resource);
+                nmetal::compute_pipeline_state_t* mps = CreateComponent<ngfx::pipeline_state_t, nmetal::compute_pipeline_state_t>(device, ps);
                 mps->m_desc                           = desc;
             }
 
@@ -38,10 +37,12 @@ namespace ncore
                     mps->m_pDepthStencilState->release();
 
                     MTL::RenderPipelineDescriptor* descriptor = MTL::RenderPipelineDescriptor::alloc()->init();
-                    descriptor->setVertexFunction((MTL::Function*)GetHandle(device, mps->m_desc.vs));
+                    nmetal::mshader_t const*       msvs       = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, mps->m_desc.vs);
+                    descriptor->setVertexFunction(msvs->m_pFunction);
                     if (mps->m_desc.ps)
                     {
-                        descriptor->setFragmentFunction((MTL::Function*)GetHandle(device, mps->m_desc.ps));
+                        nmetal::mshader_t const* msps = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, mps->m_desc.ps);
+                        descriptor->setFragmentFunction(msps->m_pFunction);
                     }
 
                     for (u32 i = 0; i < 8; ++i)
@@ -100,15 +101,18 @@ namespace ncore
                     mps->m_pDepthStencilState->release();
 
                     MTL::MeshRenderPipelineDescriptor* descriptor = MTL::MeshRenderPipelineDescriptor::alloc()->init();
-                    descriptor->setMeshFunction((MTL::Function*)GetHandle(device, mps->m_desc.ms));
+                    nmetal::mshader_t const*           ms         = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, mps->m_desc.ms);
+                    descriptor->setMeshFunction(ms->m_pFunction);
                     if (mps->m_desc.as)
                     {
-                        descriptor->setObjectFunction((MTL::Function*)GetHandle(device, mps->m_desc.as));
+                        nmetal::mshader_t const* as = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, mps->m_desc.as);
+                        descriptor->setObjectFunction(as->m_pFunction);
                     }
 
                     if (mps->m_desc.ps)
                     {
-                        descriptor->setFragmentFunction((MTL::Function*)GetHandle(device, mps->m_desc.ps));
+                        nmetal::mshader_t const* ps = GetComponent<ngfx::shader_t, nmetal::mshader_t>(device, mps->m_desc.ps);
+                        descriptor->setFragmentFunction(ps->m_pFunction);
                     }
 
                     for (u32 i = 0; i < 8; ++i)
@@ -227,6 +231,5 @@ namespace ncore
             // }
 
         }  // namespace nmetal
-#endif
     }  // namespace ngfx
 }  // namespace ncore

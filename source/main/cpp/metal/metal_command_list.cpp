@@ -362,40 +362,35 @@ namespace ncore
                 mcmdList->m_pBlitCommandEncoder->copyFromTexture(srcMetalTexture, src_array, src_mip, origin, srcSize, dstMetalTexture, dst_array, dst_mip, origin);
             }
 
-            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, ngfx::descriptor_t* uav, const float* clear_value)
+            void ClearUAV(ngfx::command_list_t* cmdList, buffer_t* resource, ngfx::descriptor_t* uav, const float* clear_value)
             {
-                if (uav->m_type == enums::DescriptorTypeUavBuffer)
-                {
-                    nmetal::uav_buffer_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(cmdList->m_device, uav);
-                    const uav_desc_t&     desc = muav->m_base.m_desc;
-                    // TODO, use callback_t ??
-                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
-                }
-                else if (uav->m_type == enums::DescriptorTypeUavTexture)
-                {
-                    nmetal::uav_texture_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(cmdList->m_device, uav);
-                    const uav_desc_t&      desc = muav->m_base.m_desc;
-                    // TODO, use callback_t ??
-                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
-                }
+                nmetal::uav_buffer_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(cmdList->m_device, uav);
+                const uav_desc_t&     desc = muav->m_base.m_desc;
+                // TODO, use callback_t ??
+                //::ClearUAV(cmdList, resource, uav, desc, clear_value);
             }
 
-            void ClearUAV(ngfx::command_list_t* cmdList, resource_t* resource, ngfx::descriptor_t* uav, const u32* clear_value)
+            void ClearUAV(ngfx::command_list_t* cmdList, texture_t* resource, ngfx::descriptor_t* uav, const float* clear_value)
             {
-                if (uav->m_type == enums::DescriptorTypeUavBuffer)
-                {
-                    nmetal::uav_buffer_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(cmdList->m_device, uav);
-                    const uav_desc_t&     desc = muav->m_base.m_desc;
-                    // TODO, use callback_t ??
-                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
-                }
-                else if (uav->m_type == enums::DescriptorTypeUavTexture)
-                {
-                    nmetal::uav_texture_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(cmdList->m_device, uav);
-                    const uav_desc_t&      desc = muav->m_base.m_desc;
-                    // TODO, use callback_t ??
-                    //::ClearUAV(cmdList, resource, uav, desc, clear_value);
-                }
+                nmetal::uav_texture_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(cmdList->m_device, uav);
+                const uav_desc_t&      desc = muav->m_base.m_desc;
+                // TODO, use callback_t ??
+                //::ClearUAV(cmdList, resource, uav, desc, clear_value);
+            }
+
+            void ClearUAV(ngfx::command_list_t* cmdList, buffer_t* resource, ngfx::descriptor_t* uav, const u32* clear_value)
+            {
+                nmetal::uav_buffer_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_buffer_t>(cmdList->m_device, uav);
+                const uav_desc_t&     desc = muav->m_base.m_desc;
+                // TODO, use callback_t ??
+                //::ClearUAV(cmdList, resource, uav, desc, clear_value);
+            }
+            void ClearUAV(ngfx::command_list_t* cmdList, texture_t* resource, ngfx::descriptor_t* uav, const u32* clear_value)
+            {
+                nmetal::uav_texture_t* muav = GetComponent<ngfx::descriptor_t, nmetal::uav_texture_t>(cmdList->m_device, uav);
+                const uav_desc_t&      desc = muav->m_base.m_desc;
+                // TODO, use callback_t ??
+                //::ClearUAV(cmdList, resource, uav, desc, clear_value);
             }
 
             void WriteBuffer(ngfx::command_list_t* cmdList, buffer_t* buffer, u32 offset, u32 data)

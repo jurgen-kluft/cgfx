@@ -79,6 +79,7 @@ namespace ncore
             // TODO: Should we pass a ccore callback_t so that this level can invoke a function on a higher level?
             void ClearUAV(ngfx::command_list_t* cmdList, ngfx::texture_t* texture, ngfx::descriptor_t* uav, const float* value);
             void ClearUAV(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, ngfx::descriptor_t* uav, const float* value);
+
             void ClearUAV(ngfx::command_list_t* cmdList, ngfx::texture_t* texture, ngfx::descriptor_t* uav, const u32* value);
             void ClearUAV(ngfx::command_list_t* cmdList, ngfx::buffer_t* buffer, ngfx::descriptor_t* uav, const u32* value);
 
