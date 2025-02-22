@@ -47,16 +47,5 @@ namespace ncore
             }
         }
 
-        u64       GetHash(device_t const* device, const shader_t* shader)
-        {
-            switch (device->m_desc.backend)
-            {
-                case enums::Backend_D3D12: return nd3d12::GetHash(device, shader);
-                case enums::Backend_Metal: return nmetal::GetHash(device, shader);
-                case enums::Backend_Mock: return nmock::GetHash(device, shader);
-            }
-            return 0;
-        }
-
     }  // namespace ngfx
 }  // namespace ncore

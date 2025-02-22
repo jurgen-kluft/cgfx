@@ -18,7 +18,7 @@ namespace ncore
         shader_t* CreateShader(device_t* device, const shader_desc_t& desc, const char* name);
         bool      Create(device_t* device, shader_t* shader, byte* data_ptr, u32 data_len);
         void      Destroy(device_t* device, shader_t* resource);
-        u64       GetHash(device_t const* device, const shader_t* shader);
+
     }  // namespace ngfx
 }  // namespace ncore
 

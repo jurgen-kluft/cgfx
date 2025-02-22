@@ -11,10 +11,11 @@ namespace ncore
         {
             ngfx::shader_t* CreateShader(ngfx::device_t* device, ngfx::shader_t* shader)
             {
+                shader->m_hash = 0;
+
                 nmock::shader_t* mshader = CreateComponent<ngfx::shader_t, nmock::shader_t>(device, shader);
                 mshader->m_data          = nullptr;
                 mshader->m_len           = 0;
-                mshader->m_hash          = 0;
                 return shader;
             }
 
@@ -34,15 +35,12 @@ namespace ncore
 
                 mshader->m_data = data_ptr;
                 mshader->m_len  = data_len;
-                mshader->m_hash = nhash::datahash(data_ptr, data_len);
+
+                shader->m_hash = nhash::datahash(data_ptr, data_len);
                 return true;
             }
 
-            u64 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader)
-            {
-                const nmock::shader_t* mshader = GetComponent<ngfx::shader_t, nmock::shader_t>(device, shader);
-                return mshader->m_hash;
-            }
+            u64 GetHash(ngfx::device_t const* device, const ngfx::shader_t* shader) { return shader->m_hash; }
 
         }  // namespace nmock
     }  // namespace ngfx

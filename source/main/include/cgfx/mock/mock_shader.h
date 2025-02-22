@@ -13,7 +13,6 @@ namespace ncore
             {
                 D_GFX_CS_COMPONENT_SET(enums::ComponentMockShader);
                 byte* m_data;
-                u64   m_hash;
                 u32   m_len;
                 DCORE_CLASS_PLACEMENT_NEW_DELETE
             };
