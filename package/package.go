@@ -26,25 +26,25 @@ func GetPackage() *denv.Package {
 	mainpkg.AddPackage(allocatorpkg)
 
 	// 'cgfx' library
-	mainlib := denv.SetupDefaultCppLibProject("cgfx", "github.com\\jurgen-kluft\\cgfx")
-	mainlib.Dependencies = append(mainlib.Dependencies, basepkg.GetMainLib())
-	mainlib.Dependencies = append(mainlib.Dependencies, allocatorpkg.GetMainLib())
+	mainlib := denv.SetupCppLibProject("cgfx", "github.com\\jurgen-kluft\\cgfx")
+	mainlib.AddDependencies(basepkg.GetMainLib()...)
+	mainlib.AddDependencies(allocatorpkg.GetMainLib()...)
 
 	if denv.IsMacOS() {
-		mainlib.Dependencies = append(mainlib.Dependencies, macospkg.GetMainLib())
+		mainlib.AddDependencies(macospkg.GetMainLib()...)
 	} else if denv.IsWindows() {
-		mainlib.Dependencies = append(mainlib.Dependencies, d3d12pkg.GetMainLib())
+		mainlib.AddDependencies(d3d12pkg.GetMainLib()...)
 	}
 
 	// 'cgfx' unittest project
 	maintest := denv.SetupDefaultCppTestProject("cgfx"+"_test", "github.com\\jurgen-kluft\\cgfx")
-	maintest.Dependencies = append(maintest.Dependencies, unittestpkg.GetMainLib())
+	maintest.AddDependencies(unittestpkg.GetMainLib()...)
 	maintest.Dependencies = append(maintest.Dependencies, mainlib)
 
 	if denv.IsMacOS() {
-		maintest.Dependencies = append(maintest.Dependencies, macospkg.GetMainLib())
+		maintest.AddDependencies(macospkg.GetMainLib()...)
 	} else if denv.IsWindows() {
-		maintest.Dependencies = append(maintest.Dependencies, d3d12pkg.GetMainLib())
+		maintest.AddDependencies(d3d12pkg.GetMainLib()...)
 	}
 
 	mainpkg.AddMainLib(mainlib)
