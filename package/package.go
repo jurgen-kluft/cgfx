@@ -9,45 +9,63 @@ import (
 	cunittest "github.com/jurgen-kluft/cunittest/package"
 )
 
-// GetPackage returns the package object of 'cgfx'
+const (
+	repo_path = "github.com\\jurgen-kluft"
+	repo_name = "cgfx"
+)
+
 func GetPackage() *denv.Package {
-	// Dependencies
-	unittestpkg := cunittest.GetPackage()
-	basepkg := cbase.GetPackage()
-	allocatorpkg := callocator.GetPackage()
-	macospkg := cmacos.GetPackage()
-	d3d12pkg := cd3d12.GetPackage()
+	name := repo_name
 
-	// The main package
-	mainpkg := denv.NewPackage("cgfx")
-	mainpkg.AddPackage(unittestpkg)
-	mainpkg.AddPackage(basepkg)
-	mainpkg.AddPackage(macospkg)
-	mainpkg.AddPackage(allocatorpkg)
+	// dependencies
+	cunittestpkg := cunittest.GetPackage()
+	cbasepkg := cbase.GetPackage()
+	callocpkg := callocator.GetPackage()
+	cd3d12pkg := cd3d12.GetPackage()
+	cmacospkg := cmacos.GetPackage()
 
-	// 'cgfx' library
-	mainlib := denv.SetupCppLibProject("cgfx", "github.com\\jurgen-kluft\\cgfx")
-	mainlib.AddDependencies(basepkg.GetMainLib()...)
-	mainlib.AddDependencies(allocatorpkg.GetMainLib()...)
+	// main package
+	mainpkg := denv.NewPackage(repo_path, repo_name)
+	mainpkg.AddPackage(cunittestpkg)
+	mainpkg.AddPackage(cbasepkg)
+	mainpkg.AddPackage(callocpkg)
+	mainpkg.AddPackage(cd3d12pkg)
+	mainpkg.AddPackage(cmacospkg)
 
-	if denv.IsMacOS() {
-		mainlib.AddDependencies(macospkg.GetMainLib()...)
-	} else if denv.IsWindows() {
-		mainlib.AddDependencies(d3d12pkg.GetMainLib()...)
-	}
-
-	// 'cgfx' unittest project
-	maintest := denv.SetupDefaultCppTestProject("cgfx"+"_test", "github.com\\jurgen-kluft\\cgfx")
-	maintest.AddDependencies(unittestpkg.GetMainLib()...)
-	maintest.Dependencies = append(maintest.Dependencies, mainlib)
+	// main library
+	mainlib := denv.SetupCppLibProject(mainpkg, name)
+	mainlib.AddDependencies(cbasepkg.GetMainLib()...)
+	mainlib.AddDependencies(callocpkg.GetMainLib()...)
+	mainlib.AddDependencies(cd3d12pkg.GetMainLib()...)
+	mainlib.AddDependencies(cmacospkg.GetMainLib()...)
 
 	if denv.IsMacOS() {
-		maintest.AddDependencies(macospkg.GetMainLib()...)
+		mainlib.AddDependencies(cmacospkg.GetMainLib()...)
 	} else if denv.IsWindows() {
-		maintest.AddDependencies(d3d12pkg.GetMainLib()...)
+		mainlib.AddDependencies(cd3d12pkg.GetMainLib()...)
 	}
+
+	// test library
+	testlib := denv.SetupCppTestLibProject(mainpkg, name)
+	testlib.AddDependencies(cbasepkg.GetTestLib()...)
+	testlib.AddDependencies(callocpkg.GetTestLib()...)
+	testlib.AddDependencies(cd3d12pkg.GetTestLib()...)
+	testlib.AddDependencies(cmacospkg.GetTestLib()...)
+	testlib.AddDependencies(cunittestpkg.GetTestLib()...)
+
+	if denv.IsMacOS() {
+		testlib.AddDependencies(cmacospkg.GetTestLib()...)
+	} else if denv.IsWindows() {
+		testlib.AddDependencies(cd3d12pkg.GetTestLib()...)
+	}
+
+	// unittest project
+	maintest := denv.SetupCppTestProject(mainpkg, name)
+	maintest.AddDependencies(cunittestpkg.GetMainLib()...)
+	maintest.AddDependency(testlib)
 
 	mainpkg.AddMainLib(mainlib)
+	mainpkg.AddTestLib(testlib)
 	mainpkg.AddUnittest(maintest)
 	return mainpkg
 }
