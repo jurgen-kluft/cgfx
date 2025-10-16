@@ -34,34 +34,34 @@ func GetPackage() *denv.Package {
 
 	// main library
 	mainlib := denv.SetupCppLibProject(mainpkg, name)
-	mainlib.AddDependencies(cbasepkg.GetMainLib()...)
-	mainlib.AddDependencies(callocpkg.GetMainLib()...)
-	mainlib.AddDependencies(cd3d12pkg.GetMainLib()...)
-	mainlib.AddDependencies(cmacospkg.GetMainLib()...)
+	mainlib.AddDependencies(cbasepkg.GetMainLib())
+	mainlib.AddDependencies(callocpkg.GetMainLib())
+	mainlib.AddDependencies(cd3d12pkg.GetMainLib())
+	mainlib.AddDependencies(cmacospkg.GetMainLib())
 
 	if denv.IsMacOS() {
-		mainlib.AddDependencies(cmacospkg.GetMainLib()...)
+		mainlib.AddDependencies(cmacospkg.GetMainLib())
 	} else if denv.IsWindows() {
-		mainlib.AddDependencies(cd3d12pkg.GetMainLib()...)
+		mainlib.AddDependencies(cd3d12pkg.GetMainLib())
 	}
 
 	// test library
 	testlib := denv.SetupCppTestLibProject(mainpkg, name)
-	testlib.AddDependencies(cbasepkg.GetTestLib()...)
-	testlib.AddDependencies(callocpkg.GetTestLib()...)
-	testlib.AddDependencies(cd3d12pkg.GetTestLib()...)
-	testlib.AddDependencies(cmacospkg.GetTestLib()...)
-	testlib.AddDependencies(cunittestpkg.GetTestLib()...)
+	testlib.AddDependencies(cbasepkg.GetTestLib())
+	testlib.AddDependencies(callocpkg.GetTestLib())
+	testlib.AddDependencies(cd3d12pkg.GetTestLib())
+	testlib.AddDependencies(cmacospkg.GetTestLib())
+	testlib.AddDependencies(cunittestpkg.GetTestLib())
 
 	if denv.IsMacOS() {
-		testlib.AddDependencies(cmacospkg.GetTestLib()...)
+		testlib.AddDependencies(cmacospkg.GetTestLib())
 	} else if denv.IsWindows() {
-		testlib.AddDependencies(cd3d12pkg.GetTestLib()...)
+		testlib.AddDependencies(cd3d12pkg.GetTestLib())
 	}
 
 	// unittest project
 	maintest := denv.SetupCppTestProject(mainpkg, name)
-	maintest.AddDependencies(cunittestpkg.GetMainLib()...)
+	maintest.AddDependencies(cunittestpkg.GetMainLib())
 	maintest.AddDependency(testlib)
 
 	mainpkg.AddMainLib(mainlib)
