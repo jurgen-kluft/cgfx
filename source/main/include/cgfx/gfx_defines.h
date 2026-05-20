@@ -5,7 +5,7 @@
     #pragma once
 #endif
 
-#include "cbase/c_carray.h"
+#include "ccore/c_array.h"
 
 namespace ncore
 {
@@ -56,9 +56,7 @@ namespace ncore
             // enums::backend backend = enums::cast<enums::backend>(b);
             template <typename T, typename F>
             inline static T cast(F type)
-            {
-                return static_cast<T>(type);
-            }
+            { return static_cast<T>(type); }
 
             enum Component
             {
@@ -671,9 +669,7 @@ namespace ncore
         };
 
         inline bool operator==(const uav_desc_t& lhs, const uav_desc_t& rhs)
-        {
-            return lhs.type == rhs.type && lhs.texture.mip_slice == rhs.texture.mip_slice && lhs.texture.array_slice == rhs.texture.array_slice && lhs.texture.array_size == rhs.texture.array_size && lhs.texture.plane_slice == rhs.texture.plane_slice;
-        }
+        { return lhs.type == rhs.type && lhs.texture.mip_slice == rhs.texture.mip_slice && lhs.texture.array_slice == rhs.texture.array_slice && lhs.texture.array_size == rhs.texture.array_size && lhs.texture.plane_slice == rhs.texture.plane_slice; }
 
         struct renderpass_colorattachment_t
         {
@@ -924,7 +920,9 @@ namespace ncore
 
         struct blas_desc_t
         {
-            carray_t<rt_geometry_t*>    geometries;
+            rt_geometry_t**             geometries;
+            u32                         geometry_count;
+            u32                         geometry_capacity;
             enums::rt::accstruct_flag_t flags;
         };
 

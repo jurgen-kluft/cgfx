@@ -5,7 +5,6 @@
 There is only one specific device, depending on the OS you are running on. For example, on Windows, there is a `D3D12Device` class that is derived from `device_t`. 
 Currently you can have multiple devices, but only one is active at a time, we should change this to only have one device at compile time.
 
-
 # GfxResource
 
 Is a base class.
