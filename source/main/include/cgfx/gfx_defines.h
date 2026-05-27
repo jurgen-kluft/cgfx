@@ -714,10 +714,10 @@ namespace ncore
 #pragma pack(push, 1)
         struct rasterizer_state_t
         {
-            enums::cullmode_t cull_mode           = enums::CullNone;
             float             depth_bias          = 0.0f;
             float             depth_bias_clamp    = 0.0f;
             float             depth_slope_scale   = 0.0f;
+            enums::cullmode_t cull_mode           = enums::CullNone;
             bool              wireframe           = false;
             bool              front_ccw           = false;
             bool              depth_clip          = true;
@@ -736,10 +736,10 @@ namespace ncore
         struct depth_stencilstate_t
         {
             enums::comparefunc_t depth_func  = enums::CompareFuncAlways;
-            bool                 depth_test  = false;
-            bool                 depth_write = true;
             depth_stencilop_t    front;
             depth_stencilop_t    back;
+            bool                 depth_test  = false;
+            bool                 depth_write = true;
             bool                 stencil_test       = false;
             u8                   stencil_read_mask  = 0xFF;
             u8                   stencil_write_mask = 0xFF;
