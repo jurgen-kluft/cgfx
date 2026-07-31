@@ -3,10 +3,10 @@ package cgfx
 import (
 	callocator "github.com/jurgen-kluft/callocator/package"
 	cbase "github.com/jurgen-kluft/cbase/package"
-	"github.com/jurgen-kluft/ccode/denv"
 	cd3d12 "github.com/jurgen-kluft/cd3d12/package"
 	cmacos "github.com/jurgen-kluft/cmacos/package"
 	cunittest "github.com/jurgen-kluft/cunittest/package"
+	"github.com/jurgen-kluft/gide/denv"
 )
 
 const (
