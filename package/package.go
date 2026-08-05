@@ -6,7 +6,7 @@ import (
 	cd3d12 "github.com/jurgen-kluft/cd3d12/package"
 	cmacos "github.com/jurgen-kluft/cmacos/package"
 	cunittest "github.com/jurgen-kluft/cunittest/package"
-	"github.com/jurgen-kluft/gide/denv"
+	"github.com/jurgen-kluft/go-ide/denv"
 )
 
 const (
